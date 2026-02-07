@@ -20,6 +20,7 @@
       </button>
       <ul class="nav-menu" id="nav-menu">
         <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
         <li><a href="#salesforce" class="nav-link">Salesforce</a></li>
         <li><a href="#projects" class="nav-link">Projects</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -33,7 +34,12 @@
       <div class="hero-content">
         <p class="hero-subtitle">Hello, I'm</p>
         <h1 class="hero-title">Eddie Zaragoza</h1>
-        <p class="hero-description">Salesforce Professional &amp; Developer</p>
+        <div class="hero-typed-wrap">
+          <span class="hero-typed" id="typed-text"></span><span class="typed-cursor">|</span>
+        </div>
+        <p class="hero-description">
+          Building solutions on the Salesforce platform and beyond.
+        </p>
         <div class="hero-cta">
           <a href="#projects" class="btn btn-primary">View My Work</a>
           <a href="#contact" class="btn btn-outline">Get In Touch</a>
@@ -56,7 +62,7 @@
           </p>
           <p>
             <!-- TODO: Add more about your background, how you got into Salesforce, etc. -->
-            [More detail coming soon — background, journey into Salesforce, certifications, etc.]
+            [More detail coming soon &mdash; background, journey into Salesforce, certifications, etc.]
           </p>
         </div>
         <div class="about-highlights">
@@ -80,14 +86,65 @@
     </div>
   </section>
 
+  <!-- Skills & Tools Section -->
+  <section class="section section-alt" id="skills">
+    <div class="container">
+      <h2 class="section-title">Skills &amp; Tools</h2>
+      <p class="section-subtitle">Technologies and platforms I work with</p>
+
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>Salesforce Platform</h3>
+          <div class="skill-tags">
+            <!-- TODO: Update with your actual Salesforce skills -->
+            <span class="skill-tag">Apex</span>
+            <span class="skill-tag">Lightning Web Components</span>
+            <span class="skill-tag">Visualforce</span>
+            <span class="skill-tag">Flows</span>
+            <span class="skill-tag">SOQL / SOSL</span>
+            <span class="skill-tag">Process Automation</span>
+            <span class="skill-tag">Reports &amp; Dashboards</span>
+            <span class="skill-tag">Data Management</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Development</h3>
+          <div class="skill-tags">
+            <!-- TODO: Update with your actual dev skills -->
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">HTML / CSS</span>
+            <span class="skill-tag">Chrome Extensions</span>
+            <span class="skill-tag">REST APIs</span>
+            <span class="skill-tag">Git / GitHub</span>
+            <span class="skill-tag">VS Code</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Tools &amp; Platforms</h3>
+          <div class="skill-tags">
+            <!-- TODO: Update with your actual tools -->
+            <span class="skill-tag">Salesforce CLI</span>
+            <span class="skill-tag">Data Loader</span>
+            <span class="skill-tag">Workbench</span>
+            <span class="skill-tag">Developer Console</span>
+            <span class="skill-tag">Postman</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Salesforce Section -->
-  <section class="section section-alt" id="salesforce">
+  <section class="section" id="salesforce">
     <div class="container">
       <h2 class="section-title">Salesforce Expertise</h2>
       <p class="section-subtitle">What I do day-to-day on the Salesforce platform</p>
 
       <div class="sf-grid">
         <div class="sf-card">
+          <div class="sf-card-icon">&#9881;</div>
           <h3>Administration</h3>
           <p>
             <!-- TODO: Describe your admin work -->
@@ -95,6 +152,7 @@
           </p>
         </div>
         <div class="sf-card">
+          <div class="sf-card-icon">&#128296;</div>
           <h3>Development</h3>
           <p>
             <!-- TODO: Describe your dev work -->
@@ -102,6 +160,7 @@
           </p>
         </div>
         <div class="sf-card">
+          <div class="sf-card-icon">&#9889;</div>
           <h3>Automation</h3>
           <p>
             <!-- TODO: Describe your automation work -->
@@ -109,6 +168,7 @@
           </p>
         </div>
         <div class="sf-card">
+          <div class="sf-card-icon">&#128279;</div>
           <h3>Integrations</h3>
           <p>
             <!-- TODO: Describe integration work -->
@@ -131,7 +191,7 @@
   </section>
 
   <!-- Projects Section -->
-  <section class="section" id="projects">
+  <section class="section section-alt" id="projects">
     <div class="container">
       <h2 class="section-title">Projects</h2>
       <p class="section-subtitle">Things I've built</p>
@@ -168,7 +228,7 @@
           <h3>Health Check App</h3>
           <p>
             <!-- TODO: Add description -->
-            [Describe the health check app — what it monitors, how it works, etc.]
+            [Describe the health check app &mdash; what it monitors, how it works, etc.]
           </p>
           <div class="project-tech">
             <!-- TODO: Add actual tech stack -->
@@ -188,7 +248,7 @@
           <h3>Habit Tracker</h3>
           <p>
             <!-- TODO: Add description -->
-            [Describe the habit tracker — features, motivation behind it, etc.]
+            [Describe the habit tracker &mdash; features, motivation behind it, etc.]
           </p>
           <div class="project-tech">
             <!-- TODO: Add actual tech stack -->
@@ -210,7 +270,7 @@
   </section>
 
   <!-- Contact Section -->
-  <section class="section section-alt" id="contact">
+  <section class="section" id="contact">
     <div class="container">
       <h2 class="section-title">Get In Touch</h2>
       <p class="section-subtitle">Interested in working together or just want to connect?</p>
@@ -240,6 +300,9 @@
       <p>&copy; 2026 Eddie Zaragoza. All rights reserved.</p>
     </div>
   </footer>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">&#8593;</button>
 
   <script src="js/main.js"></script>
 </body>
