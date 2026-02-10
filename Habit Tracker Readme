@@ -1,0 +1,74 @@
+# Habit Tracker — Project Summary
+
+## Website Blurb
+
+Habit Tracker is a full-featured personal habit tracking app built entirely on Google Apps Script and Google Sheets — zero external dependencies, zero third-party servers. It supports eight distinct entry types (habits with streak tracking, countable trackers, numeric metrics, start/stop time trackers, goals, wins, life logs, and bedtime), all wrapped in a mobile-first dark UI with four themes including an animated Matrix rain mode. Every byte of user data stays in their own Google account. Built as a single-page vanilla JS application with offline support, two-phase loading, and lazy-loaded dashboards, it handles 1,000+ entries without breaking a sweat. [View on GitHub](https://github.com/eddiezaragoza/habit-tracker)
+
+---
+
+## Detailed Overview
+
+### What It Is
+
+A self-hosted habit and life tracking web app deployed as a Google Apps Script Web App. Users get a private instance backed by their own Google Sheets — no accounts, no servers, no subscriptions.
+
+### What It Does
+
+**8 Entry Types:**
+
+- **Habits** — Tap-to-log with automatic streak tracking, milestone badges at 7/30/100 days
+- **Trackers** — Countable items (reps, glasses of water, etc.) with configurable increments and daily goals
+- **Metrics** — Numeric tracking (steps, weight, spending) with sum/average aggregation and optional currency formatting
+- **Time Trackers** — Start/stop timers with concurrent session support and automatic cross-midnight splitting
+- **Goals** — Long-term objectives that auto-log as wins on completion
+- **Wins** — Freeform text entries for celebrating achievements, searchable with monthly grouping
+- **Life Log** — Journal-style entries for one-off events
+- **Bedtime** — Sleep/wake time logging with smart date detection and duration calculation
+
+**Core Features:**
+
+- Configurable dashboard with period views: Today, Week, Month, Quarter, Year, All-Time
+- Offline queue-based sync — log entries without connectivity, auto-syncs on reconnect
+- Pull-to-refresh and 5-second undo on deletions
+- Collapsible sections for organizing habits and trackers into groups
+- Drag-to-reorder items and drag-onto-section for reorganization
+- Morning splash screen with personalized greeting and streak highlights
+- Confetti animations and haptic feedback on completions
+- CSV and JSON export/import for full data portability
+- Configurable column layouts (2-4 columns), per-item dashboard/streak visibility toggles
+- Emoji picker (338 emojis) and color picker for item customization
+
+**4 Themes:**
+
+- Default (clean dark)
+- Matrix (animated canvas-based katakana rain)
+- Midnight Ocean (deep blues/teals)
+- Sunset Blaze (warm oranges/reds)
+
+### Why It Exists
+
+Most habit trackers require accounts, cost money, or store data on someone else's servers. This one runs entirely within Google's ecosystem — the user's own spreadsheet is the database, the Apps Script runtime is the server, and the deployed web app is the frontend. No vendor lock-in, full data ownership, and trivially forkable.
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Vanilla HTML5, CSS3, JavaScript (single-page app, 5,800 lines) |
+| Backend | Google Apps Script |
+| Database | Google Sheets (Settings + HabitLog sheets) |
+| Dependencies | None |
+| Deployment | Google Apps Script Web App |
+
+### Notable Implementation Details
+
+- **Two-phase loading** — Phase 1 loads today's data and settings for instant interactivity; Phase 2 fetches 37 days of history in the background for dashboard/streaks
+- **Stored streaks** — Current streak and last-completion date persisted in the Settings sheet (columns O, P), eliminating expensive full-history recalculation on every page load
+- **Lazy dashboard periods** — QTD, YTD, and All-Time data fetched on-demand with loading spinners, preventing large datasets from blocking initial render
+- **Offline queue** — Failed API calls stored in `window.offlineQueue`, replayed automatically on reconnect or manually via pull-to-refresh
+- **Cross-midnight timer splitting** — Active time tracker sessions automatically split into separate entries at midnight with correct effective dates
+- **Zero-dependency architecture** — No frameworks, no build step, no CDN imports. Copy two files into Apps Script and deploy
+- **Mobile-first responsive design** — Touch-optimized tap targets, keyboard-safe input handling (no re-renders during typing), add-to-home-screen PWA support
+
+### Author
+
+**Eddie Zaragoza** — [edward.zaragoza@gmail.com](mailto:edward.zaragoza@gmail.com) · [Buy Me a Coffee](https://buymeacoffee.com/eddiez63)
