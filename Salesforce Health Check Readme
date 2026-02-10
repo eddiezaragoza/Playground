@@ -1,0 +1,95 @@
+# Salesforce Health Check — Project Summary
+
+## Website Blurb
+
+Salesforce Health Check is an open-source tool that generates comprehensive org assessment reports covering security settings, user licensing, automation inventory, code metrics, and more — without requiring a managed package install. It ships as both a Node.js CLI for quick one-off assessments and a deployable Visualforce page for permanent in-org access. Built for Salesforce admins, consultants, and architects who need a fast, reliable way to document org configuration for governance reviews, client engagements, or compliance audits. [GitHub](https://github.com/eddiezaragoza/Salesforce-Health-Check)
+
+---
+
+## Detailed Project Summary
+
+### What It Is
+
+- A Salesforce org health check and reporting tool
+- Two delivery modes: a **Node.js CLI** (zero deployment, run against any authorized org) and a **Visualforce page** (deploy once, access permanently from within the org)
+- Produces branded, professional HTML reports suitable for client-facing presentations, plus raw JSON for programmatic consumption
+- MIT-licensed, no managed package dependencies
+
+### What It Does
+
+**Organization Overview**
+- Org ID (15/18-char), org name, type (Production/Sandbox/Developer), instance, primary contact
+- Organization-Wide Default (OWD) sharing settings for Accounts, Contacts, Leads, Opportunities, Campaigns, Cases, Contracts, Calendars
+
+**User Management & Licensing**
+- User license inventory: total, used, and available counts per license type
+- Profile analysis: standard vs. custom, active user counts, site-associated profile detection, usage distribution breakdown
+- Permission set analysis: custom vs. standard, assignment counts, unused permission set identification
+- Role hierarchy mapping with active user counts and orphaned role detection
+
+**Sharing & Access Control**
+- Sharing rules inventory via Metadata API (criteria-based, owner-based, guest/portal, territory-based)
+- Rule counts aggregated by object
+
+**Flows & Automation**
+- Record-triggered flows (before/after save), screen flows, scheduled flows, autolaunched flows, Process Builders
+- Active/inactive status, custom vs. managed classification
+- 20+ flow process types supported
+
+**Data Model**
+- Custom object inventory with org-created field counts (excludes managed package objects unless they have org-created fields)
+- Standard objects scanned for org-created custom fields
+- Filters out metadata types, external objects, platform events, knowledge articles, and system objects
+
+**Code Inventory**
+- Apex classes: total count and breakdown by type (test, batch, schedulable, queueable, controller, trigger handler)
+- Per-class metrics: lines of code (excluding comments), API version, last modified date
+- Apex triggers: inventory with object associations and active/inactive status
+- Managed package code explicitly excluded from all counts
+
+**Installed Packages**
+- Full managed package inventory with namespace prefix and version numbers (via Tooling API)
+
+**Validation Rules**
+- Complete inventory grouped by object, active/inactive status, unmanaged only
+
+**Storage & API Limits**
+- Data storage and file storage: used, limit, percentage with visual progress bars
+- Daily API requests, async Apex executions, bulk API requests
+
+### Why It Exists
+
+Salesforce admins and consultants routinely need to assess org health — for pre-engagement discovery, governance reviews, compliance audits, or optimization planning. Existing options are either paid third-party tools, manual Setup navigation, or custom-built queries. This tool fills the gap: a free, comprehensive, single-report solution that works without installing anything into the org (CLI mode) or can live inside it permanently (Visualforce mode).
+
+### Tech Stack
+
+**Visualforce / In-Org:**
+- Apex (controller + 20+ wrapper classes, ~1,700 LOC)
+- Visualforce page (~1,800 lines) with embedded CSS and JavaScript
+- SOQL, Tooling API (REST), Metadata API (SOAP via HTTP callouts), OrgLimits API
+- `@RemoteAction` pattern for async data loading and callout support
+
+**CLI:**
+- Node.js 18+
+- jsforce v2.0.0-beta.29 (Salesforce API client)
+- commander.js v11.1.0 (CLI framework)
+- ora v7.0.1 (progress spinners)
+- chalk v5.3.0 (terminal styling)
+- Salesforce CLI (`sf`) for org authentication
+
+**Testing:**
+- Apex test class (~860 LOC, 75%+ code coverage)
+
+### Notable Implementation Details
+
+- **Metadata API SOAP workaround:** Sharing rules aren't available through the Tooling API, so the tool constructs raw SOAP requests to the Metadata API and parses the XML response with regex — handling the 3-query-per-call limit by batching rule types
+- **Managed package detection:** Multi-layered filtering using namespace prefix checks at both the object and field level to ensure only org-created customizations appear in counts
+- **Governor limit optimization:** Single SOQL query per entity type with in-memory aggregation; describe calls wrapped in try-catch for graceful degradation on restricted objects
+- **Dual output architecture:** CLI and Visualforce share the same assessment logic conceptually but use different API access patterns (jsforce REST vs. Apex SOQL/SOAP), allowing the CLI to run without any org deployment
+- **Print-optimized CSS:** Media queries handle page breaks, header repetition, and layout adjustments so HTML reports export cleanly to PDF
+- **Site profile handling:** Detects and badges site-associated profiles by cross-referencing the Site sObject, with graceful fallback when Site access is restricted
+
+### Author
+
+**Eddie Zaragoza** — [GitHub](https://github.com/eddiezaragoza)
+Built at [CrossCountry Consulting](https://www.crosscountry-consulting.com/)
