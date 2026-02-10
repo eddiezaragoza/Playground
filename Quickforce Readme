@@ -1,0 +1,22 @@
+Project: Quickforce
+Repo: https://github.com/eddiezaragoza/Quickforce
+Chrome Web Store: https://chromewebstore.google.com/detail/quickforce/pnccohdkpccdnpaionhplfkepdolpnhi
+
+What it is: A Chrome extension (Manifest V3) for Salesforce admins and developers. It adds a keyboard shortcut (Alt+S) that lets you instantly toggle between any Salesforce Lightning page and the corresponding Object Manager Setup page.
+
+What it does:
+
+On a record page (e.g. an Account or Contact record): opens the Object Manager Setup page for that object in a new tab
+On a list view (e.g. the Accounts list): opens the Object Manager Setup page for that object in a new tab
+On a Setup page: navigates back to the record/list you came from (uses sessionStorage to remember it), or falls back to Salesforce Home
+On any other Lightning page: opens Setup Home
+Why it exists: Salesforce admins constantly need to jump between working with records and configuring objects in Setup. Normally this means manually navigating through menus. Quickforce makes it one keyboard shortcut.
+
+Tech details:
+
+3 files, ~80 lines of vanilla JavaScript total, zero dependencies, no build step
+manifest.json (extension config), background.js (service worker that listens for Alt+S), content.js (injected script that parses the URL and navigates)
+Minimal permissions: activeTab, scripting, scoped to *.lightning.force.com only
+All navigations open in a new tab
+Author: Eddie Zaragoza
+
