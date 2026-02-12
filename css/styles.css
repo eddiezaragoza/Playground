@@ -734,10 +734,12 @@ a {
   }
 
   .project-links .btn-small {
+    display: block;
     width: 100%;
     text-align: center;
-    padding: 12px 20px;
+    padding: 14px 20px;
     font-size: 1rem;
+    box-sizing: border-box;
   }
 
   /* Mobile nav */
