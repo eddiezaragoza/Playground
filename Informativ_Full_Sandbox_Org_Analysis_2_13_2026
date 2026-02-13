@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informativ Salesforce Org — Comprehensive Analysis</title>
+    <style>
+        /* === RESET & BASE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        /* === TYPOGRAPHY === */
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: white;
+            font-size: 1.6em;
+            margin: 40px 0 20px 0;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        h3 {
+            color: #2980b9;
+            font-size: 1.25em;
+            margin: 25px 0 15px 0;
+            padding: 10px 0;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        h4 {
+            color: #34495e;
+            font-size: 1.1em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+        }
+
+        h5 {
+            color: #7f8c8d;
+            font-size: 1em;
+            margin: 15px 0 8px 0;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+            color: #34495e;
+        }
+
+        ul, ol { margin: 15px 0 15px 25px; }
+        li { margin: 8px 0; }
+
+        strong { color: #2c3e50; }
+
+        /* === CODE === */
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Ubuntu Mono', monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            border-left: 4px solid #3498db;
+            white-space: pre;
+        }
+
+        code {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        /* === TABLES === */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th {
+            background: #d5e8f0;
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+        }
+
+        td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            color: #34495e;
+        }
+
+        tr:nth-child(even) { background: #f8f9fa; }
+        tr:hover { background: #eaf2f8; }
+
+        /* === COMPONENTS === */
+        .step-container {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1em;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #d35400;
+        }
+
+        .warning-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            color: white;
+        }
+
+        .warning-box p { color: rgba(255,255,255,0.95); }
+
+        .info-box {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #1a5276;
+        }
+
+        .info-box strong { color: white; }
+        .info-box p { color: rgba(255,255,255,0.95); }
+
+        .success-box {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #1e8449;
+        }
+
+        .success-box strong { color: white; }
+        .success-box p { color: rgba(255,255,255,0.95); }
+
+        .toc {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+            background: none;
+            color: #2c3e50;
+        }
+
+        .toc ol { padding-left: 25px; }
+        .toc li { margin: 10px 0; color: #34495e; }
+        .toc a { color: #3498db; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        .separator {
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #9b59b6, #3498db);
+            margin: 40px 0;
+            border-radius: 1px;
+        }
+
+        .prereq-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .prereq-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .prereq-item strong { color: #2c3e50; display: block; margin-bottom: 5px; }
+        .prereq-item span { color: #7f8c8d; font-size: 0.9em; }
+
+        /* === PRINT === */
+        @media print {
+            body { background: white; padding: 20px; }
+            .container { box-shadow: none; border: 1px solid #ddd; }
+            h2 {
+                background: #f0f0f0 !important;
+                color: #333 !important;
+                -webkit-print-color-adjust: exact;
+            }
+            pre { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Informativ Salesforce Org — Comprehensive Analysis</h1>
+    <p class="subtitle">Generated: 2026-02-12 &nbsp;|&nbsp; Org: Informativ (Production + Full Sandbox) &nbsp;|&nbsp; Source: Full metadata retrieval + CPQ data export</p>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ol>
+            <li><a href="#executive-summary">Executive Summary</a></li>
+            <li><a href="#architecture-overview">Architecture Overview</a></li>
+            <li><a href="#account-management">Account Management</a></li>
+            <li><a href="#cpq-quoting">CPQ / Quoting</a></li>
+            <li><a href="#opportunities-pipeline">Opportunities &amp; Pipeline</a></li>
+            <li><a href="#projects-implementation">Projects &amp; Implementation</a></li>
+            <li><a href="#cases-support">Cases &amp; Support</a></li>
+            <li><a href="#leads-contacts">Leads &amp; Contacts</a></li>
+            <li><a href="#billing-revenue">Billing &amp; Revenue</a></li>
+            <li><a href="#sales-territory">Sales Territory Management</a></li>
+            <li><a href="#surveys">Surveys &amp; Customer Feedback</a></li>
+            <li><a href="#marketing">Marketing &amp; Attribution</a></li>
+            <li><a href="#apex-code">Apex Code</a></li>
+            <li><a href="#security-model">Security Model</a></li>
+            <li><a href="#integrations">Integrations</a></li>
+            <li><a href="#custom-metadata">Custom Metadata &amp; Configuration</a></li>
+            <li><a href="#known-issues">Known Issues &amp; Optimization Opportunities</a></li>
+            <li><a href="#appendix">Appendix: Full Inventory</a></li>
+        </ol>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- EXECUTIVE SUMMARY -->
+    <!-- ============================================================ -->
+    <h2 id="executive-summary">Executive Summary</h2>
+
+    <p>Informativ is a B2B company providing credit bureau, compliance, and dealer services to automotive dealerships and other businesses. The Salesforce org supports the full customer lifecycle:</p>
+
+    <div class="info-box">
+        <strong>End-to-End Process:</strong>
+        <p>Lead &rarr; Opportunity &rarr; Quote (CPQ) &rarr; Project (Implementation) &rarr; Billing &rarr; Ongoing Support</p>
+    </div>
+
+    <h3>Key Metrics</h3>
+
+    <table>
+        <tr><th>Component</th><th>Count</th><th>Notes</th></tr>
+        <tr><td>Custom Objects</td><td>26</td><td>Core business objects + config objects</td></tr>
+        <tr><td>Flows</td><td>182</td><td>Record-triggered, screen, scheduled, subflows</td></tr>
+        <tr><td>Apex Classes</td><td>29</td><td>10 production + 19 test/site controllers</td></tr>
+        <tr><td>Apex Triggers</td><td>4</td><td>Case routing, Jira integration, email handling</td></tr>
+        <tr><td>CPQ Products</td><td>278</td><td>Credit reports, compliance, integrations</td></tr>
+        <tr><td>CPQ Price Rules</td><td>37</td><td>Hard pull, soft pull, discount management</td></tr>
+        <tr><td>CPQ Discount Tiers</td><td>509</td><td>Volume-based pricing</td></tr>
+        <tr><td>Custom Metadata Records</td><td>634+</td><td>Territory assignments, routing config</td></tr>
+        <tr><td>Permission Sets</td><td>63</td><td>Role-based access layering</td></tr>
+        <tr><td>Profiles</td><td>58</td><td>Functional role profiles</td></tr>
+        <tr><td>Approval Processes</td><td>2</td><td>Quote discount approvals</td></tr>
+    </table>
+
+    <h3>Product Lines</h3>
+
+    <div class="prereq-list">
+        <div class="prereq-item">
+            <strong>CBC</strong>
+            <span>Credit Bureau Connection — Core credit reporting and compliance suite</span>
+        </div>
+        <div class="prereq-item">
+            <strong>DSGSS</strong>
+            <span>DealerSocket/Dealer Services — Dealer-specific service packages</span>
+        </div>
+        <div class="prereq-item">
+            <strong>Credit Driver</strong>
+            <span>QR-based pre-qualification tool</span>
+        </div>
+        <div class="prereq-item">
+            <strong>DealerTrack</strong>
+            <span>Integration with DealerTrack dealer management system</span>
+        </div>
+        <div class="prereq-item">
+            <strong>Verified STIPs</strong>
+            <span>Stipulation verification services</span>
+        </div>
+        <div class="prereq-item">
+            <strong>Payments</strong>
+            <span>Payment processing services</span>
+        </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- ARCHITECTURE OVERVIEW -->
+    <!-- ============================================================ -->
+    <h2 id="architecture-overview">Architecture Overview</h2>
+
+    <h3>System Architecture Diagram</h3>
+
+<pre>
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         INFORMATIV SALESFORCE ORG                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌──────────┐    ┌─────────────┐    ┌──────────────┐    ┌───────────┐  │
+│  │  LEADS   │───&gt;│ OPPORTUNITY │───&gt;│  CPQ QUOTE   │───&gt;│  PROJECT  │  │
+│  │          │    │             │    │  + QLGs      │    │ (Impl.)   │  │
+│  └────┬─────┘    └──────┬──────┘    └──────┬───────┘    └─────┬─────┘  │
+│       │                 │                  │                  │         │
+│       v                 v                  v                  v         │
+│  ┌──────────┐    ┌─────────────┐    ┌──────────────┐    ┌───────────┐  │
+│  │ CONTACT  │    │  ACCOUNT    │&lt;───│ DEAL DESK    │    │ BILLING   │  │
+│  │          │    │ (3-tier     │    │   FORM       │    │  RECORD   │  │
+│  └──────────┘    │  hierarchy) │    └──────────────┘    └───────────┘  │
+│                  └──────┬──────┘                                        │
+│                         │                                               │
+│         ┌───────────────┼───────────────┐                              │
+│         v               v               v                              │
+│  ┌──────────┐    ┌─────────────┐    ┌──────────────┐                   │
+│  │  CASES   │    │  SURVEYS    │    │  TERRITORY   │                   │
+│  │(Support) │    │  (NPS/CSAT) │    │ ATTACK PLANS │                   │
+│  └──────────┘    └─────────────┘    └──────────────┘                   │
+│                                                                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│                        AUTOMATION LAYER                                 │
+│                                                                         │
+│  ┌──────────────────┐  ┌────────────────┐  ┌────────────────────────┐  │
+│  │ 182 FLOWS        │  │ 4 APEX         │  │ CPQ ENGINE             │  │
+│  │ (Before/After    │  │ TRIGGERS       │  │ 37 Price Rules         │  │
+│  │  Save, Screen,   │  │ (Case routing, │  │ 509 Discount Tiers     │  │
+│  │  Scheduled)      │  │  Jira, Email)  │  │ 9 Custom Scripts       │  │
+│  └──────────────────┘  └────────────────┘  │ 2 Approval Processes   │  │
+│                                             └────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                       EXTERNAL INTEGRATIONS                             │
+│                                                                         │
+│  ┌──────────┐  ┌────────┐  ┌──────────┐  ┌──────────┐  ┌───────────┐  │
+│  │  JIRA    │  │ CONGA  │  │ MIRAGE   │  │RULEBRICKS│  │ ZOOMINFO  │  │
+│  │ (Cases)  │  │ (Docs) │  │ (CTI)    │  │(Pricing) │  │ (Data)    │  │
+│  └──────────┘  └────────┘  └──────────┘  └──────────┘  └───────────┘  │
+│                                                                         │
+│  ┌──────────┐  ┌────────┐  ┌──────────┐  ┌──────────┐                  │
+│  │ROLLWORKS │  │ PARDOT │  │ NETSUITE │  │DEALERTRK │                  │
+│  │ (ABM)    │  │(Mktg.) │  │(Billing) │  │(Dealers) │                  │
+│  └──────────┘  └────────┘  └──────────┘  └──────────┘                  │
+└─────────────────────────────────────────────────────────────────────────┘
+</pre>
+
+    <h3>Account Hierarchy Model</h3>
+
+<pre>
+┌─────────────────────────┐
+│     GROUP PARENT        │  Type = "Group Parent" (no ParentId, has children)
+│  (Top-level entity)     │  Owns: Territory, CSA/CSM Assignment
+│  Example: "ABC Auto     │  Rollups: Rooftop Count, ACV
+│   Group"                │
+├────────┬────────────────┘
+│        │
+│   ┌────v────────────────┐
+│   │  REGIONAL PARENT    │  Type = "Regional Parent" (has parent AND children)
+│   │  (Mid-tier)         │  Inherits: Territory from Group Parent
+│   │  Example: "ABC Auto │  Rollups: Child Rooftop Count
+│   │   Southwest"        │
+│   ├────────┬────────────┘
+│   │        │
+│   │   ┌────v────────────┐
+│   │   │    ROOFTOP      │  Type = "Rooftop" (has parent, NO children)
+│   │   │  (Leaf node)    │  Inherits: CSA/CSM, Territory
+│   │   │  Example: "ABC  │  Owns: Opportunities, Projects, Cases
+│   │   │   Auto Dallas"  │
+│   │   └─────────────────┘
+│   │
+│   │   ┌─────────────────┐
+│   │   │    ROOFTOP      │  (Another location)
+│   │   └─────────────────┘
+│   │
+├───┘
+│
+│   ┌─────────────────────┐
+│   │  AFFILIATE          │  Type = "Affiliate" (overrides hierarchy rules)
+│   │  (Partner/reseller) │  Status always = "Other"
+│   │  Example: "Partner  │  Has: Active_Clients_Signed__c count
+│   │   XYZ"              │
+│   └─────────────────────┘
+</pre>
+
+    <h3>Data Flow: Lead to Revenue</h3>
+
+<pre>
+LEAD ──(conversion)──&gt; ACCOUNT + CONTACT + OPPORTUNITY
+                              │
+                              v
+                    OPPORTUNITY ──(quote creation)──&gt; CPQ QUOTE
+                              │                          │
+                              │                    QUOTE LINE GROUPS
+                              │                          │
+                              │                    QUOTE LINES (Products)
+                              │                          │
+                              │               ┌──────────┴──────────┐
+                              │               │                     │
+                              │          PRICE RULES           DISCOUNT TIERS
+                              │          (37 rules)            (509 tiers)
+                              │               │                     │
+                              │               └──────────┬──────────┘
+                              │                          │
+                              │                   DEAL DESK FORM
+                              │                   (if below margin)
+                              │                          │
+                              │                   APPROVAL PROCESS
+                              │                   (Executive review)
+                              │                          │
+                    (Closed Won) ──────────────&gt; PROJECT__c
+                              │               (Implementation)
+                              │                          │
+                              │                   BILLING_RECORD__c
+                              │                   (First Invoice)
+                              │                          │
+                              │                   COMMISSION_PAYMENTS__c
+                              │                   (Ongoing usage)
+                              v
+                        ACCOUNT STATUS
+                    (Client/Implementing/
+                     Terminated/Prospect)
+</pre>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 1. ACCOUNT MANAGEMENT -->
+    <!-- ============================================================ -->
+    <h2 id="account-management">1. Account Management</h2>
+
+    <h3>Objects</h3>
+
+    <p><strong>Account</strong> (Standard, heavily customized)</p>
+    <ul>
+        <li><code>force-app/main/default/objects/Account/</code></li>
+        <li>Three-tier custom hierarchy: Group Parent &rarr; Regional Parent &rarr; Rooftop</li>
+        <li>Special type: "Affiliate" (partner/reseller, overrides hierarchy rules)</li>
+        <li>Special subtype: "Franchise" (auto-detected from account name matching OEM brands)</li>
+    </ul>
+
+    <h4>Key Custom Fields on Account</h4>
+
+    <table>
+        <tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Record_Type_Name__c</code></td><td>Text</td><td>Text copy of RecordType.Name for formulas/reporting</td></tr>
+        <tr><td><code>Account_Type_Override__c</code></td><td>Checkbox</td><td>Prevents automatic Type recalculation</td></tr>
+        <tr><td><code>Territory_Override__c</code></td><td>Checkbox</td><td>Prevents automatic territory reassignment</td></tr>
+        <tr><td><code>Strategic_Account__c</code></td><td>Checkbox</td><td>Marks strategic accounts, cascades to children</td></tr>
+        <tr><td><code>Affiliate_Account__c</code></td><td>Lookup(Account)</td><td>Links to affiliate/partner account</td></tr>
+        <tr><td><code>Active_Clients_Signed__c</code></td><td>Number</td><td>Count of active clients on Affiliate accounts</td></tr>
+        <tr><td><code>Active_Campaign__c</code></td><td>Lookup(Campaign)</td><td>Triggers contact campaign member creation</td></tr>
+        <tr><td><code>Rooftops__c</code></td><td>Number</td><td>Count of Rooftop accounts in hierarchy</td></tr>
+        <tr><td><code>CSA_Assignment__c</code></td><td>Lookup(User)</td><td>Customer Success Associate</td></tr>
+        <tr><td><code>CSM_Assignment__c</code></td><td>Lookup(User)</td><td>Customer Success Manager</td></tr>
+        <tr><td><code>Physical_Address_Same_As_Billing_Address__c</code></td><td>Checkbox</td><td>Syncs Billing &rarr; Shipping</td></tr>
+        <tr><td><code>Status__c</code></td><td>Picklist</td><td>Client/Implementing/Terminated/Prospect/Other</td></tr>
+        <tr><td><code>Sales_Territory__c</code></td><td>Text</td><td>Assigned sales territory</td></tr>
+        <tr><td><code>MCD_Synced__c</code></td><td>Checkbox</td><td>Synced with MCD external system</td></tr>
+        <tr><td><code>Single_Rooftop__c</code></td><td>Checkbox</td><td>Group Parent with no child accounts</td></tr>
+        <tr><td>Product activation fields</td><td>Various</td><td>CBC, DSGSS, CreditDriver, etc. status tracking</td></tr>
+    </table>
+
+    <h3>Account Status Logic</h3>
+
+    <p>Status is calculated automatically based on product activation state:</p>
+
+    <table>
+        <tr><th>Status</th><th>Condition</th></tr>
+        <tr><td><strong>Implementing</strong></td><td>Active implementation project exists</td></tr>
+        <tr><td><strong>Client</strong></td><td>Any product active (CBC, DSGSS, CreditDriver, etc.)</td></tr>
+        <tr><td><strong>Terminated</strong></td><td>Products deactivated &lt; 12 months ago</td></tr>
+        <tr><td><strong>Prospect</strong></td><td>Products deactivated &gt; 12 months ago OR no products ever</td></tr>
+        <tr><td><strong>Other</strong></td><td>Type = "Affiliate" (always overrides)</td></tr>
+    </table>
+
+    <p>A scheduled flow recalculates Terminated &rarr; Prospect transitions daily.</p>
+
+    <h3>Account Automation (28 flows)</h3>
+
+    <div class="success-box">
+        <strong>Consolidation Success:</strong>
+        <p>The Account flows were recently consolidated from 17 individual flows to 2 consolidated flows + 1 subflow to resolve SOQL 101 governor limit issues. This reduced SOQL queries from ~67 to ~15-19 per transaction (70-75% reduction).</p>
+    </div>
+
+    <h4>Consolidated Before Save Flow</h4>
+    <p><code>Account_RT_Before_Save_Consolidated.flow-meta.xml</code></p>
+    <p>Fires on: Create + Update (Before Save). Replaces 9 individual flows. Handles:</p>
+    <ul>
+        <li>Physical address sync (Billing &rarr; Shipping when checkbox is true)</li>
+        <li>Record Type Name text field sync</li>
+        <li>Lead conversion record type assignment</li>
+        <li>Affiliate type and status logic</li>
+        <li>Account Type hierarchy assignment (Group Parent / Regional / Rooftop)</li>
+        <li>Franchise name detection via custom metadata</li>
+        <li>Status calculation (Client / Implementing / Terminated / Prospect)</li>
+    </ul>
+
+    <h4>Consolidated After Save Flow</h4>
+    <p><code>Account_RT_After_Save_Consolidated.flow-meta.xml</code></p>
+    <p>Fires on: Create + Update (After Save). Replaces 8 individual flows. Handles:</p>
+    <ul>
+        <li>Contact owner cascade (sync Contact owners to Account owner)</li>
+        <li>Campaign member creation (when Active_Campaign__c populated)</li>
+        <li>Strategic Account propagation to children</li>
+        <li>CSA/CSM copy to Rooftop accounts (async path)</li>
+        <li>Affiliate active client count rollup</li>
+        <li>Rooftop count and ACV rollups</li>
+        <li>Territory assignment (calls subflow)</li>
+        <li>Lead address copy (scheduled path, 1 min delay)</li>
+    </ul>
+
+    <h4>Territory Assignment Subflow</h4>
+    <p><code>Account_Subflow_Territory_Assignment.flow-meta.xml</code></p>
+    <p>Type: Autolaunched Subflow (called from After Save consolidated flow). Handles complex territory assignment logic:</p>
+    <ul>
+        <li>Queries ALL territory custom metadata records once</li>
+        <li>Loops in-memory to match zip code to territory (reduced from 55 individual SOQL queries to 3)</li>
+        <li>Handles exceptions: affiliate owner overrides, strategic account inheritance, zip code region lookup</li>
+        <li>Returns: OwnerId, SalesTerritory, should_update flag</li>
+    </ul>
+
+    <h4>Other Account Flows (still separate)</h4>
+
+    <table>
+        <tr><th>Flow</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Account_RT_Create_Edit_Rooftop_Rollup_Controller</code></td><td>Before Save</td><td>Rooftop rollup calculations</td></tr>
+        <tr><td><code>Account_RT_On_Create_Update_Child_Account_Field_Roll_Up_to_Parent</code></td><td>After Create</td><td>Child field rollups</td></tr>
+        <tr><td><code>Account_RT_After_Update_Copy_CSA_CSM_Assignment...</code></td><td>After Update</td><td>CSA/CSM distribution</td></tr>
+        <tr><td><code>Account_Schedule_Flow_Update_Status_From_Terminated_to_Prospect</code></td><td>Scheduled</td><td>Quarterly status transitions</td></tr>
+        <tr><td><code>Account_Name_Change</code></td><td>After Update</td><td>Name change notifications</td></tr>
+    </table>
+
+    <h4>Obsoleted Flows (17 — set to Obsolete status)</h4>
+    <p>These individual flows were replaced by the consolidated versions:</p>
+    <ul>
+        <li><code>Update_Physical_Address_to_Billing_Address</code></li>
+        <li><code>Account_Create_Edit_Update_Record_Type_Name</code></li>
+        <li><code>Account_Create_Edit_Update_Status_to_Other_on_Affiliate</code></li>
+        <li><code>Account_Create_Edit_Update_Type_to_Affiliate</code></li>
+        <li><code>Account_Create_Edit_Update_Affiliate_Account_Sharing_for_Manager</code></li>
+        <li><code>Account_Create_Edit_Update_Type_to</code> (franchise detection)</li>
+        <li><code>Account_Create_Edit_Type_Update</code> (hierarchy type)</li>
+        <li><code>Account_Create_Edit_Update_Status</code> (status calculation)</li>
+        <li><code>Account_Create_Edit_Update_Account_Record_Type_from_Lead_Conversion</code></li>
+        <li><code>Account_RT_Create_Edit_Rooftop_Rollups_Controller_V3</code></li>
+        <li><code>Account_Create_Edit_Update_Contact_Owners</code></li>
+        <li><code>Account_Create_Edit_Update_Affiliate_Count</code></li>
+        <li><code>Account_RT_After_Update_Copy_CSA_CSM_Assignment...</code></li>
+        <li><code>Account_Create_Edit_Update_Child_Accounts_for_Strategic_Parents</code></li>
+        <li><code>Account_Create_Edit_Update_Child_Accounts_for_Strategic_Parents_to_false</code></li>
+        <li><code>Account_Create_Edit_Update_Contact_Campaigns</code></li>
+        <li><code>Account_RT_Create_Edit_Update_Territories_Territory</code> (156KB)</li>
+    </ul>
+
+    <h3>Account Validation Rules</h3>
+    <p>None defined directly on Account (logic handled by flows).</p>
+
+    <h3>Account Workflows</h3>
+    <ul>
+        <li><strong>Account_Name_Change alert</strong> — Notifies key stakeholders when account name changes</li>
+        <li><strong>New_Account_Notifications alert</strong> — Notifies on account creation</li>
+        <li>Email recipients: jrance@creditbureauconnection.com, mbyrd@informativ.com</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 2. CPQ / QUOTING -->
+    <!-- ============================================================ -->
+    <h2 id="cpq-quoting">2. CPQ / Quoting</h2>
+
+    <p>The org uses <strong>Salesforce CPQ (SteelBrick)</strong> extensively for quoting, pricing, and deal management. This is one of the most complex areas of the org.</p>
+
+    <h3>CPQ Objects</h3>
+
+    <table>
+        <tr><th>Object</th><th>Purpose</th><th>File Path</th></tr>
+        <tr><td><code>SBQQ__Quote__c</code></td><td>CPQ Quote (managed package)</td><td>Standard CPQ managed</td></tr>
+        <tr><td><code>SBQQ__QuoteLine__c</code></td><td>Individual product line items</td><td>Standard CPQ managed</td></tr>
+        <tr><td><code>SBQQ__QuoteLineGroup__c</code></td><td>Groups of quote lines (rooftop bundles)</td><td>Standard CPQ managed</td></tr>
+        <tr><td><code>SBQQ__Product2__c</code></td><td>Product extensions</td><td>Standard CPQ managed</td></tr>
+        <tr><td><code>Deal_Desk_Form__c</code></td><td>Deal approval tracking</td><td><code>objects/Deal_Desk_Form__c/</code></td></tr>
+        <tr><td><code>Discount_Tier__c</code></td><td>Custom discount tiers</td><td><code>objects/Discount_Tier__c/</code></td></tr>
+    </table>
+
+    <h4>Deal Desk Form (Custom Object)</h4>
+    <ul>
+        <li><strong>Name Field:</strong> AutoNumber (DDF-{0000})</li>
+        <li><strong>23 custom fields</strong> tracking deal approval requirements</li>
+        <li>Key fields: Opportunity__c, Quote__c, Gross_Margin__c, Discount_Request__c, Strategic_Importance__c, Contract_Term__c</li>
+        <li>Links to both Opportunity and SBQQ__Quote__c</li>
+    </ul>
+
+    <h4>Discount Tier (Custom Object)</h4>
+    <ul>
+        <li><strong>Name Field:</strong> AutoNumber (DT-{0000})</li>
+        <li><strong>509 records</strong> in production</li>
+        <li>Controls preset discount levels on products for sales negotiations</li>
+        <li><strong>Validation Rule:</strong> <code>Prevent_More_than_3_Discount_Tiers</code> — Max 3 tiers per product</li>
+    </ul>
+
+    <h3>Products (278 Active)</h3>
+
+    <h4>Product Families</h4>
+    <ul>
+        <li><strong>CBC - Compliance &amp; Other Services</strong> (5 products): Adverse action notices, mailhouse services, onsite inspections, risk-based pricing</li>
+        <li><strong>CBC - Credit Reports - Add Ons</strong> (14 products): Bankruptcy scores, ID verification, fraud checks, liens &amp; judgments, vehicle VIN</li>
+        <li><strong>CBC - Monthly Subscription Fees</strong> (4 products): Precise ID subscriptions, long-term data storage</li>
+        <li><strong>CBC - New Account Fees</strong> (4 products): Portal setup fees, integration fees</li>
+        <li><strong>Core Products</strong> (251 products): Total Solution bundles, hard/soft pull packages, Credit Driver, DealerSocket packages, bureau regulatory fees, integration fees</li>
+    </ul>
+
+    <h4>Key Product Concepts</h4>
+    <ul>
+        <li><strong>Hard Pulls</strong> — Full credit bureau reports (Equifax, Experian, TransUnion)</li>
+        <li><strong>Soft Pulls</strong> — Pre-qualification packages (available in quantities: 25, 50, 100)</li>
+        <li><strong>Total Solution</strong> — Bundled package combining credit insights, compliance, and services</li>
+        <li><strong>DealerSocket Packages</strong> — Internal packages (web app, pre-qual, compliance portals)</li>
+        <li><strong>Bureau Regulatory Fees</strong> — FACTA compliance fees per bureau (Experian, TransUnion, Equifax)</li>
+    </ul>
+
+    <h3>Pricebooks (7 Total)</h3>
+
+    <table>
+        <tr><th>Pricebook</th><th>Status</th><th>Purpose</th></tr>
+        <tr><td>Standard Price Book</td><td>Active</td><td>Default pricebook</td></tr>
+        <tr><td>Auto Price Book</td><td>Active</td><td>Auto dealership vertical</td></tr>
+        <tr><td>Non-Auto Price Book</td><td>Active</td><td>Non-auto dealership vertical</td></tr>
+        <tr><td>Auto Price Book 7/1/24-8/31/25</td><td>Active</td><td>Time-bound auto pricing</td></tr>
+        <tr><td>Non-Auto Price Book 7/1/24-8/31/25</td><td>Active</td><td>Time-bound non-auto pricing</td></tr>
+        <tr><td>Custom Pricing</td><td>Active</td><td>Account-specific overrides</td></tr>
+        <tr><td>Audi Lafayette Price Book</td><td>Active</td><td>Single-account pricing</td></tr>
+    </table>
+
+    <p><strong>814 active pricebook entries</strong> with prices ranging from $0.10 (regulatory fees) to $5,000 (enterprise solutions).</p>
+
+    <h3>Price Rules (37 Total)</h3>
+
+    <p>Price rules are organized into categories with standard and flat-rate variants:</p>
+
+    <h4>Discount Management</h4>
+    <ul>
+        <li>Discount Tier application</li>
+        <li>Max Standard Discount calculation</li>
+        <li>Non-discountable product protection</li>
+        <li>Discount clearing logic</li>
+    </ul>
+
+    <h4>Hard Pull Pricing (8 rules + flat-rate variants)</h4>
+    <ul>
+        <li>Standalone calculation</li>
+        <li>Primary bureau calculation (multi-bureau with primary selection)</li>
+        <li>Non-primary bureau calculation</li>
+        <li>Total Solution with manual quantity overrides</li>
+        <li>CBD-specific hard pull pricing</li>
+    </ul>
+
+    <h4>Soft Pull Pricing (6 rules + flat-rate variants)</h4>
+    <ul>
+        <li>Standalone calculation</li>
+        <li>Total Solution calculation</li>
+        <li>Manual quantity overrides</li>
+        <li>CBD pre-qual bundles</li>
+    </ul>
+
+    <h4>Data Management</h4>
+    <ul>
+        <li>Copy pull quantity to line item quantity</li>
+        <li>Pull quantity override logic</li>
+        <li>Default pull quantity enforcement</li>
+        <li>Zero out hard/soft pull quantities</li>
+        <li>Remove unused subcode fees</li>
+    </ul>
+
+    <h4>Revenue</h4>
+    <ul>
+        <li>CBC revenue calculation from quote</li>
+    </ul>
+
+    <h3>Price Conditions (127) &amp; Price Actions (73)</h3>
+    <p>Conditions evaluate: product codes, quantity thresholds, account type, bundle selection, discount tier assignment. Actions perform: percentage discounts, fixed dollar discounts, quantity-based price modifications, field value copies, revenue calculations.</p>
+
+    <h3>Block Prices (68 Records)</h3>
+    <p>Volume pricing breakpoints:</p>
+    <ul>
+        <li>0-50, 51-100, 101-500, 500+ (standard ranges)</li>
+        <li>Custom intervals: 0-100, 101-200, 201-233, 234-267, 268-300, etc.</li>
+    </ul>
+
+    <h3>Cost Records (110)</h3>
+    <p>Define cost basis for margin calculations. Used by:</p>
+    <ul>
+        <li>Custom scripts for goal-seeking margin optimization</li>
+        <li>Deal desk approval workflows (deals below margin threshold require approval)</li>
+        <li>Profitability reporting on quote lines</li>
+    </ul>
+
+    <h3>Product Rules (2)</h3>
+    <ol>
+        <li><strong>Require One Implementation Product</strong> — Every quote must include at least one implementation service</li>
+        <li><strong>Require One Channel Partner</strong> — Quotes must assign a partner/channel for attribution</li>
+    </ol>
+
+    <h3>Custom Scripts (9 — Margin Goal Seeking)</h3>
+    <p>JavaScript CPQ calculator plugin scripts for advanced margin optimization:</p>
+    <ul>
+        <li>Named <code>v1GroupMarginGoalSeeker12072025</code> through <code>v9GroupMarginGoalSeeker01052026</code></li>
+        <li>Given a target margin %, calculates required discount or minimum price</li>
+        <li>Optimizes margin across entire Quote Line Group (bundle), not individual lines</li>
+        <li>Used by deal desk for "what-if" margin analysis</li>
+    </ul>
+
+    <h3>Custom Actions (39)</h3>
+
+    <table>
+        <tr><th>Level</th><th>Actions</th></tr>
+        <tr><td><strong>Quote</strong></td><td>Add Products, Add Favorites, Upgrade Assets, Renew Subscriptions, Calculate, Quick Save, Save</td></tr>
+        <tr><td><strong>Group</strong></td><td>Add Group, Clone Group, Delete Group, Optional All/None</td></tr>
+        <tr><td><strong>Line</strong></td><td>Clone, Delete, Reconfigure, Desegment/Resegment, View Discount Schedule, Reset Discounts</td></tr>
+        <tr><td><strong>Integration</strong></td><td>Launch External, View Pricing (Rulebricks), Get Pricing (Rulebricks), Apply Edit Rules</td></tr>
+    </table>
+
+    <h3>Approval Processes (2)</h3>
+
+    <p>Both target <code>SBQQ__Quote__c</code>:</p>
+
+    <h4>1. Executive Quote Approval (Process Order: 1)</h4>
+    <ul>
+        <li><strong>Entry Criteria:</strong> <code>Discount_Override__c = True</code></li>
+        <li><strong>Approver:</strong> mbyrd@informativ.com (Mike Byrd)</li>
+        <li><strong>Submitters:</strong> Quote owner + Sales leadership roles</li>
+        <li><strong>On Approval:</strong> Email alert + status updates (Approved, Quote_Reviewed, Audit_Status)</li>
+        <li><strong>On Rejection:</strong> Status updates (Denied_Status, Rejection_Audit) + rejection email</li>
+    </ul>
+
+    <h4>2. CCC Quote Approval (Process Order: 2)</h4>
+    <ul>
+        <li><strong>Entry Criteria:</strong> <code>Test_Account__c = True AND Discount_Override__c = True</code></li>
+        <li><strong>Approver:</strong> salesforce-scs@informativ.com (test account)</li>
+        <li><strong>Purpose:</strong> Testing/staging approval process</li>
+    </ul>
+
+    <h3>CPQ Flows (40+ flows)</h3>
+
+    <h4>Quote Before Save Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Quote_RT_Before_Create_Set_default_fields</code></td><td>Sets default pricebook and fields</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Before_Update_Flag_if_Term_is_Changed</code></td><td>Tracks term changes</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Before_Update_Set_Proposal_Sent_Date</code></td><td>Sets proposal sent date</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Before_Create_Wipe_Values_From_Cloned_Quote</code></td><td>Clears values on clone</td></tr>
+        <tr><td><code>Quote_RT_Before_Update_Trim_Price_Rule_Audit_Field</code></td><td>Trims audit field</td></tr>
+    </table>
+
+    <h4>Quote After Save Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Quote_RT_After_Create_Set_Pricebook_Based_On_Account_Business_Type</code></td><td>Routes pricebook by account type</td></tr>
+        <tr><td><code>Quote_RT_After_Update_Push_Values_To_Rooftop</code></td><td>Syncs quote values to rooftop account</td></tr>
+        <tr><td><code>CPQ_Quote_RT_After_Update_Update_Deal_Desk_Form</code></td><td>Updates deal desk tracking</td></tr>
+        <tr><td><code>CPQ_Quote_RT_After_Update_Calculate_Gross_Total...</code></td><td>Sums one-time fees</td></tr>
+        <tr><td><code>CPQ_Quote_RT_After_Update_Scoped_Bypass_Autoclear</code></td><td>Clears bypass flags</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Send_Quote_In_Review_Alert</code></td><td>Email: quote in review</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Send_Quote_Reviewed_Alert</code></td><td>Email: quote reviewed</td></tr>
+        <tr><td><code>CPQ_Quote_RT_Set_Status_To_Contract_Ready</code></td><td>Auto-updates status</td></tr>
+        <tr><td><code>CPQ_Quote_Create_Edit_Update_Opportunity_Recur_Revenue</code></td><td>Updates recurring revenue on opportunity</td></tr>
+        <tr><td><code>Conga_Sign_Transaction_RT_After_Create_Update...</code></td><td>Conga e-signature status sync</td></tr>
+    </table>
+
+    <h4>Quote Line Flows (15+)</h4>
+
+    <h5>Before Save</h5>
+    <ul>
+        <li><code>Quote_Line_RT_Before_Create_Update_Calculate_Margins</code> — Margin calculations</li>
+        <li><code>Quote_Line_RT_Before_Create_Update_Set_Product_Bundle</code> — Bundle and revenue type assignment</li>
+    </ul>
+
+    <h5>After Save</h5>
+    <ul>
+        <li><code>Quote_Line_RT_After_Create_Update_Calculate_Margins</code> — Recalculates margins</li>
+        <li><code>Quote_Line_RT_After_Create_Update_Perform_Calculations_Eddie_Test</code> — Complex calculations</li>
+        <li><code>Quote_Line_RT_After_Create_Update_Set_Flat_Rate_Discounts</code> — Flat rate discount application</li>
+        <li><code>Quote_Line_RT_After_Create_Update_Rollup_One_Time_Fees_To_QLG</code> — Fee rollups</li>
+        <li><code>Quote_Line_RT_After_Create_Push_STIPs_Count_to_QLG</code> — STIP count updates</li>
+        <li><code>Quote_Line_RT_After_Update_Copy_Values_To_Bundled_Quote_Lines</code> — Bundle sync</li>
+        <li><code>Quote_Line_RT_After_Update_Push_Rulebricks_Values_To_QLG</code> — Rulebricks integration</li>
+        <li><code>Quote_Line_RT_After_Update_Set_Default_Margin_On_QLG</code> — QLG margin defaults</li>
+    </ul>
+
+    <h4>Quote Line Group Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Quote_Line_Group_RT_Before_Create_Set_Default_Rooftop_Values</code></td><td>Default values from rooftop</td></tr>
+        <tr><td><code>Quote_Line_Group_RT_Before_Create_Update_Quote_Line_Group_Roll_Ups</code></td><td>QLG rollup management</td></tr>
+        <tr><td><code>Quote_Line_Group_RT_Before_Create_Update_Set_Group_Name</code></td><td>Auto-name generation</td></tr>
+        <tr><td><code>Quote_Line_Group_RT_Before_Create_Update_Set_Implementation_Type</code></td><td>Implementation type assignment</td></tr>
+        <tr><td><code>Quote_Line_Group_RT_After_Update_Trigger_Quote_Line</code></td><td>Cascade changes to quote lines</td></tr>
+    </table>
+
+    <h4>CPQ Screen Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>CPQ_Quote_SF_Display_Quote_Lines_with_Discounts...</code></td><td>Discount audit view</td></tr>
+        <tr><td><code>CPQ_Quote_SF_QLG_Scoped_Bypass_Toggle</code></td><td>Toggle scoped bypass</td></tr>
+        <tr><td><code>CPQ_Quote_Screenflow_Breakout_Opportunities...</code></td><td>Break out child opportunities</td></tr>
+        <tr><td><code>CPQ_Revenue_Update_Screenflow_Call_QLG_for_Revenue</code></td><td>Revenue calculation screen</td></tr>
+        <tr><td><code>Quote_SF_Submit_For_Approval</code></td><td>Approval submission</td></tr>
+        <tr><td><code>Quote_SF_Update_Discount_Override_True</code></td><td>Enable discount override</td></tr>
+        <tr><td><code>Opportunity_Screenflow_Create_Quote_with_Signers</code></td><td>Create quote with e-sign</td></tr>
+        <tr><td><code>CPQ_Search</code></td><td>Product search</td></tr>
+        <tr><td><code>Rulebricks_QLE_Button_Quote_Level</code></td><td>Rulebricks pricing integration</td></tr>
+    </table>
+
+    <h4>CPQ Scheduled/Autolaunched Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>CPQ_Quote_STF_Daily_Send_Expiring_Quote_Reminder</code></td><td>Daily expiring quote reminders</td></tr>
+        <tr><td><code>CPQ_Flow_Autolaunch_Get_QLG_for_Revenue_1</code></td><td>Revenue calculations</td></tr>
+        <tr><td><code>QLG_Autolaunched_Revenue_updates_for_QLG_2</code></td><td>QLG revenue updates</td></tr>
+        <tr><td><code>CPQ_Quote_AL_QLG_Scoped_Bypass_Toggle</code></td><td>Bypass toggle (autolaunched)</td></tr>
+    </table>
+
+    <h3>CPQ Pricing Flow (How It Works)</h3>
+
+    <div class="step-container">
+        <p><span class="step-number">1</span>Sales rep adds product to quote</p>
+        <p><span class="step-number">2</span>Product family determines which price rule applies</p>
+        <p><span class="step-number">3</span>Price rule checks quantity against discount tiers</p>
+        <p><span class="step-number">4</span>Block price identifies relevant volume tier</p>
+        <p><span class="step-number">5</span>Discount percentage applied based on tier</p>
+        <p><span class="step-number">6</span>Price recalculated with discount</p>
+        <p><span class="step-number">7</span>Margin calculated using cost records</p>
+        <p><span class="step-number">8</span>If margin &lt; threshold &rarr; Deal desk approval required</p>
+        <p><span class="step-number">9</span>Goal-seeking script calculates break-even pricing if negotiated</p>
+        <p><span class="step-number">10</span>Custom actions validate compliance rules</p>
+        <p><span class="step-number">11</span>Deal desk form captured for audit trail</p>
+        <p><span class="step-number">12</span>Approval process routes to executive (if Discount_Override__c = true)</p>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 3. OPPORTUNITIES & PIPELINE -->
+    <!-- ============================================================ -->
+    <h2 id="opportunities-pipeline">3. Opportunities &amp; Pipeline</h2>
+
+    <h3>Opportunity Automation (18 flows)</h3>
+
+    <h4>Before Save Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Opportunity_Financials</code></td><td>Calculates annual subscription, monthly estimates, margins for all product types</td></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Closed_Date_on_Closed</code></td><td>Sets closed date on stage change</td></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Opportunity_Record_Type_from_Lead_Type</code></td><td>Record type from lead type</td></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Opportunity_Campaign</code></td><td>Campaign association</td></tr>
+        <tr><td><code>Opportunity_RT_Create_Edit_Child_Opportunity_Summary</code></td><td>Child opportunity rollup</td></tr>
+        <tr><td><code>Opportunity_RT_Create_Edit_Child_Opportunity_Summary_after_11_1_24</code></td><td>Updated child opp rollup (post Nov 2024)</td></tr>
+        <tr><td><code>Lock_Financial_Fields_On_Opportunity</code></td><td>Prevents editing of financial fields</td></tr>
+        <tr><td><code>Remove_Fields_when_Opportunity_is_Cloned</code></td><td>Cleanup on clone</td></tr>
+    </table>
+
+    <h4>After Save Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Opportunity_RT_After_Create_Push_Pull_Quantities_To_Rooftop</code></td><td>Push hard/soft pull quantities to account</td></tr>
+        <tr><td><code>Opportunity_RT_After_Save_Create_Project_Record</code></td><td>Auto-create Project on finalization</td></tr>
+        <tr><td><code>Opportunity_Create_Create_Product_Lines_on_Opportunity_from_QLG</code></td><td>Create product lines from QLG</td></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Related_QLG...</code></td><td>Link QLG to opportunity</td></tr>
+        <tr><td><code>Opportunity_Create_Edit_Update_Related_Account...</code></td><td>Update account on loss</td></tr>
+        <tr><td><code>Opportunity_Edit_Update_Territory_Attack_Plans</code></td><td>Update territory attack plans</td></tr>
+        <tr><td><code>Opportunity_Edit_Create_Agile_Work_Record</code></td><td>Create agile work records</td></tr>
+        <tr><td><code>Opportunity_Creat_Edit_Update_Last_Updated_Date_for_Affiliate</code></td><td>Affiliate activity tracking</td></tr>
+        <tr><td><code>Opportunity_NG_Opportunity_Splits_Spinify_Updates</code></td><td>Spinify gamification updates</td></tr>
+        <tr><td><code>Opportunity_Financials_Updates</code></td><td>Financial field cascading</td></tr>
+    </table>
+
+    <h4>Scheduled/Screen Flows</h4>
+    <ul>
+        <li><code>Opportunity_Edit_Scheduled_Create_Agile_Work_Record</code> — Scheduled agile work creation</li>
+        <li><code>Opportunity_STF_Relate_Child_Opportunities_to_Quote_Line_Group</code> — Scheduled child opp linking</li>
+        <li><code>Opportunity_Screenflow_Create_Quote_with_Signers</code> — Interactive quote creation</li>
+    </ul>
+
+    <h3>Opportunity-Related Objects</h3>
+
+    <h4>Opportunity_Monthly_Snapshots__c</h4>
+    <ul>
+        <li><strong>52+ custom fields</strong> — Monthly point-in-time snapshot for pipeline reporting</li>
+        <li>Captures: stage, amount, dates, owner, products, split info, forecast category</li>
+        <li>Name Field: AutoNumber (OppSnap-{00000000})</li>
+        <li>Purpose: Historical pipeline analysis (recommended by Capstreet)</li>
+    </ul>
+
+    <h4>Oppsfinancial__c</h4>
+    <ul>
+        <li>Financial metrics for opportunities</li>
+        <li>AutoNumber format: Oppsnaps - {000000}</li>
+    </ul>
+
+    <h4>SnapShot_Opportunity_Pipeline__c</h4>
+    <ul>
+        <li>Pipeline snapshot data for reporting</li>
+    </ul>
+
+    <h3>Opportunity Workflows</h3>
+    <ul>
+        <li><strong>Closed_Won_Opportunity alert</strong> — Notifies 8+ users when opportunity closes won</li>
+        <li><strong>Update_Opportunity_Name field update</strong> — Formula: Account Name + Type + Product_Solution + Amount + Description (max 80 chars)</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 4. PROJECTS & IMPLEMENTATION -->
+    <!-- ============================================================ -->
+    <h2 id="projects-implementation">4. Projects &amp; Implementation</h2>
+
+    <h3>Project__c (Custom Object)</h3>
+    <p><code>force-app/main/default/objects/Project__c/</code></p>
+    <p>This is one of the most complex objects in the org with <strong>230+ custom fields</strong>.</p>
+
+    <h4>Record Types</h4>
+    <ul>
+        <li><strong>Implementation</strong> — Tracks project through implementation phases</li>
+        <li><strong>Cancellation</strong> — For projects that don't materialize (DNM)</li>
+    </ul>
+
+    <h4>Key Field Categories</h4>
+    <table>
+        <tr><th>Category</th><th>Fields</th><th>Purpose</th></tr>
+        <tr><td>Account links</td><td>Account__c, Account_ID__c, Account_Status__c, Account_Type__c</td><td>Parent account reference</td></tr>
+        <tr><td>Status tracking</td><td>Project_Status__c, Product_Implementation_Type__c, Product_Subtypes__c</td><td>Implementation phase</td></tr>
+        <tr><td>Product integrations</td><td>CRM__c, Credit__c, CBC_ID__c, DSGSS_ID__c, DealerTrack_Status__c</td><td>Per-product status</td></tr>
+        <tr><td>CSA management</td><td>CSA_1__c, CSA_2__c, CSA_Notes__c, Accurate_Handover_to_CSA__c</td><td>Customer success handoff</td></tr>
+        <tr><td>QA &amp; testing</td><td>Compliance_Peer_QA_Status__c, Credit_Peer_QA_Status__c, CRM_Tested__c</td><td>Quality checks</td></tr>
+        <tr><td>DNM (Did Not Materialize)</td><td>DNM_Reason__c, DNM_Finalized_Date__c</td><td>Cancellation tracking</td></tr>
+        <tr><td>Dates</td><td>~20+ date fields per product/milestone</td><td>Implementation timeline</td></tr>
+    </table>
+
+    <h4>Validation Rules</h4>
+    <ul>
+        <li><code>DNM_Reason_Required</code> — Requires reason and date when status = "DNM"</li>
+        <li><code>Accurate_Handover_False</code> — Validates handover notes</li>
+        <li><code>Require_Main_POC_Email</code> — Email validation for main point of contact</li>
+        <li><code>Product_Solution_ID_Field_Validation</code> — Validates product solution IDs</li>
+    </ul>
+
+    <h3>Project Flows (20+ flows)</h3>
+
+    <h4>Record-Triggered Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Project_RT_Before_Create_Update_Fast_Field_Updates</code></td><td>Before Save</td><td>Date stamps for ICC_Complete and Configuration_Complete</td></tr>
+        <tr><td><code>Project_RT_After_Save_Push_Counter</code></td><td>After Save</td><td>Push counter tracking</td></tr>
+        <tr><td><code>Project_RT_After_Update_Send_Implementation_Survey</code></td><td>After Update</td><td>Triggers implementation survey</td></tr>
+        <tr><td><code>Project_RT_Update_Account_Implementation_Project_Checkbox</code></td><td>After Save</td><td>Updates account implementation flag</td></tr>
+        <tr><td><code>Project_After_Save_Update</code></td><td>After Save</td><td>General post-save updates</td></tr>
+        <tr><td><code>Project_After_Save_Update_Opportunity</code></td><td>After Save</td><td>Syncs changes to opportunity</td></tr>
+    </table>
+
+    <h4>Date Tracking Flows (13 — candidates for consolidation)</h4>
+
+    <div class="warning-box">
+        <strong>Consolidation Opportunity:</strong>
+        <p>Each of these flows timestamps when a specific milestone is completed. They could be consolidated into 1-2 flows following the Account consolidation pattern.</p>
+    </div>
+
+    <table>
+        <tr><th>Flow</th><th>Milestone</th></tr>
+        <tr><td><code>Project_Create_Edit_Update_CRM_Tested_Date</code></td><td>CRM testing complete</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_DealerTrack_Tested_Date</code></td><td>DealerTrack testing complete</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Dealertrack_Integration...</code></td><td>DealerTrack integration</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_OFAC_Tested_Date</code></td><td>OFAC testing complete</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_RouteOne_Date</code></td><td>RouteOne integration</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Web_Apps_Date</code></td><td>Web apps deployed</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Inventory_Date</code></td><td>Inventory setup</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Decommission_Completed_Date</code></td><td>Decommission complete</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Opportunity_Install_Start_Date</code></td><td>Install start synced to opp</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_DNM_on_Opportunity</code></td><td>DNM status to opportunity</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Accurate_Handover...</code></td><td>Handover validation</td></tr>
+        <tr><td><code>Project_Create_Edit_Handover_to_Implementation_Notes_Updated</code></td><td>Notes timestamp</td></tr>
+        <tr><td><code>Project_Create_Edit_Update_Active_Project_on_Account</code></td><td>Account active flag</td></tr>
+    </table>
+
+    <h4>Specialized Flows</h4>
+    <ul>
+        <li><code>Project_Edit_MTTI_pause_calculation_flow</code> — Mean Time To Implementation pause tracking</li>
+        <li><code>Project_STF_Send_Ongoing_General_NPS_Survey</code> — Scheduled NPS survey delivery</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 5. CASES & SUPPORT -->
+    <!-- ============================================================ -->
+    <h2 id="cases-support">5. Cases &amp; Support</h2>
+
+    <h3>Case Automation (11 flows + 3 triggers)</h3>
+    <p>Cases are automated through both Flow and Apex, with Apex handling routing/Jira integration and Flows handling status management.</p>
+
+    <h4>Case Flows</h4>
+    <table>
+        <tr><th>Flow</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Case_Create_Edit_Update_Status_Date_Time_Stamp...</code></td><td>Before Save</td><td>Timestamps for Unassigned, Assigned, Escalated, Resolved</td></tr>
+        <tr><td><code>Case_Create_Edit_Update_Escalation_Owner</code></td><td>Before Save</td><td>Sets escalation owner</td></tr>
+        <tr><td><code>Case_Create_Edit_Update_Escalated_Status...</code></td><td>Before Save</td><td>Auto-assigns escalated cases</td></tr>
+        <tr><td><code>Case_Create_Edit_Create_Cancellation_Project</code></td><td>Before Save</td><td>Creates cancellation project from case</td></tr>
+        <tr><td><code>Case_Create_Auto_Response_to_Customer</code></td><td>Before Save</td><td>Auto-response email</td></tr>
+        <tr><td><code>Case_Create_Auto_Close_Spam_Cases</code></td><td>Before Save</td><td>Auto-closes spam</td></tr>
+        <tr><td><code>Case_After_Update_Update_Case_Status_Flow</code></td><td>After Update</td><td>Status cascading</td></tr>
+        <tr><td><code>Case_RT_After_Update_Send_Support_Survey</code></td><td>After Update</td><td>Triggers support survey</td></tr>
+        <tr><td><code>Case_Autolaunched_Close_Case_as_Spam</code></td><td>Autolaunched</td><td>Spam closure logic</td></tr>
+        <tr><td><code>Case_Screenflow_to_Launch_Close_as_Spam</code></td><td>Screen Flow</td><td>User-initiated spam closure</td></tr>
+        <tr><td><code>Agent_Work_Omnichannel_Create_Edit_Update...</code></td><td>Record-Triggered</td><td>Omnichannel agent work tracking</td></tr>
+    </table>
+
+    <h4>Case Apex Triggers</h4>
+
+    <p><strong>CaseRoutingTrigger</strong> — Fires Before Update. Routes cases to personal queues based on Service Cloud permissions. Uses <code>OmniChannelPersonalRoutingConfig__mdt</code> custom metadata.</p>
+
+    <p><strong>CaseInsertedTrigger</strong> — Fires After Update. Creates Jira issues when cases escalated to Product Development. Uses <code>JCFS.API.createJiraIssueWithDefaultPostAction()</code>.</p>
+
+    <p><strong>EmailMessageTrigger</strong> — Fires After Insert on EmailMessage. Routes incoming emails on cases to assigned users' personal queues.</p>
+
+    <div class="info-box">
+        <strong>Feature Toggle:</strong>
+        <p>All triggers use <code>Trigger_Handler__c</code> custom setting as a feature toggle for enable/disable.</p>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 6. LEADS & CONTACTS -->
+    <!-- ============================================================ -->
+    <h2 id="leads-contacts">6. Leads &amp; Contacts</h2>
+
+    <h3>Lead Flows (7 flows)</h3>
+    <table>
+        <tr><th>Flow</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Lead_RT_After_Create_Update_Relate_Lead_To_Account</code></td><td>After Create/Update</td><td>Matches leads to accounts by email domain</td></tr>
+        <tr><td><code>Lead_Create_Edit_Update_Opportunity_Conversion_Record_TypeValue</code></td><td>Before Save</td><td>Sets conversion record type</td></tr>
+        <tr><td><code>Lead_Creat_Edit_Update_Lead_Default_values_for_mapping</code></td><td>Before Save</td><td>Default field mapping values</td></tr>
+        <tr><td><code>Lead_Create_Edit_Update_Integrated_Status</code></td><td>Before Save</td><td>Integrated status calculation</td></tr>
+        <tr><td><code>Lead_Create_UTM_Touchpoint</code></td><td>Before Save</td><td>Creates UTM touchpoint record</td></tr>
+        <tr><td><code>Lead_RT_Update_Source_to_Paid_Media</code></td><td>After Update</td><td>Updates lead source</td></tr>
+        <tr><td><code>Lead_RocketReach_Import_Updates</code></td><td>After Update</td><td>RocketReach data integration</td></tr>
+    </table>
+
+    <h3>Contact Flows (5 flows)</h3>
+    <table>
+        <tr><th>Flow</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Contact_Create_Edit_Update_Campaign_from_Account</code></td><td>Before Save</td><td>Adds contact to account's active campaign</td></tr>
+        <tr><td><code>Contact_Create_Edit_Update_Contact_Owner_to_Account_Owner</code></td><td>Before Save</td><td>Syncs contact owner to account owner</td></tr>
+        <tr><td><code>Contact_Create_UTM_Touchpoint</code></td><td>Before Save</td><td>Creates UTM touchpoint record</td></tr>
+        <tr><td><code>Contact_Create_Update_Contact_as_Created_by_Service_User</code></td><td>Before Save</td><td>Flags service-created contacts</td></tr>
+        <tr><td><code>Contact_RT_After_Update_Send_NPS_Survey</code></td><td>After Update</td><td>Triggers NPS survey</td></tr>
+    </table>
+
+    <h3>Lead Conversion Flow</h3>
+    <p>When a Lead converts:</p>
+    <ol>
+        <li><code>Account_Record_Type_from_Lead_Conversion__c</code> is populated on Account</li>
+        <li>Before Save consolidated flow reads this to set correct RecordTypeId</li>
+        <li><code>Record_Type_Updated_from_Lead__c</code> flag prevents re-running on subsequent edits</li>
+        <li>Type set to "Affiliate" if conversion field indicates Affiliate</li>
+        <li>Lead address copied to Account physical address via scheduled path (1 min delay)</li>
+    </ol>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 7. BILLING & REVENUE -->
+    <!-- ============================================================ -->
+    <h2 id="billing-revenue">7. Billing &amp; Revenue</h2>
+
+    <h3>Billing_Record__c</h3>
+    <p><code>force-app/main/default/objects/Billing_Record__c/</code></p>
+    <p><strong>53 custom fields</strong> — Comprehensive billing tracking across all product lines. History tracking and reports enabled.</p>
+
+    <h4>Field Groups</h4>
+    <table>
+        <tr><th>Category</th><th>Key Fields</th><th>Purpose</th></tr>
+        <tr><td>Core billing</td><td>Amount__c, Daily_Rate__c, Monthly_Contract_Amount__c, Type__c</td><td>Basic billing data</td></tr>
+        <tr><td>Product references</td><td>CBC_ID__c, Credit_Driver_ID__c, DSGSS_ID__c</td><td>Per-product billing IDs</td></tr>
+        <tr><td>Revenue tracking</td><td>Est_Monthly_Usage_Revenue__c, Est_One_Time_Revenue__c</td><td>Revenue categorization</td></tr>
+        <tr><td>Install proration</td><td>Install_Start_Date__c, Prorated_Days__c, Pro_rated_Invoice_Amount__c</td><td>Prorated first month</td></tr>
+        <tr><td>NetSuite integration</td><td>Existing_NetSuite_Customer_ID__c, New_NetSuite_Customer_ID__c</td><td>Accounting sync</td></tr>
+        <tr><td>Quality assurance</td><td>Accurate_First_Bill__c, Billing_Primary_Reviewer__c, Billing_Secondary_Audit__c</td><td>Bill accuracy tracking</td></tr>
+        <tr><td>Incentives</td><td>Deal_Incentive__c, Incentive_Credit_Amount__c, Incentive_Credit_Date__c</td><td>Promotional credits</td></tr>
+    </table>
+
+    <h3>Commission_Payments__c</h3>
+    <ul>
+        <li><strong>Label:</strong> Ongoing Usage Commission</li>
+        <li><strong>9 custom fields</strong> — Tracks status of ongoing usage commission payments</li>
+        <li>AutoNumber: Commissions-{0000}</li>
+        <li>Key fields: Invoice__c, Payment_Status__c, Payment__c, Tax_Free_Usage_Amount__c</li>
+    </ul>
+
+    <h3>First_Invoice__c</h3>
+    <ul>
+        <li>Child of Billing_Record__c (ControlledByParent sharing)</li>
+        <li>Captures the first invoice billed to customer</li>
+        <li>Tracks first invoice completion for TAT (turnaround time) metrics</li>
+    </ul>
+
+    <h3>Revenue Flows</h3>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Update_Amount_for_Annual_Subscriptions_and_Usage</code></td><td>Calculates annual revenue</td></tr>
+        <tr><td><code>Update_Amount_for_Subscription_and_Usage</code></td><td>Calculates subscription + usage</td></tr>
+        <tr><td><code>Update_Opportunity_Annual_Fields_from_Products</code></td><td>Rollup from products to opportunity</td></tr>
+        <tr><td><code>Update_Opportunity_Subscriptions_and_Usage_Amounts</code></td><td>Revenue categorization</td></tr>
+        <tr><td><code>Update_Commissions</code></td><td>Commission calculations</td></tr>
+        <tr><td><code>Discount_Tier_STF_Calculate_Product_Prices_Per_Discount_Tier</code></td><td>Scheduled tier pricing</td></tr>
+        <tr><td><code>Discount_Tier_RT_After_Create_Trigger_Product_Record</code></td><td>Product record creation</td></tr>
+    </table>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 8. SALES TERRITORY MANAGEMENT -->
+    <!-- ============================================================ -->
+    <h2 id="sales-territory">8. Sales Territory Management</h2>
+
+    <h3>Territory_Attack_Plans__c</h3>
+    <p><code>force-app/main/default/objects/Territory_Attack_Plans__c/</code></p>
+    <p><strong>61 custom fields</strong> — Quarterly territory planning tool for Regional Sales Managers.</p>
+
+    <h4>Field Categories</h4>
+    <table>
+        <tr><th>Category</th><th>Fields</th><th>Purpose</th></tr>
+        <tr><td>Territory</td><td>Sales_Territory__c, Fiscal_Quarter__c</td><td>Territory identification</td></tr>
+        <tr><td>Large accounts</td><td>Large_Account_1-5__c, Large_Opportunity_1-5__c, Large_Amount_Total__c</td><td>Top-tier targets</td></tr>
+        <tr><td>Medium accounts</td><td>Medium_Account_1-5__c, Medium_Opportunity_1-5__c</td><td>Mid-tier targets</td></tr>
+        <tr><td>Small accounts</td><td>Small_Account_1-5__c, Small_Opportunity_1-5__c</td><td>Entry-level targets</td></tr>
+        <tr><td>Cross-sell</td><td>Cross_sell_Account_1-5__c, Cross_sell_Opportunity_1-5__c</td><td>Expansion opportunities</td></tr>
+        <tr><td>Strategy</td><td>Account_Penetration_Strategy__c, Customer_Acquisition_Strategy__c, Risk_Analysis__c</td><td>Planning</td></tr>
+        <tr><td>Execution</td><td>Monthly_Milestones__c, Quarterly_Action_Steps__c, Quarterly_Quota__c</td><td>Goal tracking</td></tr>
+    </table>
+
+    <h3>Territory Assignment Logic</h3>
+    <p>Territory assignment uses a sophisticated metadata-driven approach:</p>
+    <ol>
+        <li><strong>Zipcode_Regions__mdt</strong> (~150+ records) — Maps zip code ranges to regions (e.g., Cali_North: 9594-9616)</li>
+        <li><strong>Default_Territory_Owner_Assignment__mdt</strong> — Maps regions to default territory owners</li>
+        <li><strong>Exception_Account_Owner__mdt</strong> — Special case assignments (e.g., Unassigned_Owner, New_Affiliates_Curtis)</li>
+    </ol>
+
+    <div class="info-box">
+        <strong>Performance Optimization:</strong>
+        <p>The <code>Account_Subflow_Territory_Assignment</code> queries all metadata records once, then loops in-memory to match — an optimization that reduced 55 individual SOQL queries down to 3.</p>
+    </div>
+
+    <h3>Territory Flows</h3>
+    <table>
+        <tr><th>Flow</th><th>Purpose</th></tr>
+        <tr><td><code>Account_Subflow_Territory_Assignment</code></td><td>Core territory assignment logic (subflow)</td></tr>
+        <tr><td><code>Update_Sales_Territories</code></td><td>Bulk territory updates</td></tr>
+        <tr><td><code>Update_Northwest_Sales_Territory</code></td><td>Regional territory screen flow</td></tr>
+        <tr><td><code>Opportunity_Edit_Update_Territory_Attack_Plans</code></td><td>Update attack plans from opportunity</td></tr>
+    </table>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 9. SURVEYS & CUSTOMER FEEDBACK -->
+    <!-- ============================================================ -->
+    <h2 id="surveys">9. Surveys &amp; Customer Feedback</h2>
+
+    <h3>Survey__c</h3>
+    <p><code>force-app/main/default/objects/Survey__c/</code></p>
+    <p><strong>12 custom fields</strong> — Customer satisfaction tracking. AutoNumber: Survey-{0000}.</p>
+
+    <h4>Record Types (5)</h4>
+    <table>
+        <tr><th>Record Type</th><th>Trigger</th><th>Purpose</th></tr>
+        <tr><td>NPS</td><td>Contact update</td><td>Net Promoter Score</td></tr>
+        <tr><td>Implementation</td><td>Project completion</td><td>Implementation satisfaction</td></tr>
+        <tr><td>CSA</td><td>Account milestone</td><td>Customer Success feedback</td></tr>
+        <tr><td>Support</td><td>Case closure</td><td>Support quality</td></tr>
+        <tr><td>Account</td><td>Account milestone</td><td>Overall account health</td></tr>
+    </table>
+
+    <p><strong>Key Fields:</strong> NPS_Score__c, Likelihood_to_Recommend__c, Rating_Explanation__c, Survey_Completed__c, Days_Since_Survey_Sent__c</p>
+
+    <h3>Survey Subflows (5 — one per survey type)</h3>
+    <ul>
+        <li><code>Subflow_SF_Account_Survey</code></li>
+        <li><code>Subflow_SF_CSA_Survey</code></li>
+        <li><code>Subflow_SF_Implementation_Survey</code></li>
+        <li><code>Subflow_SF_NPS_Survey</code></li>
+        <li><code>Subflow_SF_Support_Survey</code></li>
+    </ul>
+
+    <h3>Survey Trigger Flows</h3>
+    <table>
+        <tr><th>Flow</th><th>Triggers</th><th>Survey Type</th></tr>
+        <tr><td><code>Contact_RT_After_Update_Send_NPS_Survey</code></td><td>Contact update</td><td>NPS</td></tr>
+        <tr><td><code>Project_RT_After_Update_Send_Implementation_Survey</code></td><td>Project update</td><td>Implementation</td></tr>
+        <tr><td><code>Case_RT_After_Update_Send_Support_Survey</code></td><td>Case update</td><td>Support</td></tr>
+        <tr><td><code>Project_STF_Send_Ongoing_General_NPS_Survey</code></td><td>Scheduled</td><td>Ongoing NPS</td></tr>
+        <tr><td><code>Survey_RT_After_Update_Send_Survey_Awareness_Notifications</code></td><td>Survey update</td><td>All (awareness)</td></tr>
+    </table>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 10. MARKETING & ATTRIBUTION -->
+    <!-- ============================================================ -->
+    <h2 id="marketing">10. Marketing &amp; Attribution</h2>
+
+    <h3>UTM_Touchpoint__c</h3>
+    <ul>
+        <li>Creates a record every time a lead or contact gets new UTM parameters</li>
+        <li>Tracks: source, medium, campaign, content, term</li>
+        <li>No bulk API or streaming API access (lightweight tracking)</li>
+    </ul>
+
+    <h3>Campaign Flows</h3>
+    <ul>
+        <li><code>Campaign_Create_Member_Statuses</code> — Auto-creates campaign member statuses on campaign creation</li>
+        <li><code>Contact_Create_Edit_Update_Campaign_from_Account</code> — Adds contacts to account's active campaign</li>
+    </ul>
+
+    <h3>Pardot Integration</h3>
+    <ul>
+        <li><code>PardotReferralConfirmation</code> Apex class sends referral confirmation emails with form data</li>
+        <li>Handles: referrer info, lead info, dealership, UTM params, state code resolution</li>
+        <li>Called from Pardot forms via @InvocableMethod</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 11. APEX CODE -->
+    <!-- ============================================================ -->
+    <h2 id="apex-code">11. Apex Code</h2>
+
+    <h3>Production Classes (10)</h3>
+    <table>
+        <tr><th>Class</th><th>Type</th><th>Purpose</th><th>Objects</th></tr>
+        <tr><td><code>CaseRoutingTriggerHandler</code></td><td>Trigger Handler</td><td>Routes cases to personal queues via OmniChannel metadata</td><td>Case</td></tr>
+        <tr><td><code>CaseInsertedTriggerHandler</code></td><td>Trigger Handler</td><td>Creates Jira issues for Product Development escalations</td><td>Case</td></tr>
+        <tr><td><code>EmailMessageHandler</code></td><td>Trigger Handler</td><td>Routes incoming emails to correct queues</td><td>EmailMessage, Case</td></tr>
+        <tr><td><code>HealthCheckController</code></td><td>Page Controller</td><td>Comprehensive org health diagnostics dashboard</td><td>Many</td></tr>
+        <tr><td><code>PardotReferralConfirmation</code></td><td>Invocable</td><td>Sends referral confirmation emails from Pardot</td><td>None (email utility)</td></tr>
+        <tr><td><code>markAllSingleRooftps</code></td><td>Batch Job</td><td>Identifies single-location Group Parent accounts</td><td>Account</td></tr>
+        <tr><td><code>CreateGroupParentBatch_SingleRooftops</code></td><td>Batch Job</td><td>Creates Group Parent accounts for single rooftops</td><td>Account</td></tr>
+        <tr><td><code>SiteLoginController</code></td><td>Site Controller</td><td>Community login</td><td>Site</td></tr>
+        <tr><td><code>SiteRegisterController</code></td><td>Site Controller</td><td>Portal user registration</td><td>User, Account</td></tr>
+        <tr><td><code>ForgotPasswordController</code></td><td>Site Controller</td><td>Password reset</td><td>Site</td></tr>
+    </table>
+
+    <h3>Triggers (4)</h3>
+    <table>
+        <tr><th>Trigger</th><th>Object</th><th>Events</th><th>Handler</th></tr>
+        <tr><td><code>CaseRoutingTrigger</code></td><td>Case</td><td>Before Update</td><td>CaseRoutingTriggerHandler</td></tr>
+        <tr><td><code>CaseInsertedTrigger</code></td><td>Case</td><td>After Update</td><td>CaseInsertedTriggerHandler</td></tr>
+        <tr><td><code>EmailMessageTrigger</code></td><td>EmailMessage</td><td>After Insert</td><td>EmailMessageHandler</td></tr>
+        <tr><td><code>MirageLogoutEventTrigger</code></td><td>LogoutEventStream</td><td>After Insert</td><td>Mirage.LogoutEventTriggerHelper</td></tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Feature Toggle Pattern:</strong>
+        <p>All triggers use <code>Trigger_Handler__c</code> custom setting as a feature toggle.</p>
+    </div>
+
+    <h3>Test Classes (19)</h3>
+    <p>Each production class has corresponding test coverage. Notable:</p>
+    <ul>
+        <li><code>HealthCheckControllerTest</code> — 40+ test methods with HTTP mocks</li>
+        <li><code>CaseInsertedTriggerHandlerTest</code> — Tests Jira escalation</li>
+        <li><code>EmailMessageTriggerTest</code> — Tests email queue routing</li>
+        <li><code>PardotReferralConfirmation_Tests</code> — Happy path + error scenarios</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 12. SECURITY MODEL -->
+    <!-- ============================================================ -->
+    <h2 id="security-model">12. Security Model</h2>
+
+    <h3>Permission Sets (63)</h3>
+    <table>
+        <tr><th>Area</th><th>Key Permission Sets</th><th>Purpose</th></tr>
+        <tr><td><strong>CPQ/Quoting</strong></td><td>CPQ_Quote_Manager, CPQ_Quote_Read_Only, Can_Edit_Others_CPQ_Quotes, Move_Quote_Status_Backward, Edit_Quote_Term, Deal_Desk_Threshold_Override</td><td>Quote lifecycle control</td></tr>
+        <tr><td><strong>Implementation</strong></td><td>Implementation_Project_Edit (800+ field perms), Project_QC_View, Project_QC_View_Edit, Project_CSA_Section_Edit</td><td>Project access by role</td></tr>
+        <tr><td><strong>Case Management</strong></td><td>Case_Agent (800+ field perms), Case_Management_for_Service_Supervisor, Omni_Setup_Flow</td><td>Service team access</td></tr>
+        <tr><td><strong>Account/Territory</strong></td><td>Edit_Locked_Accounts, Assign_Affiliate_Account_Owner, Manual_Territory_Override, Edit_Client_Accounts</td><td>Account management</td></tr>
+        <tr><td><strong>Admin/Audit</strong></td><td>Set_Audit_Fields_upon_Record_Creation, Modify_All_Data, Health_Check_User, MFA</td><td>Administrative access</td></tr>
+        <tr><td><strong>Integrations</strong></td><td>Jira_Sync, ZoomInfo_Regional_Sales_Team, Mirage_CTI_Admin_User, Mirage_Amazon_connect</td><td>External system access</td></tr>
+        <tr><td><strong>Marketing</strong></td><td>Create_Affiliate_Leads, Change_the_Address_of_Marketing_Owned_Leads</td><td>Marketing operations</td></tr>
+    </table>
+
+    <h3>Permission Set Groups (15)</h3>
+    <table>
+        <tr><th>Group</th><th>Included Sets</th><th>Purpose</th></tr>
+        <tr><td><strong>CPQ_Manager</strong></td><td>CPQ_Quote_Manager + 4 others</td><td>Full CPQ management</td></tr>
+        <tr><td><strong>CPQ_Admin</strong></td><td>CPQ_Manager suite + SBQQ__SteelBrickCPQAdmin + Conga admin</td><td>CPQ administration</td></tr>
+        <tr><td><strong>Conga_CPQ_User</strong></td><td>Document generation + quote management</td><td>Document user</td></tr>
+        <tr><td>force__SalesUsers</td><td>Salesforce-managed</td><td>Core sales</td></tr>
+        <tr><td>force__ServiceUsers</td><td>Salesforce-managed</td><td>Service features</td></tr>
+        <tr><td>+ 10 more</td><td>Salesforce-managed</td><td>Platform features</td></tr>
+    </table>
+
+    <h3>Profiles (58)</h3>
+    <table>
+        <tr><th>Department</th><th>Profiles</th></tr>
+        <tr><td><strong>Sales</strong></td><td>Sales_Manager, Sales_Engineer, Solutions_Engineer, Regional_Sales_Managers, VP_of_Sales, VP_of_Business_Development, CRO, SDR</td></tr>
+        <tr><td><strong>Customer Success</strong></td><td>Customer_Success, Client_Concierge_PM, Director_of_Client_Operations, Director_of_Client_Advocacy, Client_Advocate, Affiliate_Manager</td></tr>
+        <tr><td><strong>Implementation</strong></td><td>Implementation, Implementation_Managers, Implementation_Read_Only, DSGSS_Onboarding</td></tr>
+        <tr><td><strong>Service</strong></td><td>Case_Management_for_Service_Supervisor, Service_Users, Einstein_Agent_User</td></tr>
+        <tr><td><strong>Sales Operations</strong></td><td>Sales_Operations_Administrator, Sales_Operations_Coordinator</td></tr>
+        <tr><td><strong>Other</strong></td><td>Accounting_Team, HR_User, Contract_Manager, Marketing_Contractors, MarketingProfile</td></tr>
+        <tr><td><strong>Integration</strong></td><td>Salesforce_API_Only_System_Integrations, Minimum_Access_API_Only, CPQ_Integration_User, B2BMA_Integration_User, Anypoint</td></tr>
+        <tr><td><strong>External</strong></td><td>Guest_Profile, Guest_License_User, Chatter_Free_User, External_Apps_Login_User</td></tr>
+        <tr><td><strong>Admin</strong></td><td>Admin (full access)</td></tr>
+    </table>
+
+    <h3>Sharing Rules (100+)</h3>
+    <table>
+        <tr><th>Object</th><th>Rule</th><th>Type</th><th>Access</th></tr>
+        <tr><td>Opportunity</td><td>Implementation_Managers</td><td>Criteria (Closed Won)</td><td>Edit</td></tr>
+        <tr><td>Opportunity</td><td>David_Frontiera_Sharing_Rule</td><td>Owner-based</td><td>Edit</td></tr>
+        <tr><td>Project__c</td><td>Share_Director_Client_Advocacy</td><td>Owner-based</td><td>Edit</td></tr>
+        <tr><td>Project__c</td><td>Share_Director_of_Client_Ops</td><td>Owner-based</td><td>Edit</td></tr>
+        <tr><td>+ 96 more</td><td>Various objects</td><td>Various</td><td>Various</td></tr>
+    </table>
+
+    <h3>Duplicate Rules (17)</h3>
+    <ul>
+        <li><strong>Account (9 rules):</strong> Standard match, exact name, rooftop address, billing address, FEIN, customer number, CBC customer ID, MCID</li>
+        <li><strong>Lead (6 rules):</strong> Standard match, lead-to-contact email, lead-to-lead email, contact-to-contact email, bypass sharing variants</li>
+        <li><strong>Contact (2 rules):</strong> Standard match, contacts with duplicate leads</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 13. INTEGRATIONS -->
+    <!-- ============================================================ -->
+    <h2 id="integrations">13. Integrations</h2>
+
+    <h3>External Systems</h3>
+    <table>
+        <tr><th>System</th><th>Purpose</th><th>Integration Method</th><th>Files</th></tr>
+        <tr><td><strong>Jira</strong></td><td>Case escalation to Product Development</td><td>Managed package (JCFS)</td><td><code>CaseInsertedTriggerHandler.cls</code></td></tr>
+        <tr><td><strong>Conga</strong></td><td>Document generation and e-signatures</td><td>Managed package (APXTConga4)</td><td>VF pages, remote site settings</td></tr>
+        <tr><td><strong>Mirage</strong></td><td>CTI (Computer Telephony Integration)</td><td>Managed package + Amazon Connect</td><td><code>MirageLogoutEventTrigger.trigger</code></td></tr>
+        <tr><td><strong>Rulebricks</strong></td><td>External pricing engine</td><td>Flow-based API calls</td><td>Quote/QLG flows</td></tr>
+        <tr><td><strong>ZoomInfo</strong></td><td>B2B data enrichment</td><td>Permission set access</td><td><code>ZoomInfo_Regional_Sales_Team</code></td></tr>
+        <tr><td><strong>RollWorks</strong></td><td>Account-Based Marketing (ABM)</td><td>Profile-based access</td><td><code>RollWorks</code> profile</td></tr>
+        <tr><td><strong>Pardot</strong></td><td>Marketing automation</td><td>Apex invocable method</td><td><code>PardotReferralConfirmation.cls</code></td></tr>
+        <tr><td><strong>NetSuite</strong></td><td>Accounting/billing</td><td>Field mappings on Billing_Record__c</td><td>Custom fields</td></tr>
+        <tr><td><strong>DealerTrack</strong></td><td>Dealer management system</td><td>Product integrations</td><td>Various Project/Quote fields</td></tr>
+        <tr><td><strong>RocketReach</strong></td><td>Contact data enrichment</td><td>Flow-based</td><td><code>Lead_RocketReach_Import_Updates</code></td></tr>
+        <tr><td><strong>MCD</strong></td><td>External data platform</td><td>OAuth Connected App</td><td><code>Production_MCD_API_Integration</code></td></tr>
+        <tr><td><strong>Spinify</strong></td><td>Sales gamification</td><td>Flow-based</td><td>Opportunity Splits flow</td></tr>
+    </table>
+
+    <h3>Remote Site Settings (11)</h3>
+    <table>
+        <tr><th>Name</th><th>Endpoint</th><th>Purpose</th></tr>
+        <tr><td>Mirage_Remotesite</td><td>informativ--mirage.vf.force.com</td><td>CTI UI</td></tr>
+        <tr><td>Mirage_Cloud_Service</td><td>Cloud Mirage endpoint</td><td>CTI backend</td></tr>
+        <tr><td>Mirage_Sipgate_Remotesite</td><td>Sipgate VoIP</td><td>CTI telephony</td></tr>
+        <tr><td>Mirage_Microsoft_Remotesite</td><td>Microsoft endpoint</td><td>Teams integration</td></tr>
+        <tr><td>Conga_Front_End</td><td>informativ--apxtconga4.vf.force.com</td><td>Document generation UI</td></tr>
+        <tr><td>Composer_VisualForce</td><td>Conga backend</td><td>Document backend</td></tr>
+        <tr><td>Appfire</td><td>JIRA/Confluence vendor</td><td>Jira integration</td></tr>
+        <tr><td>Health_Check</td><td>Dev org endpoint</td><td>Org health diagnostics</td></tr>
+        <tr><td>+ 3 others</td><td>Various</td><td>Standard/VF endpoints</td></tr>
+    </table>
+
+    <h3>Connected App</h3>
+    <p><strong>Production_MCD_API_Integration</strong></p>
+    <ul>
+        <li>OAuth 2.0 with callback to informativ.lightning.force.com</li>
+        <li>Scope: Full API data access</li>
+        <li>Token: 60-minute sessions, zero refresh token lifetime</li>
+        <li>Purpose: External MCD platform data integration</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 14. CUSTOM METADATA & CONFIGURATION -->
+    <!-- ============================================================ -->
+    <h2 id="custom-metadata">14. Custom Metadata &amp; Configuration</h2>
+
+    <h3>Custom Metadata Types (634+ records across 7 types)</h3>
+    <table>
+        <tr><th>Metadata Type</th><th>Records</th><th>Purpose</th><th>Used By</th></tr>
+        <tr><td><code>Zipcode_Regions__mdt</code></td><td>~150+</td><td>Maps zip code ranges to regions</td><td>Territory assignment subflow</td></tr>
+        <tr><td><code>Default_Territory_Owner_Assignment__mdt</code></td><td>~10</td><td>Maps regions to default owners</td><td>Territory assignment subflow</td></tr>
+        <tr><td><code>Exception_Account_Owner__mdt</code></td><td>~5</td><td>Special case owner assignments</td><td>Territory assignment subflow</td></tr>
+        <tr><td><code>Franchise_Auto_Names__mdt</code></td><td>15+</td><td>OEM brand names (Ford, Toyota, Tesla, etc.)</td><td>Before Save consolidated flow</td></tr>
+        <tr><td><code>OmniChannelPersonalRoutingConfig__mdt</code></td><td>4</td><td>Maps users to OmniChannel queues</td><td>Case routing trigger handler</td></tr>
+        <tr><td><code>Escalation_Queue_Assignments__mdt</code></td><td>2</td><td>Escalation queue routing</td><td>Case escalation flows</td></tr>
+        <tr><td><code>Spam_Emails__mdt</code></td><td>1+</td><td>Email domain blocklist</td><td>Case spam detection</td></tr>
+    </table>
+
+    <h3>Custom Settings</h3>
+    <table>
+        <tr><th>Setting</th><th>Type</th><th>Purpose</th></tr>
+        <tr><td><code>Trigger_Handler__c</code></td><td>List</td><td>Feature toggle for Apex triggers (Is_Active__c checkbox)</td></tr>
+        <tr><td><code>Jira_Configuration__c</code></td><td>List</td><td>Jira Project ID and Issue Type ID</td></tr>
+        <tr><td><code>In_App_Checklist_Settings__c</code></td><td>Hierarchy</td><td>In-App Checklist feature configuration</td></tr>
+    </table>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- 15. KNOWN ISSUES & OPTIMIZATION -->
+    <!-- ============================================================ -->
+    <h2 id="known-issues">15. Known Issues &amp; Optimization Opportunities</h2>
+
+    <h3>High Priority</h3>
+
+    <div class="warning-box">
+        <strong>1. Project Flows — Consolidation Opportunity</strong>
+        <p>13+ individual "Project_Create_Edit_Update_*_Date" flows could be consolidated into 1-2 Before Save flows. Each separate flow runs independently with its own entry conditions, consuming unnecessary flow interview resources. Follow the Account flow consolidation pattern — estimated reduction: 13 &rarr; 2 flows.</p>
+    </div>
+
+    <div class="warning-box">
+        <strong>2. CPQ Quote Line Flows — Consolidation Opportunity</strong>
+        <p>10+ individual Quote Line record-triggered flows running on the same object. When many quote lines are saved simultaneously, each trigger fires independently, multiplying SOQL/DML consumption. Consolidate into 2-3 flows. Risk: CPQ's own triggers already consume significant governor limits — test carefully.</p>
+    </div>
+
+    <div class="warning-box">
+        <strong>3. Duplicate/Overlapping Flows</strong>
+        <p>Several flows appear to handle overlapping logic: two active versions of Child_Opportunity_Summary, and overlapping Discount_Tier flows. Verify which versions are active and deactivate duplicates.</p>
+    </div>
+
+    <h3>Medium Priority</h3>
+
+    <h4>4. Test/Temporary Flows in Production</h4>
+    <p>Several flows appear to be test or temporary:</p>
+    <ul>
+        <li><code>TestFlow</code> — Simple test flow with assignment (Active)</li>
+        <li><code>TEST_Update_Commissions</code> — Test version of commission flow</li>
+        <li><code>Eddie_Temp_Update_To_QLG_Scoring_Models</code> — Temporary scoring update</li>
+        <li><code>Quote_Line_RT_After_Create_Update_Perform_Calculations_Eddie_Test</code> — Test calculation flow</li>
+    </ul>
+    <p><strong>Recommendation:</strong> Deactivate or delete these flows from production.</p>
+
+    <h4>5. Hardcoded Values in Apex</h4>
+    <p><code>SiteRegisterController.cls</code> contains a hardcoded <code>PORTAL_ACCOUNT_ID</code> that must be manually updated per org. Move to Custom Metadata or Custom Setting for configurability.</p>
+
+    <h4>6. Account Batch Jobs Without Scheduled Execution</h4>
+    <p><code>markAllSingleRooftps</code> and <code>CreateGroupParentBatch_SingleRooftops</code> are batch jobs but there's no visible scheduled execution or trigger. Verify these are being scheduled and document the schedule.</p>
+
+    <h3>Low Priority</h3>
+
+    <h4>7. Workflow Rules Still Active</h4>
+    <p>4 workflow rule files exist alongside the more modern Flow automation. Migrate remaining workflow rules to Flows for consistency and maintainability.</p>
+
+    <h4>8. Non-Production Remote Site Settings</h4>
+    <p><code>DadJokes</code> remote site setting and CSP trusted site point to icanhazdadjoke.com — a non-production Easter egg API. Remove from production for security hygiene.</p>
+
+    <h4>9. Security Model Complexity</h4>
+    <p>63 permission sets + 58 profiles creates a complex security matrix that's difficult to audit. Consider consolidating profiles, using Permission Set Groups more aggressively, and documenting the intended permission model per role.</p>
+
+    <h4>10. Custom Metadata Volume</h4>
+    <p>634+ custom metadata records (primarily Zipcode_Regions) are queried by the territory assignment subflow. The current implementation (query all, loop in-memory) is already optimized. Monitor if the number grows significantly.</p>
+
+    <h3>Architecture Observations</h3>
+
+    <h4>What's Working Well</h4>
+
+    <div class="success-box">
+        <strong>Strengths:</strong>
+        <p></p>
+    </div>
+
+    <ul>
+        <li><strong>Account flow consolidation</strong> — Excellent pattern reducing 17 flows to 3, cutting SOQL by 70-75%</li>
+        <li><strong>Custom metadata for configuration</strong> — Territory assignments, routing config, and feature toggles are properly externalized</li>
+        <li><strong>Trigger handler pattern with feature toggles</strong> — <code>Trigger_Handler__c</code> custom setting allows disabling triggers without deployment</li>
+        <li><strong>Subflow extraction</strong> — Territory assignment as a standalone subflow is maintainable and testable</li>
+        <li><strong>Survey framework</strong> — Clean separation with 5 survey types, each with dedicated subflows</li>
+        <li><strong>CPQ configuration</strong> — Mature implementation with proper margin governance, goal-seeking scripts, and approval workflows</li>
+    </ul>
+
+    <h4>Areas for Improvement</h4>
+    <ul>
+        <li><strong>Flow sprawl</strong> — 182 flows is a large number; consolidation patterns should be applied beyond Account</li>
+        <li><strong>Mixed automation paradigms</strong> — Flows + Workflows + Triggers + Apex classes all operating on the same objects (especially Case)</li>
+        <li><strong>Object complexity</strong> — Project__c with 230+ fields is a maintenance challenge; consider splitting into related objects</li>
+        <li><strong>Snapshot proliferation</strong> — Three separate snapshot objects may have overlapping purposes</li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <!-- ============================================================ -->
+    <!-- APPENDIX -->
+    <!-- ============================================================ -->
+    <h2 id="appendix">Appendix: Full Inventory</h2>
+
+    <h3>All Custom Objects</h3>
+    <table>
+        <tr><th>Object</th><th>Fields</th><th>Record Types</th><th>Purpose</th></tr>
+        <tr><td><code>Project__c</code></td><td>230+</td><td>Implementation, Cancellation</td><td>Product implementation tracking</td></tr>
+        <tr><td><code>Territory_Attack_Plans__c</code></td><td>61</td><td>—</td><td>Quarterly territory planning</td></tr>
+        <tr><td><code>Billing_Record__c</code></td><td>53</td><td>—</td><td>Billing and revenue tracking</td></tr>
+        <tr><td><code>Opportunity_Monthly_Snapshots__c</code></td><td>52+</td><td>—</td><td>Pipeline snapshots</td></tr>
+        <tr><td><code>Deal_Desk_Form__c</code></td><td>23</td><td>—</td><td>Quote approval tracking</td></tr>
+        <tr><td><code>Survey__c</code></td><td>12</td><td>NPS, Implementation, CSA, Support, Account</td><td>Customer feedback</td></tr>
+        <tr><td><code>Commission_Payments__c</code></td><td>9</td><td>—</td><td>Usage commission tracking</td></tr>
+        <tr><td><code>Discount_Tier__c</code></td><td>Few</td><td>—</td><td>CPQ discount tiers</td></tr>
+        <tr><td><code>UTM_Touchpoint__c</code></td><td>~6</td><td>—</td><td>Marketing attribution</td></tr>
+        <tr><td><code>Sales_Initiation_Checklist__c</code></td><td>Few</td><td>CBC, DSGSS, Multi_Rooftop</td><td>Sales onboarding checklists</td></tr>
+        <tr><td><code>Competitive_Information__c</code></td><td>Few</td><td>—</td><td>Competitive intelligence</td></tr>
+        <tr><td><code>First_Invoice__c</code></td><td>Few</td><td>—</td><td>First invoice tracking</td></tr>
+        <tr><td><code>Oppsfinancial__c</code></td><td>Few</td><td>—</td><td>Opportunity financials</td></tr>
+        <tr><td><code>SnapShot_Opportunity_Pipeline__c</code></td><td>Few</td><td>—</td><td>Pipeline snapshots</td></tr>
+        <tr><td><code>Resources__c</code></td><td>Few</td><td>—</td><td>Knowledge resources</td></tr>
+        <tr><td><code>Knowledge__kav</code></td><td>Standard</td><td>Knowledge</td><td>Knowledge articles</td></tr>
+    </table>
+
+    <h3>Custom Settings</h3>
+    <table>
+        <tr><th>Setting</th><th>Type</th><th>Fields</th></tr>
+        <tr><td><code>Trigger_Handler__c</code></td><td>List</td><td>Is_Active__c</td></tr>
+        <tr><td><code>Jira_Configuration__c</code></td><td>List</td><td>Jira_Project_Id__c, Jira_Issue_Type_Id__c</td></tr>
+        <tr><td><code>In_App_Checklist_Settings__c</code></td><td>Hierarchy</td><td>Sales_Cloud_In_App_Page__c, ProfileKey__c</td></tr>
+    </table>
+
+    <h3>Custom Metadata Types</h3>
+    <table>
+        <tr><th>Type</th><th>Records</th><th>Fields</th></tr>
+        <tr><td><code>Zipcode_Regions__mdt</code></td><td>~150+</td><td>Last_Four_Digits_of_Zipcode__c, Region__c</td></tr>
+        <tr><td><code>Default_Territory_Owner_Assignment__mdt</code></td><td>~10</td><td>Region__c, User_ID__c</td></tr>
+        <tr><td><code>Exception_Account_Owner__mdt</code></td><td>~5</td><td>Type__c, User_ID__c</td></tr>
+        <tr><td><code>Franchise_Auto_Names__mdt</code></td><td>15+</td><td>(Name-based matching)</td></tr>
+        <tr><td><code>OmniChannelPersonalRoutingConfig__mdt</code></td><td>4</td><td>UserId__c, QueueId__c</td></tr>
+        <tr><td><code>Escalation_Queue_Assignments__mdt</code></td><td>2</td><td>Queue_ID__c, Escelation_Team__c</td></tr>
+        <tr><td><code>Spam_Emails__mdt</code></td><td>1+</td><td>Spam_Email_Address__c</td></tr>
+    </table>
+
+    <h3>All 182 Flows by Object</h3>
+    <table>
+        <tr><th>Object</th><th>Count</th><th>Breakdown</th></tr>
+        <tr><td><strong>Account</strong></td><td>28</td><td>2 consolidated + 1 subflow + 1 scheduled + 24 individual (17 obsoleted)</td></tr>
+        <tr><td><strong>Opportunity</strong></td><td>18</td><td>8 before save + 10 after save/screen/scheduled</td></tr>
+        <tr><td><strong>CPQ Quote</strong></td><td>15</td><td>4 before save + 11 after save</td></tr>
+        <tr><td><strong>Quote Line</strong></td><td>12</td><td>2 before save + 10 after save</td></tr>
+        <tr><td><strong>Quote Line Group</strong></td><td>5</td><td>4 before save + 1 after save</td></tr>
+        <tr><td><strong>Project</strong></td><td>20+</td><td>1 consolidated before save + 13 date flows + 6 after save/scheduled</td></tr>
+        <tr><td><strong>Case</strong></td><td>11</td><td>6 before save + 3 after save + 2 screen/autolaunched</td></tr>
+        <tr><td><strong>Contact</strong></td><td>5</td><td>4 before save + 1 after save</td></tr>
+        <tr><td><strong>Lead</strong></td><td>7</td><td>4 before save + 3 after save</td></tr>
+        <tr><td><strong>Campaign</strong></td><td>2</td><td>1 after create + 1 after update</td></tr>
+        <tr><td><strong>Survey</strong></td><td>6</td><td>5 subflows + 1 notification flow</td></tr>
+        <tr><td><strong>CPQ Screen/Scheduled</strong></td><td>10</td><td>Various screen flows and scheduled triggers</td></tr>
+        <tr><td><strong>Revenue/Financial</strong></td><td>6</td><td>Revenue calculations and commission updates</td></tr>
+        <tr><td><strong>Discount Tier</strong></td><td>3</td><td>Product trigger + scheduled calculation</td></tr>
+        <tr><td><strong>Other</strong></td><td>34</td><td>Date tracking, status updates, competitive info, user management, templates</td></tr>
+    </table>
+
+    <h3>All Apex Classes (29)</h3>
+    <ul>
+        <li><strong>Production (10):</strong> CaseRoutingTriggerHandler, CaseInsertedTriggerHandler, EmailMessageHandler, HealthCheckController, PardotReferralConfirmation, markAllSingleRooftps, CreateGroupParentBatch_SingleRooftops, SiteLoginController, SiteRegisterController, ForgotPasswordController</li>
+        <li><strong>Additional Site Controllers:</strong> ChangePasswordController, MyProfilePageController</li>
+        <li><strong>Test Classes (17):</strong> One per production class + EmailMessageTriggerTest + MirageLogoutEventTriggerTests</li>
+    </ul>
+
+    <h3>All Triggers (4)</h3>
+    <p>CaseRoutingTrigger (Case, Before Update), CaseInsertedTrigger (Case, After Update), EmailMessageTrigger (EmailMessage, After Insert), MirageLogoutEventTrigger (LogoutEventStream, After Insert)</p>
+
+    <div class="separator"></div>
+
+    <p style="text-align: center; color: #7f8c8d; font-style: italic;">This document was generated by analyzing the full Salesforce metadata retrieved to <code>force-app/</code> and CPQ data exported to <code>data/cpq/</code>. For the latest state, re-pull metadata and update this analysis.</p>
+
+</div>
+</body>
+</html>
