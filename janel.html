@@ -135,6 +135,13 @@
     overflow: hidden;
     position: relative;
     border-radius: 12px;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .reel-container.dragging {
+    cursor: grabbing;
   }
 
   .reel-strip {
@@ -478,6 +485,10 @@ const restaurants = [
 const ITEM_HEIGHT = 260;
 let isSpinning = false;
 let selectedIndex = null;
+let manualOffset = 0;
+let isDragging = false;
+let dragStartY = 0;
+let dragStartOffset = 0;
 
 // Build reel strip (repeat restaurants multiple times for the scrolling effect)
 function buildReel() {
@@ -533,6 +544,7 @@ function spin() {
   let startTime = null;
 
   // Reset position
+  manualOffset = 0;
   strip.style.transition = 'none';
   strip.style.transform = 'translateY(0)';
 
@@ -654,8 +666,60 @@ function launchConfetti() {
   animate();
 }
 
+// Manual scroll / drag handling
+function initDrag() {
+  const container = document.querySelector('.reel-container');
+
+  container.addEventListener('mousedown', onDragStart);
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  container.addEventListener('touchstart', onDragStart, { passive: false });
+  window.addEventListener('touchmove', onDragMove, { passive: false });
+  window.addEventListener('touchend', onDragEnd);
+}
+
+function onDragStart(e) {
+  if (isSpinning) return;
+  isDragging = true;
+  const container = document.querySelector('.reel-container');
+  container.classList.add('dragging');
+  const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+  dragStartY = y;
+  dragStartOffset = manualOffset;
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('centerLine').classList.remove('visible');
+}
+
+function onDragMove(e) {
+  if (!isDragging) return;
+  e.preventDefault();
+  const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+  const delta = dragStartY - y;
+  const maxOffset = (restaurants.length - 1) * ITEM_HEIGHT;
+  manualOffset = Math.max(0, Math.min(maxOffset, dragStartOffset + delta));
+  document.getElementById('reelStrip').style.transform = `translateY(-${manualOffset}px)`;
+}
+
+function onDragEnd() {
+  if (!isDragging) return;
+  isDragging = false;
+  const container = document.querySelector('.reel-container');
+  container.classList.remove('dragging');
+  // Snap to nearest item
+  const nearestIndex = Math.round(manualOffset / ITEM_HEIGHT);
+  const maxIndex = restaurants.length - 1;
+  const snappedIndex = Math.max(0, Math.min(maxIndex, nearestIndex));
+  manualOffset = snappedIndex * ITEM_HEIGHT;
+  const strip = document.getElementById('reelStrip');
+  strip.style.transition = 'transform 0.3s ease-out';
+  strip.style.transform = `translateY(-${manualOffset}px)`;
+  setTimeout(() => { strip.style.transition = 'none'; }, 300);
+}
+
 // Init
 buildReel();
+initDrag();
 </script>
 
 </body>
