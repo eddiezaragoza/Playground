@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tampa Tapas Slots 🎰</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&family=Lobster&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A855;
+    --gold-light: #E8C97A;
+    --deep-red: #8B1A2B;
+    --cherry: #C92A42;
+    --cream: #FFF8F0;
+    --dark: #1A0A0E;
+    --dark-panel: #2A1218;
+    --warm-brown: #3D1E24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--cream);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    padding: 20px;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(139,26,43,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(212,168,85,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(26,10,14,1) 0%, rgba(26,10,14,1) 100%);
+    z-index: -1;
+  }
+
+  .machine-wrapper {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    animation: fadeDown 0.8s ease-out;
+  }
+
+  .header h1 {
+    font-family: 'Lobster', cursive;
+    font-size: clamp(2rem, 7vw, 3rem);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #B8860B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 8px rgba(212,168,85,0.3));
+    line-height: 1.2;
+  }
+
+  .header p {
+    font-size: 0.9rem;
+    color: rgba(255,248,240,0.5);
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Machine body */
+  .machine {
+    width: 100%;
+    background: linear-gradient(180deg, var(--dark-panel) 0%, #1E0D12 100%);
+    border: 2px solid rgba(212,168,85,0.3);
+    border-radius: 24px;
+    padding: 28px 20px;
+    position: relative;
+    box-shadow:
+      0 0 60px rgba(139,26,43,0.15),
+      inset 0 1px 0 rgba(212,168,85,0.15),
+      0 20px 60px rgba(0,0,0,0.5);
+    animation: fadeUp 0.8s ease-out 0.2s both;
+  }
+
+  .machine::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* Reel window */
+  .reel-window {
+    background: linear-gradient(180deg, #0D0508, #150910, #0D0508);
+    border-radius: 16px;
+    border: 1px solid rgba(212,168,85,0.15);
+    padding: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .reel-window::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg,
+        rgba(13,5,8,0.9) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(13,5,8,0.9) 100%
+      );
+    z-index: 2;
+  }
+
+  .reel-container {
+    height: 260px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 12px;
+  }
+
+  .reel-strip {
+    transition: transform 0.1s;
+    will-change: transform;
+  }
+
+  .reel-item {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .reel-item .emoji {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  }
+
+  .reel-item .name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.25;
+  }
+
+  .reel-item .stars {
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+
+  .reel-item .address {
+    font-size: 0.75rem;
+    color: rgba(255,248,240,0.4);
+    line-height: 1.3;
+  }
+
+  .reel-item .vibe-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    background: rgba(212,168,85,0.12);
+    border: 1px solid rgba(212,168,85,0.2);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Center line */
+  .center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    height: 260px;
+    border: 2px solid rgba(212,168,85,0.15);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .center-line.visible {
+    opacity: 1;
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(212,168,85,0.2);
+  }
+
+  /* Pull lever / Spin button */
+  .spin-btn {
+    width: 100%;
+    padding: 18px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--deep-red), var(--cherry));
+    border: 2px solid rgba(212,168,85,0.3);
+    border-radius: 16px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(139,26,43,0.3);
+  }
+
+  .spin-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1));
+    pointer-events: none;
+  }
+
+  .spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(139,26,43,0.4);
+    border-color: var(--gold);
+  }
+
+  .spin-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Result card (shown after spin) */
+  .result-card {
+    width: 100%;
+    background: linear-gradient(135deg, var(--dark-panel), var(--warm-brown));
+    border: 1px solid rgba(212,168,85,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    display: none;
+    animation: fadeUp 0.5s ease-out;
+  }
+
+  .result-card.show { display: block; }
+
+  .result-card .result-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .result-card .result-rating {
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .result-card .result-address {
+    font-size: 0.85rem;
+    color: rgba(255,248,240,0.55);
+    margin-bottom: 6px;
+  }
+
+  .result-card .result-hours {
+    font-size: 0.8rem;
+    color: rgba(255,248,240,0.4);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .result-card .result-vibe {
+    font-size: 0.85rem;
+    color: rgba(255,248,240,0.65);
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .maps-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(212,168,85,0.15);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    color: var(--gold-light);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+
+  .maps-btn:hover {
+    background: rgba(212,168,85,0.25);
+    transform: translateY(-1px);
+  }
+
+  /* Footer message */
+  .footer-msg {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(255,248,240,0.3);
+    animation: fadeUp 0.8s ease-out 0.4s both;
+  }
+
+  .footer-msg span {
+    color: var(--cherry);
+  }
+
+  /* Confetti canvas */
+  #confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(212,168,85,0.1); }
+    50% { box-shadow: 0 0 40px rgba(212,168,85,0.25); }
+  }
+
+  .spinning .reel-window {
+    animation: glow 0.6s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="machine-wrapper">
+  <div class="header">
+    <h1>Tampa Tapas Slots</h1>
+    <p>Spin to pick our spot</p>
+  </div>
+
+  <div class="machine" id="machine">
+    <div class="reel-window">
+      <div class="reel-container">
+        <div class="reel-strip" id="reelStrip"></div>
+      </div>
+      <div class="center-line" id="centerLine"></div>
+    </div>
+    <button class="spin-btn" id="spinBtn" onclick="spin()">
+      🎰 &nbsp; Pull the Lever &nbsp; 🎰
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+
+  <div class="footer-msg">
+    Eddie & Janel's date night <span>♥</span>
+  </div>
+</div>
+
+<script>
+const restaurants = [
+  {
+    name: "Bulla Gastrobar",
+    rating: 4.9,
+    ratingCount: "16,600+",
+    address: "930 S Howard Ave, Tampa",
+    emoji: "🍷",
+    vibe: "Rooftop Bar · Spanish Tapas",
+    hours: "Mon–Thu 11:30AM–10PM · Fri 11:30AM–11PM\nSat 11AM–11PM · Sun 11AM–10PM",
+    blurb: "The crown jewel of Tampa tapas — gorgeous rooftop, incredible sangria, and bacon-wrapped dates that will change your life.",
+    lat: 27.9342, lng: -82.4829
+  },
+  {
+    name: "Barcelona Wine Bar",
+    rating: 4.5,
+    ratingCount: "490+",
+    address: "2907 W Bay to Bay Blvd, Tampa",
+    emoji: "🍇",
+    vibe: "Wine Bar · Spanish Tapas",
+    hours: "Mon–Thu 4PM–12AM · Fri 2PM–1AM\nSat 11AM–1AM · Sun 11AM–11PM",
+    blurb: "Cozy wine-forward spot with an extensive tapas menu — perfect for sharing plates and discovering new wines together.",
+    lat: 27.9202, lng: -82.4914
+  },
+  {
+    name: "Cepas Wine & Tapas",
+    rating: 4.4,
+    ratingCount: "29",
+    address: "12904 N Dale Mabry Hwy, Tampa",
+    emoji: "🫒",
+    vibe: "Intimate · Authentic Spanish",
+    hours: "Tue–Thu 4–9PM · Fri–Sat 4–10PM\nSun–Mon Closed",
+    blurb: "A hidden gem with real-deal Spanish flavors — the Cachopo (breaded steak with Serrano ham) is a must-try.",
+    lat: 28.0642, lng: -82.5053
+  },
+  {
+    name: "Vizcaya SoHo",
+    rating: 4.5,
+    ratingCount: "219",
+    address: "401 S Howard Ave, Tampa",
+    emoji: "🥘",
+    vibe: "Date Night · Spanish Kitchen",
+    hours: "Tue–Thu 11:30AM–2PM, 5–9PM\nFri–Sat 11:30AM–2PM, 5–11PM\nSun 11AM–3PM, 5–9PM",
+    blurb: "Converted gas station turned romantic Spanish kitchen — the paella and Basque cheesecake are legendary.",
+    lat: 27.9408, lng: -82.4833
+  },
+  {
+    name: "Plate Tapas Grill",
+    rating: 4.7,
+    ratingCount: "185",
+    address: "13134 Dale Mabry Hwy, Tampa",
+    emoji: "🦑",
+    vibe: "Creative Tapas · Fusion",
+    hours: "Tue–Thu 11AM–9PM · Fri 11AM–10PM\nSat–Sun 12–10PM / 9PM",
+    blurb: "Inventive tapas with a global twist — the crispy tuna and snow crab are show-stoppers.",
+    lat: 28.0662, lng: -82.5069
+  },
+  {
+    name: "Spain Restaurant",
+    rating: 4.4,
+    ratingCount: "1,050+",
+    address: "513 N Tampa St, Tampa",
+    emoji: "💃",
+    vibe: "Live Music · Historic Tampa",
+    hours: "Mon 8AM–3PM · Tue–Fri 8AM–9/10PM\nSat 4–10PM · Sun Closed",
+    blurb: "A Tampa institution for nearly 50 years — live music, authentic Spanish vibes, and an electric atmosphere after 8PM.",
+    lat: 27.9486, lng: -82.4591
+  },
+  {
+    name: "La Sétima Club",
+    rating: 4.9,
+    ratingCount: "178",
+    address: "815 E 7th Ave, Tampa (Ybor City)",
+    emoji: "🌿",
+    vibe: "Natural Wine · Plant-Forward",
+    hours: "Tue–Thu 5–10PM · Fri–Sat 5PM–12AM\nSun 5–10PM · Mon Closed",
+    blurb: "Ybor City's best-kept secret — a gorgeous natural wine bar with creative plant-forward small plates. Ultra-romantic.",
+    lat: 27.9603, lng: -82.4515
+  }
+];
+
+const ITEM_HEIGHT = 260;
+let isSpinning = false;
+let selectedIndex = null;
+
+// Build reel strip (repeat restaurants multiple times for the scrolling effect)
+function buildReel() {
+  const strip = document.getElementById('reelStrip');
+  strip.innerHTML = '';
+  // Repeat 8 times for long scroll
+  for (let cycle = 0; cycle < 8; cycle++) {
+    restaurants.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reel-item';
+      const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.3 ? '½' : '');
+      div.innerHTML = `
+        <div class="emoji">${r.emoji}</div>
+        <div class="name">${r.name}</div>
+        <div class="stars">${stars} ${r.rating}</div>
+        <div class="address">${r.address}</div>
+        <div class="vibe-tag">${r.vibe.split('·')[0].trim()}</div>
+      `;
+      strip.appendChild(div);
+    });
+  }
+}
+
+function spin() {
+  if (isSpinning) return;
+  isSpinning = true;
+
+  const btn = document.getElementById('spinBtn');
+  const strip = document.getElementById('reelStrip');
+  const machine = document.getElementById('machine');
+  const resultCard = document.getElementById('resultCard');
+  const centerLine = document.getElementById('centerLine');
+
+  btn.disabled = true;
+  btn.textContent = '✨  Spinning...  ✨';
+  machine.classList.add('spinning');
+  resultCard.classList.remove('show');
+  centerLine.classList.remove('visible');
+
+  // Pick a random winner
+  const winnerIdx = Math.floor(Math.random() * restaurants.length);
+  selectedIndex = winnerIdx;
+
+  // Calculate target position: land on the winner in the 5th cycle (middle-ish)
+  const targetCycle = 5;
+  const targetItemIndex = targetCycle * restaurants.length + winnerIdx;
+  const targetOffset = targetItemIndex * ITEM_HEIGHT;
+
+  // Animate with easing via JS
+  const startPos = 0;
+  const totalDistance = targetOffset;
+  const duration = 3500; // ms
+  let startTime = null;
+
+  // Reset position
+  strip.style.transition = 'none';
+  strip.style.transform = 'translateY(0)';
+
+  // Easing function (ease-out cubic with a slight bounce feel)
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function animateReel(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutQuart(progress);
+
+    const currentPos = eased * totalDistance;
+    strip.style.transform = `translateY(-${currentPos}px)`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateReel);
+    } else {
+      // Done spinning
+      onSpinComplete(winnerIdx);
+    }
+  }
+
+  requestAnimationFrame(animateReel);
+}
+
+function onSpinComplete(winnerIdx) {
+  const btn = document.getElementById('spinBtn');
+  const machine = document.getElementById('machine');
+  const centerLine = document.getElementById('centerLine');
+  const resultCard = document.getElementById('resultCard');
+  const r = restaurants[winnerIdx];
+
+  machine.classList.remove('spinning');
+  centerLine.classList.add('visible');
+
+  // Show result card
+  const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.3 ? '½' : '');
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lng}`;
+
+  resultCard.innerHTML = `
+    <div class="result-name">${r.emoji} ${r.name}</div>
+    <div class="result-rating">${stars} ${r.rating} · ${r.ratingCount} reviews</div>
+    <div class="result-address">${r.address}</div>
+    <div class="result-vibe">"${r.blurb}"</div>
+    <div class="result-hours">${r.hours.replace(/\n/g, '<br>')}</div>
+    <a class="maps-btn" href="${mapsUrl}" target="_blank" rel="noopener">
+      📍 Open in Maps
+    </a>
+  `;
+  resultCard.classList.add('show');
+
+  // Confetti!
+  launchConfetti();
+
+  // Re-enable
+  btn.disabled = false;
+  btn.innerHTML = '🎰 &nbsp; Spin Again &nbsp; 🎰';
+  isSpinning = false;
+}
+
+// Simple confetti
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#D4A855', '#E8C97A', '#C92A42', '#8B1A2B', '#FFF8F0', '#FFD700'];
+  const particles = [];
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 1) * 14 - 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 6 + 3,
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 10,
+      life: 1
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.vy += 0.25;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.life -= 0.012;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+
+    frame++;
+    if (alive && frame < 200) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  animate();
+}
+
+// Init
+buildReel();
+</script>
+
+</body>
+</html>
