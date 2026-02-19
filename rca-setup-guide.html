@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce Revenue Cloud Advanced (RCA) — Setup Guide</title>
+    <style>
+        :root {
+            --sf-blue: #0176d3;
+            --sf-dark: #032d60;
+            --sf-light: #f4f6f9;
+            --sf-green: #2e844a;
+            --sf-orange: #fe9339;
+            --sf-red: #ea001e;
+            --sf-purple: #730394;
+            --border: #d8dde6;
+            --text: #181818;
+            --text-muted: #5a6872;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--sf-light);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--sf-dark) 0%, var(--sf-blue) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .toc {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .toc h2 { color: var(--sf-dark); margin-bottom: 1rem; font-size: 1.3rem; }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .toc a {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            background: var(--sf-light);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--sf-dark);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .toc a:hover { background: #e1ebf5; transform: translateX(4px); }
+
+        .toc .step-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            color: var(--sf-dark);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--sf-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section h2 .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .section h3 {
+            color: var(--sf-blue);
+            margin: 1.5rem 0 0.8rem 0;
+            font-size: 1.15rem;
+        }
+
+        .section p, .section li { margin-bottom: 0.5rem; }
+
+        .section ul, .section ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .setup-path {
+            background: #f0f7ff;
+            border-left: 4px solid var(--sf-blue);
+            padding: 0.8rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+            color: var(--sf-dark);
+        }
+
+        .warning {
+            background: #fff8e1;
+            border-left: 4px solid var(--sf-orange);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .warning strong { color: #e65100; }
+
+        .critical {
+            background: #ffeef0;
+            border-left: 4px solid var(--sf-red);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .critical strong { color: var(--sf-red); }
+
+        .tip {
+            background: #e8f5e9;
+            border-left: 4px solid var(--sf-green);
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .tip strong { color: var(--sf-green); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--sf-dark);
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.7rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:nth-child(even) { background: var(--sf-light); }
+        tr:hover { background: #e8f0fe; }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 0.6rem 0.8rem;
+            padding-left: 2.2rem;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.15s, opacity 0.15s;
+        }
+
+        .checklist li:hover { background: #f8fafc; }
+
+        .checklist li input[type="checkbox"] {
+            position: absolute;
+            left: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            accent-color: var(--sf-green);
+            cursor: pointer;
+        }
+
+        .checklist li.checked {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            text-decoration-color: #c0c8d0;
+        }
+
+        .setup-steps details {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.6rem;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .setup-steps details:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+        .setup-steps details[open] {
+            border-color: var(--sf-blue);
+            box-shadow: 0 2px 12px rgba(1,118,211,0.12);
+        }
+
+        .setup-steps summary {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.9rem 1.2rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--sf-dark);
+            background: white;
+            list-style: none;
+            user-select: none;
+        }
+
+        .setup-steps summary::-webkit-details-marker { display: none; }
+
+        .setup-steps summary::after {
+            content: '▸';
+            margin-left: auto;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .setup-steps details[open] summary::after { transform: rotate(90deg); }
+
+        .setup-steps details[open] summary {
+            border-bottom: 1px solid var(--border);
+            background: #f0f7ff;
+        }
+
+        .setup-steps .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-body {
+            padding: 1rem 1.2rem 1.2rem;
+            background: white;
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+
+        .step-body p { margin-bottom: 0.5rem; }
+
+        .step-body ul, .step-body ol {
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .step-body li { margin-bottom: 0.3rem; }
+
+        .step-category {
+            font-weight: 600;
+            color: var(--sf-blue);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin: 0.8rem 0 0.3rem;
+        }
+
+        .step-category:first-child { margin-top: 0; }
+
+        .doc-link {
+            display: inline-block;
+            margin-top: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--sf-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .doc-link:hover { text-decoration: underline; }
+
+        .checklist-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .checklist-toolbar .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-right: auto;
+        }
+
+        .checklist-toolbar .progress-text.all-done { color: var(--sf-green); font-weight: 600; }
+
+        .checklist-toolbar button {
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s;
+        }
+
+        .checklist-toolbar button:hover { opacity: 0.85; }
+
+        .btn-save {
+            background: var(--sf-green);
+            color: white;
+        }
+
+        .btn-reset {
+            background: #f0f2f5;
+            color: var(--text-muted);
+            border: 1px solid var(--border) !important;
+        }
+
+        .btn-reset:hover { color: var(--sf-red) !important; border-color: var(--sf-red) !important; }
+
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--sf-purple);
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .diagram {
+            margin: 1rem 0;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--sf-dark); }
+
+        @media print {
+            body { background: white; }
+            .header { background: var(--sf-dark) !important; -webkit-print-color-adjust: exact; }
+            .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Revenue Cloud Advanced (RCA)</h1>
+    <div class="subtitle">Complete Setup &amp; Configuration Guide</div>
+    <div class="badge">Salesforce Revenue Lifecycle Management &bull; Updated February 2026</div>
+</div>
+
+<div class="container">
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+        <h2>Setup Steps</h2>
+        <div class="toc-grid">
+            <a href="#step0"><span class="step-num">0</span> Prerequisites &amp; Planning</a>
+            <a href="#step1"><span class="step-num">1</span> Enable RLM Settings</a>
+            <a href="#step2"><span class="step-num">2</span> Assign Permission Set Licenses</a>
+            <a href="#step3"><span class="step-num">3</span> Assign Permission Sets</a>
+            <a href="#step4"><span class="step-num">4</span> Enable Feature Settings</a>
+            <a href="#step5"><span class="step-num">5</span> Create Custom Fields</a>
+            <a href="#step6"><span class="step-num">6</span> Update Page Layouts</a>
+            <a href="#step7"><span class="step-num">7</span> Configure Pricing Procedures</a>
+            <a href="#step8"><span class="step-num">8</span> Set Up Product Catalog</a>
+            <a href="#step9"><span class="step-num">9</span> Sync Pricing &amp; Test</a>
+            <a href="#step10"><span class="step-num">10</span> Set Up a Bundle</a>
+            <a href="#step11"><span class="step-num">11</span> Configure Price Waterfall</a>
+            <a href="#step12"><span class="step-num">12</span> Use Quote Line Groups</a>
+            <a href="#automation"><span class="step-num">A</span> Automation Script</a>
+            <a href="#checklist"><span class="step-num">✓</span> Final Checklist</a>
+        </div>
+    </div>
+
+    <!-- STEP 0 -->
+    <div class="section" id="step0">
+        <h2><span class="num">0</span> Prerequisites &amp; Planning</h2>
+
+        <h3>Required Before Starting</h3>
+        <ul>
+            <li><strong>Revenue Cloud Advanced license</strong> provisioned on your org (contact your Salesforce AE)</li>
+            <li><strong>System Administrator profile</strong> or equivalent for the setup user</li>
+            <li><strong>Sandbox environment</strong> — never configure RCA directly in production first</li>
+            <li><strong>Salesforce CLI (sf)</strong> installed if using the automation script</li>
+        </ul>
+
+        <h3>Recommended Environment Strategy</h3>
+        <table>
+            <tr><th>Environment</th><th>Purpose</th><th>When</th></tr>
+            <tr><td>Developer Sandbox</td><td>Individual feature development &amp; experimentation</td><td>First</td></tr>
+            <tr><td>Partial Sandbox</td><td>Integration testing with sample data</td><td>After dev complete</td></tr>
+            <tr><td>Full Sandbox</td><td>UAT and performance testing</td><td>Before go-live</td></tr>
+            <tr><td>Production</td><td>Final deployment</td><td>After UAT sign-off</td></tr>
+        </table>
+
+        <div class="tip">
+            <strong>Tip:</strong> Map out your product taxonomy (bundles vs. simple products, selling models, categories) BEFORE touching the org. ProductType cannot be changed once set.
+        </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="section" id="step1">
+        <h2><span class="num">1</span> Enable Revenue Lifecycle Management Settings</h2>
+
+        <div class="setup-path">Setup → Revenue Lifecycle Management Settings</div>
+
+        <p>Enable <strong>all available toggles</strong> on this page. This is the master switch for RCA functionality.</p>
+
+        <div class="warning">
+            <strong>Note:</strong> If you don't see "Revenue Lifecycle Management Settings" in Setup, your org may not have the RCA license provisioned. Contact your Salesforce Account Executive.
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="section" id="step2">
+        <h2><span class="num">2</span> Assign Permission Set Licenses (PSLs)</h2>
+
+        <div class="setup-path">Setup → Users → [Select User] → Permission Set License Assignments</div>
+
+        <p>Assign these PSLs based on user role. Each PSL unlocks a set of permission sets.</p>
+
+        <table>
+            <tr><th>Category</th><th>Permission Set License</th><th>Required For</th></tr>
+            <tr><td>Core</td><td><code>Revenue Cloud User</code></td><td>All RCA users</td></tr>
+            <tr><td>Core</td><td><code>Revenue Lifecycle Management User</code></td><td>All RCA users</td></tr>
+            <tr><td>Catalog</td><td><code>Product Catalog Mgmt Administrator</code></td><td>Product admins</td></tr>
+            <tr><td>Catalog</td><td><code>Product Catalog Mgmt Viewer</code></td><td>Sales users</td></tr>
+            <tr><td>Pricing</td><td><code>Salesforce Pricing Design Time</code></td><td>Pricing admins</td></tr>
+            <tr><td>Pricing</td><td><code>Salesforce Pricing Run Time</code></td><td>All quoting users</td></tr>
+            <tr><td>Config</td><td><code>Product Configuration User</code></td><td>Users who configure products</td></tr>
+            <tr><td>Rules</td><td><code>Business Rules Engine Designer</code></td><td>Rule authors</td></tr>
+            <tr><td>Rules</td><td><code>Business Rules Engine Runtime</code></td><td>Users who run rules</td></tr>
+            <tr><td>Context</td><td><code>Context Service Admin</code></td><td>Admins setting up pricing</td></tr>
+            <tr><td>Context</td><td><code>Context Service Runtime</code></td><td>All pricing users</td></tr>
+            <tr><td>CLM</td><td><code>Contract Lifecycle Mgmt User</code></td><td>Contract managers</td></tr>
+            <tr><td>DocGen</td><td><code>Document Builder User</code></td><td>Quote document users</td></tr>
+            <tr><td>Fulfillment</td><td><code>Fulfillment User PSL</code></td><td>Order fulfillment users</td></tr>
+            <tr><td>Billing</td><td><code>Billing</code></td><td>Billing &amp; invoicing users</td></tr>
+            <tr><td>Usage</td><td><code>Usage Management Design Time</code></td><td>Usage-based pricing admins</td></tr>
+            <tr><td>Usage</td><td><code>Usage Management Run Time</code></td><td>Usage-based pricing users</td></tr>
+            <tr><td>Rate</td><td><code>Rate Management Design Time</code></td><td>Rate card admins</td></tr>
+            <tr><td>Rate</td><td><code>Rate Management Run Time</code></td><td>Rate card users</td></tr>
+            <tr><td>Wallet</td><td><code>Wallet Management User</code></td><td>Credits/wallet feature users</td></tr>
+            <tr><td>Data</td><td><code>Data Pipelines Base User</code></td><td>Data sync operations</td></tr>
+        </table>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="section" id="step3">
+        <h2><span class="num">3</span> Assign Permission Sets</h2>
+
+        <div class="setup-path">Setup → Users → [Select User] → Permission Set Assignments</div>
+
+        <p>After PSLs are assigned, grant specific permission sets per functional role:</p>
+
+        <div class="two-col">
+            <div>
+                <h3>Quoting &amp; Orders</h3>
+                <ul>
+                    <li><code>Assetize Order</code></li>
+                    <li><code>Create Orders from Quotes</code></li>
+                    <li><code>PlaceOrder API</code></li>
+                    <li><code>Calculate Prices/Taxes APIs</code></li>
+                    <li><code>Price and Tax Calculation for Quoting</code></li>
+                </ul>
+
+                <h3>Product Catalog</h3>
+                <ul>
+                    <li><code>Product Catalog Mgmt Designer</code></li>
+                    <li><code>Product Catalog Mgmt Viewer</code></li>
+                    <li><code>Product Discovery Admin</code></li>
+                    <li><code>Product Discovery User</code></li>
+                </ul>
+
+                <h3>Pricing</h3>
+                <ul>
+                    <li><code>Salesforce Pricing Admin</code></li>
+                    <li><code>Salesforce Pricing Manager</code></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Rules Engine</h3>
+                <ul>
+                    <li><code>Advanced Configurator Designer</code></li>
+                    <li><code>Rule Engine Designer</code></li>
+                    <li><code>Rule Engine Advanced Designer</code></li>
+                    <li><code>Rule Engine Runtime</code></li>
+                    <li><code>Access to Rules Engine Runtime</code></li>
+                </ul>
+
+                <h3>Contract &amp; Document</h3>
+                <ul>
+                    <li><code>CLM Admin User</code> / <code>CLM Runtime User</code></li>
+                    <li><code>DocGen Designer</code> / <code>DocGen User</code></li>
+                </ul>
+
+                <h3>Orchestration &amp; Tax</h3>
+                <ul>
+                    <li><code>DRO Admin User</code></li>
+                    <li><code>DRO Order Submit Initiate User</code></li>
+                    <li><code>Tax Admin</code> / <code>Tax Configuration</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="critical">
+            <strong>Security Warning:</strong> Some RCA Permission Sets grant <code>Run Flows</code> or <code>Manage Flows</code>, giving full control over ALL flows in the org. Use <strong>Permission Set Groups with Muting Permission Sets</strong> to remove these risky permissions for non-admin users.
+        </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="section" id="step4">
+        <h2><span class="num">4</span> Enable Feature Settings</h2>
+
+        <h3>Revenue Settings</h3>
+        <div class="setup-path">Setup → Revenue Settings</div>
+        <ul class="checklist">
+            <li>Enable Quotes</li>
+            <li>Allow quote creation without opportunities (optional)</li>
+            <li>Enable negative and zero order quantities</li>
+            <li>Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+        </ul>
+
+        <h3>Salesforce Pricing</h3>
+        <div class="setup-path">Setup → Salesforce Pricing</div>
+        <ul class="checklist">
+            <li>Toggle ON "Salesforce Pricing"</li>
+            <li>Enable Context Definitions</li>
+        </ul>
+
+        <h3>Additional Features</h3>
+        <table>
+            <tr><th>Setting</th><th>Location</th><th>Action</th></tr>
+            <tr><td>Contract Lifecycle Management</td><td>Setup → CLM Settings</td><td>Enable</td></tr>
+            <tr><td>Document Generation</td><td>Setup → DocGen Settings</td><td>Enable</td></tr>
+            <tr><td>Dynamic Revenue Orchestrator</td><td>Setup → DRO Settings</td><td>Enable</td></tr>
+            <tr><td>Product Schedules</td><td>Setup → Product Schedule Settings</td><td>Enable</td></tr>
+        </table>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="section" id="step5">
+        <h2><span class="num">5</span> Create Required Custom Fields</h2>
+
+        <p>The Advanced Configurator requires a hidden diagnostics field on three objects:</p>
+
+        <table>
+            <tr><th>Object</th><th>Field Name</th><th>Type</th><th>Length</th></tr>
+            <tr><td>QuoteLineItem</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
+            <tr><td>OrderItem</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
+            <tr><td>AssetActionSource</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
+        </table>
+
+        <div class="warning">
+            <strong>Important:</strong> Create these fields BEFORE enabling Advanced Configuration Rules in Revenue Settings. Without them, the rules engine will fail silently.
+        </div>
+
+        <h3>Deploy via CLI</h3>
+        <pre>sf project deploy start --source-dir force-app \
+  --target-org myorg</pre>
+        <p>Or use the provided <code>rca-org-setup.sh</code> script which creates and deploys these automatically.</p>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="section" id="step6">
+        <h2><span class="num">6</span> Update Page Layouts</h2>
+
+        <h3>Product2 Layout</h3>
+        <p>Add these fields to the Product page layout:</p>
+        <div class="two-col">
+            <ul>
+                <li><code>ConfigurableDuringSale</code></li>
+                <li><code>DisplayUrl</code></li>
+                <li><code>ProductType</code></li>
+            </ul>
+            <ul>
+                <li><code>QuantityUnitOfMeasure</code></li>
+                <li><code>TaxPolicy</code></li>
+                <li><code>IsAssetizable</code></li>
+            </ul>
+        </div>
+        <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
+
+        <h3>PricebookEntry Layout</h3>
+        <ul>
+            <li><code>ProductSellingModel</code></li>
+            <li><code>IsDerived</code></li>
+        </ul>
+
+        <h3>Quote Layout</h3>
+        <ul>
+            <li><code>Account</code> (for Quote)</li>
+        </ul>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="section" id="step7">
+        <h2><span class="num">7</span> Configure Pricing Procedures</h2>
+
+        <div class="critical">
+            <strong>Do NOT build pricing procedures from scratch.</strong> Always clone from Salesforce-provided templates. Missing required elements will cause pricing to fail silently.
+        </div>
+
+        <h3>Clone Templates</h3>
+        <div class="setup-path">Setup → Expression Set Templates</div>
+        <ol>
+            <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> → Clone</li>
+            <li>Find <strong>"Product Discovery Pricing Procedure"</strong> → Clone</li>
+            <li>Set activation dates on both cloned procedures</li>
+            <li>Enable them</li>
+        </ol>
+
+        <h3>Pricing Procedure Architecture</h3>
+        <div class="diagram" id="pricingArchDiagram"></div>
+
+        <h3>Context Definitions</h3>
+        <p>If you need custom fields in pricing calculations:</p>
+        <ol>
+            <li>Create extended versions of standard context definitions</li>
+            <li>Add custom fields to the appropriate section (Sales Transaction or Sales Transaction Item)</li>
+            <li>Map to the correct Quote or QuoteLineItem fields</li>
+        </ol>
+
+        <h3>Decision Tables</h3>
+        <p>Decision Tables replace CPQ Price Rules. They are structured lookup tables:</p>
+        <ul>
+            <li><strong>Conditions:</strong> Product, Selling Model, Date range, Customer attributes</li>
+            <li><strong>Outputs:</strong> Price, Discount %, Adjustment Amount</li>
+            <li>Support complex multi-dimensional lookups</li>
+        </ul>
+    </div>
+
+    <!-- STEP 8 -->
+    <div class="section" id="step8">
+        <h2><span class="num">8</span> Set Up Product Catalog</h2>
+
+        <h3>8a. Create Product Selling Models</h3>
+        <div class="setup-path">App Launcher → Product Catalog Management</div>
+        <table>
+            <tr><th>Model Name</th><th>Type</th><th>Use Case</th></tr>
+            <tr><td>One-Time</td><td><code>OneTime</code></td><td>Single purchases, hardware, professional services</td></tr>
+            <tr><td>Term-Defined 12 Months</td><td><code>TermDefined</code></td><td>Annual subscriptions, 1-year licenses</td></tr>
+            <tr><td>Evergreen</td><td><code>Evergreen</code></td><td>Month-to-month, ongoing services</td></tr>
+            <tr><td>Usage-Based</td><td><code>UsageBased</code></td><td>Consumption pricing, metered billing</td></tr>
+        </table>
+
+        <h3>8b. Create Catalog Structure</h3>
+        <ol>
+            <li>Create a <strong>ProductCatalog</strong> (e.g., "Enterprise Catalog")</li>
+            <li>Create <strong>ProductCategory</strong> hierarchy (e.g., Hardware → Software → Services)</li>
+        </ol>
+
+        <h3>8c. Create Products</h3>
+        <ol>
+            <li>Create Product2 records with correct <strong>ProductType</strong> (Simple or Bundle)</li>
+            <li>Set <code>IsActive = true</code></li>
+            <li>Assign <strong>ProductSellingModelOption</strong> (junction linking product to selling model)</li>
+            <li>For bundles: use the <strong>Structure tab</strong> to add components and groups</li>
+            <li>Run <strong>"Validate Product Definition"</strong> before activating bundles</li>
+        </ol>
+
+        <h3>8d. Create Price Book Entries</h3>
+        <ol>
+            <li>Add products to Price Book with List Prices</li>
+            <li>Link <code>ProductSellingModel</code> on each PricebookEntry</li>
+        </ol>
+
+        <div class="tip">
+            <strong>Tip:</strong> One product can have multiple ProductSellingModelOptions, allowing you to sell the same product as one-time OR subscription without creating duplicate SKUs.
+        </div>
+    </div>
+
+    <!-- STEP 9 -->
+    <div class="section" id="step9">
+        <h2><span class="num">9</span> Sync Pricing Data &amp; Test</h2>
+
+        <h3>Sync Pricing Data</h3>
+        <div class="setup-path">Setup → Sync Pricing Data → Execute</div>
+
+        <div class="critical">
+            <strong>CRITICAL:</strong> You MUST run "Sync Pricing Data" after EVERY pricing configuration change. This includes new products, new price book entries, pricing procedure changes, and decision table updates. Forgetting this is the #1 cause of "my pricing isn't working" issues.
+        </div>
+
+        <h3>Refresh Decision Tables</h3>
+        <div class="setup-path">Setup → Decision Tables → Refresh</div>
+        <p>Ensures new pricing data is available for quoting operations.</p>
+
+        <h3>Test Your Configuration</h3>
+        <ol>
+            <li>Navigate to <strong>Quotes → New</strong></li>
+            <li>Populate required fields (Quote Name, Account)</li>
+            <li>Click <strong>Browse Catalog</strong></li>
+            <li>Select products from your catalog</li>
+            <li>Verify pricing calculates correctly</li>
+            <li>Test bundle configuration if applicable</li>
+            <li>Generate a test order from the quote</li>
+        </ol>
+    </div>
+
+    <!-- STEP 10: BUNDLES -->
+    <div class="section" id="step10">
+        <h2><span class="num">10</span> Set Up a Product Bundle</h2>
+
+        <p>Bundles in RCA use <code>ProductComponentGroup</code> and <code>ProductRelatedComponent</code> instead of CPQ's ProductFeature/ProductOption. Groups are <strong>required</strong> for configurable bundles.</p>
+
+        <div class="critical">
+            <strong>CRITICAL:</strong> <code>ProductType</code> cannot be changed after creation. Decide if a product is "Bundle" or "Simple" before creating it. There is no going back.
+        </div>
+
+        <h3>10a. Create the Bundle Product</h3>
+        <div class="setup-path">App Launcher → Product Catalog Management → Products → New</div>
+        <ol>
+            <li>Set <code>ProductType</code> = <strong>Bundle</strong></li>
+            <li>Set <code>IsActive</code> = true</li>
+            <li>Set <code>ConfigurableDuringSale</code> = <strong>true</strong> (if reps should modify components during quoting)</li>
+            <li>Set <code>IsAssetizable</code> = true (if the bundle creates assets on order activation)</li>
+            <li>Add ProductSellingModels and PricebookEntries for the bundle</li>
+        </ol>
+
+        <h3>10b. Create Component Groups</h3>
+        <div class="setup-path">Product Record → Structure Tab → Add Group</div>
+        <ol>
+            <li>Click <strong>Add Group</strong></li>
+            <li>Name the group (e.g., "Compute Options", "Support Tier")</li>
+            <li>Set <strong>Cardinality</strong> (min/max selections):
+                <ul>
+                    <li>Min=1, Max=1 → exactly one required (radio-button behavior)</li>
+                    <li>Min=0, Max=3 → up to 3 optional selections</li>
+                    <li>Min=2, Max=5 → at least 2, up to 5</li>
+                </ul>
+            </li>
+            <li>Set <strong>Sequence</strong> for display order</li>
+            <li>Repeat for each group</li>
+        </ol>
+
+        <h3>10c. Add Child Products to Groups</h3>
+        <div class="setup-path">Product Record → Structure Tab → Group → Add Component</div>
+        <ol>
+            <li>Click <strong>Add Component</strong> within a group</li>
+            <li>Search for and select the child product (must already exist and be Active)</li>
+            <li>Set <strong>Default Quantity</strong></li>
+            <li>Set <strong>Is Required</strong> = true for mandatory components</li>
+            <li>Optionally configure <strong>BundleBasedAdjustment</strong> for bundle-specific pricing</li>
+        </ol>
+
+        <h3>10d. Validate and Test</h3>
+        <ol>
+            <li>On the Product record, click <strong>Validate Product Definition</strong></li>
+            <li>Fix any issues flagged</li>
+            <li>Run <strong>Sync Pricing Data</strong> (if pricing was changed)</li>
+            <li>Create a test Quote → Browse Catalog → add the bundle → verify configurator shows groups with correct cardinality</li>
+        </ol>
+
+        <div class="tip">
+            <strong>Static vs. Configurable:</strong> If <code>ConfigurableDuringSale</code> = false, the bundle has a fixed configuration and groups are optional. If true (configurable), <code>ProductComponentGroup</code> records are <strong>required</strong>.
+        </div>
+    </div>
+
+    <!-- STEP 11: PRICE WATERFALL -->
+    <div class="section" id="step11">
+        <h2><span class="num">11</span> Configure the Price Waterfall</h2>
+
+        <p>The price waterfall defines the sequence of pricing calculations — from base list price to final net price. Each step is a Pricing Element within a Pricing Procedure.</p>
+
+        <h3>11a. Clone Pricing Procedure Templates</h3>
+        <div class="setup-path">Setup → Expression Set Templates</div>
+        <ol>
+            <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> → click <strong>Clone</strong></li>
+            <li>Name it descriptively (e.g., "Standard Product Pricing")</li>
+            <li>Also clone <strong>"Product Discovery Pricing Procedure"</strong> (used during catalog browsing)</li>
+            <li>Set <strong>Activation Start/End Dates</strong> on each clone</li>
+        </ol>
+
+        <div class="critical">
+            <strong>CRITICAL:</strong> Never build pricing procedures from scratch. Always clone from templates. Missing required internal elements causes silent pricing failures.
+        </div>
+
+        <h3>11b. Configure Context Definitions</h3>
+        <div class="setup-path">Setup → Context Definitions</div>
+        <ol>
+            <li>Create an <strong>EXT (Extended)</strong> Context Definition if you need custom fields</li>
+            <li>Map <strong>Sales Transaction</strong> → Quote fields (Account, Opportunity, custom fields)</li>
+            <li>Map <strong>Sales Transaction Item</strong> → QuoteLineItem fields (Product, Quantity, etc.)</li>
+            <li>Add any custom fields your pricing logic needs (e.g., customer tier, region)</li>
+        </ol>
+
+        <h3>11c. Build Decision Tables</h3>
+        <div class="setup-path">Setup → Decision Tables</div>
+        <ol>
+            <li>Create a Decision Table (e.g., "Volume Discount Entries")</li>
+            <li>Define <strong>Input columns</strong> (conditions): Product, Quantity Range, Customer Tier</li>
+            <li>Define <strong>Output columns</strong> (results): Discount Percentage, Adjustment Amount</li>
+            <li>Add rows — each row is one pricing rule</li>
+        </ol>
+
+        <h3>11d. Add Pricing Elements to the Procedure</h3>
+        <p>Open your cloned Pricing Procedure in the Expression Set designer. Add elements in waterfall order:</p>
+        <table>
+            <tr><th>Order</th><th>Element</th><th>Purpose</th></tr>
+            <tr><td>1</td><td>List Price</td><td>Base price from PricebookEntry</td></tr>
+            <tr><td>2</td><td>Volume / Tier Discount</td><td>Quantity-based tiers via PriceAdjustmentSchedule</td></tr>
+            <tr><td>3</td><td>Attribute-Based Adjustment</td><td>Price changes from product configuration</td></tr>
+            <tr><td>4</td><td>Bundle-Based Adjustment</td><td>Bundle-specific pricing (vs. standalone)</td></tr>
+            <tr><td>5</td><td>Contract-Based Pricing</td><td>Account-specific negotiated rates</td></tr>
+            <tr><td>6</td><td>Formula-Based Pricing</td><td>Custom calculations</td></tr>
+            <tr><td>7</td><td>Manual Discount</td><td>Sales rep adjustments</td></tr>
+            <tr><td>8</td><td>Subscription Pricing</td><td>Multi-period recurring calculations</td></tr>
+            <tr><td>9</td><td>Proration</td><td>Partial-period adjustments</td></tr>
+            <tr><td>10</td><td>Price Tracking</td><td>Floor/ceiling enforcement</td></tr>
+        </table>
+
+        <h3>11e. Link and Sync</h3>
+        <ol>
+            <li>Navigate to <strong>Setup → Sales Transaction Types</strong></li>
+            <li>Associate your Pricing Procedure with the transaction type</li>
+            <li>Run <strong>Sync Pricing Data</strong></li>
+            <li>Refresh Decision Tables</li>
+            <li>Use the <strong>Simulation</strong> feature in the Pricing Procedure designer to test</li>
+        </ol>
+
+        <div class="tip">
+            <strong>Tip:</strong> Use the Simulation feature's <strong>Basic mode</strong> to quickly test with a product, or <strong>Advanced mode</strong> with JSON input for precise testing. The Price Waterfall log shows each element's input, calculation, and output for debugging.
+        </div>
+    </div>
+
+    <!-- STEP 12: QUOTE LINE GROUPS -->
+    <div class="section" id="step12">
+        <h2><span class="num">12</span> Use Quote Line Groups</h2>
+
+        <p>RCA has a native <code>QuoteLineGroup</code> object (API v61.0+) managed through the Transaction Line Editor (TLE). This replaces CPQ's <code>SBQQ__QuoteLineGroup__c</code>.</p>
+
+        <h3>Prerequisites</h3>
+        <ol>
+            <li>Deploy the <strong>Sales Transaction Line Editor (LWC)</strong> component on Quote and Order Lightning record pages</li>
+            <li>If using ramp deals: enable in <strong>Revenue Settings</strong> and activate <strong>"Clone Quote Line Groups"</strong></li>
+        </ol>
+
+        <h3>Manual Grouping</h3>
+        <ol>
+            <li>Open a Quote → navigate to the <strong>Transaction Line Editor</strong></li>
+            <li>Click <strong>"Add Group"</strong> in the TLE toolbar</li>
+            <li>Name the group (e.g., "Year 1 Licenses", "Professional Services")</li>
+            <li>Select line items using checkboxes</li>
+            <li>Click <strong>"Move Selected Lines"</strong> in the group action header</li>
+            <li>Subtotals appear at group level automatically</li>
+        </ol>
+
+        <h3>Automatic Grouping</h3>
+        <ol>
+            <li>Click the <strong>Group</strong> action in the TLE toolbar</li>
+            <li>Select a column to group by (e.g., Product Family, Category)</li>
+            <li>Lines auto-organize into groups — names are editable</li>
+            <li>Use <strong>"Ungroup"</strong> to return to flat view</li>
+        </ol>
+
+        <h3>Ramp Deals for Groups (Winter '26+)</h3>
+        <ol>
+            <li>Create or select a group in the TLE</li>
+            <li>Mark the group as a <strong>"Ramp Group"</strong></li>
+            <li>Define start/end dates and segment types</li>
+            <li>Products within the group follow the ramp schedule together</li>
+            <li>Clone ramp segments year-over-year with uplift logic</li>
+        </ol>
+
+        <div class="tip">
+            <strong>Tip:</strong> With Winter '26+, you can generate <strong>separate orders from groups</strong> — each QLG becomes its own order, or you can group by a specific line field value.
+        </div>
+    </div>
+
+    <!-- AUTOMATION SCRIPT -->
+    <div class="section" id="automation">
+        <h2><span class="num">A</span> Automation Script</h2>
+
+        <p>A setup script is provided at <code>scripts/rca-org-setup.sh</code> that automates steps 2, 3, 5, and creates starter data (Product Selling Models, default Catalog with categories).</p>
+
+        <h3>Usage</h3>
+        <pre># Authenticate to your org first
+sf org login web -a myorg
+
+# Run the setup script
+./scripts/rca-org-setup.sh myorg</pre>
+
+        <h3>What the Script Does</h3>
+        <ol>
+            <li>Validates org connection</li>
+            <li>Assigns all RCA Permission Set Licenses to current user</li>
+            <li>Assigns all RCA Permission Sets to current user</li>
+            <li>Deploys <code>ConstraintEngineNodeStatus</code> custom fields</li>
+            <li>Validates RCA object accessibility (runs test Apex)</li>
+            <li>Creates standard Product Selling Models (One-Time, Term-Defined, Evergreen)</li>
+            <li>Creates default Product Catalog with sample categories</li>
+            <li>Outputs remaining manual steps</li>
+        </ol>
+
+        <div class="warning">
+            <strong>Note:</strong> The script handles errors gracefully — PSLs/PSs that don't exist in your org edition will be skipped. Review the output for any items that need attention.
+        </div>
+    </div>
+
+    <!-- FINAL CHECKLIST -->
+    <div class="section" id="checklist">
+        <h2><span class="num">✓</span> Final Setup Checklist</h2>
+        <p>Complete each step in order. Click any step to expand full details and verification items. Check off items as you go — your progress is saved directly into this file so it travels with the document when shared or moved.</p>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:0;">
+            <strong>Save Progress</strong> writes your checked items into this HTML file on disk. The first time you save, you'll be prompted to select this file — after that, saves happen silently. <strong>Reset All</strong> clears every checkbox. Use <strong>Ctrl+S</strong> as a shortcut to save at any time.
+        </p>
+
+        <div class="setup-steps">
+
+            <details>
+                <summary>
+                    <span class="step-num">0</span>
+                    Prerequisites &amp; Planning
+                </summary>
+                <div class="step-body">
+                    <ul class="checklist">
+                        <li>Revenue Cloud Advanced license provisioned on org (contact your Salesforce AE)</li>
+                        <li>System Administrator profile confirmed for setup user</li>
+                        <li>Sandbox environment prepared (never configure in production first)</li>
+                        <li>Product taxonomy mapped out (bundles vs. simple products, selling models, categories)</li>
+                        <li>Salesforce CLI (<code>sf</code>) installed if using the automation script</li>
+                    </ul>
+                    <div class="warning">
+                        <strong>Important:</strong> <code>ProductType</code> cannot be changed once set on a Product2 record. Plan your taxonomy before touching the org.
+                    </div>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">1</span>
+                    Enable Revenue Lifecycle Management Settings
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Revenue Lifecycle Management Settings</div>
+                    <ul class="checklist">
+                        <li>"Revenue Lifecycle Management Settings" visible in Setup search</li>
+                        <li>All available toggles enabled on the page</li>
+                    </ul>
+                    <div class="warning">
+                        <strong>Not visible?</strong> Your org may not have the RCA license provisioned. Contact your Salesforce Account Executive.
+                    </div>
+                    <a class="doc-link" href="https://help.salesforce.com/s/articleView?id=ind.set_up_revenue_cloud.htm" target="_blank">Salesforce Help: Set Up Revenue Cloud &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">2</span>
+                    Assign Permission Set Licenses (PSLs)
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Users &rarr; [Select User] &rarr; Permission Set License Assignments</div>
+                    <p>Assign PSLs per user role. Each PSL unlocks a set of permission sets.</p>
+                    <p class="step-category">Core (all RCA users)</p>
+                    <ul>
+                        <li><code>Revenue Cloud User</code></li>
+                        <li><code>Revenue Lifecycle Management User</code></li>
+                    </ul>
+                    <p class="step-category">Product Catalog</p>
+                    <ul>
+                        <li><code>Product Catalog Mgmt Administrator</code></li>
+                        <li><code>Product Catalog Mgmt Viewer</code></li>
+                    </ul>
+                    <p class="step-category">Pricing</p>
+                    <ul>
+                        <li><code>Salesforce Pricing Design Time</code></li>
+                        <li><code>Salesforce Pricing Run Time</code></li>
+                    </ul>
+                    <p class="step-category">Configuration &amp; Rules</p>
+                    <ul>
+                        <li><code>Product Configuration User</code></li>
+                        <li><code>Business Rules Engine Designer</code></li>
+                        <li><code>Business Rules Engine Runtime</code></li>
+                        <li><code>Context Service Admin</code> / <code>Context Service Runtime</code></li>
+                    </ul>
+                    <p class="step-category">Optional (assign as needed)</p>
+                    <ul>
+                        <li><code>Contract Lifecycle Mgmt User</code> &mdash; Contract managers</li>
+                        <li><code>Document Builder User</code> &mdash; Quote document generation</li>
+                        <li><code>Fulfillment User PSL</code> &mdash; Order fulfillment</li>
+                        <li><code>Billing</code> &mdash; Billing &amp; invoicing</li>
+                        <li><code>Usage Management Design Time / Run Time</code> &mdash; Usage-based pricing</li>
+                        <li><code>Rate Management Design Time / Run Time</code> &mdash; Rate cards</li>
+                        <li><code>Wallet Management User</code> &mdash; Credits/wallet features</li>
+                        <li><code>Data Pipelines Base User</code> &mdash; Data sync operations</li>
+                    </ul>
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>PSL assignments verified for all target users (admin + end users)</li>
+                    </ul>
+                    <a class="doc-link" href="https://help.salesforce.com/s/articleView?id=ind.revenue_cloud_permission_sets_table.htm" target="_blank">Salesforce Help: Revenue Cloud Permission Sets &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">3</span>
+                    Assign Permission Sets
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Users &rarr; [Select User] &rarr; Permission Set Assignments</div>
+                    <p>After PSLs are assigned, grant specific permission sets per functional role:</p>
+                    <p class="step-category">Quoting &amp; Orders</p>
+                    <ul>
+                        <li><code>Assetize Order</code></li>
+                        <li><code>Create Orders from Quotes</code></li>
+                        <li><code>PlaceOrder API</code></li>
+                        <li><code>Calculate Prices/Taxes APIs</code></li>
+                        <li><code>Price and Tax Calculation for Quoting</code></li>
+                    </ul>
+                    <p class="step-category">Product Catalog</p>
+                    <ul>
+                        <li><code>Product Catalog Mgmt Designer</code> / <code>Viewer</code></li>
+                        <li><code>Product Discovery Admin</code> / <code>User</code></li>
+                    </ul>
+                    <p class="step-category">Pricing</p>
+                    <ul>
+                        <li><code>Salesforce Pricing Admin</code></li>
+                        <li><code>Salesforce Pricing Manager</code></li>
+                    </ul>
+                    <p class="step-category">Rules Engine</p>
+                    <ul>
+                        <li><code>Advanced Configurator Designer</code></li>
+                        <li><code>Rule Engine Designer</code> / <code>Advanced Designer</code></li>
+                        <li><code>Rule Engine Runtime</code> / <code>Access to Rules Engine Runtime</code></li>
+                    </ul>
+                    <p class="step-category">Contract &amp; Document</p>
+                    <ul>
+                        <li><code>CLM Admin User</code> / <code>CLM Runtime User</code></li>
+                        <li><code>DocGen Designer</code> / <code>DocGen User</code></li>
+                    </ul>
+                    <p class="step-category">Orchestration &amp; Tax</p>
+                    <ul>
+                        <li><code>DRO Admin User</code> / <code>DRO Order Submit Initiate User</code></li>
+                        <li><code>Tax Admin</code> / <code>Tax Configuration</code></li>
+                    </ul>
+                    <div class="critical" style="margin-top:0.8rem;">
+                        <strong>Security Warning:</strong> Some RCA Permission Sets grant <code>Run Flows</code> or <code>Manage Flows</code>, giving full control over ALL flows in the org. Use <strong>Permission Set Groups with Muting Permission Sets</strong> to remove risky permissions for non-admin users.
+                    </div>
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>Permission Set security audit completed (Run Flows risk reviewed)</li>
+                        <li>Muting Permission Sets configured for non-admin users (if applicable)</li>
+                    </ul>
+                    <a class="doc-link" href="https://help.salesforce.com/s/articleView?id=ind.revenue_cloud_permission_sets_table.htm" target="_blank">Salesforce Help: Revenue Cloud Permission Sets &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">4</span>
+                    Enable Feature Settings
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Revenue Settings</div>
+                    <ul class="checklist">
+                        <li>Enable Quotes (check "Enable Quotes")</li>
+                        <li>Allow quote creation without opportunities (optional)</li>
+                        <li>Enable negative and zero order quantities</li>
+                        <li>Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+                    </ul>
+                    <div class="setup-path">Setup &rarr; Salesforce Pricing</div>
+                    <ul class="checklist">
+                        <li>Toggle ON "Salesforce Pricing"</li>
+                        <li>Enable Context Definitions</li>
+                    </ul>
+                    <p><strong>Additional Feature Toggles:</strong></p>
+                    <ul class="checklist">
+                        <li>Contract Lifecycle Management (Setup &rarr; CLM Settings)</li>
+                        <li>Document Generation (Setup &rarr; DocGen Settings)</li>
+                        <li>Dynamic Revenue Orchestrator (Setup &rarr; DRO Settings)</li>
+                        <li>Product Schedules (Setup &rarr; Product Schedule Settings)</li>
+                    </ul>
+                    <a class="doc-link" href="https://help.salesforce.com/s/articleView?id=ind.set_up_revenue_cloud.htm" target="_blank">Salesforce Help: Set Up Revenue Cloud &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">5</span>
+                    Create Required Custom Fields
+                </summary>
+                <div class="step-body">
+                    <p>Create a <code>ConstraintEngineNodeStatus</code> field (Long Text Area, 5000 chars) on each of the following objects. This hidden field stores engine processing data:</p>
+                    <ul class="checklist">
+                        <li><code>ConstraintEngineNodeStatus</code> on <strong>QuoteLineItem</strong> (Long Text Area, 5000)</li>
+                        <li><code>ConstraintEngineNodeStatus</code> on <strong>OrderItem</strong> (Long Text Area, 5000)</li>
+                        <li><code>ConstraintEngineNodeStatus</code> on <strong>AssetActionSource</strong> (Long Text Area, 5000)</li>
+                        <li>Fields deployed and verified</li>
+                    </ul>
+                    <div class="critical">
+                        <strong>Order matters:</strong> Create these fields BEFORE enabling Advanced Configuration Rules in Revenue Settings. Without them, the rules engine fails silently.
+                    </div>
+                    <a class="doc-link" href="https://developer.salesforce.com/docs/atlas.en-us.revenue_lifecycle_management_dev_guide.meta/revenue_lifecycle_management_dev_guide/pricing_std_objects_parent.htm" target="_blank">Developer Docs: Pricing Standard Objects &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">6</span>
+                    Update Page Layouts
+                </summary>
+                <div class="step-body">
+                    <p><strong>Product2 Layout</strong> &mdash; Add fields:</p>
+                    <ul>
+                        <li><code>ConfigurableDuringSale</code>, <code>DisplayUrl</code>, <code>ProductType</code></li>
+                        <li><code>QuantityUnitOfMeasure</code>, <code>TaxPolicy</code>, <code>IsAssetizable</code></li>
+                    </ul>
+                    <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
+
+                    <p style="margin-top:0.8rem;"><strong>PricebookEntry Layout</strong> &mdash; Add fields:</p>
+                    <ul>
+                        <li><code>ProductSellingModel</code></li>
+                        <li><code>IsDerived</code></li>
+                    </ul>
+
+                    <p style="margin-top:0.8rem;"><strong>Quote Layout</strong> &mdash; Add fields:</p>
+                    <ul>
+                        <li><code>Account</code> (for Quote)</li>
+                    </ul>
+
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>Product2 layout updated with all 6 RCA fields</li>
+                        <li>Product2 related lists added</li>
+                        <li>PricebookEntry layout updated</li>
+                        <li>Quote layout updated</li>
+                    </ul>
+                    <a class="doc-link" href="https://help.salesforce.com/s/articleView?id=ind.set_up_revenue_cloud.htm" target="_blank">Salesforce Help: Set Up Revenue Cloud &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">7</span>
+                    Configure Pricing Procedures
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Expression Set Templates</div>
+                    <div class="critical">
+                        <strong>Do NOT build from scratch.</strong> Always clone from Salesforce-provided templates. Missing required elements will cause pricing to fail silently.
+                    </div>
+                    <ol>
+                        <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> &rarr; Clone</li>
+                        <li>Find <strong>"Product Discovery Pricing Procedure"</strong> &rarr; Clone</li>
+                        <li>Set activation dates on both cloned procedures</li>
+                        <li>Enable both procedures</li>
+                    </ol>
+                    <p style="margin-top:0.8rem;"><strong>Context Definitions</strong> (if custom fields needed in pricing):</p>
+                    <ol>
+                        <li>Create extended versions of standard context definitions</li>
+                        <li>Add custom fields to the appropriate section (Sales Transaction or Sales Transaction Item)</li>
+                        <li>Map to correct Quote or QuoteLineItem fields</li>
+                    </ol>
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>Default Pricing Procedure cloned and enabled</li>
+                        <li>Discovery Pricing Procedure cloned and enabled</li>
+                        <li>Context Definitions extended (if applicable)</li>
+                        <li>Decision Tables configured for lookup-based pricing (if applicable)</li>
+                    </ul>
+                    <a class="doc-link" href="https://developer.salesforce.com/docs/atlas.en-us.revenue_lifecycle_management_dev_guide.meta/revenue_lifecycle_management_dev_guide/pricing_std_objects_parent.htm" target="_blank">Developer Docs: Pricing Standard Objects &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">8</span>
+                    Set Up Product Catalog
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">App Launcher &rarr; Product Catalog Management</div>
+                    <ol>
+                        <li>Create <code>ProductSellingModels</code> (One-Time, Term-Defined, Evergreen, Usage-Based as needed)</li>
+                        <li>Create a <code>ProductCatalog</code> record</li>
+                        <li>Create <code>ProductCategory</code> hierarchy</li>
+                        <li>Create <code>Product2</code> records with correct <code>ProductType</code> (Simple or Bundle)</li>
+                        <li>Set <code>IsActive = true</code> on all products</li>
+                        <li>Assign <code>ProductSellingModelOptions</code> to products</li>
+                        <li>For bundles: configure components via the <strong>Structure tab</strong></li>
+                        <li>Run <strong>"Validate Product Definition"</strong> on all bundles</li>
+                        <li>Create <code>PricebookEntries</code> with List Prices</li>
+                        <li>Link <code>ProductSellingModel</code> on each PricebookEntry</li>
+                    </ol>
+                    <div class="tip">
+                        <strong>Tip:</strong> One product can have multiple ProductSellingModelOptions, allowing you to sell the same product as one-time OR subscription without duplicate SKUs.
+                    </div>
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>Product Selling Models created</li>
+                        <li>Catalog and category hierarchy created</li>
+                        <li>Products created with correct ProductType</li>
+                        <li>Selling model options assigned</li>
+                        <li>Bundles validated (if applicable)</li>
+                        <li>Price book entries created and linked to selling models</li>
+                    </ul>
+                    <a class="doc-link" href="https://developer.salesforce.com/docs/atlas.en-us.revenue_lifecycle_management_dev_guide.meta/revenue_lifecycle_management_dev_guide/pcm_std_objects_parent.htm" target="_blank">Developer Docs: Product Catalog Management Objects &rarr;</a>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">9</span>
+                    Sync Pricing Data
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Sync Pricing Data &rarr; Execute</div>
+                    <div class="critical">
+                        <strong>CRITICAL:</strong> You MUST run "Sync Pricing Data" after EVERY pricing configuration change &mdash; new products, new price book entries, pricing procedure changes, decision table updates. Forgetting this is the #1 cause of "my pricing isn't working" issues.
+                    </div>
+                    <ul class="checklist">
+                        <li>Pricing Data sync executed successfully</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">10</span>
+                    Refresh Decision Tables
+                </summary>
+                <div class="step-body">
+                    <div class="setup-path">Setup &rarr; Decision Tables &rarr; Refresh</div>
+                    <p>Ensures new pricing data is available for quoting operations. Decision tables cache pricing rules and must be refreshed after syncing pricing data.</p>
+                    <ul class="checklist">
+                        <li>Decision Tables refreshed</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    <span class="step-num">11</span>
+                    Test End-to-End
+                </summary>
+                <div class="step-body">
+                    <p>Verify the full quoting flow works:</p>
+                    <ol>
+                        <li>Navigate to <strong>Quotes &rarr; New</strong></li>
+                        <li>Populate required fields (Quote Name, Account)</li>
+                        <li>Click <strong>Browse Catalog</strong></li>
+                        <li>Select products from your catalog</li>
+                        <li>Verify pricing calculates correctly</li>
+                        <li>Test bundle configuration (if applicable)</li>
+                        <li>Generate a test order from the quote</li>
+                    </ol>
+                    <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
+                        <li>Test quote created &mdash; pricing calculates correctly</li>
+                        <li>Bundle configuration works (if applicable)</li>
+                        <li>Test order generated from quote</li>
+                        <li>End-to-end quote-to-order flow verified</li>
+                    </ul>
+                    <a class="doc-link" href="https://trailhead.salesforce.com/content/learn/trails/configure-revenue-cloud" target="_blank">Trailhead: Configure Revenue Cloud &rarr;</a>
+                </div>
+            </details>
+
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Post-Setup Governance</h3>
+        <ul class="checklist">
+            <li>Permission Set assignments documented per role</li>
+            <li>Pricing sync process documented (must run after every pricing config change)</li>
+            <li>Sandbox refresh and deployment strategy defined</li>
+            <li>Change management process established for production rollout</li>
+        </ul>
+
+        <div class="tip" style="margin-top:1rem;">
+            <strong>Official Documentation</strong>
+            <ul style="margin:0.5rem 0 0; padding-left:1.2rem; font-size:0.88rem;">
+                <li><a href="https://help.salesforce.com/s/articleView?id=ind.set_up_revenue_cloud.htm" target="_blank">Set Up Revenue Cloud</a></li>
+                <li><a href="https://help.salesforce.com/s/articleView?id=ind.revenue_cloud_permission_sets_table.htm" target="_blank">Permission Sets Reference</a></li>
+                <li><a href="https://help.salesforce.com/s/articleView?id=ind.data_model_overview.htm" target="_blank">Revenue Cloud Data Model</a></li>
+                <li><a href="https://developer.salesforce.com/docs/platform/data-models/guide/revenue-cloud-category.html" target="_blank">Data Model Gallery</a></li>
+                <li><a href="https://trailhead.salesforce.com/content/learn/trails/configure-revenue-cloud" target="_blank">Trailhead: Configure Revenue Cloud</a></li>
+                <li><a href="https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/pdf/revenue_lifecycle_management_dev_guide.pdf" target="_blank">Developer Guide (PDF)</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>Salesforce Revenue Cloud Advanced Setup Guide &bull; Generated February 2026</p>
+    <p>Part of the <strong>Salesforce Knowledge Base</strong> &bull; For internal use</p>
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Pricing Architecture SVG Diagram
+    (function() {
+        const target = document.getElementById('pricingArchDiagram');
+        if (!target) return;
+
+        const W = 720, H = 380, PAD = 20;
+        const colors = {
+            blue: '#0176d3', dark: '#032d60', green: '#2e844a',
+            purple: '#730394', teal: '#118ab2', bg: '#f8f9ff'
+        };
+
+        const boxes = [
+            { id: 'proc', label: 'PricingProcedure', x: 260, y: 20, w: 200, h: 36, color: colors.dark },
+            { id: 'list', label: 'PricingElement: List Price', sub: 'pulls from PricebookEntry', x: 80, y: 90, w: 240, h: 48, color: colors.blue },
+            { id: 'disc', label: 'PricingElement: Discount', sub: 'applies adjustments', x: 400, y: 90, w: 240, h: 48, color: colors.blue },
+            { id: 'surch', label: 'PricingElement: Surcharge', sub: 'adds charges', x: 80, y: 155, w: 240, h: 48, color: colors.blue },
+            { id: 'form', label: 'FormulaElement', sub: 'custom calculations', x: 400, y: 155, w: 240, h: 48, color: colors.teal },
+            { id: 'dt', label: 'DecisionTable', sub: 'lookup-based logic', x: 260, y: 220, w: 200, h: 48, color: colors.purple },
+            { id: 'ctx', label: 'ContextDefinition', sub: 'defines available data fields', x: 160, y: 300, w: 200, h: 48, color: colors.green },
+            { id: 'st', label: 'Sales Transaction', sub: 'Quote fields', x: 420, y: 300, w: 200, h: 48, color: colors.green },
+        ];
+
+        const connections = [
+            { from: 'proc', to: 'list' },
+            { from: 'proc', to: 'disc' },
+            { from: 'proc', to: 'surch' },
+            { from: 'proc', to: 'form' },
+            { from: 'proc', to: 'dt' },
+            { from: 'ctx', to: 'proc', dashed: true, label: 'feeds into' },
+            { from: 'ctx', to: 'st', label: 'maps to' },
+        ];
+
+        function center(b) { return { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
+        function boxById(id) { return boxes.find(b => b.id === id); }
+
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:${colors.bg};border-radius:8px;border:1px solid #d8dde6;">`;
+        svg += `<defs><marker id="ah" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker>`;
+        svg += `<marker id="ahd" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="${colors.green}"/></marker></defs>`;
+
+        // Draw connections
+        connections.forEach(c => {
+            const from = boxById(c.from), to = boxById(c.to);
+            const fc = center(from), tc = center(to);
+            const stroke = c.dashed ? colors.green : '#64748b';
+            const marker = c.dashed ? 'url(#ahd)' : 'url(#ah)';
+            const dash = c.dashed ? ' stroke-dasharray="5,4"' : '';
+
+            let x1 = fc.x, y1 = fc.y, x2 = tc.x, y2 = tc.y;
+            // Adjust to edge of boxes
+            if (y1 < y2) { y1 = from.y + from.h; y2 = to.y; }
+            else if (y1 > y2) { y1 = from.y; y2 = to.y + to.h; }
+            if (Math.abs(y1 - y2) < 5) {
+                if (x1 < x2) { x1 = from.x + from.w; x2 = to.x; }
+                else { x1 = from.x; x2 = to.x + to.w; }
+            }
+
+            svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="1.5"${dash} marker-end="${marker}"/>`;
+            if (c.label) {
+                const lx = (x1 + x2) / 2, ly = (y1 + y2) / 2 - 5;
+                svg += `<text x="${lx}" y="${ly}" text-anchor="middle" font-size="10" fill="${stroke}" font-style="italic">${c.label}</text>`;
+            }
+        });
+
+        // Draw boxes
+        boxes.forEach(b => {
+            svg += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" fill="${b.color}" opacity="0.9"/>`;
+            const ty = b.sub ? b.y + b.h / 2 - 5 : b.y + b.h / 2 + 4;
+            svg += `<text x="${b.x + b.w / 2}" y="${ty}" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="'Segoe UI',sans-serif">${b.label}</text>`;
+            if (b.sub) {
+                svg += `<text x="${b.x + b.w / 2}" y="${ty + 14}" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-size="10" font-family="'Segoe UI',sans-serif">${b.sub}</text>`;
+            }
+        });
+
+        svg += '</svg>';
+        target.innerHTML = svg;
+    })();
+
+    // Interactive Checklists — saves state directly into the file on disk
+    (function() {
+        const section = document.getElementById('checklist');
+        const items = document.querySelectorAll('.checklist li');
+        let fileHandle = null;
+        const DB_NAME = 'rca-setup-checklist';
+        const STORE = 'handles';
+        const KEY = 'fileHandle';
+
+        // IndexedDB helpers to persist the file handle across sessions
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, 1);
+                req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function storeHandle(handle) {
+            const db = await openDB();
+            const tx = db.transaction(STORE, 'readwrite');
+            tx.objectStore(STORE).put(handle, KEY);
+        }
+
+        async function loadHandle() {
+            try {
+                const db = await openDB();
+                return new Promise(resolve => {
+                    const tx = db.transaction(STORE, 'readonly');
+                    const req = tx.objectStore(STORE).get(KEY);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch { return null; }
+        }
+
+        async function clearHandle() {
+            try {
+                const db = await openDB();
+                const tx = db.transaction(STORE, 'readwrite');
+                tx.objectStore(STORE).delete(KEY);
+            } catch {}
+            fileHandle = null;
+        }
+
+        // Try to restore handle from IndexedDB on load
+        loadHandle().then(h => { if (h) fileHandle = h; });
+
+        // Build toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'checklist-toolbar';
+        toolbar.innerHTML = '<span class="progress-text"></span>'
+            + '<button class="btn-save" title="Save progress to this file (Ctrl+S)">Save Progress</button>'
+            + '<button class="btn-reset" title="Uncheck all items">Reset All</button>';
+        const intro = section.querySelector('p');
+        intro.parentNode.insertBefore(toolbar, intro.nextSibling);
+
+        const progressEl = toolbar.querySelector('.progress-text');
+        const saveBtn = toolbar.querySelector('.btn-save');
+        const resetBtn = toolbar.querySelector('.btn-reset');
+
+        // Inject checkboxes, restore state from data-checked attributes
+        items.forEach(li => {
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = li.hasAttribute('data-checked');
+            if (cb.checked) li.classList.add('checked');
+
+            cb.addEventListener('change', () => {
+                li.classList.toggle('checked', cb.checked);
+                if (cb.checked) li.setAttribute('data-checked', '');
+                else li.removeAttribute('data-checked');
+                updateProgress();
+            });
+
+            li.prepend(cb);
+            li.addEventListener('click', (e) => {
+                if (e.target === cb || e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
+                cb.checked = !cb.checked;
+                cb.dispatchEvent(new Event('change'));
+            });
+        });
+
+        function updateProgress() {
+            const total = items.length;
+            const done = section.querySelectorAll('.checklist li.checked').length;
+            progressEl.textContent = done + ' / ' + total + ' completed';
+            progressEl.classList.toggle('all-done', done === total && total > 0);
+        }
+        updateProgress();
+
+        // Build a clean HTML snapshot (no injected checkboxes/toolbar/classes)
+        function buildCleanHTML() {
+            const checkboxes = document.querySelectorAll('.checklist li input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.remove());
+            toolbar.remove();
+            items.forEach(li => li.classList.remove('checked'));
+
+            const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+            // Restore the live page immediately
+            items.forEach(li => {
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = li.hasAttribute('data-checked');
+                if (cb.checked) li.classList.add('checked');
+                cb.addEventListener('change', () => {
+                    li.classList.toggle('checked', cb.checked);
+                    if (cb.checked) li.setAttribute('data-checked', '');
+                    else li.removeAttribute('data-checked');
+                    updateProgress();
+                });
+                li.prepend(cb);
+                li.addEventListener('click', (e) => {
+                    if (e.target === cb || e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
+                    cb.checked = !cb.checked;
+                    cb.dispatchEvent(new Event('change'));
+                });
+            });
+            intro.parentNode.insertBefore(toolbar, intro.nextSibling);
+            return html;
+        }
+
+        // Verify or request write permission on a stored handle
+        async function verifyPermission(handle) {
+            if (await handle.queryPermission({ mode: 'readwrite' }) === 'granted') return true;
+            if (await handle.requestPermission({ mode: 'readwrite' }) === 'granted') return true;
+            return false;
+        }
+
+        // Save handler — writes directly to the file on disk
+        async function saveProgress() {
+            const html = buildCleanHTML();
+
+            try {
+                // Try stored handle first, verify permission
+                if (fileHandle) {
+                    const ok = await verifyPermission(fileHandle);
+                    if (!ok) fileHandle = null; // permission denied, re-prompt with picker
+                }
+
+                // No handle yet — ask user to pick the file once
+                if (!fileHandle) {
+                    fileHandle = await window.showSaveFilePicker({
+                        suggestedName: 'rca-setup-guide.html',
+                        types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }]
+                    });
+                    await storeHandle(fileHandle); // persist for future sessions
+                }
+
+                const writable = await fileHandle.createWritable();
+                await writable.write(html);
+                await writable.close();
+
+                // Brief visual confirmation
+                saveBtn.textContent = 'Saved!';
+                saveBtn.style.background = 'var(--sf-blue)';
+                setTimeout(() => {
+                    saveBtn.textContent = 'Save Progress';
+                    saveBtn.style.background = '';
+                }, 1500);
+            } catch (err) {
+                if (err.name === 'AbortError') return; // user cancelled picker
+                // If stored handle went stale, clear it and retry
+                if (fileHandle && err.name === 'NotAllowedError') {
+                    await clearHandle();
+                    return saveProgress();
+                }
+                alert('Save failed: ' + err.message);
+            }
+        }
+
+        saveBtn.addEventListener('click', saveProgress);
+
+        // Ctrl+S / Cmd+S shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveProgress();
+            }
+        });
+
+        // Reset: uncheck everything
+        resetBtn.addEventListener('click', () => {
+            if (!confirm('Reset all checkboxes? This cannot be undone.')) return;
+            items.forEach(li => {
+                li.removeAttribute('data-checked');
+                li.classList.remove('checked');
+                const cb = li.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = false;
+            });
+            updateProgress();
+        });
+    })();
+</script>
+
+</body>
+</html>
