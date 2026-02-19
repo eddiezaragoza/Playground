@@ -384,12 +384,113 @@
             box-shadow: 0 6px 16px rgba(3, 45, 96, 0.5);
         }
 
+        /* Print Button */
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.4rem;
+            background: var(--sf-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .print-btn:hover { background: var(--sf-blue); transform: translateY(-1px); }
+        .print-btn:active { transform: translateY(0); }
+
+        .print-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .print-bar-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .print-bar-bottom {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0 0.5rem;
+        }
+
         @media print {
-            body { background: white; font-size: 11pt; }
-            .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
-            .nav-bar { display: none; }
-            .back-to-top { display: none; }
+            body { background: white !important; font-size: 10pt; line-height: 1.45; color: #000; }
+            .container { max-width: 100%; padding: 0; margin: 0; }
+
+            /* Hide interactive elements */
+            .nav-bar, .back-to-top, .print-btn, .print-bar-top, .print-bar-bottom { display: none !important; }
+
+            /* Hero */
+            .hero {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 1.5rem 1rem 1rem;
+                break-after: avoid;
+            }
+            .hero h1 { font-size: 1.8rem; }
+            .hero .subtitle { font-size: 1rem; }
+
+            /* Sections */
+            .section {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                border-radius: 0;
+                padding: 1rem 1.2rem;
+                margin-bottom: 0.8rem;
+                break-inside: avoid;
+            }
+            .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; padding-bottom: 0.3rem; }
+            .section h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; }
+            .section h4 { font-size: 0.95rem; margin: 0.8rem 0 0.3rem; }
+
+            /* Tables */
+            table { font-size: 8.5pt; }
+            th { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0.4rem 0.5rem; }
+            td { padding: 0.3rem 0.5rem; }
+            tr { break-inside: avoid; }
+
+            /* SVG diagrams */
+            svg { max-width: 100%; height: auto; break-inside: avoid; }
+            .diagram, .diagram-light { break-inside: avoid; }
+
+            /* Grids — stack on print to avoid clipping */
+            .vs-grid, .two-col { grid-template-columns: 1fr; gap: 0.5rem; }
+            .three-col { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+            .vs-card { break-inside: avoid; }
+            .feature-card { break-inside: avoid; }
+
+            /* Callouts */
+            .callout {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                break-inside: avoid;
+                padding: 0.6rem 0.8rem;
+                margin: 0.5rem 0;
+            }
+
+            /* Code */
+            code { font-size: 8pt; }
+            pre { font-size: 7.5pt; break-inside: avoid; }
+
+            /* Links — show URL after link text */
+            a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 7.5pt; color: #666; word-break: break-all; }
+            .nav-links a::after { content: none; }
+
+            /* Footer */
+            .footer { font-size: 8.5pt; break-before: avoid; }
+
+            /* Reduce whitespace globally */
+            .section p { margin-bottom: 0.3rem; }
+            .section ul, .section ol { margin-bottom: 0.5rem; }
+            .section li { margin-bottom: 0.2rem; }
+
+            /* Page margins */
+            @page { margin: 0.6in 0.5in; }
         }
     </style>
 </head>
@@ -416,6 +517,7 @@
         </div>
         <div class="nav-links">
             <a href="#what-is-rca" class="rca">What is RCA</a>
+            <a href="#licensing" class="rca">Licensing</a>
             <a href="#architecture" class="rca">Architecture</a>
             <a href="#data-model" class="rca">Data Model</a>
             <a href="#cpq-mapping" class="cpq">CPQ → RCA Mapping</a>
@@ -426,6 +528,7 @@
             <a href="#quoting" class="rca">Quoting</a>
             <a href="#quote-line-groups" class="rca">Quote Line Groups</a>
             <a href="#orders-assets" class="rca">Orders &amp; Assets</a>
+            <a href="#contracting" class="rca">Contracting &amp; CLM</a>
             <a href="#billing" class="rca">Billing</a>
             <a href="#omniscripts" class="rca">OmniScripts</a>
             <a href="#cpq-deep-dive" class="cpq">CPQ Deep Dive</a>
@@ -434,6 +537,14 @@
             <a href="#enhancements" class="rca">Recent Updates</a>
             <a href="#resources" class="rca">Resources</a>
         </div>
+    </div>
+
+    <!-- PRINT BUTTON (TOP) -->
+    <div class="print-bar-top">
+        <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Print to PDF
+        </button>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
@@ -561,6 +672,117 @@
                     <li>MRR/ARR Reporting</li>
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- LICENSING -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="section" id="licensing">
+        <h2>Licensing: What's Included vs. What's Extra</h2>
+
+        <p>Revenue Cloud is sold in <strong>three tiers</strong>. Understanding which features require which license is critical for scoping implementations and setting client expectations.</p>
+
+        <div class="callout callout-blue">
+            <strong>Prerequisite</strong>
+            All Revenue Cloud editions require an active <strong>Sales Cloud</strong> or <strong>Service Cloud</strong> license as a prerequisite.
+        </div>
+
+        <h3>Revenue Cloud Editions</h3>
+        <table>
+            <tr><th>Edition</th><th>List Price</th><th>What's Included</th></tr>
+            <tr>
+                <td><strong>Revenue Cloud Growth</strong></td>
+                <td>$150/user/month</td>
+                <td>Core CPQ (configure, price, quote), product catalog, pricing engine, product configurator, basic transaction management, OmniStudio</td>
+            </tr>
+            <tr>
+                <td><strong>Revenue Cloud Advanced</strong></td>
+                <td>$200/user/month</td>
+                <td>Everything in Growth <strong>+</strong> Contract Lifecycle Management (CLM), Dynamic Revenue Orchestrator (DRO), order orchestration &amp; fulfillment, basic/API-driven invoicing, Business Rules Engine</td>
+            </tr>
+            <tr>
+                <td><strong>Revenue Cloud Billing</strong></td>
+                <td>Custom pricing (contact SF)</td>
+                <td>Add-on to Growth or Advanced — full billing, invoicing, payments, usage rating, AR, accounting subledger</td>
+            </tr>
+        </table>
+
+        <p>There is also a standalone <strong>Salesforce Contracts</strong> edition at <strong>$50/user/month</strong> for CLM-only use cases (document generation, clause management, e-signatures) without the full CPQ suite.</p>
+
+        <h3>What's in Advanced vs. What Requires Billing</h3>
+
+        <div class="two-col">
+            <div>
+                <h4>Included in Advanced ($200/user/mo)</h4>
+                <ul>
+                    <li>Product catalog management &amp; configurator</li>
+                    <li>Pricing procedures, decision tables, price adjustment schedules</li>
+                    <li>Quoting, approvals, document generation (DocGen)</li>
+                    <li>Order management &amp; DRO</li>
+                    <li>Asset lifecycle (create, amend, renew, cancel)</li>
+                    <li>Contract lifecycle management (CLM)</li>
+                    <li>Clause management &amp; contracted pricing</li>
+                    <li>OmniStudio (OmniScripts, FlexCards, DataRaptors)</li>
+                    <li>Business Rules Engine</li>
+                    <li>Basic/API-driven invoicing</li>
+                    <li>ASC 606 revenue scheduling</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Requires Billing Add-On</h4>
+                <ul>
+                    <li>Full UI-driven invoice generation with PDF &amp; email</li>
+                    <li>Milestone-based &amp; scheduled invoicing</li>
+                    <li>Usage rating &amp; consumption management</li>
+                    <li>Digital wallet / prepaid credits</li>
+                    <li>Payment gateway integration (ACH, credit cards)</li>
+                    <li>Credit memo &amp; refund management</li>
+                    <li>Accounts receivable (collections, write-offs)</li>
+                    <li>Accounting subledger (chart of accounts, journal entries)</li>
+                    <li>Tax engine integration</li>
+                    <li>Billing dispute resolution (Spring '26)</li>
+                    <li>Statement of Account (Spring '26)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="callout callout-orange">
+            <strong>Key Distinction: "Basic Invoicing" in Advanced</strong>
+            Revenue Cloud Advanced includes basic invoicing, but it's <strong>API-centric</strong> — you can generate invoices programmatically and configure basic invoice settings. If your business needs <strong>full UI invoicing</strong> (PDF generation, email, milestones, usage billing, previews from the UI, payment processing), you need the <strong>Billing add-on</strong>.
+        </div>
+
+        <h3>OmniStudio Licensing</h3>
+        <p><strong>OmniStudio is included with Revenue Cloud</strong> (both Growth and Advanced). It is not a separate purchase. When Revenue Cloud is provisioned, the following Permission Set Licenses (PSLs) are automatically provisioned:</p>
+        <ul>
+            <li><strong>OmniStudio</strong> — OmniScripts, FlexCards/FlexPages, DataRaptors, Integration Procedures</li>
+            <li><strong>OmniStudio Document Generation</strong> — DocGen Designer and DocGen User roles</li>
+            <li><strong>Business Rules Engine</strong> — Designer and Runtime PSLs</li>
+            <li><strong>Data Pipelines Base User</strong> — required for billing, usage data, or DRO features</li>
+            <li><strong>Clause Management</strong> — part of CLM (Advanced only)</li>
+        </ul>
+
+        <div class="callout callout-purple">
+            <strong>Standard vs Industries OmniStudio</strong>
+            Revenue Cloud provisions the <strong>standard OmniStudio runtime</strong> — not the Industries/Vlocity managed package version. If you need Industries CPQ (Communications, Media, Energy) or industry-specific OmniStudio features, those require separate Industries Cloud licensing.
+        </div>
+
+        <h3>Comparison: Old CPQ+Billing vs New Revenue Cloud Licensing</h3>
+        <table>
+            <tr><th>Aspect</th><th>Old Model (CPQ + Billing)</th><th>New Model (Revenue Cloud)</th></tr>
+            <tr><td>Architecture</td><td>Managed packages (SBQQ__, blng__)</td><td>Built on-core (native platform)</td></tr>
+            <tr><td>Base CPQ</td><td>Salesforce CPQ: ~$75/user/mo</td><td>Revenue Cloud Growth: $150/user/mo</td></tr>
+            <tr><td>Advanced CPQ</td><td>Salesforce CPQ+: ~$150/user/mo</td><td>Revenue Cloud Advanced: $200/user/mo</td></tr>
+            <tr><td>Billing</td><td>Separate managed package add-on (required CPQ+)</td><td>Separate on-core SKU (layers on Growth or Advanced)</td></tr>
+            <tr><td>CLM</td><td>Not included — required Conga, DocuSign CLM, etc.</td><td>Natively included in Advanced</td></tr>
+            <tr><td>Order Orchestration</td><td>Not included</td><td>Included in Advanced (DRO)</td></tr>
+            <tr><td>OmniStudio</td><td>Not included</td><td>Included with Revenue Cloud</td></tr>
+            <tr><td>Current Status</td><td>End of Sale — no new customers, no new features</td><td>Actively sold and developed (3x/year releases)</td></tr>
+        </table>
+
+        <div class="callout callout-green">
+            <strong>Bottom Line</strong>
+            The new model bundles significantly more functionality (CLM, DRO, OmniStudio, advanced catalog) into the base license at a higher per-user price. The old model was more modular (buy just CPQ at $75, add Billing separately), but required third-party tools for CLM and orchestration. For most implementations, <strong>Revenue Cloud Advanced</strong> is the recommended starting point. Add <strong>Billing</strong> only if you need full invoicing, payments, usage rating, or AR.
         </div>
     </div>
 
@@ -1859,19 +2081,196 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- CONTRACTING, RENEWALS & AMENDMENTS -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="section" id="contracting">
+        <h2>Contracting, Renewals &amp; Amendments</h2>
+
+        <div class="callout callout-blue">
+            <strong>The Big Shift: Contract-Centric → Asset-Centric</strong>
+            In CPQ, the lifecycle was <strong>Quote → Order → Contract → Subscription</strong>, and all lifecycle operations (amend, renew) went through the Contract. In RCA, the lifecycle is <strong>Quote → Order → Asset</strong>, and all lifecycle operations go through <strong>Assets via the Managed Assets component</strong>. The Contract is still used for legal/commercial purposes, but it is no longer the required gateway for lifecycle operations.
+        </div>
+
+        <h3>CPQ vs RCA Lifecycle Flow</h3>
+        <div class="two-col">
+            <div>
+                <h4>CPQ (Legacy)</h4>
+                <p>Quote → Order → <strong>Contract</strong> → Subscription</p>
+                <ul>
+                    <li>The Contract was the central operational hub</li>
+                    <li>Subscriptions (<code>SBQQ__Subscription__c</code>) were child records of the Contract</li>
+                    <li>Amendments and renewals went <strong>through</strong> the Contract</li>
+                    <li>You <strong>had to</strong> create a Contract to enable lifecycle operations</li>
+                </ul>
+            </div>
+            <div>
+                <h4>RCA (Modern)</h4>
+                <p>Quote → Order → Activate → <strong>Asset</strong> (with AssetActions &amp; AssetStatePeriods)</p>
+                <ul>
+                    <li>The Asset is the central operational hub</li>
+                    <li>No more Subscription records — everything is an Asset</li>
+                    <li>Amendments and renewals go through <strong>Assets via Managed Assets</strong></li>
+                    <li>Contracts are <strong>optional</strong> — used for legal/CLM purposes</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Contract Lifecycle Management (CLM)</h3>
+        <p>RCA includes <strong>native CLM</strong> in the Advanced license — no need for third-party tools like Conga or DocuSign CLM. This was a major gap in the CPQ era. Salesforce Contracts is also available standalone at $50/user/month for CLM-only use cases.</p>
+
+        <table>
+            <tr><th>CLM Capability</th><th>Description</th><th>CPQ Equivalent</th></tr>
+            <tr><td>Document Generation (DocGen)</td><td>Generate contracts, proposals, NDAs via OmniStudio templates</td><td>Required third-party (Conga, DocuSign)</td></tr>
+            <tr><td>Clause Management</td><td>Clause libraries, reusable clause templates</td><td>Not available natively</td></tr>
+            <tr><td>Redlining &amp; Negotiation</td><td>Track changes, version control on contract documents</td><td>Not available natively</td></tr>
+            <tr><td>Contract Approvals</td><td>Multi-step approval workflows for contract terms</td><td>Basic approval on Quote only</td></tr>
+            <tr><td>Obligation Tracking</td><td>Track compliance with contract commitments</td><td>Not available natively</td></tr>
+            <tr><td>Contracted Pricing</td><td>Customer-specific negotiated pricing auto-applied during quoting</td><td>SBQQ__ContractedPrice__c</td></tr>
+            <tr><td>Framework Agreements</td><td>Volume commitments, drawdown arrangements</td><td>Custom implementation</td></tr>
+            <tr><td>E-Signature Integration</td><td>Built-in signature workflow</td><td>Required third-party</td></tr>
+        </table>
+
+        <h4>When Is the Contract Object Still Used?</h4>
+        <table>
+            <tr><th>Use Case</th><th>Contract Required?</th><th>Notes</th></tr>
+            <tr><td>Tracking customer install base</td><td>No — use Assets</td><td>Assets replaced Subscriptions for this</td></tr>
+            <tr><td>Initiating amendments</td><td>No — use Managed Assets</td><td>Assets are the starting point</td></tr>
+            <tr><td>Initiating renewals</td><td>No — use Managed Assets</td><td>Assets are the starting point</td></tr>
+            <tr><td>Legal agreement document</td><td><strong>Yes</strong></td><td>Contract holds legal terms, clauses, signatures</td></tr>
+            <tr><td>Contracted/negotiated pricing</td><td><strong>Yes</strong></td><td>Pricing stored on Contract, auto-applied in quotes</td></tr>
+            <tr><td>Framework agreements</td><td><strong>Yes</strong></td><td>Volume commitments, drawdown arrangements</td></tr>
+            <tr><td>Obligation tracking</td><td><strong>Yes</strong></td><td>Track compliance with commitments</td></tr>
+            <tr><td>Grouping assets under an agreement</td><td><strong>Yes</strong></td><td>Via <code>AssetContractRelationship</code> junction</td></tr>
+        </table>
+
+        <h3>Renewals</h3>
+        <p>In CPQ, renewals were initiated from the Contract record via "Renewal Forecast" and "Renewal Quoted" checkboxes. In RCA, renewals are initiated from <strong>Assets</strong> through the Managed Assets component on the Account record.</p>
+
+        <h4>End-to-End Renewal Flow</h4>
+        <ol>
+            <li><strong>Navigate to Managed Assets:</strong> Account record → Managed Assets component shows all active assets. Term-defined assets approaching their end date are candidates.</li>
+            <li><strong>Select assets &amp; click "Renew":</strong> Launches the <strong>ARC Flow</strong> (Amend, Renew, and Cancel Assets) — a prebuilt Screen Flow.</li>
+            <li><strong>Configure renewal terms:</strong>
+                <ul>
+                    <li><strong>Automatic Renewal</strong> — extends at term end based on product's predefined renewal term</li>
+                    <li><strong>Override Renewal Term</strong> — set custom start/end dates for co-termination or non-standard periods</li>
+                </ul>
+            </li>
+            <li><strong>Renewal quote generated:</strong> Carries over pricing from current asset (including price adjustments). Further adjustments can be made.</li>
+            <li><strong>Review, approve, generate order:</strong> Standard quoting process — pricing review, discounting, approvals.</li>
+            <li><strong>Activate order → Assets updated:</strong> New <code>AssetAction</code> (Renewal) logged. New <code>AssetStatePeriod</code> reflects renewed term.</li>
+        </ol>
+
+        <h4>Automatic vs Manual Renewal</h4>
+        <table>
+            <tr><th>Aspect</th><th>Automatic Renewal</th><th>Manual Renewal</th></tr>
+            <tr><td>Configuration</td><td>Set at Product level via ProductSellingModel</td><td>Sales rep initiates from Managed Assets</td></tr>
+            <tr><td>Trigger</td><td>System extends automatically at term end</td><td>Rep clicks "Renew" button on Managed Assets</td></tr>
+            <tr><td>Override</td><td>Can be overridden at Order level per asset</td><td>N/A — always manual</td></tr>
+            <tr><td>Applies to</td><td>Term-defined products (Evergreen products continue inherently)</td><td>Any term-defined asset</td></tr>
+            <tr><td>Custom terms</td><td>Uses predefined renewal term</td><td>Override Renewal Term allows custom dates</td></tr>
+        </table>
+
+        <h4>Co-Termination</h4>
+        <p>Co-termination aligns end dates of multiple assets so they renew together. In RCA, co-termination is achieved through:</p>
+        <ul>
+            <li><strong>Override Renewal Term</strong> — manually adjust start/end dates to align</li>
+            <li><strong>Amendment flows</strong> — when adding new products, set end date to match existing assets</li>
+            <li><strong>Multi-asset renewal</strong> — select multiple assets in Managed Assets and renew together with aligned dates</li>
+            <li><strong>Auto co-termination</strong> (Winter '26) — contract-based quote alignment</li>
+        </ul>
+
+        <div class="callout callout-orange">
+            <strong>CPQ Comparison</strong>
+            CPQ had a "Co-Terminated" field on Quote/Contract with more explicit co-term logic. RCA achieves co-termination through date management during amendments and renewals. The Winter '26 "Auto co-termination" feature brings more automated alignment.
+        </div>
+
+        <h3>Amendments</h3>
+        <p>In CPQ, amendments went through <code>ContractManipulationAPI.AmendmentCreator</code> from the Contract. In RCA, amendments are initiated from <strong>Assets</strong> via the Managed Assets component and generate amendment quotes.</p>
+
+        <h4>End-to-End Amendment Flow</h4>
+        <ol>
+            <li><strong>Navigate to Managed Assets:</strong> Account → Managed Assets component listing all active assets.</li>
+            <li><strong>Select asset(s) &amp; click "Amend":</strong> Launches the <strong>ARC Flow</strong>.</li>
+            <li><strong>Schedule amendment:</strong> Set the amendment effective date and specify changes (quantity, attributes, configuration).</li>
+            <li><strong>Amendment quote generated:</strong> Auto-generated quote reflecting the delta (difference) between current and desired state.</li>
+            <li><strong>Adjust the quote:</strong> Modify quantities, product attributes/configuration, apply pricing changes.</li>
+            <li><strong>Review, approve, generate order:</strong> Standard quoting process.</li>
+            <li><strong>Activate order → Assets updated:</strong> New <code>AssetAction</code> (Amendment) logged. Previous <code>AssetStatePeriod</code> closes. New period begins reflecting changes.</li>
+        </ol>
+
+        <h4>What Can Be Amended?</h4>
+        <table>
+            <tr><th>Amendment Type</th><th>Availability</th><th>Details</th></tr>
+            <tr><td>Quantity changes</td><td>GA since Summer '24</td><td>Add or remove seats/units; system calculates prorated difference</td></tr>
+            <tr><td>Attribute changes</td><td>Winter '26+</td><td>Change product attributes (e.g., Standard → Premium tier) that affect pricing</td></tr>
+            <tr><td>Term changes</td><td>Winter '26+</td><td>Push out asset end date; adjust term length</td></tr>
+            <tr><td>CPI price escalation</td><td>Winter '26+</td><td>Automatic price adjustments (monthly/quarterly/annually) based on CPI</td></tr>
+            <tr><td>Product swap / upgrade / downgrade</td><td>Spring '26</td><td>Native tracking of old→new product relationship in amendment</td></tr>
+            <tr><td>Future-dated amendments</td><td>Spring '26</td><td>Edit orders with future start dates before they become active</td></tr>
+            <tr><td>Unlimited amendments</td><td>Winter '26+</td><td>No limit on number of amendments per asset</td></tr>
+        </table>
+
+        <div class="callout callout-red">
+            <strong>Important Limitation (Pre-Spring '26)</strong>
+            In earlier RCA releases, amendments were primarily quantity-focused. Pure price/discount changes without quantity changes required cancel-and-replace. This has been progressively addressed: attribute-based pricing in Winter '26, CPI escalation in Winter '26, and product swap in Spring '26.
+        </div>
+
+        <h3>CPQ vs RCA: Amendment Comparison</h3>
+        <table>
+            <tr><th>Aspect</th><th>CPQ (Legacy)</th><th>RCA (Modern)</th></tr>
+            <tr><td>API</td><td><code>ContractManipulationAPI.ContractAmender</code></td><td>Initiate Amendment Action (invocable)</td></tr>
+            <tr><td>Initiation point</td><td>Contract record ("Amend" button)</td><td>Managed Assets on Account</td></tr>
+            <tr><td>What is amended</td><td>Contract → amendment opp + quote with delta lines</td><td>Asset(s) → amendment quote with delta</td></tr>
+            <tr><td>Customization</td><td>Apex plugins, triggers, custom code</td><td>Cloneable ARC Flow (Screen Flow) + standard automation</td></tr>
+            <tr><td>Future-dated</td><td>Not natively supported</td><td>Spring '26 feature</td></tr>
+            <tr><td>Product swap tracking</td><td>Not natively tracked</td><td>Spring '26 feature</td></tr>
+            <tr><td>CPI escalation</td><td>Not supported (cancel-and-replace)</td><td>Winter '26 feature</td></tr>
+            <tr><td>Managed package</td><td>Yes (SBQQ namespace)</td><td>No — platform/core objects</td></tr>
+        </table>
+
+        <h3>CPQ vs RCA: Renewal Comparison</h3>
+        <table>
+            <tr><th>Aspect</th><th>CPQ (Legacy)</th><th>RCA (Modern)</th></tr>
+            <tr><td>Initiation point</td><td>Contract record</td><td>Managed Assets on Account</td></tr>
+            <tr><td>Trigger</td><td>"Renewal Forecast" &amp; "Renewal Quoted" checkboxes</td><td>"Renew" button; or auto-renew setting</td></tr>
+            <tr><td>What gets renewed</td><td>Subscriptions on a Contract</td><td>Assets on an Account</td></tr>
+            <tr><td>Output</td><td>Renewal Opportunity + Renewal Quote</td><td>Renewal Quote (Opportunity optional)</td></tr>
+            <tr><td>Auto-renewal</td><td>Contract auto-renewal settings</td><td>Product Selling Model setting; overridable at Order level</td></tr>
+            <tr><td>API</td><td><code>ContractManipulationAPI.RenewalCreator</code></td><td>Initiate Renewal Action (invocable)</td></tr>
+            <tr><td>Multi-subscription</td><td>Renew from Contract (all subs) or multi-contract</td><td>Select multiple assets in Managed Assets</td></tr>
+            <tr><td>Customization</td><td>Apex triggers, CPQ plugins</td><td>Cloneable ARC Flow + standard Flow elements</td></tr>
+        </table>
+
+        <div class="callout callout-green">
+            <strong>The ARC Flow — Your Customization Point</strong>
+            The <strong>Amend, Renew, and Cancel Assets Flow</strong> is a prebuilt Screen Flow that Salesforce provides out of the box. Clone it and add custom business logic using standard Flow elements — no Apex required. This is the primary customization point for all lifecycle operations.
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
     <!-- BILLING -->
     <!-- ═══════════════════════════════════════════════════════════ -->
     <div class="section" id="billing">
         <h2>Billing &amp; Revenue Recognition</h2>
 
+        <div class="callout callout-orange">
+            <strong>Licensing Note</strong>
+            The features below span two license tiers. Basic/API-driven invoicing and revenue scheduling are included in <strong>Revenue Cloud Advanced</strong> ($200/user/mo). Full billing capabilities (UI invoicing, usage rating, payments, AR, accounting) require the <strong>Revenue Cloud Billing</strong> add-on. See the <a href="#licensing">Licensing section</a> for the complete breakdown.
+        </div>
+
         <h3>RCA Billing Capabilities</h3>
         <ul>
-            <li><strong>Recurring billing</strong> — automated invoice generation on schedule</li>
-            <li><strong>Usage-based billing</strong> — metered consumption with rating engine</li>
+            <li><strong>Recurring billing</strong> — automated invoice generation on schedule <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Usage-based billing</strong> — metered consumption with rating engine <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
             <li><strong>One-time billing</strong> — immediate invoicing on order</li>
-            <li><strong>Configurable billing schedules</strong> — flexible timing and frequency</li>
-            <li><strong>Tax Management</strong> — built-in tax calculation and integration points</li>
-            <li><strong>Wallet/Credits</strong> — pre-paid credits and consumption tracking</li>
+            <li><strong>Configurable billing schedules</strong> — flexible timing and frequency <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Tax Management</strong> — built-in tax calculation and integration points <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Wallet/Credits</strong> — pre-paid credits and consumption tracking <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Payment processing</strong> — gateway integration for ACH, credit cards <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Credit &amp; refund management</strong> — credit memos, partial payments <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Accounts receivable</strong> — collections, write-offs <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
+            <li><strong>Accounting subledger</strong> — chart of accounts, journal entries, FX tracking <span style="color:var(--sf-purple);font-size:0.8em;">[Billing add-on]</span></li>
         </ul>
 
         <h3>Revenue Recognition (ASC 606)</h3>
@@ -2252,6 +2651,14 @@
             <li><a href="https://gearset.com/solutions/manage-data/rca/" target="_blank">RCA Deployment Solution (Gearset)</a></li>
             <li><a href="https://www.grazitti.com/blog/7-step-cpq-to-salesforce-rca-formerly-rlm-migration-plan/" target="_blank">7-Step CPQ to RCA Migration Plan (Grazitti)</a></li>
         </ul>
+    </div>
+
+    <!-- PRINT BUTTON (BOTTOM) -->
+    <div class="print-bar-bottom">
+        <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Print to PDF
+        </button>
     </div>
 
 </div>
