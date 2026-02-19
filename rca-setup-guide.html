@@ -384,6 +384,22 @@
 
         .btn-reset:hover { color: var(--sf-red) !important; border-color: var(--sf-red) !important; }
 
+        .step-body .checklist-toolbar,
+        .section > .checklist-toolbar.section-toolbar {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .autosave-indicator {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-style: italic;
+            white-space: nowrap;
+        }
+
+        .autosave-indicator.active { color: var(--sf-green); }
+
         code {
             background: #f0f2f5;
             padding: 0.15rem 0.4rem;
@@ -626,17 +642,17 @@
         <h3>Revenue Settings</h3>
         <div class="setup-path">Setup → Revenue Settings</div>
         <ul class="checklist">
-            <li>Enable Quotes</li>
-            <li>Allow quote creation without opportunities (optional)</li>
-            <li>Enable negative and zero order quantities</li>
-            <li>Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+            <li data-check-id="s4-quotes">Enable Quotes</li>
+            <li data-check-id="s4-no-opp">Allow quote creation without opportunities (optional)</li>
+            <li data-check-id="s4-negative">Enable negative and zero order quantities</li>
+            <li data-check-id="s4-config-rules">Enable "Set Up Advanced Configuration Rules and Constraints"</li>
         </ul>
 
         <h3>Salesforce Pricing</h3>
         <div class="setup-path">Setup → Salesforce Pricing</div>
         <ul class="checklist">
-            <li>Toggle ON "Salesforce Pricing"</li>
-            <li>Enable Context Definitions</li>
+            <li data-check-id="s4-pricing">Toggle ON "Salesforce Pricing"</li>
+            <li data-check-id="s4-context">Enable Context Definitions</li>
         </ul>
 
         <h3>Additional Features</h3>
@@ -1013,7 +1029,7 @@ sf org login web -a myorg
         <h2><span class="num">✓</span> Final Setup Checklist</h2>
         <p>Complete each step in order. Click any step to expand full details and verification items. Check off items as you go — your progress is saved directly into this file so it travels with the document when shared or moved.</p>
         <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:0;">
-            <strong>Save Progress</strong> writes your checked items into this HTML file on disk. The first time you save, you'll be prompted to select this file — after that, saves happen silently. <strong>Reset All</strong> clears every checkbox. Use <strong>Ctrl+S</strong> as a shortcut to save at any time.
+            <strong>Save Progress</strong> writes your checked items into this HTML file on disk. The first time you save, you'll be prompted to select this file — after that, saves happen silently. Each section has its own Save &amp; Reset buttons. <strong>Auto-save</strong> activates after your first manual save and writes changes every 60 seconds. Items shared between the guide above and this checklist (e.g., Step 4) stay <strong>linked</strong> — checking one checks both. Use <strong>Ctrl+S</strong> as a shortcut at any time.
         </p>
 
         <div class="setup-steps">
@@ -1164,15 +1180,15 @@ sf org login web -a myorg
                 <div class="step-body">
                     <div class="setup-path">Setup &rarr; Revenue Settings</div>
                     <ul class="checklist">
-                        <li>Enable Quotes (check "Enable Quotes")</li>
-                        <li>Allow quote creation without opportunities (optional)</li>
-                        <li>Enable negative and zero order quantities</li>
-                        <li>Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+                        <li data-check-id="s4-quotes">Enable Quotes (check "Enable Quotes")</li>
+                        <li data-check-id="s4-no-opp">Allow quote creation without opportunities (optional)</li>
+                        <li data-check-id="s4-negative">Enable negative and zero order quantities</li>
+                        <li data-check-id="s4-config-rules">Enable "Set Up Advanced Configuration Rules and Constraints"</li>
                     </ul>
                     <div class="setup-path">Setup &rarr; Salesforce Pricing</div>
                     <ul class="checklist">
-                        <li>Toggle ON "Salesforce Pricing"</li>
-                        <li>Enable Context Definitions</li>
+                        <li data-check-id="s4-pricing">Toggle ON "Salesforce Pricing"</li>
+                        <li data-check-id="s4-context">Enable Context Definitions</li>
                     </ul>
                     <p><strong>Additional Feature Toggles:</strong></p>
                     <ul class="checklist">
@@ -1481,12 +1497,17 @@ sf org login web -a myorg
 
     // Interactive Checklists — saves state directly into the file on disk
     (function() {
-        const section = document.getElementById('checklist');
-        const items = document.querySelectorAll('.checklist li');
+        const allItems = document.querySelectorAll('.checklist li');
         let fileHandle = null;
         const DB_NAME = 'rca-setup-checklist';
         const STORE = 'handles';
         const KEY = 'fileHandle';
+
+        // Auto-save state
+        let hasSavedOnce = false;
+        let autoSaveTimer = null;
+        const AUTO_SAVE_DELAY = 60000; // 60 seconds
+        const toolbars = [];
 
         // IndexedDB helpers to persist the file handle across sessions
         function openDB() {
@@ -1528,78 +1549,155 @@ sf org login web -a myorg
         // Try to restore handle from IndexedDB on load
         loadHandle().then(h => { if (h) fileHandle = h; });
 
-        // Build toolbar
-        const toolbar = document.createElement('div');
-        toolbar.className = 'checklist-toolbar';
-        toolbar.innerHTML = '<span class="progress-text"></span>'
-            + '<button class="btn-save" title="Save progress to this file (Ctrl+S)">Save Progress</button>'
-            + '<button class="btn-reset" title="Uncheck all items">Reset All</button>';
-        const intro = section.querySelector('p');
-        intro.parentNode.insertBefore(toolbar, intro.nextSibling);
+        // Sync linked checkboxes by data-check-id
+        function syncLinked(li) {
+            const id = li.getAttribute('data-check-id');
+            if (!id) return;
+            const isChecked = li.hasAttribute('data-checked');
+            document.querySelectorAll('.checklist li[data-check-id="' + id + '"]').forEach(other => {
+                if (other === li) return;
+                const cb = other.querySelector('input[type="checkbox"]');
+                if (!cb) return;
+                if (isChecked) {
+                    other.setAttribute('data-checked', '');
+                    other.classList.add('checked');
+                    cb.checked = true;
+                } else {
+                    other.removeAttribute('data-checked');
+                    other.classList.remove('checked');
+                    cb.checked = false;
+                }
+            });
+        }
 
-        const progressEl = toolbar.querySelector('.progress-text');
-        const saveBtn = toolbar.querySelector('.btn-save');
-        const resetBtn = toolbar.querySelector('.btn-reset');
+        // Schedule auto-save (debounced 60s after first manual save)
+        function scheduleAutoSave() {
+            if (!hasSavedOnce) return;
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(async () => {
+                await saveProgress(true);
+                autoSaveTimer = null;
+            }, AUTO_SAVE_DELAY);
+        }
 
-        // Inject checkboxes, restore state from data-checked attributes
-        items.forEach(li => {
+        // Inject a checkbox into a checklist li
+        function injectCheckbox(li) {
             const cb = document.createElement('input');
             cb.type = 'checkbox';
             cb.checked = li.hasAttribute('data-checked');
             if (cb.checked) li.classList.add('checked');
-
             cb.addEventListener('change', () => {
                 li.classList.toggle('checked', cb.checked);
                 if (cb.checked) li.setAttribute('data-checked', '');
                 else li.removeAttribute('data-checked');
-                updateProgress();
+                syncLinked(li);
+                updateAllProgress();
+                scheduleAutoSave();
             });
-
             li.prepend(cb);
+        }
+
+        // Inject checkboxes into all checklist items
+        allItems.forEach(injectCheckbox);
+
+        // Click-to-toggle: set up once, queries current checkbox from DOM
+        allItems.forEach(li => {
             li.addEventListener('click', (e) => {
-                if (e.target === cb || e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
+                const cb = li.querySelector('input[type="checkbox"]');
+                if (!cb || e.target === cb || e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
                 cb.checked = !cb.checked;
                 cb.dispatchEvent(new Event('change'));
             });
         });
 
-        function updateProgress() {
-            const total = items.length;
-            const done = section.querySelectorAll('.checklist li.checked').length;
-            progressEl.textContent = done + ' / ' + total + ' completed';
-            progressEl.classList.toggle('all-done', done === total && total > 0);
-        }
-        updateProgress();
+        // Group items by container (.step-body for Final Checklist details, .section otherwise)
+        const containerMap = new Map();
+        allItems.forEach(li => {
+            const container = li.closest('.step-body') || li.closest('.section');
+            if (!container) return;
+            if (!containerMap.has(container)) containerMap.set(container, new Set());
+            containerMap.get(container).add(li);
+        });
 
-        // Build a clean HTML snapshot (no injected checkboxes/toolbar/classes)
+        // Build a per-section toolbar for each container
+        containerMap.forEach((itemSet, container) => {
+            const toolbar = document.createElement('div');
+            toolbar.className = 'checklist-toolbar';
+            if (!container.classList.contains('step-body')) toolbar.classList.add('section-toolbar');
+
+            toolbar.innerHTML = '<span class="progress-text"></span>'
+                + '<span class="autosave-indicator"></span>'
+                + '<button class="btn-save" title="Save progress to this file (Ctrl+S)">Save Progress</button>'
+                + '<button class="btn-reset" title="Uncheck items in this section">Reset Section</button>';
+
+            // Insert after the last .checklist UL that contains items in this set
+            const lastLi = Array.from(itemSet).pop();
+            const insertRef = lastLi.closest('.checklist');
+            insertRef.parentNode.insertBefore(toolbar, insertRef.nextSibling);
+            toolbar._insertRef = insertRef;
+            toolbar._items = itemSet;
+
+            const progressEl = toolbar.querySelector('.progress-text');
+            const autoLabel = toolbar.querySelector('.autosave-indicator');
+
+            toolbar._updateProgress = function() {
+                const arr = Array.from(itemSet);
+                const total = arr.length;
+                const done = arr.filter(l => l.classList.contains('checked')).length;
+                progressEl.textContent = done + ' / ' + total + ' completed';
+                progressEl.classList.toggle('all-done', done === total && total > 0);
+            };
+
+            toolbar._updateAutoLabel = function(time) {
+                if (time) {
+                    autoLabel.textContent = 'Auto-saved at ' + time;
+                    autoLabel.classList.add('active');
+                } else if (hasSavedOnce) {
+                    autoLabel.textContent = 'Auto-save: on';
+                    autoLabel.classList.add('active');
+                }
+            };
+
+            toolbar.querySelector('.btn-save').addEventListener('click', () => saveProgress(false));
+
+            toolbar.querySelector('.btn-reset').addEventListener('click', () => {
+                if (!confirm('Reset checkboxes in this section? This cannot be undone.')) return;
+                itemSet.forEach(li => {
+                    li.removeAttribute('data-checked');
+                    li.classList.remove('checked');
+                    const cb = li.querySelector('input[type="checkbox"]');
+                    if (cb) cb.checked = false;
+                    syncLinked(li);
+                });
+                updateAllProgress();
+            });
+
+            toolbars.push(toolbar);
+        });
+
+        function updateAllProgress() {
+            toolbars.forEach(tb => tb._updateProgress());
+        }
+        updateAllProgress();
+
+        function updateAllAutoLabels(time) {
+            toolbars.forEach(tb => tb._updateAutoLabel(time || null));
+        }
+
+        // Build a clean HTML snapshot (no injected checkboxes/toolbars/classes)
         function buildCleanHTML() {
-            const checkboxes = document.querySelectorAll('.checklist li input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.remove());
-            toolbar.remove();
-            items.forEach(li => li.classList.remove('checked'));
+            document.querySelectorAll('.checklist li input[type="checkbox"]').forEach(cb => cb.remove());
+            toolbars.forEach(tb => tb.remove());
+            allItems.forEach(li => li.classList.remove('checked'));
 
             const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 
             // Restore the live page immediately
-            items.forEach(li => {
-                const cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.checked = li.hasAttribute('data-checked');
-                if (cb.checked) li.classList.add('checked');
-                cb.addEventListener('change', () => {
-                    li.classList.toggle('checked', cb.checked);
-                    if (cb.checked) li.setAttribute('data-checked', '');
-                    else li.removeAttribute('data-checked');
-                    updateProgress();
-                });
-                li.prepend(cb);
-                li.addEventListener('click', (e) => {
-                    if (e.target === cb || e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
-                    cb.checked = !cb.checked;
-                    cb.dispatchEvent(new Event('change'));
-                });
+            allItems.forEach(injectCheckbox);
+            toolbars.forEach(tb => {
+                tb._insertRef.parentNode.insertBefore(tb, tb._insertRef.nextSibling);
             });
-            intro.parentNode.insertBefore(toolbar, intro.nextSibling);
+            updateAllProgress();
             return html;
         }
 
@@ -1611,67 +1709,66 @@ sf org login web -a myorg
         }
 
         // Save handler — writes directly to the file on disk
-        async function saveProgress() {
+        async function saveProgress(silent) {
             const html = buildCleanHTML();
 
             try {
                 // Try stored handle first, verify permission
                 if (fileHandle) {
                     const ok = await verifyPermission(fileHandle);
-                    if (!ok) fileHandle = null; // permission denied, re-prompt with picker
+                    if (!ok) fileHandle = null;
                 }
 
                 // No handle yet — ask user to pick the file once
                 if (!fileHandle) {
+                    if (silent) return; // auto-save cannot prompt for file picker
                     fileHandle = await window.showSaveFilePicker({
                         suggestedName: 'rca-setup-guide.html',
                         types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }]
                     });
-                    await storeHandle(fileHandle); // persist for future sessions
+                    await storeHandle(fileHandle);
                 }
 
                 const writable = await fileHandle.createWritable();
                 await writable.write(html);
                 await writable.close();
 
-                // Brief visual confirmation
-                saveBtn.textContent = 'Saved!';
-                saveBtn.style.background = 'var(--sf-blue)';
-                setTimeout(() => {
-                    saveBtn.textContent = 'Save Progress';
-                    saveBtn.style.background = '';
-                }, 1500);
+                hasSavedOnce = true;
+
+                if (silent) {
+                    // Auto-save: show timestamp in all toolbars
+                    const now = new Date();
+                    const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                    updateAllAutoLabels(time);
+                } else {
+                    // Manual save: flash confirmation on all save buttons
+                    toolbars.forEach(tb => {
+                        const btn = tb.querySelector('.btn-save');
+                        btn.textContent = 'Saved!';
+                        btn.style.background = 'var(--sf-blue)';
+                        setTimeout(() => {
+                            btn.textContent = 'Save Progress';
+                            btn.style.background = '';
+                        }, 1500);
+                    });
+                    updateAllAutoLabels(); // show "Auto-save: on"
+                }
             } catch (err) {
-                if (err.name === 'AbortError') return; // user cancelled picker
-                // If stored handle went stale, clear it and retry
+                if (err.name === 'AbortError') return;
                 if (fileHandle && err.name === 'NotAllowedError') {
                     await clearHandle();
-                    return saveProgress();
+                    return saveProgress(silent);
                 }
-                alert('Save failed: ' + err.message);
+                if (!silent) alert('Save failed: ' + err.message);
             }
         }
-
-        saveBtn.addEventListener('click', saveProgress);
 
         // Ctrl+S / Cmd+S shortcut
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
-                saveProgress();
+                saveProgress(false);
             }
-        });
-
-        // Reset: uncheck everything
-        resetBtn.addEventListener('click', () => {
-            if (!confirm('Reset all checkboxes? This cannot be undone.')) return;
-            items.forEach(li => {
-                li.removeAttribute('data-checked');
-                li.classList.remove('checked');
-                const cb = li.querySelector('input[type="checkbox"]');
-                if (cb) cb.checked = false;
-            });
-            updateProgress();
         });
     })();
 </script>
