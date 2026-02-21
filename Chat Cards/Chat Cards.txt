@@ -1,0 +1,497 @@
+import { useState, useCallback, useEffect, useRef } from "react";
+
+const questions = [
+  { q: "If you could have any superpower, what would it be and how would you use it to help people?", cat: "Imagine", emoji: "✨" },
+  { q: "If animals could talk, which animal would you want to be best friends with?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could visit any planet, which one would you go to and what would you do there?", cat: "Imagine", emoji: "✨" },
+  { q: "If you woke up tomorrow and were invisible, what would you do first?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could fly anywhere in the world right now, where would you go?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could shrink down to the size of an ant for a day, what would you explore?", cat: "Imagine", emoji: "✨" },
+  { q: "If you found a magic door in your house, where would it lead?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could breathe underwater, what would you want to see in the ocean?", cat: "Imagine", emoji: "✨" },
+  { q: "If your stuffed animals came to life at night, what do you think they'd do?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could talk to trees, what do you think they'd tell you?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could make one rule that everyone in the world had to follow, what would it be?", cat: "Imagine", emoji: "✨" },
+  { q: "If you had a robot helper, what would you want it to do for you?", cat: "Imagine", emoji: "✨" },
+  { q: "If you could live inside any book or movie, which one would you pick?", cat: "Imagine", emoji: "✨" },
+  { q: "What's the best part about being your age right now?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite thing to do when it's raining outside?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's the yummiest meal you've ever had?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite sound in the whole world?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's the best dream you've ever had?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite thing about our family?", cat: "Favorites", emoji: "⭐" },
+  { q: "If you could eat only one food for a whole week, what would you pick?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's the funniest thing that happened to you this week?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite game to play with friends?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's the best thing about your best friend?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite smell?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's the coolest thing you learned recently?", cat: "Favorites", emoji: "⭐" },
+  { q: "What's your favorite holiday and why?", cat: "Favorites", emoji: "⭐" },
+  { q: "Would you rather be able to fly or be able to turn invisible? Why?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather live in a treehouse or a house on a cloud?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather have a pet dragon or a pet unicorn?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather be the fastest runner in the world or the best singer?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather explore outer space or the deepest part of the ocean?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather have super strength or be able to read minds?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather it be your birthday every day or have summer vacation last all year?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather be really good at drawing or really good at cooking?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather meet a dinosaur or meet someone from the future?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather have a time machine or a teleporter?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather be able to talk to animals or speak every language in the world?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "Would you rather have the power to make people laugh or make people feel brave?", cat: "Would You Rather", emoji: "🤔" },
+  { q: "What makes you feel really proud of yourself?", cat: "Feelings", emoji: "💛" },
+  { q: "What makes you feel safe and cozy?", cat: "Feelings", emoji: "💛" },
+  { q: "What's something that always makes you laugh?", cat: "Feelings", emoji: "💛" },
+  { q: "What do you do when you feel nervous about something?", cat: "Feelings", emoji: "💛" },
+  { q: "What's the kindest thing someone has done for you?", cat: "Feelings", emoji: "💛" },
+  { q: "What makes you feel brave?", cat: "Feelings", emoji: "💛" },
+  { q: "When you're having a bad day, what helps you feel better?", cat: "Feelings", emoji: "💛" },
+  { q: "What's something you're really grateful for?", cat: "Feelings", emoji: "💛" },
+  { q: "What does happiness feel like to you?", cat: "Feelings", emoji: "💛" },
+  { q: "Who makes you feel really special?", cat: "Feelings", emoji: "💛" },
+  { q: "What's a time you felt really excited?", cat: "Feelings", emoji: "💛" },
+  { q: "How do you like to be cheered up when you're sad?", cat: "Feelings", emoji: "💛" },
+  { q: "What's something that makes you feel peaceful?", cat: "Feelings", emoji: "💛" },
+  { q: "If you could invent something to make the world better, what would it be?", cat: "Create", emoji: "🎨" },
+  { q: "If you could design your dream playground, what would it have?", cat: "Create", emoji: "🎨" },
+  { q: "If you could create a new ice cream flavor, what would it taste like?", cat: "Create", emoji: "🎨" },
+  { q: "If you could build your dream bedroom, what would be in it?", cat: "Create", emoji: "🎨" },
+  { q: "If you could create a new holiday, what would everyone celebrate?", cat: "Create", emoji: "🎨" },
+  { q: "If you could write a book, what would it be about?", cat: "Create", emoji: "🎨" },
+  { q: "If you could design a new animal, what would it look like and what would you name it?", cat: "Create", emoji: "🎨" },
+  { q: "If you could invent a new sport, what would the rules be?", cat: "Create", emoji: "🎨" },
+  { q: "If you could make a potion that does anything, what would it do?", cat: "Create", emoji: "🎨" },
+  { q: "If you could build anything out of LEGO, what would you build?", cat: "Create", emoji: "🎨" },
+  { q: "If you could name a star, what would you call it?", cat: "Create", emoji: "🎨" },
+  { q: "If you could paint the sky any color, what would you choose?", cat: "Create", emoji: "🎨" },
+  { q: "What's your favorite memory from a vacation or trip?", cat: "Remember", emoji: "📸" },
+  { q: "What's the most fun thing we've done together as a family?", cat: "Remember", emoji: "📸" },
+  { q: "What's the bravest thing you've ever done?", cat: "Remember", emoji: "📸" },
+  { q: "What's the nicest thing you've ever done for someone?", cat: "Remember", emoji: "📸" },
+  { q: "What's a really happy memory you have from school?", cat: "Remember", emoji: "📸" },
+  { q: "What was the best birthday you've ever had?", cat: "Remember", emoji: "📸" },
+  { q: "What's something funny that happened that you still laugh about?", cat: "Remember", emoji: "📸" },
+  { q: "What's a time you tried something new and it turned out great?", cat: "Remember", emoji: "📸" },
+  { q: "What's the best surprise you've ever gotten?", cat: "Remember", emoji: "📸" },
+  { q: "What's a time someone made you feel really loved?", cat: "Remember", emoji: "📸" },
+  { q: "What's the most amazing thing you've ever seen?", cat: "Remember", emoji: "📸" },
+  { q: "When you grow up, what do you think would be the most fun job?", cat: "Dream", emoji: "🚀" },
+  { q: "What's something you really want to learn how to do?", cat: "Dream", emoji: "🚀" },
+  { q: "If you could be famous for one thing, what would it be?", cat: "Dream", emoji: "🚀" },
+  { q: "What's one thing on your bucket list?", cat: "Dream", emoji: "🚀" },
+  { q: "What kind of person do you want to be when you're older?", cat: "Dream", emoji: "🚀" },
+  { q: "What's a goal you're working on right now?", cat: "Dream", emoji: "🚀" },
+  { q: "What place in the world do you most want to visit someday?", cat: "Dream", emoji: "🚀" },
+  { q: "If you could learn any musical instrument, which one would you choose?", cat: "Dream", emoji: "🚀" },
+  { q: "What do you think cars will look like in the future?", cat: "Dream", emoji: "🚀" },
+  { q: "What's something you want our family to do together this year?", cat: "Dream", emoji: "🚀" },
+  { q: "If you could master any skill overnight, what would it be?", cat: "Dream", emoji: "🚀" },
+  { q: "How would you help a friend who's feeling left out?", cat: "Kindness", emoji: "💜" },
+  { q: "If you saw someone being teased, what would you do?", cat: "Kindness", emoji: "💜" },
+  { q: "How would you cheer up a friend who's having a bad day?", cat: "Kindness", emoji: "💜" },
+  { q: "If you could fix one problem in the world, what would it be?", cat: "Kindness", emoji: "💜" },
+  { q: "What's a small thing you can do to make someone's day better?", cat: "Kindness", emoji: "💜" },
+  { q: "If a new kid moved to your school and didn't know anyone, what would you do?", cat: "Kindness", emoji: "💜" },
+  { q: "What does being a good friend mean to you?", cat: "Kindness", emoji: "💜" },
+  { q: "How would you help someone who's scared to try something new?", cat: "Kindness", emoji: "💜" },
+  { q: "What's the most important thing about being part of a team?", cat: "Kindness", emoji: "💜" },
+  { q: "If you could give one piece of advice to a younger kid, what would it be?", cat: "Kindness", emoji: "💜" },
+  { q: "How would you make a shy person feel welcome?", cat: "Kindness", emoji: "💜" },
+  { q: "If you could have dinner with any cartoon character, who would it be?", cat: "Silly", emoji: "😂" },
+  { q: "What would you name a pet penguin?", cat: "Silly", emoji: "😂" },
+  { q: "If your shoes could take you anywhere when you clicked your heels, where would you go?", cat: "Silly", emoji: "😂" },
+  { q: "If you could swap lives with anyone in the family for a day, who would you pick?", cat: "Silly", emoji: "😂" },
+  { q: "What's the silliest face you can make? Can you describe it?", cat: "Silly", emoji: "😂" },
+  { q: "If your pet could suddenly talk, what do you think they'd say first?", cat: "Silly", emoji: "😂" },
+  { q: "What would happen if it rained candy instead of water?", cat: "Silly", emoji: "😂" },
+  { q: "If you were a superhero, what would your name and costume look like?", cat: "Silly", emoji: "😂" },
+  { q: "What's the weirdest sandwich you can think of?", cat: "Silly", emoji: "😂" },
+  { q: "If you could make any weird law, like 'everyone must hop on Tuesdays,' what would it be?", cat: "Silly", emoji: "😂" },
+];
+
+const catColors = {
+  "Imagine": { bg: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+  "Favorites": { bg: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)" },
+  "Would You Rather": { bg: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)" },
+  "Feelings": { bg: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" },
+  "Create": { bg: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)" },
+  "Remember": { bg: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" },
+  "Dream": { bg: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)" },
+  "Kindness": { bg: "linear-gradient(135deg, #c471f5 0%, #fa71cd 100%)" },
+  "Silly": { bg: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" },
+};
+
+const shuffle = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+const allCats = ["All", ...Object.keys(catColors)];
+
+// Animation definitions — each has exit and enter keyframes
+const animations = [
+  { // Slide left
+    exit: [
+      { transform: "translateX(0) scale(1)", opacity: 1 },
+      { transform: "translateX(-120%) scale(0.8) rotate(-8deg)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "translateX(120%) scale(0.8) rotate(8deg)", opacity: 0 },
+      { transform: "translateX(0) scale(1) rotate(0deg)", opacity: 1 },
+    ],
+  },
+  { // Slide right
+    exit: [
+      { transform: "translateX(0) scale(1)", opacity: 1 },
+      { transform: "translateX(120%) scale(0.8) rotate(8deg)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "translateX(-120%) scale(0.8) rotate(-8deg)", opacity: 0 },
+      { transform: "translateX(0) scale(1) rotate(0deg)", opacity: 1 },
+    ],
+  },
+  { // Flip Y
+    exit: [
+      { transform: "perspective(800px) rotateY(0deg)", opacity: 1 },
+      { transform: "perspective(800px) rotateY(90deg)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "perspective(800px) rotateY(-90deg)", opacity: 0 },
+      { transform: "perspective(800px) rotateY(0deg)", opacity: 1 },
+    ],
+  },
+  { // Flip X
+    exit: [
+      { transform: "perspective(800px) rotateX(0deg)", opacity: 1 },
+      { transform: "perspective(800px) rotateX(90deg)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "perspective(800px) rotateX(-90deg)", opacity: 0 },
+      { transform: "perspective(800px) rotateX(0deg)", opacity: 1 },
+    ],
+  },
+  { // Zoom out / zoom in
+    exit: [
+      { transform: "scale(1) rotate(0deg)", opacity: 1 },
+      { transform: "scale(0) rotate(180deg)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "scale(0) rotate(-180deg)", opacity: 0 },
+      { transform: "scale(1) rotate(0deg)", opacity: 1 },
+    ],
+  },
+  { // Float up / drop down
+    exit: [
+      { transform: "translateY(0) scale(1)", opacity: 1 },
+      { transform: "translateY(-150%) scale(0.6)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "translateY(150%) scale(0.6)", opacity: 0 },
+      { transform: "translateY(0) scale(1)", opacity: 1 },
+    ],
+  },
+  { // Fan out
+    exit: [
+      { transform: "rotate(0deg) translateX(0)", opacity: 1 },
+      { transform: "rotate(25deg) translateX(80px)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "rotate(-25deg) translateX(-80px)", opacity: 0 },
+      { transform: "rotate(0deg) translateX(0)", opacity: 1 },
+    ],
+  },
+  { // Pop squish
+    exit: [
+      { transform: "scale(1) scaleX(1)", opacity: 1 },
+      { transform: "scale(1.2) scaleX(0.3)", opacity: 0 },
+    ],
+    enter: [
+      { transform: "scale(0.3) scaleX(1.2)", opacity: 0 },
+      { transform: "scale(1) scaleX(1)", opacity: 1 },
+    ],
+  },
+];
+
+const pickRandom = () => animations[Math.floor(Math.random() * animations.length)];
+
+export default function App() {
+  const [deck, setDeck] = useState(() => shuffle(questions));
+  const [idx, setIdx] = useState(0);
+  const [filter, setFilter] = useState("All");
+  const [showMenu, setShowMenu] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const cardRef = useRef(null);
+
+  const filtered = filter === "All" ? deck : deck.filter(c => c.cat === filter);
+  const card = filtered[idx] || filtered[0];
+  const total = filtered.length;
+
+  const animateTransition = useCallback((newIdx) => {
+    if (animating || !cardRef.current) return;
+    setAnimating(true);
+    const anim = pickRandom();
+    const el = cardRef.current;
+    const exitAnim = el.animate(anim.exit, { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" });
+    exitAnim.onfinish = () => {
+      setIdx(newIdx);
+      const enterAnim = el.animate(anim.enter, { duration: 400, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" });
+      enterAnim.onfinish = () => {
+        el.style.transform = "";
+        el.style.opacity = "";
+        setAnimating(false);
+      };
+    };
+  }, [animating]);
+
+  const next = useCallback(() => {
+    animateTransition((idx + 1) % total);
+  }, [idx, total, animateTransition]);
+
+  const prev = useCallback(() => {
+    animateTransition((idx - 1 + total) % total);
+  }, [idx, total, animateTransition]);
+
+  const reshuf = () => {
+    if (animating) return;
+    setAnimating(true);
+    const el = cardRef.current;
+    if (!el) return;
+    const exitAnim = el.animate(
+      [
+        { transform: "scale(1) rotate(0deg)", opacity: 1 },
+        { transform: "scale(0) rotate(360deg)", opacity: 0 },
+      ],
+      { duration: 400, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+    );
+    exitAnim.onfinish = () => {
+      setDeck(shuffle(questions));
+      setIdx(0);
+      const enterAnim = el.animate(
+        [
+          { transform: "scale(0) rotate(-360deg)", opacity: 0 },
+          { transform: "scale(1.05) rotate(0deg)", opacity: 1 },
+          { transform: "scale(1) rotate(0deg)", opacity: 1 },
+        ],
+        { duration: 500, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" }
+      );
+      enterAnim.onfinish = () => {
+        el.style.transform = "";
+        el.style.opacity = "";
+        setAnimating(false);
+      };
+    };
+  };
+
+  useEffect(() => {
+    setIdx(0);
+    if (cardRef.current) {
+      cardRef.current.animate(
+        [
+          { transform: "scale(0.8)", opacity: 0 },
+          { transform: "scale(1)", opacity: 1 },
+        ],
+        { duration: 350, easing: "ease-out", fill: "forwards" }
+      );
+    }
+  }, [filter]);
+
+  // Initial entrance
+  useEffect(() => {
+    if (cardRef.current) {
+      cardRef.current.animate(
+        [
+          { transform: "translateY(60px) scale(0.8)", opacity: 0 },
+          { transform: "translateY(0) scale(1)", opacity: 1 },
+        ],
+        { duration: 500, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" }
+      );
+    }
+  }, []);
+
+  const colors = card ? catColors[card.cat] : catColors["Imagine"];
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: "20px 16px",
+      fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif",
+      overflow: "hidden",
+    }}>
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: 16 }}>
+        <h1 style={{
+          fontSize: 28, fontWeight: 800, color: "white", margin: 0,
+          letterSpacing: "-0.5px",
+          textShadow: "0 2px 20px rgba(102,126,234,0.5)",
+        }}>
+          💬 Chat Cards
+        </h1>
+        <p style={{ color: "rgba(255,255,255,0.5)", margin: "4px 0 0", fontSize: 13 }}>
+          Family Conversation Game
+        </p>
+      </div>
+
+      {/* Category Filter */}
+      <div style={{ position: "relative", marginBottom: 16, width: "100%", maxWidth: 420, display: "flex", justifyContent: "center" }}>
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          style={{
+            background: "rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            borderRadius: 20, color: "white", padding: "8px 20px",
+            fontSize: 14, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 8,
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          {filter === "All" ? "🎲 All Categories" : `${card?.emoji} ${filter}`}
+          <span style={{ fontSize: 10, opacity: 0.6 }}>▼</span>
+        </button>
+        {showMenu && (
+          <div style={{
+            position: "absolute", top: "100%", marginTop: 8,
+            background: "rgba(22,33,62,0.98)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 16, padding: 8, zIndex: 100,
+            display: "flex", flexWrap: "wrap", gap: 6,
+            maxWidth: 360, justifyContent: "center",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+            backdropFilter: "blur(20px)",
+          }}>
+            {allCats.map(c => (
+              <button key={c}
+                onClick={() => { setFilter(c); setShowMenu(false); }}
+                style={{
+                  background: filter === c ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)",
+                  border: filter === c ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 12, color: "white", padding: "6px 14px",
+                  fontSize: 13, cursor: "pointer", transition: "all 0.2s",
+                }}
+              >
+                {c === "All" ? "🎲 All" : `${questions.find(q => q.cat === c)?.emoji || ""} ${c}`}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Card */}
+      <div style={{ width: "100%", maxWidth: 420, height: 340, marginBottom: 20 }}>
+        {card && (
+          <div ref={cardRef} style={{
+            width: "100%", height: "100%", borderRadius: 24,
+            background: colors.bg,
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(102,126,234,0.15)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            padding: "32px 28px", boxSizing: "border-box",
+            position: "relative", overflow: "hidden",
+            willChange: "transform, opacity",
+          }}>
+            {/* Decorative circles */}
+            <div style={{
+              position: "absolute", top: -30, right: -30,
+              width: 120, height: 120, borderRadius: "50%",
+              background: "rgba(255,255,255,0.1)",
+            }} />
+            <div style={{
+              position: "absolute", bottom: -20, left: -20,
+              width: 80, height: 80, borderRadius: "50%",
+              background: "rgba(255,255,255,0.08)",
+            }} />
+            <div style={{
+              position: "absolute", top: "50%", left: -40,
+              width: 100, height: 100, borderRadius: "50%",
+              background: "rgba(255,255,255,0.05)",
+            }} />
+
+            {/* Category badge */}
+            <div style={{
+              background: "rgba(255,255,255,0.25)",
+              borderRadius: 20, padding: "5px 16px",
+              fontSize: 12, fontWeight: 700, color: "white",
+              textTransform: "uppercase", letterSpacing: 1.5,
+              marginBottom: 20, backdropFilter: "blur(10px)",
+            }}>
+              {card.emoji} {card.cat}
+            </div>
+
+            {/* Question */}
+            <p style={{
+              fontSize: card.q.length > 80 ? 19 : 22,
+              fontWeight: 700, color: "white", textAlign: "center",
+              lineHeight: 1.5, margin: 0,
+              textShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              position: "relative", zIndex: 1,
+            }}>
+              {card.q}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Counter */}
+      <div style={{
+        color: "rgba(255,255,255,0.4)", fontSize: 13,
+        marginBottom: 16, fontWeight: 600,
+      }}>
+        {idx + 1} / {total}
+      </div>
+
+      {/* Controls */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <button onClick={prev} disabled={animating} style={{
+          width: 48, height: 48, borderRadius: "50%",
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          color: "white", fontSize: 20, cursor: animating ? "default" : "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "all 0.2s", backdropFilter: "blur(10px)",
+          opacity: animating ? 0.5 : 1,
+        }}>
+          ←
+        </button>
+
+        <button onClick={next} disabled={animating} style={{
+          padding: "14px 40px", borderRadius: 50,
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          border: "none", color: "white", fontSize: 16,
+          fontWeight: 700, cursor: animating ? "default" : "pointer",
+          boxShadow: "0 8px 30px rgba(102,126,234,0.4)",
+          transition: "all 0.2s", letterSpacing: 0.5,
+          opacity: animating ? 0.7 : 1,
+        }}>
+          Draw Card 🃏
+        </button>
+
+        <button onClick={reshuf} disabled={animating} style={{
+          width: 48, height: 48, borderRadius: "50%",
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          color: "white", fontSize: 20, cursor: animating ? "default" : "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "all 0.2s", backdropFilter: "blur(10px)",
+          opacity: animating ? 0.5 : 1,
+        }}>
+          🔀
+        </button>
+      </div>
+
+      {/* Tip */}
+      <p style={{
+        color: "rgba(255,255,255,0.3)", fontSize: 12,
+        marginTop: 24, textAlign: "center", maxWidth: 300,
+      }}>
+        Tip: Everyone answers each question — kids love hearing parents' answers too!
+      </p>
+    </div>
+  );
+}

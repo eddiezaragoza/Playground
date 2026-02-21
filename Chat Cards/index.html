@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Chat Cards</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    /* ===== Deck Selection Screen ===== */
+    #deck-select {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+    }
+
+    .ds-header { text-align: center; margin-bottom: 40px; }
+    .ds-header h1 {
+      font-size: 36px; font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 20px rgba(102,126,234,0.5);
+    }
+    .ds-header p { color: rgba(255,255,255,0.5); font-size: 16px; margin-top: 8px; }
+
+    .deck-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
+
+    .deck-btn {
+      width: 260px; padding: 36px 24px; border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.15); cursor: pointer;
+      text-align: center; color: white;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .deck-btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+
+    .deck-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+    .deck-name { font-size: 22px; font-weight: 800; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .deck-desc { font-size: 14px; opacity: 0.85; margin-bottom: 12px; line-height: 1.4; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    .deck-meta { font-size: 12px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+
+    .deck-kids { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .deck-adult { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .deck-xrated { display: none; }
+
+    /* ===== Game View ===== */
+    #game-view {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; padding: 20px 16px;
+    }
+
+    .game-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 12px; width: 100%; max-width: 420px;
+    }
+
+    #back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: white; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(10px); transition: all 0.2s; flex-shrink: 0;
+    }
+    #back-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .game-title-wrap { text-align: center; flex: 1; }
+    .game-title-wrap h2 { font-size: 24px; font-weight: 800; text-shadow: 0 2px 20px rgba(102,126,234,0.5); }
+    .game-title-wrap p { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 2px; }
+
+    .spacer { width: 40px; flex-shrink: 0; }
+
+    /* ===== Filter ===== */
+    #filter-wrap {
+      position: relative; margin-bottom: 16px;
+      width: 100%; max-width: 420px; display: flex; justify-content: center;
+    }
+
+    #filter-btn {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; color: white; padding: 8px 20px; font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      backdrop-filter: blur(10px); transition: all 0.2s;
+    }
+    #filter-btn:hover { background: rgba(255,255,255,0.15); }
+
+    #filter-menu {
+      position: absolute; top: 100%; margin-top: 8px;
+      background: rgba(22,33,62,0.98); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px; padding: 8px; z-index: 100;
+      display: none; flex-wrap: wrap; gap: 6px; max-width: 360px;
+      justify-content: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px);
+    }
+    #filter-menu.open { display: flex; }
+
+    .cat-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: white; padding: 6px 14px; font-size: 13px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .cat-btn:hover { background: rgba(255,255,255,0.15); }
+    .cat-btn.active { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); }
+
+    /* ===== Card ===== */
+    #card-area { width: 100%; max-width: 420px; height: 340px; margin-bottom: 20px; }
+
+    #card {
+      width: 100%; height: 100%; border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(102,126,234,0.15);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 32px 28px; position: relative; overflow: hidden;
+      will-change: transform, opacity;
+    }
+
+    .card-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.18); border-radius: 24px; pointer-events: none;
+    }
+
+    .card-circle {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.1); pointer-events: none;
+    }
+    .card-circle-1 { top: -30px; right: -30px; width: 120px; height: 120px; }
+    .card-circle-2 { bottom: -20px; left: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); }
+    .card-circle-3 { top: 50%; left: -40px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); }
+
+    .card-badge {
+      background: rgba(255,255,255,0.25); border-radius: 20px;
+      padding: 5px 16px; font-size: 12px; font-weight: 700;
+      color: white; text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 20px; backdrop-filter: blur(10px);
+      position: relative; z-index: 1;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .card-question {
+      font-weight: 700; color: white; text-align: center; line-height: 1.5;
+      position: relative; z-index: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.6);
+    }
+
+    /* ===== Counter ===== */
+    #counter { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 16px; font-weight: 600; }
+
+    /* ===== Controls ===== */
+    #controls { display: flex; gap: 12px; align-items: center; }
+
+    .ctrl-round {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: white; font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; backdrop-filter: blur(10px);
+    }
+    .ctrl-round:hover { background: rgba(255,255,255,0.2); }
+    .ctrl-round:disabled { opacity: 0.5; cursor: default; }
+
+    #draw-btn {
+      padding: 14px 40px; border-radius: 50px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none; color: white; font-size: 16px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 8px 30px rgba(102,126,234,0.4);
+      transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    #draw-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(102,126,234,0.5); }
+    #draw-btn:disabled { opacity: 0.7; cursor: default; transform: none; }
+
+    #tip {
+      color: rgba(255,255,255,0.3); font-size: 12px;
+      margin-top: 24px; text-align: center; max-width: 300px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 600px) {
+      .deck-btn { width: 100%; max-width: 340px; padding: 28px 20px; }
+      .deck-grid { flex-direction: column; align-items: center; }
+      .ds-header h1 { font-size: 28px; }
+      #card-area { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Deck Selection -->
+  <div id="deck-select">
+    <div class="ds-header">
+      <h1>💬 Chat Cards</h1>
+      <p>Choose Your Deck</p>
+    </div>
+    <div class="deck-grid">
+      <button class="deck-btn deck-kids" onclick="selectDeck('kids')">
+        <span class="deck-emoji">🧒</span>
+        <div class="deck-name">Kids</div>
+        <div class="deck-desc">Family-friendly questions for all ages. Sparks creativity and connection.</div>
+        <div class="deck-meta">300 cards &middot; 9 categories</div>
+      </button>
+      <button class="deck-btn deck-adult" onclick="selectDeck('adult')">
+        <span class="deck-emoji">🎉</span>
+        <div class="deck-name">Fun Adult</div>
+        <div class="deck-desc">Perfect for parties, game nights, and hangouts with friends.</div>
+        <div class="deck-meta">300 cards &middot; 9 categories</div>
+      </button>
+      <button class="deck-btn deck-xrated" onclick="selectDeck('xrated')">
+        <span class="deck-emoji">🔥</span>
+        <div class="deck-name">X-Rated</div>
+        <div class="deck-desc">Spicy, bold, and playful. For consenting adults only.</div>
+        <div class="deck-meta">300 cards &middot; 9 categories</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Game View -->
+  <div id="game-view" style="display:none">
+    <div class="game-header">
+      <button id="back-btn" onclick="goBack()">&#8592;</button>
+      <div class="game-title-wrap">
+        <h2 id="game-title">💬 Chat Cards</h2>
+        <p id="game-subtitle">Family Conversation Game</p>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <div id="filter-wrap">
+      <button id="filter-btn" onclick="toggleMenu()">🎲 All Categories <span style="font-size:10px;opacity:0.6">&#9660;</span></button>
+      <div id="filter-menu"></div>
+    </div>
+
+    <div id="card-area">
+      <div id="card">
+        <div class="card-overlay"></div>
+        <div class="card-circle card-circle-1"></div>
+        <div class="card-circle card-circle-2"></div>
+        <div class="card-circle card-circle-3"></div>
+        <div class="card-badge" id="card-badge"></div>
+        <p class="card-question" id="card-question"></p>
+      </div>
+    </div>
+
+    <div id="counter"></div>
+
+    <div id="controls">
+      <button class="ctrl-round" id="prev-btn" onclick="prev()">&#8592;</button>
+      <button id="draw-btn" onclick="next()">Draw Card 🃏</button>
+      <button class="ctrl-round" id="shuffle-btn" onclick="reshuf()">🔀</button>
+    </div>
+
+    <p id="tip"></p>
+  </div>
+
+  <!-- Load question data files -->
+  <script src="kids-questions.js"></script>
+  <script src="adult-questions.js"></script>
+
+  <script>
+    /* ===== Category Colors (darkened for white-text contrast) ===== */
+    const catColors = {
+      // Kids
+      "Imagine":           "linear-gradient(135deg, #5a6ad8 0%, #6a3fa0 100%)",
+      "Favorites":         "linear-gradient(135deg, #c87820 0%, #b84a28 100%)",
+      "Would You Rather":  "linear-gradient(135deg, #3a8080 0%, #885070 100%)",
+      "Feelings":          "linear-gradient(135deg, #b868b0 0%, #6878b8 100%)",
+      "Create":            "linear-gradient(135deg, #c04850 0%, #984898 100%)",
+      "Remember":          "linear-gradient(135deg, #4868b8 0%, #3888b8 100%)",
+      "Dream":             "linear-gradient(135deg, #2890b0 0%, #3868b8 100%)",
+      "Kindness":          "linear-gradient(135deg, #9048c0 0%, #c04898 100%)",
+      "Silly":             "linear-gradient(135deg, #209050 0%, #189880 100%)",
+
+      // Adult
+      "Hypothetical":      "linear-gradient(135deg, #b83838 0%, #c85828 100%)",
+      "Debate":            "linear-gradient(135deg, #305898 0%, #203888 100%)",
+      "Nostalgia":         "linear-gradient(135deg, #705090 0%, #903870 100%)",
+      "Awkward":           "linear-gradient(135deg, #b85028 0%, #b87820 100%)",
+      "Deep Thoughts":     "linear-gradient(135deg, #284878 0%, #185868 100%)",
+      "Party":             "linear-gradient(135deg, #b83068 0%, #d03848 100%)",
+      "Travel":            "linear-gradient(135deg, #207090 0%, #289078 100%)",
+      "Pop Culture":       "linear-gradient(135deg, #703898 0%, #a03090 100%)",
+      "Life & Career":     "linear-gradient(135deg, #385878 0%, #304868 100%)",
+
+    };
+
+    /* ===== Deck Metadata ===== */
+    const deckMeta = {
+      kids:   { name: "Kids", icon: "🧒", subtitle: "Family Conversation Game", tip: "Tip: Everyone answers each question — kids love hearing parents' answers too!" },
+      adult:  { name: "Fun Adult", icon: "🎉", subtitle: "Party & Game Night Edition", tip: "Tip: Go around the circle — everyone answers before drawing the next card!" },
+    };
+
+    const deckQuestions = {
+      kids:   typeof kidsQuestions   !== 'undefined' ? kidsQuestions   : [],
+      adult:  typeof adultQuestions  !== 'undefined' ? adultQuestions  : [],
+    };
+
+    /* ===== Animation Definitions ===== */
+    const animations = [
+      { exit: [{ transform: "translateX(0) scale(1)", opacity: 1 }, { transform: "translateX(-120%) scale(0.8) rotate(-8deg)", opacity: 0 }],
+        enter: [{ transform: "translateX(120%) scale(0.8) rotate(8deg)", opacity: 0 }, { transform: "translateX(0) scale(1) rotate(0deg)", opacity: 1 }] },
+      { exit: [{ transform: "translateX(0) scale(1)", opacity: 1 }, { transform: "translateX(120%) scale(0.8) rotate(8deg)", opacity: 0 }],
+        enter: [{ transform: "translateX(-120%) scale(0.8) rotate(-8deg)", opacity: 0 }, { transform: "translateX(0) scale(1) rotate(0deg)", opacity: 1 }] },
+      { exit: [{ transform: "perspective(800px) rotateY(0deg)", opacity: 1 }, { transform: "perspective(800px) rotateY(90deg)", opacity: 0 }],
+        enter: [{ transform: "perspective(800px) rotateY(-90deg)", opacity: 0 }, { transform: "perspective(800px) rotateY(0deg)", opacity: 1 }] },
+      { exit: [{ transform: "perspective(800px) rotateX(0deg)", opacity: 1 }, { transform: "perspective(800px) rotateX(90deg)", opacity: 0 }],
+        enter: [{ transform: "perspective(800px) rotateX(-90deg)", opacity: 0 }, { transform: "perspective(800px) rotateX(0deg)", opacity: 1 }] },
+      { exit: [{ transform: "scale(1) rotate(0deg)", opacity: 1 }, { transform: "scale(0) rotate(180deg)", opacity: 0 }],
+        enter: [{ transform: "scale(0) rotate(-180deg)", opacity: 0 }, { transform: "scale(1) rotate(0deg)", opacity: 1 }] },
+      { exit: [{ transform: "translateY(0) scale(1)", opacity: 1 }, { transform: "translateY(-150%) scale(0.6)", opacity: 0 }],
+        enter: [{ transform: "translateY(150%) scale(0.6)", opacity: 0 }, { transform: "translateY(0) scale(1)", opacity: 1 }] },
+      { exit: [{ transform: "rotate(0deg) translateX(0)", opacity: 1 }, { transform: "rotate(25deg) translateX(80px)", opacity: 0 }],
+        enter: [{ transform: "rotate(-25deg) translateX(-80px)", opacity: 0 }, { transform: "rotate(0deg) translateX(0)", opacity: 1 }] },
+      { exit: [{ transform: "scale(1) scaleX(1)", opacity: 1 }, { transform: "scale(1.2) scaleX(0.3)", opacity: 0 }],
+        enter: [{ transform: "scale(0.3) scaleX(1.2)", opacity: 0 }, { transform: "scale(1) scaleX(1)", opacity: 1 }] },
+    ];
+
+    const pickRandom = () => animations[Math.floor(Math.random() * animations.length)];
+
+    /* ===== State ===== */
+    let currentDeckName = null;
+    let cards = [];
+    let filtered = [];
+    let filter = 'All';
+    let idx = 0;
+    let animating = false;
+
+    /* ===== DOM References ===== */
+    const $deckSelect = document.getElementById('deck-select');
+    const $gameView   = document.getElementById('game-view');
+    const $card       = document.getElementById('card');
+    const $badge      = document.getElementById('card-badge');
+    const $question   = document.getElementById('card-question');
+    const $counter    = document.getElementById('counter');
+    const $filterBtn  = document.getElementById('filter-btn');
+    const $filterMenu = document.getElementById('filter-menu');
+    const $gameTitle  = document.getElementById('game-title');
+    const $gameSub    = document.getElementById('game-subtitle');
+    const $tip        = document.getElementById('tip');
+    const $drawBtn    = document.getElementById('draw-btn');
+    const $prevBtn    = document.getElementById('prev-btn');
+    const $shuffleBtn = document.getElementById('shuffle-btn');
+
+    /* ===== Utilities ===== */
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getCategories(qs) {
+      const seen = new Set();
+      return qs.reduce((acc, q) => { if (!seen.has(q.cat)) { seen.add(q.cat); acc.push(q.cat); } return acc; }, []);
+    }
+
+    /* ===== Deck Selection ===== */
+    function selectDeck(name) {
+      enterGame(name);
+    }
+
+    function enterGame(name) {
+      currentDeckName = name;
+      const meta = deckMeta[name];
+      const qs = deckQuestions[name];
+
+      cards = shuffle(qs);
+      filter = 'All';
+      idx = 0;
+      filtered = cards;
+
+      $gameTitle.textContent = meta.icon + ' ' + meta.name;
+      $gameSub.textContent = meta.subtitle;
+      $tip.textContent = meta.tip;
+
+      buildFilterMenu(qs);
+
+      $deckSelect.style.display = 'none';
+      $gameView.style.display = 'flex';
+
+      updateCard();
+
+      // Entrance animation
+      $card.animate(
+        [{ transform: "translateY(60px) scale(0.8)", opacity: 0 }, { transform: "translateY(0) scale(1)", opacity: 1 }],
+        { duration: 500, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" }
+      );
+    }
+
+    function goBack() {
+      $gameView.style.display = 'none';
+      $deckSelect.style.display = 'flex';
+      currentDeckName = null;
+      closeMenu();
+    }
+
+    /* ===== Filter Menu ===== */
+    function buildFilterMenu(qs) {
+      const cats = getCategories(qs);
+      const emojiMap = {};
+      qs.forEach(q => { if (!emojiMap[q.cat]) emojiMap[q.cat] = q.emoji; });
+
+      let html = '<button class="cat-btn active" onclick="setFilter(\'All\')">🎲 All</button>';
+      cats.forEach(c => {
+        html += '<button class="cat-btn" onclick="setFilter(\'' + c.replace(/'/g, "\\'") + '\')">' + (emojiMap[c] || '') + ' ' + c + '</button>';
+      });
+      $filterMenu.innerHTML = html;
+      updateFilterBtn();
+    }
+
+    function setFilter(cat) {
+      filter = cat;
+      idx = 0;
+      filtered = filter === 'All' ? cards : cards.filter(c => c.cat === filter);
+
+      // Highlight active
+      $filterMenu.querySelectorAll('.cat-btn').forEach(btn => {
+        const btnCat = btn.textContent.replace(/^[^\s]+\s/, '').trim();
+        const isAll = btn.textContent.includes('All');
+        btn.classList.toggle('active', (isAll && cat === 'All') || btnCat === cat);
+      });
+
+      updateFilterBtn();
+      closeMenu();
+      updateCard();
+
+      $card.animate(
+        [{ transform: "scale(0.8)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }],
+        { duration: 350, easing: "ease-out", fill: "forwards" }
+      );
+    }
+
+    function updateFilterBtn() {
+      if (filter === 'All') {
+        $filterBtn.innerHTML = '🎲 All Categories <span style="font-size:10px;opacity:0.6">▼</span>';
+      } else {
+        const card = filtered[0] || cards.find(c => c.cat === filter);
+        const emoji = card ? card.emoji : '';
+        $filterBtn.innerHTML = emoji + ' ' + filter + ' <span style="font-size:10px;opacity:0.6">▼</span>';
+      }
+    }
+
+    function toggleMenu() {
+      $filterMenu.classList.toggle('open');
+    }
+
+    function closeMenu() {
+      $filterMenu.classList.remove('open');
+    }
+
+    /* ===== Card Display ===== */
+    function updateCard() {
+      const card = filtered[idx] || filtered[0];
+      if (!card) return;
+
+      const bg = catColors[card.cat] || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+      $card.style.background = bg;
+      $badge.textContent = card.emoji + ' ' + card.cat;
+      $question.textContent = card.q;
+      $question.style.fontSize = card.q.length > 100 ? '17px' : card.q.length > 80 ? '19px' : '22px';
+      $counter.textContent = (idx + 1) + ' / ' + filtered.length;
+    }
+
+    /* ===== Card Navigation ===== */
+    function animateTransition(newIdx) {
+      if (animating || !$card) return;
+      animating = true;
+      setControlsDisabled(true);
+      const anim = pickRandom();
+
+      const exitAnim = $card.animate(anim.exit, { duration: 300, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" });
+      exitAnim.onfinish = () => {
+        idx = newIdx;
+        updateCard();
+        const enterAnim = $card.animate(anim.enter, { duration: 400, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" });
+        enterAnim.onfinish = () => {
+          $card.style.transform = "";
+          $card.style.opacity = "";
+          animating = false;
+          setControlsDisabled(false);
+        };
+      };
+    }
+
+    function next() {
+      if (filtered.length === 0) return;
+      animateTransition((idx + 1) % filtered.length);
+    }
+
+    function prev() {
+      if (filtered.length === 0) return;
+      animateTransition((idx - 1 + filtered.length) % filtered.length);
+    }
+
+    function reshuf() {
+      if (animating || filtered.length === 0) return;
+      animating = true;
+      setControlsDisabled(true);
+
+      const exitAnim = $card.animate(
+        [{ transform: "scale(1) rotate(0deg)", opacity: 1 }, { transform: "scale(0) rotate(360deg)", opacity: 0 }],
+        { duration: 400, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+      );
+      exitAnim.onfinish = () => {
+        cards = shuffle(deckQuestions[currentDeckName]);
+        filtered = filter === 'All' ? cards : cards.filter(c => c.cat === filter);
+        idx = 0;
+        updateCard();
+
+        const enterAnim = $card.animate(
+          [{ transform: "scale(0) rotate(-360deg)", opacity: 0 }, { transform: "scale(1.05) rotate(0deg)", opacity: 1 }, { transform: "scale(1) rotate(0deg)", opacity: 1 }],
+          { duration: 500, easing: "cubic-bezier(0, 0, 0.2, 1)", fill: "forwards" }
+        );
+        enterAnim.onfinish = () => {
+          $card.style.transform = "";
+          $card.style.opacity = "";
+          animating = false;
+          setControlsDisabled(false);
+        };
+      };
+    }
+
+    function setControlsDisabled(disabled) {
+      $drawBtn.disabled = disabled;
+      $prevBtn.disabled = disabled;
+      $shuffleBtn.disabled = disabled;
+    }
+
+    /* ===== Keyboard & Swipe Support ===== */
+    document.addEventListener('keydown', (e) => {
+      if (!currentDeckName) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Escape') closeMenu();
+    });
+
+    // Swipe support
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.getElementById('card-area').addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+    document.getElementById('card-area').addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      const dy = e.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) next(); else prev();
+      }
+    }, { passive: true });
+
+    // Close menu on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#filter-wrap')) closeMenu();
+    });
+  </script>
+</body>
+</html>
