@@ -1,0 +1,16 @@
+{
+  "name": "spark-dating-app",
+  "version": "1.0.0",
+  "description": "Spark - A modern dating application for meaningful connections",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "db:init": "cd server && npm run db:init",
+    "install:all": "cd server && npm install && cd ../client && npm install"
+  }
+}
