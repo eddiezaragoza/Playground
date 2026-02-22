@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.db
+*.db-wal
+*.db-shm
+server/data/
+server/uploads/photos/*.jpg
+server/uploads/photos/*.png
+server/uploads/photos/*.webp
+!server/uploads/photos/.gitkeep
+.DS_Store
