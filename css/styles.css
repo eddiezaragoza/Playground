@@ -267,10 +267,34 @@ a {
   border-radius: 50%;
 }
 
+.hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
 .hero-content {
   max-width: 640px;
   position: relative;
   z-index: 1;
+  flex: 1;
+}
+
+.hero-image {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-image img {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(1, 118, 211, 0.2);
+  box-shadow: var(--shadow-lg);
+  background: var(--color-bg-alt);
 }
 
 .hero-subtitle {
@@ -690,7 +714,37 @@ a {
 /* ============================================
    Responsive
    ============================================ */
+/* ============================================
+   Matrix Easter Egg — background mode
+   ============================================ */
+body.matrix-active {
+  background: #000;
+}
+
+body.matrix-active .hero { position: relative; z-index: 1; }
+body.matrix-active .container { position: relative; z-index: 1; }
+body.matrix-active .navbar { z-index: 1000; }
+body.matrix-active .section { position: relative; z-index: 1; }
+body.matrix-active .section-alt { background: rgba(0, 0, 0, 0.7); }
+body.matrix-active .footer { position: relative; z-index: 1; background: #000; color: #ccc; }
+body.matrix-active .back-to-top { z-index: 1000; }
+
 @media (max-width: 768px) {
+  .hero-inner {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .hero-image img {
+    width: 200px;
+    height: 200px;
+  }
+
+  .hero-cta {
+    justify-content: center;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }

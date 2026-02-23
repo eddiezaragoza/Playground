@@ -161,3 +161,112 @@ function initFadeInAnimations() {
 }
 
 initFadeInAnimations();
+
+// ============================================
+// Konami Code Easter Egg: Matrix Rain
+// ============================================
+(function initKonamiCode() {
+  const konamiSequence = [
+    "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+    "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+    "KeyB", "KeyA", "Enter",
+  ];
+  let konamiIndex = 0;
+  let matrixActive = false;
+  let matrixRainId = null;
+
+  document.addEventListener("keydown", function (e) {
+    const expected = konamiSequence[konamiIndex];
+    if (e.code === expected || e.key === expected) {
+      konamiIndex++;
+      if (konamiIndex === konamiSequence.length) {
+        konamiIndex = 0;
+        matrixActive ? stopMatrixRain() : startMatrixRain();
+        matrixActive = !matrixActive;
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+
+  function startMatrixRain() {
+    const canvas = document.getElementById("matrixCanvas");
+    if (!canvas || matrixRainId) return;
+    document.body.classList.add("matrix-active");
+    canvas.style.display = "block";
+    canvas.style.pointerEvents = "none";
+    const ctx = canvas.getContext("2d");
+
+    const chars =
+      "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:・.\"=*+-<>¦|";
+    const charArr = Array.from(chars);
+    const fontSize = 14;
+    let columns, drops;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      const oldDrops = drops || [];
+      drops = [];
+      for (let i = 0; i < columns; i++) {
+        drops[i] = oldDrops[i] !== undefined ? oldDrops[i] : Math.random() * -100;
+      }
+    }
+    resize();
+    window._matrixResize = resize;
+    window.addEventListener("resize", window._matrixResize);
+
+    let frameCount = 0;
+    function draw() {
+      frameCount++;
+      if (frameCount % 2 !== 0) {
+        matrixRainId = requestAnimationFrame(draw);
+        return;
+      }
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + "px Courier New";
+
+      for (let i = 0; i < columns; i++) {
+        const ch = charArr[Math.floor(Math.random() * charArr.length)];
+        const y = drops[i] * fontSize;
+
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "rgba(0,255,65,0.6)";
+        ctx.fillStyle = "#aaffaa";
+        ctx.fillText(ch, i * fontSize, y);
+
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(0,255,65,0.8)";
+        const ch2 = charArr[Math.floor(Math.random() * charArr.length)];
+        if (y - fontSize > 0) ctx.fillText(ch2, i * fontSize, y - fontSize);
+
+        if (y > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      matrixRainId = requestAnimationFrame(draw);
+    }
+    matrixRainId = requestAnimationFrame(draw);
+  }
+
+  function stopMatrixRain() {
+    if (matrixRainId) {
+      cancelAnimationFrame(matrixRainId);
+      matrixRainId = null;
+    }
+    document.body.classList.remove("matrix-active");
+    const canvas = document.getElementById("matrixCanvas");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = "none";
+    }
+    if (window._matrixResize) {
+      window.removeEventListener("resize", window._matrixResize);
+      delete window._matrixResize;
+    }
+  }
+})();

@@ -31,18 +31,23 @@
   <!-- Hero Section -->
   <section class="hero" id="hero">
     <div class="container">
-      <div class="hero-content">
-        <p class="hero-subtitle">Hello, I'm</p>
-        <h1 class="hero-title">Eddie Zaragoza</h1>
-        <div class="hero-typed-wrap">
-          <span class="hero-typed" id="typed-text"></span><span class="typed-cursor">|</span>
+      <div class="hero-inner">
+        <div class="hero-content">
+          <p class="hero-subtitle">Hello, I'm</p>
+          <h1 class="hero-title">Eddie Zaragoza</h1>
+          <div class="hero-typed-wrap">
+            <span class="hero-typed" id="typed-text"></span><span class="typed-cursor">|</span>
+          </div>
+          <p class="hero-description">
+            Building solutions on the Salesforce platform and beyond.
+          </p>
+          <div class="hero-cta">
+            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="#contact" class="btn btn-outline">Get In Touch</a>
+          </div>
         </div>
-        <p class="hero-description">
-          Building solutions on the Salesforce platform and beyond.
-        </p>
-        <div class="hero-cta">
-          <a href="#projects" class="btn btn-primary">View My Work</a>
-          <a href="#contact" class="btn btn-outline">Get In Touch</a>
+        <div class="hero-image">
+          <img src="images/profile.jpg" alt="Eddie Zaragoza" />
         </div>
       </div>
     </div>
@@ -317,6 +322,9 @@
 
   <!-- Back to Top Button -->
   <button class="back-to-top" id="back-to-top" aria-label="Back to top">&#8593;</button>
+
+  <!-- Konami Code Easter Egg: Matrix Rain -->
+  <canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 
   <script src="js/main.js"></script>
 </body>
