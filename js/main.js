@@ -161,3 +161,34 @@ function initFadeInAnimations() {
 }
 
 initFadeInAnimations();
+
+// ============================================
+// Konami Code Easter Egg
+// ============================================
+(function initKonamiCode() {
+  const sequence = [
+    "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+    "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+    "b", "a",
+  ];
+  let position = 0;
+  const overlay = document.getElementById("konami-overlay");
+  if (!overlay) return;
+
+  document.addEventListener("keydown", (e) => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === sequence[position]) {
+      position++;
+      if (position === sequence.length) {
+        overlay.classList.add("active");
+        position = 0;
+      }
+    } else {
+      position = 0;
+    }
+  });
+
+  overlay.addEventListener("click", () => {
+    overlay.classList.remove("active");
+  });
+})();
