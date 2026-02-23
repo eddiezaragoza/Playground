@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hardware Approval Button — Build Guide</title>
+    <style>
+        :root {
+            --cc-orange: #da7756;
+            --cc-dark: #1a1a2e;
+            --cc-darker: #0f0f1a;
+            --cc-mid: #2d2d44;
+            --cc-light: #f4f5f7;
+            --cc-green: #4ade80;
+            --cc-green-dark: #16a34a;
+            --cc-blue: #60a5fa;
+            --cc-purple: #a78bfa;
+            --cc-yellow: #fbbf24;
+            --cc-red: #f87171;
+            --border: #e2e4e8;
+            --text: #1a1a2e;
+            --text-muted: #5a6478;
+            --code-bg: #1e1e2e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--cc-light);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 40%, #da7756 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 70% 60%, rgba(74, 222, 128, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 2.6rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .subtitle {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            margin-bottom: 1.2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.12);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            padding: 0.4rem 0.85rem;
+            background: var(--cc-light);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--cc-dark);
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--cc-orange); color: white; }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            color: var(--cc-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--cc-orange);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section h2 .step-num {
+            background: var(--cc-orange);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .section h3 {
+            color: var(--cc-dark);
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.6rem;
+        }
+
+        .section p { margin-bottom: 0.8rem; }
+
+        /* Shopping Table */
+        .shop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92rem;
+        }
+
+        .shop-table th {
+            background: var(--cc-dark);
+            color: white;
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .shop-table th:first-child { border-radius: 8px 0 0 0; }
+        .shop-table th:last-child { border-radius: 0 8px 0 0; }
+
+        .shop-table td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .shop-table tr:hover td { background: #faf5f2; }
+
+        .shop-table a {
+            color: var(--cc-orange);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .shop-table a:hover { text-decoration: underline; }
+
+        .shop-table .price {
+            font-weight: 700;
+            color: var(--cc-green-dark);
+            white-space: nowrap;
+        }
+
+        .shop-table .notes {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .total-row td {
+            background: var(--cc-light);
+            font-weight: 700;
+            border-bottom: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Wiring Diagram */
+        .wiring-box {
+            background: var(--code-bg);
+            color: #cdd6f4;
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin: 1rem 0;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .wiring-box .pin { color: #89b4fa; font-weight: 700; }
+        .wiring-box .wire { color: #a6e3a1; }
+        .wiring-box .component { color: #f9e2af; }
+        .wiring-box .gnd { color: #f38ba8; }
+        .wiring-box .comment { color: #6c7086; font-style: italic; }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--code-bg);
+            color: #cdd6f4;
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin: 0.8rem 0;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block .lang-tag {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.8rem;
+            font-size: 0.7rem;
+            color: #6c7086;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .code-block .cmd { color: #a6e3a1; }
+        .code-block .flag { color: #89b4fa; }
+        .code-block .path { color: #f9e2af; }
+        .code-block .output { color: #6c7086; }
+
+        /* Info/Warning Boxes */
+        .info-box {
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+            font-size: 0.92rem;
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
+        }
+
+        .info-box .icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            line-height: 1.3;
+        }
+
+        .info-box.tip {
+            background: #f0fdf4;
+            border-left: 4px solid var(--cc-green);
+        }
+
+        .info-box.warning {
+            background: #fffbeb;
+            border-left: 4px solid var(--cc-yellow);
+        }
+
+        .info-box.danger {
+            background: #fef2f2;
+            border-left: 4px solid var(--cc-red);
+        }
+
+        .info-box.info {
+            background: #eff6ff;
+            border-left: 4px solid var(--cc-blue);
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .checklist li strong { color: var(--cc-dark); }
+
+        /* Architecture Diagram */
+        .arch-box {
+            background: linear-gradient(145deg, #1a1a2e, #2d2d44);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .arch-layer {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            width: 100%;
+            max-width: 550px;
+            color: white;
+        }
+
+        .arch-layer .layer-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .arch-layer .layer-detail {
+            font-size: 0.82rem;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .arch-layer.pico { border-color: var(--cc-green); }
+        .arch-layer.pico .layer-title { color: var(--cc-green); }
+        .arch-layer.bridge { border-color: var(--cc-orange); }
+        .arch-layer.bridge .layer-title { color: var(--cc-orange); }
+        .arch-layer.hook { border-color: var(--cc-blue); }
+        .arch-layer.hook .layer-title { color: var(--cc-blue); }
+
+        .arch-arrow {
+            color: rgba(255,255,255,0.4);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        /* Ordered Steps */
+        .steps { counter-reset: step-counter; list-style: none; margin: 1rem 0; }
+
+        .steps li {
+            counter-increment: step-counter;
+            padding: 0.6rem 0 0.6rem 2.8rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            background: var(--cc-orange);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        /* Test Cards */
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .test-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .test-card:hover { border-color: var(--cc-orange); }
+
+        .test-card .test-name {
+            font-weight: 700;
+            color: var(--cc-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .test-card .test-action {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .test-card .test-expect {
+            font-size: 0.88rem;
+            color: var(--cc-green-dark);
+            font-weight: 500;
+        }
+
+        /* File Tree */
+        .file-tree {
+            background: var(--code-bg);
+            color: #cdd6f4;
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+
+        .file-tree .dir { color: #89b4fa; }
+        .file-tree .file { color: #a6e3a1; }
+        .file-tree .desc { color: #6c7086; }
+
+        /* FAQ */
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.6rem;
+            overflow: hidden;
+        }
+
+        .faq-q {
+            padding: 0.8rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--cc-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-q:hover { background: #edeef1; }
+
+        .faq-q::after {
+            content: '+';
+            font-size: 1.3rem;
+            color: var(--cc-orange);
+            font-weight: 300;
+            transition: transform 0.2s;
+        }
+
+        .faq-item.open .faq-q::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-a {
+            max-height: 300px;
+            padding: 1rem 1.2rem;
+        }
+
+        .faq-a p { color: var(--text-muted); font-size: 0.92rem; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.8rem; }
+            .section { padding: 1.5rem; }
+            .shop-table { font-size: 0.82rem; }
+            .shop-table td, .shop-table th { padding: 0.5rem 0.6rem; }
+            .wiring-box { font-size: 0.72rem; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>Claude Code Approval Button</h1>
+    <p class="subtitle">A physical arcade button that approves Claude Code tool requests across all your terminal sessions. No window focus required.</p>
+    <div class="badges">
+        <span class="badge">Raspberry Pi Pico</span>
+        <span class="badge">CircuitPython</span>
+        <span class="badge">USB Serial</span>
+        <span class="badge">~$25 Total</span>
+    </div>
+</div>
+
+<!-- Navigation -->
+<div class="container">
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#shopping">Shopping List</a>
+            <a href="#wiring">Wiring</a>
+            <a href="#flash">Flash Pico</a>
+            <a href="#firmware">Firmware</a>
+            <a href="#bridge">Bridge Setup</a>
+            <a href="#hook">Hook Config</a>
+            <a href="#testing">Testing</a>
+            <a href="#troubleshooting">Troubleshooting</a>
+            <a href="#files">File Reference</a>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="section" id="how-it-works">
+        <h2>How It Works</h2>
+        <p>The system uses <strong>file-based signaling</strong> (the same pattern as Claude Sound) to decouple the button from any specific terminal window. Three layers work together:</p>
+
+        <div class="arch-box">
+            <div class="arch-layer pico">
+                <div class="layer-title">Raspberry Pi Pico (CircuitPython)</div>
+                <div class="layer-detail">
+                    GP15 = Button input &nbsp; | &nbsp; GP16 = LED output<br>
+                    Sends "PRESS\n" on button press, receives ON/OFF for LED
+                </div>
+            </div>
+            <div class="arch-arrow">USB Serial (COM port)</div>
+            <div class="arch-layer bridge">
+                <div class="layer-title">led-bridge.js (Node.js on Windows)</div>
+                <div class="layer-detail">
+                    Watches approval-queue/ for .pending files<br>
+                    On PRESS: approves oldest request &nbsp; | &nbsp; LED tracks queue state
+                </div>
+            </div>
+            <div class="arch-arrow">File System (approval-queue/)</div>
+            <div class="arch-layer hook">
+                <div class="layer-title">approval-button.sh (WSL2 Hook)</div>
+                <div class="layer-detail">
+                    Claude Code PermissionRequest hook<br>
+                    Creates .pending file, polls for .approved (120s timeout)
+                </div>
+            </div>
+        </div>
+
+        <h3>Step-by-Step Flow</h3>
+        <ol class="steps">
+            <li>Claude Code needs approval &rarr; fires <code>PermissionRequest</code> hook</li>
+            <li>Hook creates <code>approval-queue/1708700000000-abc123.pending</code></li>
+            <li>Bridge detects the <code>.pending</code> file &rarr; sends <code>ON</code> to Pico &rarr; LED lights up</li>
+            <li>You press the button &rarr; Pico sends <code>PRESS</code> to bridge</li>
+            <li>Bridge renames oldest <code>.pending</code> &rarr; <code>.approved</code></li>
+            <li>Hook detects <code>.approved</code> &rarr; outputs allow JSON &rarr; Claude proceeds</li>
+            <li>No more <code>.pending</code> files &rarr; bridge sends <code>OFF</code> &rarr; LED off</li>
+        </ol>
+
+        <div class="info-box tip">
+            <span class="icon">&#9889;</span>
+            <div>
+                <strong>Multi-session support:</strong> Each Claude Code session creates its own <code>.pending</code> file. The LED stays on as long as <em>any</em> session is waiting. The button always approves the <em>oldest</em> request first.
+            </div>
+        </div>
+
+        <div class="info-box info">
+            <span class="icon">&#128274;</span>
+            <div>
+                <strong>No HID keyboard:</strong> The Pico does NOT act as a keyboard. It only talks to the bridge via serial. This eliminates the "wrong window gets the keystroke" problem entirely. Works even when all terminals are minimized.
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping List -->
+    <div class="section" id="shopping">
+        <h2><span class="step-num">1</span> Shopping List</h2>
+        <p>Everything you need, with direct links. Total cost is roughly $20&ndash;30 depending on what you already have.</p>
+
+        <table class="shop-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/5525" target="_blank" rel="noopener">Raspberry Pi Pico H</a><br>
+                        <span class="notes">Adafruit #5525 &mdash; pre-soldered headers</span><br>
+                        <span class="notes">Alt: <a href="https://www.pishop.us/product/raspberry-pi-pico-h-pre-soldered-headers/" target="_blank" rel="noopener">PiShop.us</a> &nbsp;|&nbsp; <a href="https://www.amazon.com/Raspberry-Pre-Soldered-Microcontroller-Development-Dual-Core/dp/B08X7HN2VG" target="_blank" rel="noopener">Amazon</a></span>
+                    </td>
+                    <td class="price">~$5</td>
+                    <td class="notes">Regular Pico with headers. WiFi not needed. Uses micro-USB. If out of stock at one retailer, check the alternates.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/3487" target="_blank" rel="noopener">30mm Translucent Green Arcade Button w/ LED</a><br>
+                        <span class="notes">Adafruit #3487</span>
+                    </td>
+                    <td class="price">$2.50</td>
+                    <td class="notes">Built-in LED with 680&#8486; resistor. Green recommended for brightness at 3.3V. Also available in <a href="https://www.adafruit.com/product/3490" target="_blank" rel="noopener">blue</a>, <a href="https://www.adafruit.com/product/3489" target="_blank" rel="noopener">red</a>, <a href="https://www.adafruit.com/product/3488" target="_blank" rel="noopener">yellow</a>, <a href="https://www.adafruit.com/product/3491" target="_blank" rel="noopener">clear</a>.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/3835" target="_blank" rel="noopener">Quick-Connect Wires &mdash; 0.187"</a><br>
+                        <span class="notes">Adafruit #3835 (10-pack)</span>
+                    </td>
+                    <td class="price">$4.95</td>
+                    <td class="notes">For the <strong>switch</strong> contacts. You only need 1 pair (pack of 10, keep spares).</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/3838" target="_blank" rel="noopener">Quick-Connect Wires &mdash; 0.25"</a><br>
+                        <span class="notes">Adafruit #3838 (10-pack)</span>
+                    </td>
+                    <td class="price">$4.95</td>
+                    <td class="notes">For the <strong>LED</strong> contacts. You only need 1 pair.</td>
+                </tr>
+                <tr>
+                    <td>
+                        Micro-USB data cable<br>
+                        <span class="notes">Check your drawer first</span>
+                    </td>
+                    <td class="price">~$3&ndash;5</td>
+                    <td class="notes">Must be a <strong>data cable</strong>, not charge-only. If plugging in shows no COM port, the cable is charge-only.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/64" target="_blank" rel="noopener">Half-size breadboard</a><br>
+                        <span class="notes">For prototyping</span>
+                    </td>
+                    <td class="price">~$4</td>
+                    <td class="notes">Optional for permanent install, but great for first build. Any brand works.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="https://www.adafruit.com/product/758" target="_blank" rel="noopener">M-M jumper wires</a><br>
+                        <span class="notes">Assorted colors</span>
+                    </td>
+                    <td class="price">~$4</td>
+                    <td class="notes">For breadboard connections. You only need 3&ndash;4 wires.</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="2"><strong>Estimated Total</strong></td>
+                    <td><strong>~$24&ndash;30</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box tip">
+            <span class="icon">&#128161;</span>
+            <div>
+                <strong>Already have a breadboard and jumper wires?</strong> Your minimum order is just the Pico (~$5), the button ($2.50), and one pack of quick-connects ($4.95) = <strong>~$13</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Wiring -->
+    <div class="section" id="wiring">
+        <h2><span class="step-num">2</span> Wiring</h2>
+        <p>The button has <strong>four terminals</strong> &mdash; two for the switch (micro-switch) and two for the LED. They are independent circuits.</p>
+
+        <div class="wiring-box"><span class="comment">         Raspberry Pi Pico                    30mm Arcade Button</span>
+<span class="comment">         ================                    ==================</span>
+
+<span class="pin">Pin 20 (GP15)</span> <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> 0.187" wire <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> <span class="component">Switch (NO terminal)</span>
+<span class="pin">Pin 21 (GP16)</span> <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> 0.25" wire  <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> <span class="component">LED (+) terminal</span>
+<span class="gnd">Pin 23 (GND)</span>  <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> shared      <span class="wire">&mdash;&mdash;&mdash;&mdash;</span> <span class="component">Switch (COM) + LED (-)</span>
+
+<span class="comment">Notes:</span>
+<span class="comment">  - Button uses internal pull-up on GP15 (no external resistor needed)</span>
+<span class="comment">  - LED has built-in 680-ohm resistor (safe for 3.3V direct drive)</span>
+<span class="comment">  - GND is shared between switch COM and LED negative</span>
+<span class="comment">  - No LED polarity markings on button; if LED doesn't light, swap the wires</span></div>
+
+        <h3>Breadboard Layout</h3>
+        <ol class="steps">
+            <li>Seat the Pico on the breadboard, straddling the center channel</li>
+            <li>Run a jumper wire from <strong>Pin 20 (GP15)</strong> to one of the 0.187" quick-connect wires. Connect the quick-connect to the button's switch <strong>NO</strong> terminal.</li>
+            <li>Run a jumper wire from <strong>Pin 21 (GP16)</strong> to one of the 0.25" quick-connect wires. Connect the quick-connect to the button's <strong>LED (+)</strong> terminal.</li>
+            <li>Run a jumper wire from <strong>Pin 23 (GND)</strong> to a breadboard ground rail. Connect the other switch wire and the other LED wire to this same ground rail.</li>
+            <li>Plug in the micro-USB cable to the Pico and your PC.</li>
+        </ol>
+
+        <div class="info-box warning">
+            <span class="icon">&#9888;&#65039;</span>
+            <div>
+                <strong>LED doesn't light?</strong> There are no polarity markings on the button. If the LED doesn't turn on during the startup double-blink, swap the two 0.25" quick-connect wires on the LED terminals.
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash CircuitPython -->
+    <div class="section" id="flash">
+        <h2><span class="step-num">3</span> Flash CircuitPython onto the Pico</h2>
+        <p>The Pico needs CircuitPython installed before it can run the firmware.</p>
+
+        <ol class="steps">
+            <li>
+                Download the latest CircuitPython UF2 for the Pico from:<br>
+                <a href="https://circuitpython.org/board/raspberry_pi_pico/" target="_blank" rel="noopener"><strong>circuitpython.org/board/raspberry_pi_pico/</strong></a>
+            </li>
+            <li>
+                Hold down the <strong>BOOTSEL</strong> button on the Pico while plugging in the USB cable. The Pico will mount as a drive called <code>RPI-RP2</code>.
+            </li>
+            <li>
+                Drag the downloaded <code>.uf2</code> file onto the <code>RPI-RP2</code> drive. The Pico will reboot automatically and remount as <code>CIRCUITPY</code>.
+            </li>
+            <li>
+                Verify: you should see a <code>CIRCUITPY</code> drive in File Explorer with <code>code.py</code>, <code>boot_out.txt</code>, and a <code>lib/</code> folder.
+            </li>
+        </ol>
+
+        <div class="info-box info">
+            <span class="icon">&#128196;</span>
+            <div>
+                <strong>CircuitPython version:</strong> Any 9.x release works. The firmware only uses core modules (<code>board</code>, <code>digitalio</code>, <code>time</code>, <code>usb_cdc</code>) &mdash; no additional libraries needed.
+            </div>
+        </div>
+    </div>
+
+    <!-- Firmware -->
+    <div class="section" id="firmware">
+        <h2><span class="step-num">4</span> Install the Firmware</h2>
+        <p>Copy two files from <code>approval-button/CIRCUITPY/</code> to the Pico's <code>CIRCUITPY</code> drive.</p>
+
+        <h3>boot.py</h3>
+        <p>Enables the USB CDC data serial port (required for bridge communication).</p>
+        <div class="code-block">
+            <span class="lang-tag">Python</span>
+import usb_cdc
+usb_cdc.enable(data=True)</div>
+
+        <h3>code.py</h3>
+        <p>Main firmware loop: reads button, sends <code>PRESS</code>, receives LED commands.</p>
+        <div class="code-block">
+            <span class="lang-tag">Python</span>
+import board, digitalio, time, usb_cdc
+
+led = digitalio.DigitalInOut(board.GP16)
+led.direction = digitalio.Direction.OUTPUT
+
+button = digitalio.DigitalInOut(board.GP15)
+button.direction = digitalio.Direction.INPUT
+button.pull = digitalio.Pull.UP  <span class="output"># Active low</span>
+
+serial = usb_cdc.data
+
+<span class="output"># Startup double-blink</span>
+for _ in range(2):
+    led.value = True;  time.sleep(0.15)
+    led.value = False; time.sleep(0.15)
+
+<span class="output"># Main loop: button + serial commands</span>
+buf = b""
+last_press_time = 0
+while True:
+    now = time.monotonic()
+    if not button.value and (now - last_press_time) > 0.25:
+        serial.write(b"PRESS\n")
+        last_press_time = now
+        saved = led.value
+        led.value = True; time.sleep(0.05)
+        led.value = saved
+    if serial.in_waiting > 0:
+        buf = buf + serial.read(serial.in_waiting)
+        idx = buf.find(b"\n")
+        while idx >= 0:
+            cmd = buf[:idx].decode("utf-8").strip()
+            buf = buf[idx + 1:]
+            if cmd == "ON":  led.value = True
+            if cmd == "OFF": led.value = False
+            idx = buf.find(b"\n")
+    time.sleep(0.01)</div>
+
+        <ol class="steps">
+            <li>Open the <code>CIRCUITPY</code> drive in File Explorer</li>
+            <li>Copy <code>boot.py</code> to the drive root (overwrite the existing one if present)</li>
+            <li>Copy <code>code.py</code> to the drive root (overwrite the existing one)</li>
+            <li>The Pico will auto-restart. Watch for the <strong>double-blink</strong> on the LED &mdash; that confirms the firmware is running.</li>
+        </ol>
+
+        <div class="info-box warning">
+            <span class="icon">&#9888;&#65039;</span>
+            <div>
+                <strong>After copying boot.py</strong>, you must <strong>unplug and re-plug</strong> the Pico for the boot config to take effect. The data serial port won't appear until the next power cycle.
+            </div>
+        </div>
+    </div>
+
+    <!-- Bridge Setup -->
+    <div class="section" id="bridge">
+        <h2><span class="step-num">5</span> Bridge Setup (Windows)</h2>
+        <p>The Node.js bridge runs on Windows (not WSL) and connects the Pico's serial port to the file-based approval queue.</p>
+
+        <h3>Find Your COM Port</h3>
+        <ol class="steps">
+            <li>Open <strong>Device Manager</strong> (Win+X &rarr; Device Manager)</li>
+            <li>Expand <strong>Ports (COM & LPT)</strong></li>
+            <li>Look for <strong>"USB Serial Device (COMx)"</strong> or <strong>"CircuitPython CDC2 data (COMx)"</strong></li>
+            <li>Note the COM port number (e.g., <code>COM4</code>)</li>
+        </ol>
+
+        <div class="info-box tip">
+            <span class="icon">&#128161;</span>
+            <div>
+                <strong>Two COM ports?</strong> CircuitPython creates two serial ports: one for the REPL console and one for data. You want the <strong>second one</strong> (data). If unsure, try both &mdash; the wrong one will show garbled text instead of "PRESS".
+            </div>
+        </div>
+
+        <h3>Install Dependencies</h3>
+        <p>Open a <strong>Windows</strong> terminal (CMD or PowerShell, NOT WSL):</p>
+        <div class="code-block">
+            <span class="lang-tag">CMD</span>
+<span class="cmd">cd</span> <span class="path">C:\Projects\Claude-Sounds</span>
+<span class="cmd">npm install</span>
+<span class="output">
+# This installs the 'serialport' package (~15MB)</span></div>
+
+        <h3>Run the Bridge</h3>
+        <p>Option A: Double-click <code>start-led-bridge.bat</code> in File Explorer.</p>
+        <p>Option B: From a terminal:</p>
+        <div class="code-block">
+            <span class="lang-tag">CMD</span>
+<span class="cmd">node</span> <span class="path">C:\Projects\Claude-Sounds\led-bridge.js</span> <span class="flag">COM4</span>
+<span class="output">
+Starting approval bridge on COM4...
+Bridge connected on COM4
+Queue directory: C:\Projects\Claude-Sounds\approval-queue
+Waiting for requests...</span></div>
+
+        <div class="info-box info">
+            <span class="icon">&#128196;</span>
+            <div>
+                <strong>Leave the bridge running</strong> in a terminal window while you use Claude Code. You can minimize it. Consider adding it to your Windows startup if you want it always available.
+            </div>
+        </div>
+    </div>
+
+    <!-- Hook Config -->
+    <div class="section" id="hook">
+        <h2><span class="step-num">6</span> Hook Configuration (Already Done)</h2>
+        <p>The Claude Code hook is already installed. Here's what was set up for reference:</p>
+
+        <h3>Hook Script</h3>
+        <p>Location: <code>~/.claude/hooks/approval-button.sh</code></p>
+        <p>This script runs on every <code>PermissionRequest</code> event in Claude Code. It:</p>
+        <ul class="checklist">
+            <li><strong>Waits 2 seconds</strong> to let fast auto-approve hooks resolve first</li>
+            <li><strong>Creates a .pending file</strong> in the approval queue with the request details</li>
+            <li><strong>Polls every 500ms</strong> for a matching .approved file (up to 120 seconds)</li>
+            <li><strong>Outputs approval JSON</strong> if the button was pressed, or falls through to the normal terminal prompt on timeout</li>
+            <li><strong>Cleans up automatically</strong> via a trap &mdash; pending files are removed if the process is killed</li>
+        </ul>
+
+        <h3>Settings Entry</h3>
+        <p>Added to <code>~/.claude/settings.json</code> under <code>PermissionRequest</code>:</p>
+        <div class="code-block">
+            <span class="lang-tag">JSON</span>
+{
+  "matcher": "",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "/home/eddie/.claude/hooks/approval-button.sh",
+      "timeout": 130000
+    }
+  ]
+}</div>
+
+        <p>The empty <code>matcher</code> means this fires for <strong>all tool types</strong>. It runs alongside existing auto-approve hooks without interfering &mdash; if another hook approves first, this one is killed and cleans up after itself.</p>
+
+        <div class="info-box tip">
+            <span class="icon">&#128161;</span>
+            <div>
+                <strong>Graceful degradation:</strong> If the bridge isn't running or the Pico isn't plugged in, the hook simply times out after 120s and falls through to the normal terminal approval prompt. Nothing breaks.
+            </div>
+        </div>
+    </div>
+
+    <!-- Testing -->
+    <div class="section" id="testing">
+        <h2><span class="step-num">7</span> Testing & Verification</h2>
+        <p>Test each layer independently, then test end-to-end.</p>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <div class="test-name">Test 1: Pico Standalone</div>
+                <div class="test-action">Plug in the Pico. Open a serial monitor (e.g., PuTTY, or Arduino IDE Serial Monitor) on the data COM port at 115200 baud. Press the button.</div>
+                <div class="test-expect">Expected: Double-blink on startup. "PRESS" appears in serial output on each button press.</div>
+            </div>
+
+            <div class="test-card">
+                <div class="test-name">Test 2: Bridge + LED Control</div>
+                <div class="test-action">Start the bridge: <code>node led-bridge.js COM4</code>. Manually create a file named <code>test.pending</code> in <code>approval-queue/</code>.</div>
+                <div class="test-expect">Expected: LED turns on. Bridge logs "LED ON (1 pending)". Press the button &mdash; file becomes <code>test.approved</code>, LED turns off.</div>
+            </div>
+
+            <div class="test-card">
+                <div class="test-name">Test 3: End-to-End Single Session</div>
+                <div class="test-action">Start Claude Code. Ask it to run a command that needs approval. Watch the LED.</div>
+                <div class="test-expect">Expected: LED lights up after ~2s. Press button. Tool runs. LED turns off.</div>
+            </div>
+
+            <div class="test-card">
+                <div class="test-name">Test 4: Multi-Session</div>
+                <div class="test-action">Open two Claude Code terminals. Trigger approval requests in both. Press the button twice.</div>
+                <div class="test-expect">Expected: LED on. First press approves oldest. Second press approves next. LED off when queue empty.</div>
+            </div>
+
+            <div class="test-card">
+                <div class="test-name">Test 5: Timeout Fallback</div>
+                <div class="test-action">Trigger an approval request. Do NOT press the button. Wait 2+ minutes.</div>
+                <div class="test-expect">Expected: After 120s, the normal terminal approval prompt appears. You can approve from the keyboard as usual.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="section" id="troubleshooting">
+        <h2>Troubleshooting</h2>
+
+        <div class="faq-item">
+            <div class="faq-q">No COM port appears in Device Manager</div>
+            <div class="faq-a">
+                <p>Your USB cable is likely charge-only (no data lines). Try a different cable. If using a USB hub, try connecting directly to the PC. Also verify CircuitPython is installed &mdash; you should see a CIRCUITPY drive.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Bridge says "Serial error: Port is not open" or access denied</div>
+            <div class="faq-a">
+                <p>Another application has the COM port open (serial monitor, PuTTY, Arduino IDE). Close it first. Only one application can use a COM port at a time.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">LED doesn't blink on startup</div>
+            <div class="faq-a">
+                <p>Check wiring: the LED terminals use 0.25" quick-connects. No polarity markings exist on the button &mdash; if the LED doesn't light, swap the two wires on the LED terminals. Also verify code.py was copied to CIRCUITPY correctly.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Button press detected by bridge but nothing gets approved</div>
+            <div class="faq-a">
+                <p>Check that the hook script is executable: <code>chmod +x ~/.claude/hooks/approval-button.sh</code>. Verify <code>xxd</code> is installed in WSL: <code>which xxd</code>. Check the queue directory path matches between the hook (<code>/mnt/c/Projects/Claude-Sounds/approval-queue</code>) and the bridge.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">LED stays on permanently / stale .pending files</div>
+            <div class="faq-a">
+                <p>The bridge automatically cleans up .pending files older than 130 seconds and .approved files older than 10 seconds. If cleanup isn't working, manually delete files from the <code>approval-queue/</code> directory. This can happen if the hook process was killed without triggering its cleanup trap.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Hook interferes with existing auto-approve hooks</div>
+            <div class="faq-a">
+                <p>The approval-button hook has a 2-second delay before creating a .pending file. If another hook (like auto-approve.py) approves the request within that window, the approval-button hook is killed before it creates any file. If you see the LED flash briefly for auto-approved requests, that's harmless.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">I want to disable the button temporarily</div>
+            <div class="faq-a">
+                <p>Simply stop the bridge (Ctrl+C in its terminal window). The hook will still create .pending files, but they'll time out after 120s and get cleaned up. Or rename/delete the <code>approval-queue/</code> directory &mdash; the hook checks for it and exits immediately if it's missing.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Reference -->
+    <div class="section" id="files">
+        <h2>File Reference</h2>
+
+        <div class="file-tree">
+<span class="dir">approval-button/CIRCUITPY/</span>              <span class="desc">&larr; Copy to Pico's CIRCUITPY drive</span>
+  <span class="file">boot.py</span>                                <span class="desc">&larr; USB CDC data serial config</span>
+  <span class="file">code.py</span>                                <span class="desc">&larr; Button + LED firmware</span>
+
+<span class="dir">C:\Projects\Claude-Sounds\</span>
+  <span class="file">led-bridge.js</span>                          <span class="desc">&larr; Node.js serial-to-queue bridge</span>
+  <span class="file">package.json</span>                           <span class="desc">&larr; Dependencies (serialport)</span>
+  <span class="file">start-led-bridge.bat</span>                   <span class="desc">&larr; Double-click launcher</span>
+  <span class="dir">approval-queue/</span>                        <span class="desc">&larr; .pending/.approved files live here</span>
+
+<span class="dir">~/.claude/</span>
+  <span class="dir">hooks/</span>
+    <span class="file">approval-button.sh</span>                   <span class="desc">&larr; PermissionRequest hook script</span>
+  <span class="file">settings.json</span>                          <span class="desc">&larr; Hook registration (already updated)</span></div>
+    </div>
+
+    <!-- Quick-Start Checklist -->
+    <div class="section" id="quickstart">
+        <h2>Quick-Start Checklist</h2>
+        <p>Once you have all the hardware, run through this checklist:</p>
+
+        <ul class="checklist">
+            <li><strong>Flash CircuitPython</strong> onto the Pico (hold BOOTSEL, drag UF2)</li>
+            <li><strong>Copy boot.py</strong> to CIRCUITPY drive, then unplug and re-plug</li>
+            <li><strong>Copy code.py</strong> to CIRCUITPY drive &mdash; watch for double-blink</li>
+            <li><strong>Wire button</strong> to GP15 (switch), GP16 (LED), GND (shared)</li>
+            <li><strong>Find COM port</strong> in Device Manager</li>
+            <li><strong>Install bridge dependency:</strong> <code>cd C:\Projects\Claude-Sounds && npm install</code></li>
+            <li><strong>Start bridge:</strong> <code>start-led-bridge.bat</code> (or <code>node led-bridge.js COMx</code>)</li>
+            <li><strong>Test:</strong> Open Claude Code, trigger an approval, press the button</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+        Built with Claude Code &mdash; February 2026
+    </div>
+</div>
+
+<script>
+    // FAQ toggle
+    document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => {
+            q.parentElement.classList.toggle('open');
+        });
+    });
+</script>
+
+</body>
+</html>
