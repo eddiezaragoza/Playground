@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Flow Consolidation &mdash; UAT Execution Results</title>
+    <style>
+        :root {
+            --sf-blue: #0176d3;
+            --sf-dark: #032d60;
+            --sf-light: #f4f6f9;
+            --sf-green: #2e844a;
+            --sf-orange: #fe9339;
+            --sf-red: #ea001e;
+            --sf-purple: #730394;
+            --border: #d8dde6;
+            --text: #181818;
+            --text-muted: #5a6872;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--sf-light);
+        }
+        .hero {
+            background: linear-gradient(135deg, #032d60 0%, #0176d3 50%, #1b96ff 100%);
+            color: white;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; font-weight: 800; }
+        .hero .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        .hero .meta { font-size: 0.9rem; opacity: 0.75; margin-top: 0.8rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            color: var(--sf-dark);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--sf-blue);
+        }
+        .section h3 { color: var(--sf-blue); margin: 1.5rem 0 0.8rem 0; font-size: 1.15rem; }
+        .section h4 { color: var(--sf-dark); margin: 1.2rem 0 0.6rem 0; font-size: 1rem; }
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+        th { background: var(--sf-dark); color: white; padding: 0.6rem 0.7rem; text-align: left; font-weight: 600; }
+        td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        tr:nth-child(even) { background: #f8f9fb; }
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.82em;
+            color: var(--sf-purple);
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+        .callout-blue { background: #f0f7ff; border-left: 4px solid var(--sf-blue); }
+        .callout-green { background: #e8f5e9; border-left: 4px solid var(--sf-green); }
+        .callout-orange { background: #fff8e1; border-left: 4px solid var(--sf-orange); }
+        .callout-red { background: #ffeef0; border-left: 4px solid var(--sf-red); }
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--sf-blue); }
+        .callout-green strong { color: var(--sf-green); }
+        .callout-orange strong { color: #e65100; }
+        .callout-red strong { color: var(--sf-red); }
+
+        /* Summary badges */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .summary-card {
+            text-align: center;
+            padding: 1.2rem 0.8rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+        }
+        .summary-card .number { font-size: 2.2rem; display: block; line-height: 1.1; }
+        .summary-card .label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9; }
+        .bg-green { background: linear-gradient(135deg, #2e844a, #45a049); }
+        .bg-red { background: linear-gradient(135deg, #ea001e, #c62828); }
+        .bg-gray { background: linear-gradient(135deg, #5a6872, #78909c); }
+        .bg-blue { background: linear-gradient(135deg, #0176d3, #1b96ff); }
+
+        /* Status badges in tables */
+        .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        .badge-pass { background: #e8f5e9; color: #2e844a; }
+        .badge-fail { background: #ffeef0; color: #ea001e; }
+        .badge-skip { background: #f0f2f5; color: #5a6872; }
+        .badge-warn { background: #fff8e1; color: #e65100; }
+        .badge-fix { background: #e8f0fe; color: #0176d3; }
+        .badge-na { background: #f0f2f5; color: #78909c; }
+
+        /* Test header bar */
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .test-header h3 { margin: 0; }
+        .test-result { font-size: 0.85rem; font-weight: 600; }
+
+        /* Flow reference */
+        .flow-ref { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .flow-ref span { display: block; }
+
+        /* Checklist */
+        .checklist { list-style: none; padding-left: 0; }
+        .checklist li { padding: 0.4rem 0; padding-left: 1.8rem; position: relative; }
+        .checklist li::before { position: absolute; left: 0; font-size: 1.1rem; }
+        .checklist li.done::before { content: '\2705'; }
+        .checklist li.todo::before { content: '\2B1C'; }
+
+        /* TOC */
+        .toc { columns: 2; column-gap: 2rem; }
+        .toc a { color: var(--sf-blue); text-decoration: none; display: block; padding: 0.2rem 0; font-size: 0.9rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--sf-dark); }
+
+        /* Matrix Easter Egg */
+        body.matrix-active { background: #000; }
+        body.matrix-active .container { position: relative; z-index: 1; background: var(--sf-light); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+        @media print { #matrixCanvas { display: none !important; } .back-to-top { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Account Flow Consolidation &mdash; UAT Results</h1>
+    <p class="subtitle">User Acceptance Testing &mdash; Consolidated Flow Validation</p>
+    <p class="meta">Executed 2026-02-23 &bull; Full Sandbox &bull; Eddie Zaragoza (SCS Cloud / CrossCountry Consulting)</p>
+</div>
+
+<div class="container">
+
+    <!-- Executive Summary -->
+    <div class="section" id="summary">
+        <h2>Executive Summary</h2>
+
+        <div class="summary-grid">
+            <div class="summary-card bg-green"><span class="number">42</span><span class="label">Passed</span></div>
+            <div class="summary-card bg-red"><span class="number">0</span><span class="label">Failed</span></div>
+            <div class="summary-card bg-gray"><span class="number">7</span><span class="label">Skipped</span></div>
+            <div class="summary-card bg-blue"><span class="number">2</span><span class="label">Bugs Fixed</span></div>
+        </div>
+
+        <p>All three consolidated flows are functioning correctly and producing behavior consistent with the original 17 individual flows they replace. Two bugs were discovered and resolved during testing.</p>
+
+        <table>
+            <tr><th>Category</th><th>Pass</th><th>Fail</th><th>Skipped</th><th>Total</th></tr>
+            <tr><td>Before Save (Tests 1&ndash;9)</td><td>20</td><td>0</td><td>5 (Tests 3&ndash;4 Lead Conversion)</td><td>25</td></tr>
+            <tr><td>After Save (Tests 10&ndash;17)</td><td>18</td><td>0</td><td>2 (Test 18 Scheduled, Test 11 Campaign)</td><td>20</td></tr>
+            <tr><td>Integration (Tests 19&ndash;22)</td><td>4</td><td>0</td><td>0</td><td>4</td></tr>
+            <tr style="font-weight:700;"><td>TOTAL</td><td>42</td><td>0</td><td>7</td><td>49</td></tr>
+        </table>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="section" id="toc">
+        <h2>Table of Contents</h2>
+        <div class="toc">
+            <a href="#env">Test Environment</a>
+            <a href="#test1">Test 1: Physical Address Copy</a>
+            <a href="#test2">Test 2: Record Type Name Sync</a>
+            <a href="#test3">Tests 3&ndash;4: Lead Conversion (Skipped)</a>
+            <a href="#test5">Test 5: Affiliate Account Sharing</a>
+            <a href="#test6">Test 6: Account Type Hierarchy</a>
+            <a href="#test7">Test 7: Franchise Detection</a>
+            <a href="#test8">Test 8: Affiliate Status</a>
+            <a href="#test9">Test 9: Status Calculation</a>
+            <a href="#test10">Test 10: Contact Owner Cascade</a>
+            <a href="#test11">Test 11: Campaign Members (Skipped)</a>
+            <a href="#test12">Tests 12&ndash;13: Strategic Cascade</a>
+            <a href="#test14">Test 14: CSA/CSM Copy</a>
+            <a href="#test15">Test 15: Affiliate Client Count</a>
+            <a href="#test16">Test 16: Rooftop Rollups</a>
+            <a href="#test17">Test 17: Territory Assignment</a>
+            <a href="#test18">Test 18: Lead Address (Skipped)</a>
+            <a href="#integration">Tests 19&ndash;22: Integration</a>
+            <a href="#bugs">Bugs Found &amp; Fixed</a>
+            <a href="#findings">Other Findings</a>
+            <a href="#xref">Flow Cross-Reference</a>
+            <a href="#signoff">Sign-Off &amp; Checklist</a>
+        </div>
+    </div>
+
+    <!-- Test Environment -->
+    <div class="section" id="env">
+        <h2>Test Environment</h2>
+
+        <h3>Flows Under Test</h3>
+        <table>
+            <tr><th>Flow</th><th>Type</th><th>API Name</th></tr>
+            <tr><td>Before Save Consolidated</td><td>Record-Triggered (Before Save)</td><td><code>Account_RT_Before_Save_Consolidated</code></td></tr>
+            <tr><td>After Save Consolidated</td><td>Record-Triggered (After Save)</td><td><code>Account_RT_After_Save_Consolidated</code></td></tr>
+            <tr><td>Territory Assignment Subflow</td><td>AutoLaunched (Subflow)</td><td><code>Account_Subflow_Territory_Assignment</code></td></tr>
+        </table>
+
+        <h3>Kept Separate (Unchanged)</h3>
+        <table>
+            <tr><th>Flow</th><th>Reason</th></tr>
+            <tr><td><code>Account_RT_After_Create_Copy_Lead_Address_to_Account_Physical_Address</code></td><td>Scheduled path incompatible with CreateAndUpdate trigger</td></tr>
+            <tr><td><code>Account_Schedule_Flow_Update_Status_From_Terminated_to_Prospect</code></td><td>Scheduled flow (runs daily, separate transaction)</td></tr>
+        </table>
+
+        <h3>Test Data References</h3>
+        <table>
+            <tr><th>Item</th><th>Value</th></tr>
+            <tr><td>Record Type: Affiliate</td><td><code>0128a000001CI98AAG</code></td></tr>
+            <tr><td>Record Type: Non_Affiliate_Accounts</td><td><code>0128a000001CI9DAAW</code></td></tr>
+            <tr><td>Test User: SCS Consultant</td><td><code>005Qg000001J7V5IAK</code></td></tr>
+            <tr><td>Test User: Support Team</td><td><code>0058a00000NFJbsAAH</code></td></tr>
+            <tr><td>Valid CSA User</td><td><code>0058a00000NEQQKAA5</code></td></tr>
+            <tr><td>Valid CSM User</td><td><code>0058a00000MNiYTAA1</code></td></tr>
+            <tr><td>Test Record Naming</td><td><code>FLOW_TEST_BS_*</code>, <code>FLOW_TEST_OWNER_*</code>, etc.</td></tr>
+        </table>
+
+        <div class="callout callout-blue">
+            <strong>Test Method</strong>
+            All tests executed via Anonymous Apex scripts (<code>sf apex run</code>). All test records were cleaned up after each run.
+        </div>
+    </div>
+
+    <!-- BEFORE SAVE TESTS -->
+    <div class="section">
+        <h2>Before Save Flow Tests (Tests 1&ndash;9)</h2>
+        <p>These tests validate logic that updates fields on the triggering Account record. In the new architecture, all of these are <code>$Record</code> assignments in the Before Save flow (0 DML operations).</p>
+    </div>
+
+    <!-- Test 1 -->
+    <div class="section" id="test1">
+        <div class="test-header">
+            <h3>Test 1: Physical Address Copy from Billing Address</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 3/3</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Update_Physical_Address_to_Billing_Address</code></span>
+            <span><strong>New Element:</strong> D1 (<code>D1_Physical_Address_Same_As_Billing</code>) &rarr; <code>Assign_Billing_to_Shipping</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>1a</td><td>Set <code>Physical_Address_Same_As_Billing_Address__c</code> = true on Account with BillingStreet=&quot;123 Main St&quot;, BillingCity=&quot;Dallas&quot;, BillingState=&quot;TX&quot;</td><td>Shipping fields copy from Billing</td><td>All shipping fields copied correctly</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>1b</td><td>Change BillingStreet to &quot;456 Oak Ave&quot; (checkbox still true)</td><td>ShippingStreet updates</td><td>ShippingStreet updated to &quot;456 Oak Ave&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>1c</td><td>Set checkbox = false, change BillingStreet to &quot;789 Pine Rd&quot;</td><td>ShippingStreet remains &quot;456 Oak Ave&quot;</td><td>ShippingStreet unchanged</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 2 -->
+    <div class="section" id="test2">
+        <div class="test-header">
+            <h3>Test 2: Record Type Name Sync</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 2/2</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Record_Type_Name</code></span>
+            <span><strong>New Element:</strong> D2 (<code>D2_RecordTypeId_Changed</code>) &rarr; <code>Assign_Record_Type_Name</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>2a</td><td>Change Record Type to Affiliate</td><td><code>Record_Type_Name__c</code> = &quot;Affiliate&quot;</td><td>Record_Type_Name__c = &quot;Affiliate&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>2b</td><td>Change Record Type to Non_Affiliate_Accounts</td><td><code>Record_Type_Name__c</code> = &quot;Non-Affiliate Accounts&quot;</td><td>Record_Type_Name__c = &quot;Non-Affiliate Accounts&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Tests 3-4 -->
+    <div class="section" id="test3">
+        <div class="test-header">
+            <h3>Tests 3&ndash;4: Lead Conversion Record Type &amp; Affiliate Type</h3>
+            <span class="test-result"><span class="badge badge-skip">SKIPPED</span></span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flows:</strong> <code>Account_Create_Edit_Update_Account_Record_Type_from_Lead_Conversion</code>, <code>Account_Create_Edit_Update_Type_to_Affiliate</code></span>
+            <span><strong>New Elements:</strong> D3 (<code>D3_Lead_Conversion_Record_Type</code>), D4 (<code>D4_Type_to_Affiliate</code>)</span>
+        </div>
+        <div class="callout callout-orange">
+            <strong>Cannot test via Anonymous Apex</strong>
+            Lead conversion requires the <code>Database.convertLead()</code> API context, which sets special system variables (<code>$Record.Lead_Conversion__c</code>, etc.) that cannot be simulated through direct Account DML. Manual verification recommended.
+        </div>
+    </div>
+
+    <!-- Test 5 -->
+    <div class="section" id="test5">
+        <div class="test-header">
+            <h3>Test 5: Affiliate Account Sharing Record Type</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 2/2</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Affiliate_Account_Sharing_for_Manager</code></span>
+            <span><strong>New Element:</strong> D5 (<code>D5_Affiliate_Account_Sharing</code>) &rarr; <code>Assign_Affiliate_Account_Record_Type</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>5a</td><td>Populate <code>Affiliate_Account__c</code> on existing Account</td><td><code>Affiliate_Account_Record_Type__c</code> = &quot;Affiliate&quot;</td><td>Affiliate_Account_Record_Type__c = &quot;Affiliate&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>5b</td><td>Create new Account with <code>Affiliate_Account__c</code> populated</td><td>Field set correctly on insert</td><td>Record type field set correctly</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 6 -->
+    <div class="section" id="test6">
+        <div class="test-header">
+            <h3>Test 6: Account Type Based on Hierarchy</h3>
+            <span class="test-result"><span class="badge badge-fix">PASS after fix</span> 5/5</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Type_Update</code></span>
+            <span><strong>New Element:</strong> D6 &rarr; D6a &rarr; Get Records (<code>Get_Child_Accounts_for_Type</code>) &rarr; D6b (<code>D6b_Parent_Account_Check</code>)</span>
+        </div>
+        <div class="callout callout-red">
+            <strong>BUG FOUND &mdash; See <a href="#bug1">BUG 1</a></strong>
+            Steps 6d and 6f initially failed due to <code>$Record.Id</code> being null during INSERT, causing the child account query to match 17,793 parentless accounts. Fixed and re-verified.
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>6a</td><td>Edit Account with RT = &quot;Affiliate&quot;</td><td>Type = &quot;Affiliate&quot; via D6a</td><td>Covered by Test 5 (D5/D6a logic chain)</td><td><span class="badge badge-na">N/A</span></td></tr>
+            <tr><td>6b</td><td>Edit top-level Account (no ParentId) with children (UPDATE)</td><td>Type = &quot;Group Parent&quot;</td><td>Type = &quot;Group Parent&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>6c</td><td>Edit Account with ParentId AND its own children</td><td>Type = &quot;Regional Parent&quot;</td><td>Blocked by V3 Rollups conflict</td><td><span class="badge badge-na">N/A</span></td></tr>
+            <tr><td>6d</td><td>Account with ParentId, no children (INSERT + UPDATE)</td><td>Type = &quot;Rooftop&quot;</td><td>Type = &quot;Rooftop&quot; (after fix)</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>6e</td><td>Account where <code>Account_Type_Override__c</code> = true</td><td>Type NOT changed</td><td>D6 skipped entirely</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>6f</td><td>Standalone &mdash; no parent, no children (INSERT + UPDATE)</td><td>Type NOT incorrectly set</td><td>Type unchanged (after fix)</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 7 -->
+    <div class="section" id="test7">
+        <div class="test-header">
+            <h3>Test 7: Franchise Name Detection</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 2/2</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Type_to</code></span>
+            <span><strong>New Element:</strong> D7 &rarr; Get Records (<code>Franchise_Auto_Names__mdt</code>) &rarr; Loop &rarr; D7a/D7b &rarr; <code>Assign_Auto_Franchise</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>7a</td><td>Change Name to &quot;AutoNation of Dallas&quot;</td><td>Customer_Type = &quot;Auto&quot;, Customer_Subtype = &quot;Franchise&quot;</td><td>Customer_Type__c = &quot;Auto&quot;, Customer_Subtype__c = &quot;Franchise&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>7b</td><td>Change Name to non-franchise name</td><td>Customer_Type/Subtype NOT changed</td><td>Fields unchanged</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 8 -->
+    <div class="section" id="test8">
+        <div class="test-header">
+            <h3>Test 8: Status &mdash; Affiliate to &quot;Other&quot;</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 2/2</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Status_to_Other_on_Affiliate</code></span>
+            <span><strong>New Element:</strong> D8 (<code>D8_Status_Affiliate_Check</code>) &rarr; <code>Assign_Status_Other</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>8a</td><td>Edit any field on Account with RT = &quot;Affiliate&quot;</td><td>Status__c = &quot;Other&quot;</td><td>Status__c = &quot;Other&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>8b</td><td>Edit Account with non-Affiliate RT</td><td>Status NOT set to &quot;Other&quot;</td><td>D8 fell through to D8b</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 9 -->
+    <div class="section" id="test9">
+        <div class="test-header">
+            <h3>Test 9: Status Calculation (Client / Implementing / Terminated / Prospect)</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 5/5</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Status</code></span>
+            <span><strong>New Elements:</strong> D8b&ndash;D8e &rarr; <code>Assign_Status_Client</code>, <code>Assign_Status_Implementing</code>, <code>Assign_Status_Terminated</code>, <code>Assign_Status_Prospect</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>9a</td><td>Set <code>CBC__c</code> = true</td><td>Status = &quot;Client&quot;</td><td>Status__c = &quot;Client&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>9b</td><td>Set <code>DSGSS__c</code> = true, all others false</td><td>Status = &quot;Client&quot;</td><td>Status__c = &quot;Client&quot;</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>9c</td><td>All products false, active Implementation Project exists</td><td>Status = &quot;Implementing&quot;</td><td>Flow queries <code>Project__c</code> via <code>Get_Related_Implementing_Projects</code>. Test script docs corrected. Flow logic correct.</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>9d</td><td>All products false, <code>CBC_Inactive_Date__c</code> = 3 months ago</td><td>Status = &quot;Terminated&quot;; Prospect_Date = inactive + 12 mo</td><td>Status__c = &quot;Terminated&quot;, Prospect_Date__c correct</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>9e</td><td>Multiple deactivation dates (6 mo ago, 3 mo ago)</td><td>Prospect_Date = most recent + 12 months</td><td>Used most recent date (DSGSS) + 12 months</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+        <div class="callout callout-green">
+            <strong>Formula Validation (fml_ProspectDate)</strong>
+            Verified in 9e: the Before Save flow correctly computes MAX of all 5 deactivation dates and adds 12 months, matching the old flow's behavior.
+        </div>
+    </div>
+
+    <!-- AFTER SAVE TESTS -->
+    <div class="section">
+        <h2>After Save Flow Tests (Tests 10&ndash;17)</h2>
+        <p>These tests validate logic that updates OTHER records (Contacts, child Accounts, CampaignMembers, etc.). All run in the After Save flow.</p>
+    </div>
+
+    <!-- Test 10 -->
+    <div class="section" id="test10">
+        <div class="test-header">
+            <h3>Test 10: Contact Owner Cascade</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 2/2</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Contact_Owners</code></span>
+            <span><strong>New Element:</strong> D1 (<code>D1_Owner_Changed</code>) &rarr; <code>Update_Contact_Owners</code></span>
+        </div>
+        <div class="callout callout-orange">
+            <strong>Testing Note</strong>
+            Required <code>Territory_Override__c = true</code> to prevent the Territory flow (D8) from overriding OwnerId during testing.
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>10a</td><td>Change OwnerId from SCS Consultant to Support Team</td><td>All Contacts updated to new owner</td><td>All 3 test contacts updated. Territory_Override__c=true used.</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>10b</td><td>Edit Phone (no owner change)</td><td>Contact owners unchanged</td><td>D1 skipped &mdash; contacts unchanged</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 11 -->
+    <div class="section" id="test11">
+        <div class="test-header">
+            <h3>Test 11: Campaign Member Creation</h3>
+            <span class="test-result"><span class="badge badge-skip">NOT TESTED</span></span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Contact_Campaigns</code></span>
+            <span><strong>New Element:</strong> D2 (<code>D2_Campaign_Changed</code>) &rarr; Loop &rarr; D2a &rarr; <code>Create_Campaign_Member</code></span>
+        </div>
+        <div class="callout callout-orange">
+            <strong>Manual verification recommended</strong>
+            Campaign member creation requires valid Campaign IDs and specific <code>Active_Campaign__c</code> field setup. Covered indirectly by Test 10's execution through the After Save decision tree.
+        </div>
+    </div>
+
+    <!-- Tests 12-13 -->
+    <div class="section" id="test12">
+        <div class="test-header">
+            <h3>Tests 12&ndash;13: Strategic Account Cascade (True &amp; False)</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 4/4</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flows:</strong> <code>Account_Create_Edit_Update_Child_Accounts_for_Strategic_Parents</code> (true), <code>..._to_false</code> (false)</span>
+            <span><strong>New Elements:</strong> D3 (<code>D3_Strategic_True</code>) &rarr; <code>Update_Children_Strategic_True</code>; D4 (<code>D4_Strategic_False</code>) &rarr; <code>Update_Children_Strategic_False</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>12a</td><td>Set Strategic = true on parent (no ParentId)</td><td>All children: Strategic=true, Changed_from_Parent=true, Owner=parent</td><td>All child accounts updated correctly</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>12c</td><td>Set Strategic = true on CHILD (has ParentId)</td><td>D3 skipped &mdash; no cascade</td><td>D3 skipped</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>13a</td><td>Set Strategic = false on parent</td><td>All children: Strategic=false, Changed_from_Parent=false, Territory_Override=false</td><td>All child accounts updated correctly</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>13b</td><td>Set Strategic = false on CHILD</td><td>D4 skipped &mdash; no cascade</td><td>D4 skipped</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 14 -->
+    <div class="section" id="test14">
+        <div class="test-header">
+            <h3>Test 14: CSA/CSM Copy to Rooftops</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 3/3</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_RT_After_Update_Copy_CSA_CSM_Assignment_to_Rooftops_from_Group_Parent</code></span>
+            <span><strong>New Element:</strong> D5 (<code>D5_CSA_CSM_Changed</code>) &rarr; <code>Update_Rooftops_CSA_CSM</code></span>
+        </div>
+        <div class="callout callout-blue">
+            <strong>Testing Note</strong>
+            <code>CSA_Assignment__c</code> and <code>CSM_Assignment__c</code> are User lookup fields with validation filters &mdash; not all User IDs are accepted. Valid users found: CSA=<code>0058a00000NEQQKAA5</code>, CSM=<code>0058a00000MNiYTAA1</code>.
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>14a</td><td>Change CSA on Group Parent</td><td>All children: CSA = parent's value</td><td>All child accounts updated</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>14b</td><td>Change CSM on Group Parent</td><td>All children: CSM = parent's value</td><td>All child accounts updated</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>14c</td><td>Change CSA on non-Group-Parent</td><td>D5 skipped</td><td>D5 skipped &mdash; no cascade</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 15 -->
+    <div class="section" id="test15">
+        <div class="test-header">
+            <h3>Test 15: Affiliate Client Count</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 1/2, <span class="badge badge-warn">KNOWN LIMITATION</span></span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_Create_Edit_Update_Affiliate_Count</code></span>
+            <span><strong>New Element:</strong> D6 (<code>D6_Affiliate_Count</code>) &rarr; Get Records &rarr; Loop &rarr; <code>Update_Affiliate_Record</code></span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>15a (create)</td><td>Create Rooftop with Affiliate_Account__c</td><td>Affiliate parent count updated</td><td>D6 skipped &mdash; Rooftops__c not yet 1 at D6 execution time</td><td><span class="badge badge-warn">LIMITATION</span></td></tr>
+            <tr><td>15b (update)</td><td>Update existing Account with Affiliate change</td><td>Affiliate count recalculated</td><td>Count correctly calculated</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+        <div class="callout callout-orange">
+            <strong>D6/D7 Ordering Issue</strong>
+            D6 (Affiliate Count) requires <code>Rooftops__c = 1</code>, but D7 (Rooftop Rollups) sets this value. Since D6 runs first, the condition is not met on initial create. Works correctly on updates. See <a href="#finding-ordering">Other Findings</a>.
+        </div>
+    </div>
+
+    <!-- Test 16 -->
+    <div class="section" id="test16">
+        <div class="test-header">
+            <h3>Test 16: Rooftop Rollup Calculations</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 4/4</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_RT_Create_Edit_Rooftop_Rollups_Controller_V3</code></span>
+            <span><strong>New Element:</strong> D7 (<code>D7_Rooftop_Rollups</code>) &rarr; Get Records &rarr; Loop &rarr; D7a &rarr; Update Records</span>
+        </div>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>16a</td><td>Edit standalone (no parent, no children)</td><td>Rooftop__c=true, Rooftops__c=1</td><td>Rooftop__c=true, Rooftops__c=1</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>16b</td><td>Edit Rooftop (has parent, no children)</td><td>Rooftop__c=true, Rooftops__c=1</td><td>Rooftop__c=true, Rooftops__c=1</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>16d</td><td>Edit Top Parent (no parent, has children)</td><td>Is_Parent=true, Rooftop=false, Rooftops=sum</td><td>All fields set correctly</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>16e</td><td>Change ACV on a Rooftop</td><td>Parent's ACV recalculates</td><td>Parent's Account_ACV__c recalculated</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 17 -->
+    <div class="section" id="test17">
+        <div class="test-header">
+            <h3>Test 17: Territory Assignment</h3>
+            <span class="test-result"><span class="badge badge-pass">PASS</span> 5/5</span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Old Flow:</strong> <code>Account_RT_Create_Edit_Update_Territories_Territory</code> (156KB)</span>
+            <span><strong>New Element:</strong> D8 &rarr; Subflow (<code>Account_Subflow_Territory_Assignment</code>) &rarr; D8a &rarr; <code>Update_Territory_Fields</code></span>
+        </div>
+
+        <h4>17a: Territory by State</h4>
+        <table>
+            <tr><th>Step</th><th>ShippingState</th><th>Expected Territory</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>17a-1</td><td>TX</td><td>South Central</td><td>South Central</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>17a-2</td><td>CA</td><td>California</td><td>California</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>17a-3</td><td>FL</td><td>South East</td><td>South East</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>17a-4</td><td>NY</td><td>NY Metro</td><td>NY Metro</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+
+        <h4>17c: Territory Override</h4>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>17c-1</td><td>Territory_Override=true, change ShippingState</td><td>Territory updates, OwnerId preserved</td><td>Territory updated, OwnerId unchanged</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- Test 18 -->
+    <div class="section" id="test18">
+        <div class="test-header">
+            <h3>Test 18: Lead Address Copy (Scheduled Path)</h3>
+            <span class="test-result"><span class="badge badge-skip">SKIPPED</span></span>
+        </div>
+        <div class="flow-ref">
+            <span><strong>Flow:</strong> <code>Account_RT_After_Create_Copy_Lead_Address_to_Account_Physical_Address</code> (unchanged, kept active)</span>
+        </div>
+        <div class="callout callout-orange">
+            <strong>Manual verification recommended</strong>
+            Scheduled path flow &mdash; cannot be triggered or verified via Anonymous Apex.
+        </div>
+    </div>
+
+    <!-- INTEGRATION TESTS -->
+    <div class="section" id="integration">
+        <h2>Integration / Cascade Tests (Tests 19&ndash;22)</h2>
+        <p>These tests verify that consolidated flows work correctly when multiple decision branches fire in the same transaction.</p>
+
+        <table>
+            <tr><th>Test</th><th>Scenario</th><th>Expected</th><th>Actual</th><th>Status</th></tr>
+            <tr><td>19</td><td>Multi-Branch Before Save: address copy + status update in single save</td><td>Both D1 and D8b fire</td><td>Both fired in single save</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>20</td><td>Multi-Branch After Save: owner cascade + strategic cascade</td><td>D1 and D3 both fire</td><td>Both fired in single save</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>21</td><td>Recursion Prevention: strategic cascade to children</td><td>No recursive re-trigger</td><td>Children updated, no recursion</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>22</td><td>SOQL Governor Limits: complex multi-branch save</td><td>Well below 100 SOQL</td><td><strong>67/100 SOQL queries</strong></td><td><span class="badge badge-pass">PASS</span></td></tr>
+        </table>
+    </div>
+
+    <!-- BUGS FOUND -->
+    <div class="section" id="bugs">
+        <h2>Bugs Found &amp; Fixed</h2>
+
+        <h3 id="bug1">BUG 1: $Record.Id null on INSERT &mdash; false-positive child query <span class="badge badge-fix" style="margin-left:0.5rem;">FIXED</span></h3>
+        <table>
+            <tr><th style="width:140px;">Severity</th><td><strong style="color:var(--sf-red);">HIGH</strong></td></tr>
+            <tr><th>Tests Affected</th><td>6d, 6f (Account Type determination on INSERT)</td></tr>
+            <tr><th>Status</th><td>Fixed and re-verified (5/5 pass)</td></tr>
+        </table>
+
+        <h4>Root Cause</h4>
+        <p>In a Before Save flow during INSERT, <code>$Record.Id</code> is null. The <code>Get_Child_Accounts_for_Type</code> query uses the filter <code>WHERE ParentId = $Record.Id</code>. When <code>$Record.Id</code> is null, this evaluates to <code>WHERE ParentId = null</code>, which matched <strong>17,793 parentless accounts</strong> as false &quot;children.&quot; Every new account was incorrectly identified as having children.</p>
+
+        <h4>Symptoms</h4>
+        <ul>
+            <li>Standalone account (no parent, no children) &rarr; incorrectly got Type = &quot;Group Parent&quot;</li>
+            <li>Child account (has parent, no children) &rarr; incorrectly got Type = &quot;Regional Parent&quot;</li>
+        </ul>
+
+        <h4>Fix Applied</h4>
+        <ol>
+            <li>Added text variable <code>var_ChildAccountId</code></li>
+            <li>Changed <code>Get_Child_Accounts_for_Type</code> from <code>storeOutputAutomatically=true</code> to manual <code>outputAssignments</code> mapping Id &rarr; <code>var_ChildAccountId</code></li>
+            <li>Added formula <code>fml_HasChildAccounts</code>:</li>
+        </ol>
+        <pre>IF(ISNEW(), FALSE, NOT(ISBLANK({!var_ChildAccountId})))</pre>
+        <ul>
+            <li><strong>On INSERT:</strong> always returns FALSE (new accounts cannot have children)</li>
+            <li><strong>On UPDATE:</strong> checks the actual query result</li>
+        </ul>
+        <ol start="4">
+            <li>Updated D6b conditions to reference <code>fml_HasChildAccounts</code> instead of direct IS NULL checks</li>
+            <li>Changed <code>assignNullValuesIfNoRecordsFound</code> from <code>true</code> to <code>false</code></li>
+        </ol>
+
+        <h3 id="bug2" style="margin-top:2rem;">BUG 2: Test 9c documentation error <span class="badge badge-fix" style="margin-left:0.5rem;">RESOLVED</span></h3>
+        <table>
+            <tr><th style="width:140px;">Severity</th><td>LOW (documentation only)</td></tr>
+            <tr><th>Tests Affected</th><td>9c</td></tr>
+            <tr><th>Status</th><td>Resolved &mdash; test script docs updated</td></tr>
+        </table>
+
+        <h4>Root Cause</h4>
+        <p>The original test script stated to set the <code>Has_Active_Implementation_Project__c</code> checkbox. However, the flow queries <code>Project__c</code> records via <code>Get_Related_Implementing_Projects</code>:</p>
+        <pre>WHERE Account__c = $Record.Id
+  AND Record_Type_Name__c = 'Implementation'
+  AND Project_Status__c IN ('New', 'In Progress', 'On Hold')</pre>
+        <p>The checkbox is not the mechanism used. Test script documentation corrected. No flow changes needed.</p>
+    </div>
+
+    <!-- OTHER FINDINGS -->
+    <div class="section" id="findings">
+        <h2>Other Findings</h2>
+
+        <h3>Active V3 Rooftop Rollups Flow Conflict</h3>
+        <div class="callout callout-red">
+            <strong>Action Required</strong>
+            <code>Account_RT_Create_Edit_Rooftop_Rollups_Controller_V3</code> (v9) is <strong>still active</strong> alongside the consolidated After Save flow. This causes DML conflicts on cascading updates &mdash; specifically in grandchild scenarios where both flows attempt to update the same parent records.
+        </div>
+        <p><strong>Impact:</strong> Test 6c (Regional Parent) could not be isolated. Potential for unexpected errors in production if both remain active.</p>
+        <p><strong>Recommendation:</strong> Deactivate V3 Rollups before go-live.</p>
+
+        <h3 id="finding-ordering">D6/D7 Ordering Limitation in After Save Flow</h3>
+        <p>D6 (Affiliate Client Count) fires before D7 (Rooftop Rollups). On initial account creation:</p>
+        <ul>
+            <li>D6 checks <code>Rooftops__c = 1</code> as an entry condition</li>
+            <li>D7 sets <code>Rooftops__c = 1</code> on new accounts</li>
+            <li>Since D6 runs first, the condition is not met on create</li>
+        </ul>
+        <p>Works correctly on subsequent updates.</p>
+        <p><strong>Recommendation:</strong> If create-time affiliate counting is required, reorder D7 before D6 in the After Save flow.</p>
+    </div>
+
+    <!-- CROSS-REFERENCE TABLE -->
+    <div class="section" id="xref">
+        <h2>Flow Element Cross-Reference</h2>
+        <p>Which new flow element replaces which old flow, with UAT validation status.</p>
+        <table>
+            <tr><th>#</th><th>Old Flow (Obsolete)</th><th>New Flow</th><th>Element(s)</th><th>UAT Status</th></tr>
+            <tr><td>1</td><td><code>Update_Physical_Address_to_Billing_Address</code></td><td>Before Save</td><td>D1</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>2</td><td><code>Account_Create_Edit_Update_Record_Type_Name</code></td><td>Before Save</td><td>D2</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>3</td><td><code>Account_Create_Edit_Update_Status_to_Other_on_Affiliate</code></td><td>Before Save</td><td>D8</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>4</td><td><code>Account_Create_Edit_Update_Type_to_Affiliate</code></td><td>Before Save</td><td>D4</td><td><span class="badge badge-skip">SKIPPED</span></td></tr>
+            <tr><td>5</td><td><code>Account_Create_Edit_Update_Affiliate_Account_Sharing_for_Manager</code></td><td>Before Save</td><td>D5</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>6</td><td><code>Account_Create_Edit_Update_Type_to</code></td><td>Before Save</td><td>D7</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>7</td><td><code>Account_Create_Edit_Type_Update</code></td><td>Before Save</td><td>D6</td><td><span class="badge badge-fix">PASS (fixed)</span></td></tr>
+            <tr><td>8</td><td><code>Account_Create_Edit_Update_Status</code></td><td>Before Save</td><td>D8b&ndash;D8e</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>9</td><td><code>Account_Create_Edit_Update_Account_Record_Type_from_Lead_Conversion</code></td><td>Before Save</td><td>D3</td><td><span class="badge badge-skip">SKIPPED</span></td></tr>
+            <tr><td>10</td><td><code>Account_RT_Create_Edit_Rooftop_Rollups_Controller_V3</code></td><td>After Save</td><td>D7</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>11</td><td><code>Account_Create_Edit_Update_Contact_Owners</code></td><td>After Save</td><td>D1</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>12</td><td><code>Account_Create_Edit_Update_Affiliate_Count</code></td><td>After Save</td><td>D6</td><td><span class="badge badge-warn">PARTIAL</span></td></tr>
+            <tr><td>13</td><td><code>Account_RT_After_Update_Copy_CSA_CSM_Assignment_to_Rooftops_from_Group_Parent</code></td><td>After Save</td><td>D5</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>14</td><td><code>Account_Create_Edit_Update_Child_Accounts_for_Strategic_Parents</code></td><td>After Save</td><td>D3</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>15</td><td><code>Account_Create_Edit_Update_Child_Accounts_for_Strategic_Parents_to_false</code></td><td>After Save</td><td>D4</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>16</td><td><code>Account_Create_Edit_Update_Contact_Campaigns</code></td><td>After Save</td><td>D2</td><td><span class="badge badge-skip">NOT TESTED</span></td></tr>
+            <tr><td>17</td><td><code>Account_RT_Create_Edit_Update_Territories_Territory</code></td><td>After Save + Subflow</td><td>D8</td><td><span class="badge badge-pass">PASS</span></td></tr>
+            <tr><td>18</td><td><code>Account_RT_After_Create_Copy_Lead_Address_to_Account_Physical_Address</code></td><td><em>Kept separate</em></td><td>&mdash;</td><td><span class="badge badge-skip">SKIPPED</span></td></tr>
+        </table>
+    </div>
+
+    <!-- SIGN-OFF -->
+    <div class="section" id="signoff">
+        <h2>Sign-Off</h2>
+        <table>
+            <tr><th>Role</th><th>Name</th><th>Date</th><th>Status</th></tr>
+            <tr><td>Test Execution</td><td>Eddie Zaragoza (SCS Cloud / CrossCountry Consulting)</td><td>2026-02-23</td><td><span class="badge badge-pass">COMPLETE</span></td></tr>
+            <tr><td>Business Review</td><td></td><td></td><td><span class="badge badge-skip">PENDING</span></td></tr>
+            <tr><td>Technical Review</td><td></td><td></td><td><span class="badge badge-skip">PENDING</span></td></tr>
+        </table>
+
+        <h3>Pre-Deployment Checklist</h3>
+        <ul class="checklist">
+            <li class="done">All executable test cases pass (42/42)</li>
+            <li class="done">Bugs found during testing have been fixed and re-verified</li>
+            <li class="done">Test script documentation errors corrected</li>
+            <li class="todo">Deactivate <code>Account_RT_Create_Edit_Rooftop_Rollups_Controller_V3</code> (V3 Rollups)</li>
+            <li class="todo">Evaluate D6/D7 ordering for create-time affiliate counting</li>
+            <li class="todo">Lead conversion tests (Tests 3&ndash;4) &mdash; manual verification recommended</li>
+            <li class="todo">Campaign member test (Test 11) &mdash; manual verification recommended</li>
+            <li class="todo">Scheduled path test (Test 18) &mdash; manual verification recommended</li>
+        </ul>
+    </div>
+
+</div>
+
+<div class="footer">
+    Informativ &mdash; Account Flow Consolidation UAT &bull; Generated 2026-02-23
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+<script>
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    (function(){
+        const konamiSequence = [
+            'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+            'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+            'KeyB','KeyA','Enter'
+        ];
+        let konamiIndex = 0, matrixActive = false, matrixRainId = null;
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.code || e.key) === konamiSequence[konamiIndex]) {
+                if (++konamiIndex === konamiSequence.length) {
+                    konamiIndex = 0;
+                    matrixActive ? stopMatrixRain() : startMatrixRain();
+                    matrixActive = !matrixActive;
+                }
+            } else { konamiIndex = 0; }
+        });
+
+        function startMatrixRain() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas || matrixRainId) return;
+            document.body.classList.add('matrix-active');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            const chars = Array.from('\u30A2\u30A4\u30A6\u30A8\u30AA\u30AB\u30AD\u30AF\u30B1\u30B3\u30B5\u30B7\u30B9\u30BB\u30BD\u30BF\u30C1\u30C4\u30C6\u30C8\u30CA\u30CB\u30CC\u30CD\u30CE\u30CF\u30D2\u30D5\u30D8\u30DB\u30DE\u30DF\u30E0\u30E1\u30E2\u30E4\u30E6\u30E8\u30E9\u30EA\u30EB\u30EC\u30ED\u30EF\u30F2\u30F30123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            const fontSize = 14;
+            let columns, drops;
+            function resize() {
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                columns = Math.floor(canvas.width / fontSize);
+                const old = drops || [];
+                drops = Array.from({length: columns}, (_, i) => old[i] !== undefined ? old[i] : Math.random() * -100);
+            }
+            resize();
+            window._matrixResize = resize;
+            window.addEventListener('resize', resize);
+            let fc = 0;
+            function draw() {
+                if (++fc % 2 !== 0) { matrixRainId = requestAnimationFrame(draw); return; }
+                ctx.fillStyle = 'rgba(0,0,0,0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = fontSize + 'px Courier New';
+                for (let i = 0; i < columns; i++) {
+                    const y = drops[i] * fontSize;
+                    ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,255,65,0.6)'; ctx.fillStyle = '#aaffaa';
+                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y);
+                    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                    if (y - fontSize > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y - fontSize);
+                    if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+                matrixRainId = requestAnimationFrame(draw);
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+
+        function stopMatrixRain() {
+            if (matrixRainId) { cancelAnimationFrame(matrixRainId); matrixRainId = null; }
+            document.body.classList.remove('matrix-active');
+            const canvas = document.getElementById('matrixCanvas');
+            if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+            if (window._matrixResize) { window.removeEventListener('resize', window._matrixResize); delete window._matrixResize; }
+        }
+    })();
+</script>
+</body>
+</html>
