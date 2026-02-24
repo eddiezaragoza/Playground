@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.adafruit.com)",
+      "WebFetch(domain:learn.adafruit.com)",
+      "WebFetch(domain:forums.adafruit.com)"
+    ]
+  },
+  "prefersReducedMotion": false
+}
