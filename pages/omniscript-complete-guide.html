@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce OmniStudio &amp; OmniScript — Complete Knowledge Guide</title>
+    <style>
+        :root {
+            --sf-blue: #0176d3;
+            --sf-dark: #032d60;
+            --sf-light: #f4f6f9;
+            --sf-green: #2e844a;
+            --sf-orange: #fe9339;
+            --sf-red: #ea001e;
+            --sf-purple: #730394;
+            --sf-teal: #0d9dda;
+            --border: #d8dde6;
+            --text: #181818;
+            --text-muted: #5a6872;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--sf-light);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #032d60 0%, #0176d3 50%, #1b96ff 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.5rem; font-weight: 800; }
+        .hero .subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 1rem; }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.25s ease, border-radius 0.25s ease;
+        }
+
+        .nav-bar.collapsed {
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .nav-bar h3 { color: var(--sf-dark); margin-bottom: 0.8rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .nav-bar .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-bar.collapsed h3 { margin-bottom: 0; }
+
+        .nav-toggle {
+            display: none;
+            background: var(--sf-light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--sf-blue);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+        .nav-toggle:hover { background: var(--sf-blue); color: white; }
+
+        .nav-bar.collapsed .nav-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .nav-links {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+        }
+
+        .nav-bar.collapsed.expanded .nav-links {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 0.6rem;
+        }
+
+        .nav-links a {
+            padding: 0.4rem 0.9rem;
+            background: var(--sf-light);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--sf-dark);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--sf-blue); color: white; }
+
+        .nav-links a.omni { border-left: 3px solid var(--sf-teal); }
+        .nav-links a.data { border-left: 3px solid var(--sf-green); }
+        .nav-links a.deploy { border-left: 3px solid var(--sf-orange); }
+        .nav-links a.adv { border-left: 3px solid var(--sf-purple); }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            color: var(--sf-dark);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--sf-blue);
+        }
+
+        .section h3 {
+            color: var(--sf-blue);
+            margin: 1.8rem 0 0.8rem 0;
+            font-size: 1.2rem;
+        }
+
+        .section h4 {
+            color: var(--sf-dark);
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: var(--sf-dark);
+            color: white;
+            padding: 0.7rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) { background: #f8f9fb; }
+        tr:hover { background: #e8f0fe; }
+
+        /* Mapping tables */
+        .mapping-table th:first-child { background: var(--sf-purple); min-width: 200px; }
+        .mapping-table th:nth-child(2) { background: var(--sf-teal); min-width: 200px; }
+
+        .mapping-table td:first-child {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.82rem;
+            color: #4a0072;
+            background: #f9f0ff;
+        }
+
+        .mapping-table td:nth-child(2) {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.82rem;
+            color: #006272;
+            background: #f0fcff;
+        }
+
+        /* Callout boxes */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .callout-blue { background: #f0f7ff; border-left: 4px solid var(--sf-blue); }
+        .callout-green { background: #e8f5e9; border-left: 4px solid var(--sf-green); }
+        .callout-orange { background: #fff8e1; border-left: 4px solid var(--sf-orange); }
+        .callout-red { background: #ffeef0; border-left: 4px solid var(--sf-red); }
+        .callout-purple { background: #f3e5f5; border-left: 4px solid var(--sf-purple); }
+
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--sf-blue); }
+        .callout-green strong { color: var(--sf-green); }
+        .callout-orange strong { color: #e65100; }
+        .callout-red strong { color: var(--sf-red); }
+        .callout-purple strong { color: var(--sf-purple); }
+
+        /* Diagrams */
+        .diagram {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 1rem 0;
+        }
+
+        .diagram-light {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 1rem 0;
+        }
+
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85em;
+            color: var(--sf-purple);
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        /* Comparison */
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .vs-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vs-card.legacy { border-top: 4px solid var(--sf-orange); }
+        .vs-card.standard { border-top: 4px solid var(--sf-teal); }
+        .vs-card.omni { border-top: 4px solid var(--sf-teal); }
+        .vs-card.flow { border-top: 4px solid var(--sf-blue); }
+
+        .vs-card .card-head {
+            padding: 0.8rem 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .vs-card.legacy .card-head { background: #fff3e0; color: #e65100; }
+        .vs-card.standard .card-head { background: #e0f7fa; color: #006064; }
+        .vs-card.omni .card-head { background: #e0f7fa; color: #006064; }
+        .vs-card.flow .card-head { background: #e3f2fd; color: var(--sf-dark); }
+
+        .vs-card .card-body { padding: 1rem; }
+        .vs-card .card-body ul { padding-left: 1.2rem; }
+        .vs-card .card-body li { margin-bottom: 0.3rem; font-size: 0.9rem; }
+
+        /* Two/three columns */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .feature-card {
+            background: var(--sf-light);
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .feature-card h4 { color: var(--sf-blue); margin-bottom: 0.5rem; }
+
+        @media (max-width: 768px) {
+            .vs-grid, .two-col, .three-col { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+            .nav-bar { position: static; }
+            .nav-bar.collapsed .nav-links { max-height: none; opacity: 1; }
+            .nav-toggle { display: none !important; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            line-height: 48px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(1, 118, 211, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: var(--sf-dark);
+            box-shadow: 0 6px 16px rgba(3, 45, 96, 0.5);
+        }
+
+        /* Print Button */
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.4rem;
+            background: var(--sf-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .print-btn:hover { background: var(--sf-blue); transform: translateY(-1px); }
+        .print-btn:active { transform: translateY(0); }
+
+        .print-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .print-bar-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .print-bar-bottom {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0 0.5rem;
+        }
+
+        /* Matrix Easter Egg — background mode */
+        body.matrix-active {
+            background: #000;
+        }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .container { position: relative; z-index: 1; }
+        body.matrix-active .nav-bar { z-index: 100; }
+        body.matrix-active .section { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; background: #000; color: #ccc; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+        body.matrix-active .print-bar-top,
+        body.matrix-active .print-bar-bottom { position: relative; z-index: 1; }
+
+        @media print {
+            body { background: white !important; font-size: 10pt; line-height: 1.45; color: #000; }
+            .container { max-width: 100%; padding: 0; margin: 0; }
+            .nav-bar, .back-to-top, .print-btn, .print-bar-top, .print-bar-bottom, #matrixCanvas { display: none !important; }
+            .hero {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 1.5rem 1rem 1rem;
+                break-after: avoid;
+            }
+            .hero h1 { font-size: 1.8rem; }
+            .hero .subtitle { font-size: 1rem; }
+            .section {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                border-radius: 0;
+                padding: 1rem 1.2rem;
+                margin-bottom: 0.8rem;
+                break-inside: avoid;
+            }
+            .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; padding-bottom: 0.3rem; }
+            .section h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; }
+            .section h4 { font-size: 0.95rem; margin: 0.8rem 0 0.3rem; }
+            table { font-size: 8.5pt; }
+            th { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0.4rem 0.5rem; }
+            td { padding: 0.3rem 0.5rem; }
+            tr { break-inside: avoid; }
+            svg { max-width: 100%; height: auto; break-inside: avoid; }
+            .diagram, .diagram-light { break-inside: avoid; }
+            .vs-grid, .two-col { grid-template-columns: 1fr; gap: 0.5rem; }
+            .three-col { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+            .vs-card { break-inside: avoid; }
+            .feature-card { break-inside: avoid; }
+            .callout {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                break-inside: avoid;
+                padding: 0.6rem 0.8rem;
+                margin: 0.5rem 0;
+            }
+            code { font-size: 8pt; }
+            pre { font-size: 7.5pt; break-inside: avoid; }
+            a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 7.5pt; color: #666; word-break: break-all; }
+            .nav-links a::after { content: none; }
+            .footer { font-size: 8.5pt; break-before: avoid; }
+            .section p { margin-bottom: 0.3rem; }
+            .section ul, .section ol { margin-bottom: 0.5rem; }
+            .section li { margin-bottom: 0.2rem; }
+            @page { margin: 0.6in 0.5in; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>OmniStudio &amp; OmniScript</h1>
+    <div class="subtitle">Complete Knowledge Guide — Architecture, Components, Deployment &amp; Best Practices</div>
+    <div class="badges">
+        <span class="badge">Formerly Vlocity OmniScript</span>
+        <span class="badge">Acquired Feb 2020 — $1.33B</span>
+        <span class="badge">Standard Runtime Available</span>
+        <span class="badge">Updated Feb 2026</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="print-bar-top">
+        <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Print / Save PDF
+        </button>
+    </div>
+
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-header">
+            <h3>Quick Navigation</h3>
+            <button class="nav-toggle" id="navToggle">&#9776; Show Links</button>
+        </div>
+        <div class="nav-links">
+            <a href="#overview" class="omni">Overview</a>
+            <a href="#architecture" class="omni">Architecture</a>
+            <a href="#components" class="omni">Components</a>
+            <a href="#dataraptors" class="data">DataRaptors</a>
+            <a href="#integration-procedures" class="data">Integration Procedures</a>
+            <a href="#flexcards" class="omni">FlexCards</a>
+            <a href="#omniscript-elements" class="omni">Elements Deep Dive</a>
+            <a href="#data-json" class="data">Data JSON</a>
+            <a href="#deployment" class="deploy">Deployment</a>
+            <a href="#licensing" class="deploy">Licensing</a>
+            <a href="#migration" class="deploy">Migration</a>
+            <a href="#experience-cloud" class="adv">Experience Cloud</a>
+            <a href="#vs-flow" class="adv">OmniScript vs Flow</a>
+            <a href="#agentforce" class="adv">Agentforce</a>
+            <a href="#performance" class="adv">Performance</a>
+            <a href="#troubleshooting" class="deploy">Troubleshooting</a>
+        </div>
+    </nav>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: Overview -->
+    <!-- ============================================================ -->
+    <div class="section" id="overview">
+        <h2>1. What Is OmniStudio?</h2>
+
+        <p>OmniStudio is Salesforce's declarative framework for building guided, multi-step digital experiences. It originated as <strong>Vlocity OmniScript</strong>, part of the Vlocity Industries Cloud Platform. Salesforce acquired Vlocity in February 2020 for approximately $1.33 billion, rebranding the technology suite as OmniStudio.</p>
+
+        <p>The suite includes four core building blocks that work together to create end-to-end processes:</p>
+
+        <div class="three-col">
+            <div class="feature-card">
+                <h4>OmniScripts</h4>
+                <p>Guided, multi-step forms and wizards that walk users (or customers) through a business process. Think of them as interactive workflows with branching, validation, and real-time data lookups.</p>
+            </div>
+            <div class="feature-card">
+                <h4>DataRaptors</h4>
+                <p>Data access and transformation tools that read from, write to, and transform Salesforce data — without writing Apex code. Four types: Extract, Load, Transform, and Turbo Extract.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Integration Procedures</h4>
+                <p>Server-side orchestration engines that chain multiple DataRaptors, HTTP callouts, Apex actions, and other operations into a single executable unit — like a server-side pipeline.</p>
+            </div>
+        </div>
+        <div class="three-col" style="margin-top: 1rem;">
+            <div class="feature-card">
+                <h4>FlexCards</h4>
+                <p>Configurable UI cards that display contextual data from DataRaptors or Integration Procedures. Embeddable anywhere — record pages, Experience Cloud, OmniScripts, or other FlexCards.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Decision Matrices</h4>
+                <p>Table-driven lookup tools for routing, pricing, eligibility, and classification logic. Input values match against matrix rows/columns and return the corresponding output — no code needed.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Expression Sets</h4>
+                <p>Low-code calculation engines for complex business rules — pricing formulas, eligibility checks, scoring. Can reference Decision Matrices for lookup-driven calculations.</p>
+            </div>
+        </div>
+
+        <div class="callout callout-blue" style="margin-top: 1.5rem;">
+            <strong>Key Concept: Everything Is Metadata</strong>
+            OmniStudio components are stored as metadata records in Salesforce objects (<code>OmniProcess</code>, <code>OmniDataTransform</code>, <code>OmniUiCard</code>, etc.). This means they can be deployed, versioned, and migrated using standard Salesforce deployment tools — no custom code compilation required.
+        </div>
+
+        <h3>History &amp; Timeline</h3>
+        <table>
+            <tr><th>Year</th><th>Event</th></tr>
+            <tr><td>2014</td><td>Vlocity founded — builds industry-specific cloud apps on Salesforce platform</td></tr>
+            <tr><td>2014–2019</td><td>OmniScript, DataRaptors, FlexCards, Integration Procedures mature as Vlocity IP</td></tr>
+            <tr><td>Feb 2020</td><td>Salesforce acquires Vlocity for ~$1.33B</td></tr>
+            <tr><td>2021</td><td>Rebranded as "OmniStudio" — available as managed package or standard runtime</td></tr>
+            <tr><td>2022</td><td>OmniStudio Standard Runtime GA — no managed package dependency</td></tr>
+            <tr><td>2023</td><td>Metadata API support for OmniStudio components (deploy via sf CLI / SFDX)</td></tr>
+            <tr><td>2024</td><td>FlexCards renamed to "OmniStudio Cards" in some contexts; deeper LWC integration</td></tr>
+            <tr><td>2025</td><td>Tighter integration with Agentforce — OmniScripts as agent actions</td></tr>
+        </table>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: Architecture -->
+    <!-- ============================================================ -->
+    <div class="section" id="architecture">
+        <h2>2. Architecture</h2>
+
+        <p>OmniStudio follows a layered architecture where presentation, orchestration, and data access are cleanly separated. Understanding this architecture is critical for building performant, maintainable solutions.</p>
+
+        <div class="diagram" id="archDiagram"></div>
+
+        <h3>Execution Model</h3>
+        <p>OmniScripts execute in the <strong>browser</strong> (client-side LWC components), while DataRaptors and Integration Procedures execute <strong>server-side</strong>. This separation is important for performance tuning:</p>
+
+        <ul>
+            <li><strong>Client-side:</strong> OmniScript rendering, conditional visibility, step navigation, local validation, merge field resolution</li>
+            <li><strong>Server-side:</strong> DataRaptor Extract/Load, Integration Procedure execution, Apex Remote Actions, HTTP callouts</li>
+            <li><strong>Bridge:</strong> OmniScript elements like DataRaptor Action, Integration Procedure Action, and Remote Action trigger server calls from the client</li>
+        </ul>
+
+        <h3>Data JSON — The Central Data Bus</h3>
+        <p>Every OmniScript maintains a <strong>Data JSON</strong> object — a live, in-memory JSON structure that holds all form input values, DataRaptor results, and computed values. Every element in the OmniScript can read from and write to this JSON. Think of it as the "state" of the entire form.</p>
+
+        <div class="callout callout-green">
+            <strong>Analogy: Think of Data JSON Like a Clipboard</strong>
+            Imagine a clerk walking through a multi-step form with a clipboard. Each step adds data to the clipboard. Any step can read what's already there. DataRaptors add external data to the clipboard. At the end, the clipboard's contents get submitted. That clipboard is the Data JSON.
+        </div>
+
+        <h3>Two Runtime Modes</h3>
+
+        <div class="vs-grid">
+            <div class="vs-card legacy">
+                <div class="card-head">Managed Package Runtime (Legacy)</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Namespace: <code>vlocity_cmt</code>, <code>vlocity_ins</code>, <code>vlocity_ps</code></li>
+                        <li>Objects: <code>vlocity_cmt__OmniScript__c</code></li>
+                        <li>Uses Aura-based rendering</li>
+                        <li>Deployed via Vlocity Build Tool / IDX Workbench</li>
+                        <li>Still supported but migration encouraged</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card standard">
+                <div class="card-head">Standard Runtime (Current)</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Namespace: <code>omnistudio</code></li>
+                        <li>Objects: <code>OmniProcess</code>, <code>OmniDataTransform</code></li>
+                        <li>LWC-based rendering (faster, modern)</li>
+                        <li>Deployed via Metadata API / sf CLI</li>
+                        <li>Recommended for all new development</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-red">
+            <strong>One-Way Switch: Metadata API Enablement</strong>
+            Enabling OmniStudio Metadata API support is a <strong>one-way operation</strong> — once enabled, it cannot be disabled. Before enabling, ensure your org is ready to use the standard namespace and Metadata API-based deployment. This setting is found at: <code>Setup &gt; OmniStudio Settings &gt; Enable OmniStudio Metadata</code>.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: OmniScript Components -->
+    <!-- ============================================================ -->
+    <div class="section" id="components">
+        <h2>3. OmniScript Components</h2>
+
+        <p>An OmniScript is composed of <strong>elements</strong> arranged in a step-by-step flow. Elements fall into several categories:</p>
+
+        <h3>Input Elements</h3>
+        <p>Capture user data — each input writes its value to the Data JSON automatically.</p>
+        <table>
+            <tr><th>Element</th><th>Purpose</th><th>Key Properties</th></tr>
+            <tr><td>Text</td><td>Single-line text input</td><td>Pattern validation, masking, placeholder</td></tr>
+            <tr><td>Text Area</td><td>Multi-line text</td><td>Max length, resize</td></tr>
+            <tr><td>Number</td><td>Numeric input</td><td>Min/max, decimal places, step</td></tr>
+            <tr><td>Currency</td><td>Money values</td><td>Currency code, locale formatting</td></tr>
+            <tr><td>Date</td><td>Date picker</td><td>Min/max date, format</td></tr>
+            <tr><td>Date/Time</td><td>Date + time picker</td><td>Timezone handling</td></tr>
+            <tr><td>Email</td><td>Email with validation</td><td>Auto-validates email format</td></tr>
+            <tr><td>Telephone</td><td>Phone number</td><td>Pattern masking</td></tr>
+            <tr><td>URL</td><td>Web address</td><td>Auto-validates URL format</td></tr>
+            <tr><td>Checkbox</td><td>Boolean toggle</td><td>Default value, conditional logic trigger</td></tr>
+            <tr><td>Radio</td><td>Single select from options</td><td>Vertical/horizontal layout</td></tr>
+            <tr><td>Select (Dropdown)</td><td>Single/multi from list</td><td>Options source: static, DataRaptor, JSON</td></tr>
+            <tr><td>Multi-select</td><td>Multiple selections</td><td>Checkboxes or multi-picklist</td></tr>
+            <tr><td>Lookup</td><td>Search Salesforce records</td><td>Object, display field, value field, filters</td></tr>
+            <tr><td>Type Ahead</td><td>Auto-complete search</td><td>Integration Procedure or DataRaptor source</td></tr>
+            <tr><td>File Upload</td><td>Attach files</td><td>Max size, accepted types, ContentDocument</td></tr>
+            <tr><td>Signature</td><td>Capture e-signature</td><td>Canvas-based, stored as base64</td></tr>
+            <tr><td>Range</td><td>Slider input</td><td>Min/max, step, display value</td></tr>
+            <tr><td>Password</td><td>Masked text input</td><td>Pattern validation</td></tr>
+        </table>
+
+        <h3>Display Elements</h3>
+        <table>
+            <tr><th>Element</th><th>Purpose</th></tr>
+            <tr><td>Text Block</td><td>Rich text / HTML content — supports merge fields from Data JSON (<code>%elementName%</code>)</td></tr>
+            <tr><td>Headline</td><td>Section headers within steps</td></tr>
+            <tr><td>Disclosure</td><td>Expandable/collapsible content sections</td></tr>
+            <tr><td>Validation</td><td>Display validation messages with custom formulas</td></tr>
+            <tr><td>FlexCard</td><td>Embed a FlexCard component inside the OmniScript</td></tr>
+            <tr><td>Custom LWC</td><td>Embed any Lightning Web Component with data binding</td></tr>
+        </table>
+
+        <h3>Action Elements</h3>
+        <p>Trigger server-side operations — these are the elements that connect OmniScripts to data and external systems.</p>
+        <table>
+            <tr><th>Element</th><th>What It Does</th></tr>
+            <tr><td>DataRaptor Extract Action</td><td>Calls a DataRaptor Extract to pull data into the Data JSON</td></tr>
+            <tr><td>DataRaptor Post Action</td><td>Calls a DataRaptor Load to save Data JSON values to Salesforce</td></tr>
+            <tr><td>DataRaptor Transform Action</td><td>Transforms data in the Data JSON using mapping rules</td></tr>
+            <tr><td>Integration Procedure Action</td><td>Executes an Integration Procedure — can return data into the Data JSON</td></tr>
+            <tr><td>Remote Action</td><td>Calls a custom Apex method decorated with <code>@InvocableMethod</code> or a designated remote class</td></tr>
+            <tr><td>HTTP Action</td><td>Makes direct HTTP callouts (REST) to external services</td></tr>
+            <tr><td>DocuSign Envelope Action</td><td>Launches a DocuSign envelope from the OmniScript</td></tr>
+            <tr><td>Email Action</td><td>Sends an email using an email template</td></tr>
+            <tr><td>Navigate Action</td><td>Redirects the user to a URL, record page, or another OmniScript</td></tr>
+            <tr><td>Post to Chatter Action</td><td>Creates a Chatter post</td></tr>
+        </table>
+
+        <h3>Structural Elements</h3>
+        <table>
+            <tr><th>Element</th><th>Purpose</th></tr>
+            <tr><td>Step</td><td>Top-level container — each step is a "page" in the wizard. Navigation is step-by-step.</td></tr>
+            <tr><td>Block</td><td>Groups elements together — useful for conditional visibility on multiple elements at once</td></tr>
+            <tr><td>Edit Block</td><td>Editable table/list — users can add/remove rows of a repeating structure (like line items)</td></tr>
+            <tr><td>Set Values</td><td>Programmatically sets Data JSON values using formulas or merge fields</td></tr>
+            <tr><td>Aggregate</td><td>Performs calculations (SUM, COUNT, AVG, MIN, MAX) across Edit Block rows</td></tr>
+            <tr><td>Loop</td><td>Iterates over a JSON array and renders child elements for each item</td></tr>
+            <tr><td>Conditional Block</td><td>Shows/hides child elements based on Data JSON conditions</td></tr>
+        </table>
+
+        <div class="callout callout-orange">
+            <strong>Element Limits</strong>
+            An OmniScript can contain up to <strong>200 elements</strong> per form (standard). With a combination of custom and built-in elements, the effective limit is around <strong>750 elements</strong>. If you're hitting limits, break the process into multiple OmniScripts and chain them together or use sub-OmniScripts.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: DataRaptors -->
+    <!-- ============================================================ -->
+    <div class="section" id="dataraptors">
+        <h2>4. DataRaptors</h2>
+
+        <p>DataRaptors are the data plumbing of OmniStudio. They handle all CRUD operations and data transformations declaratively — no Apex required. They're stored as <code>OmniDataTransform</code> records in the standard runtime.</p>
+
+        <h3>The Four Types</h3>
+
+        <table>
+            <tr><th>Type</th><th>Direction</th><th>Purpose</th><th>When to Use</th></tr>
+            <tr>
+                <td><strong>Extract</strong></td>
+                <td>Salesforce &rarr; JSON</td>
+                <td>Reads data from one or more Salesforce objects and returns it as JSON</td>
+                <td>Pre-populate OmniScript fields, load context data, lookup records</td>
+            </tr>
+            <tr>
+                <td><strong>Load</strong></td>
+                <td>JSON &rarr; Salesforce</td>
+                <td>Takes JSON input and creates/updates/upserts Salesforce records</td>
+                <td>Save form data, create records, update existing records</td>
+            </tr>
+            <tr>
+                <td><strong>Transform</strong></td>
+                <td>JSON &rarr; JSON</td>
+                <td>Reshapes, filters, and maps JSON data without touching the database</td>
+                <td>Restructure API responses, merge data sets, flatten/nest structures</td>
+            </tr>
+            <tr>
+                <td><strong>Turbo Extract</strong></td>
+                <td>Salesforce &rarr; JSON (fast)</td>
+                <td>Optimized, read-only extract using SOQL directly — faster than standard Extract</td>
+                <td>High-performance lookups, large data volumes, simple field mapping</td>
+            </tr>
+        </table>
+
+        <h3>DataRaptor Extract — Deep Dive</h3>
+
+        <h4>How It Works</h4>
+        <ol>
+            <li><strong>Define the data source:</strong> Select the SObject (e.g., Account, Opportunity) and optionally traverse relationships (up to 5 levels deep)</li>
+            <li><strong>Map fields:</strong> For each Salesforce field, define a JSON output path (e.g., <code>Account.Name</code> &rarr; <code>AccountName</code>)</li>
+            <li><strong>Add filters:</strong> WHERE clause conditions — can use input parameters for dynamic filtering</li>
+            <li><strong>Set ordering &amp; limits:</strong> ORDER BY, LIMIT, OFFSET</li>
+            <li><strong>Execute:</strong> Returns a JSON array or object to the calling OmniScript or Integration Procedure</li>
+        </ol>
+
+        <h4>Input Parameters</h4>
+        <p>DataRaptors accept <strong>input parameters</strong> that get injected into filter conditions at runtime. For example:</p>
+        <pre>Filter: Account.Id = :AccountId
+Input Parameter: AccountId = %ContextId%</pre>
+        <p>The <code>%ContextId%</code> merge field resolves from the OmniScript's Data JSON, so the DataRaptor dynamically filters based on the current record.</p>
+
+        <h4>Multi-Object Extract</h4>
+        <p>A single DataRaptor Extract can pull from <strong>multiple related objects</strong> — just add child relationships in the field mapping. For example, pulling an Account with its Contacts and Opportunities in one call:</p>
+        <pre>Account.Name       → AccountName
+Account.Industry   → Industry
+Contact:Name       → Contacts[].Name
+Contact:Email      → Contacts[].Email
+Opportunity:Name   → Deals[].Name
+Opportunity:Amount → Deals[].Amount</pre>
+
+        <h3>DataRaptor Load — Deep Dive</h3>
+        <h4>Operations</h4>
+        <ul>
+            <li><strong>Insert:</strong> Creates new records</li>
+            <li><strong>Update:</strong> Updates existing records (requires Id)</li>
+            <li><strong>Upsert:</strong> Inserts or updates based on an external ID field</li>
+        </ul>
+
+        <h4>Multi-Object Load</h4>
+        <p>A single DataRaptor Load can write to <strong>multiple objects</strong> in a defined order. Salesforce IDs from parent inserts are automatically available for child records — enabling parent-child creation in one step.</p>
+
+        <div class="callout callout-green">
+            <strong>Best Practice: Use Integration Procedures to Wrap DataRaptors</strong>
+            Instead of calling DataRaptors directly from OmniScript elements, wrap them in an Integration Procedure. This gives you error handling, conditional logic, chaining, and reusability. Direct DataRaptor calls from OmniScript work but are harder to debug and can't be chained.
+        </div>
+
+        <h3>DataRaptor Transform</h3>
+        <p>Pure JSON-to-JSON transformation. No database calls. Common uses:</p>
+        <ul>
+            <li>Flatten nested API responses into a flat structure for OmniScript display</li>
+            <li>Restructure Data JSON before passing to a DataRaptor Load</li>
+            <li>Filter arrays — remove items that don't meet criteria</li>
+            <li>Merge multiple data sources into a single JSON structure</li>
+            <li>Apply formulas (concatenation, math, date calculations) to JSON values</li>
+        </ul>
+
+        <h3>Turbo Extract</h3>
+        <p>A performance-optimized version of DataRaptor Extract. Key differences:</p>
+        <table>
+            <tr><th>Feature</th><th>Standard Extract</th><th>Turbo Extract</th></tr>
+            <tr><td>Speed</td><td>Standard</td><td>2-3x faster</td></tr>
+            <tr><td>Multi-object</td><td>Yes — relationship traversal</td><td>Single object only</td></tr>
+            <tr><td>Formula fields</td><td>Full formula support</td><td>Limited formula support</td></tr>
+            <tr><td>Use case</td><td>Complex queries, multi-object</td><td>Simple, high-performance lookups</td></tr>
+        </table>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: Integration Procedures -->
+    <!-- ============================================================ -->
+    <div class="section" id="integration-procedures">
+        <h2>5. Integration Procedures</h2>
+
+        <p>Integration Procedures (IPs) are the <strong>server-side orchestration layer</strong> of OmniStudio. While DataRaptors handle individual data operations, IPs chain them together with logic, branching, and error handling.</p>
+
+        <p>Think of an IP as a server-side Flow — but purpose-built for OmniStudio data operations and external integrations.</p>
+
+        <div class="diagram" id="ipDiagram"></div>
+
+        <h3>Available Actions in an IP</h3>
+        <table>
+            <tr><th>Action Type</th><th>Purpose</th></tr>
+            <tr><td>DataRaptor Extract</td><td>Pull data from Salesforce</td></tr>
+            <tr><td>DataRaptor Load</td><td>Write data to Salesforce</td></tr>
+            <tr><td>DataRaptor Transform</td><td>Reshape JSON data</td></tr>
+            <tr><td>HTTP Action</td><td>Call external REST APIs</td></tr>
+            <tr><td>Remote Action (Apex)</td><td>Execute custom Apex logic</td></tr>
+            <tr><td>Integration Procedure</td><td>Call another IP (chaining/nesting)</td></tr>
+            <tr><td>Email Action</td><td>Send emails</td></tr>
+            <tr><td>Matrix Action</td><td>Look up values in a Decision Matrix</td></tr>
+            <tr><td>Set Values</td><td>Manipulate the response JSON with formulas</td></tr>
+            <tr><td>Conditional Block</td><td>If/else branching based on data</td></tr>
+            <tr><td>Loop</td><td>Iterate over JSON arrays</td></tr>
+            <tr><td>Response Action</td><td>Define what JSON gets returned to the caller</td></tr>
+            <tr><td>List Action</td><td>Merge, union, intersect, or sort JSON arrays</td></tr>
+            <tr><td>Try/Catch</td><td>Error handling wrapper</td></tr>
+        </table>
+
+        <h3>Execution Details</h3>
+        <ul>
+            <li><strong>Server-side only:</strong> IPs run entirely on the Salesforce server — no client-side component</li>
+            <li><strong>Cacheable:</strong> IPs can be configured to cache their response for a defined TTL (seconds). This dramatically improves performance for repeated calls with the same input.</li>
+            <li><strong>Invocable:</strong> IPs can be called from OmniScripts, FlexCards, Apex, REST API, or other IPs</li>
+            <li><strong>Versioned:</strong> Each IP has a Type and SubType (like a namespace) and a version number. You can have multiple active versions.</li>
+        </ul>
+
+        <h3>IP Best Practices</h3>
+        <div class="callout callout-blue">
+            <strong>Performance Tips</strong>
+            <ul style="margin-top: 0.5rem;">
+                <li>Enable <strong>caching</strong> on IPs that return reference data (products, picklists, config) — set TTL to 300-3600 seconds</li>
+                <li>Use <strong>Response Actions</strong> to return only the data the caller needs — don't return the entire internal JSON</li>
+                <li>Wrap related DataRaptor calls in a single IP instead of calling them individually from the OmniScript — reduces round trips</li>
+                <li>Use <strong>Turbo Extract</strong> inside IPs for simple lookups instead of standard DataRaptor Extract</li>
+                <li>Enable <strong>chainable</strong> on IPs that will be called sequentially to enable server-side execution without round trips</li>
+            </ul>
+        </div>
+
+        <h3>Calling an IP from REST API</h3>
+        <p>Any activated Integration Procedure can be called via REST:</p>
+        <pre>POST /services/apexrest/vlocity_cmt/v1/integrationprocedure/{Type}_{SubType}
+
+// Standard Runtime:
+POST /services/apexrest/omnistudio/v1/integrationprocedure/{Type}_{SubType}
+
+// Request Body:
+{
+  "AccountId": "001xx000003ABCD",
+  "includeDetails": true
+}</pre>
+
+        <div class="callout callout-orange">
+            <strong>Governor Limits</strong>
+            IPs execute within the standard Salesforce governor limits (SOQL queries, DML operations, CPU time, etc.). Each DataRaptor call within an IP consumes SOQL queries. Monitor your limits using the <code>Debug Log</code> or <code>LIMITS()</code> calls in Remote Actions.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: FlexCards -->
+    <!-- ============================================================ -->
+    <div class="section" id="flexcards">
+        <h2>6. FlexCards (OmniStudio Cards)</h2>
+
+        <p>FlexCards are configurable UI components that display contextual, dynamic data. They're the "read-only dashboard" counterpart to OmniScript's "writable forms." FlexCards are increasingly referred to as <strong>OmniStudio Cards</strong> in newer documentation.</p>
+
+        <h3>Anatomy of a FlexCard</h3>
+        <ul>
+            <li><strong>Data Source:</strong> Where the card gets its data — DataRaptor, Integration Procedure, Apex, SOQL, or static JSON</li>
+            <li><strong>States:</strong> Different visual configurations based on conditions (e.g., "Active Account" state vs "Inactive Account" state)</li>
+            <li><strong>Fields:</strong> Individual data points rendered on the card — text, icons, badges, buttons</li>
+            <li><strong>Actions:</strong> Buttons/links that trigger behavior — launch OmniScript, navigate, call IP, or custom JS</li>
+            <li><strong>Child Cards:</strong> FlexCards can contain other FlexCards — enabling composition</li>
+            <li><strong>Flyouts:</strong> Modal or slide-out panels triggered by actions within the card</li>
+        </ul>
+
+        <h3>Data Sources</h3>
+        <table>
+            <tr><th>Source</th><th>When to Use</th></tr>
+            <tr><td>DataRaptor</td><td>Simple, single-object data retrieval with field mapping</td></tr>
+            <tr><td>Integration Procedure</td><td>Complex data from multiple sources, external APIs, or computed data</td></tr>
+            <tr><td>SOQL</td><td>Quick queries without needing a DataRaptor — good for prototyping</td></tr>
+            <tr><td>Apex</td><td>Custom server-side logic that returns JSON</td></tr>
+            <tr><td>Streaming API</td><td>Real-time updates via Platform Events or Change Data Capture</td></tr>
+            <tr><td>Parent Card</td><td>Inherit data from a parent FlexCard — for child/nested cards</td></tr>
+        </table>
+
+        <h3>States &amp; Conditions</h3>
+        <p>A FlexCard can have multiple <strong>states</strong>, each with a different layout and set of fields. At render time, the card evaluates conditions to determine which state to display. This is powerful for showing different UIs based on record type, status, or user role:</p>
+        <pre>State: "Active Customer"
+  Condition: Status__c == "Active"
+  Shows: Green badge, renewal button, account details
+
+State: "Churned Customer"
+  Condition: Status__c == "Churned"
+  Shows: Red badge, win-back button, last activity date
+
+State: "Prospect"
+  Condition: Status__c == null OR Status__c == "Prospect"
+  Shows: Blue badge, qualify button, lead score</pre>
+
+        <h3>FlexCard Actions</h3>
+        <table>
+            <tr><th>Action</th><th>Description</th></tr>
+            <tr><td>Launch OmniScript</td><td>Opens an OmniScript in a modal, new tab, or inline — passes record context</td></tr>
+            <tr><td>Navigate</td><td>Redirect to a URL, record page, list view, or another FlexCard</td></tr>
+            <tr><td>Call Integration Procedure</td><td>Executes an IP and optionally refreshes the card with the result</td></tr>
+            <tr><td>Flyout</td><td>Opens a child FlexCard or OmniScript in a slide-out panel</td></tr>
+            <tr><td>Update Data Source</td><td>Refreshes the card's data source with new parameters</td></tr>
+            <tr><td>Custom Event</td><td>Dispatches a custom LWC event for parent components to handle</td></tr>
+            <tr><td>Set Values</td><td>Updates the card's internal data JSON</td></tr>
+        </table>
+
+        <div class="callout callout-purple">
+            <strong>Where to Use FlexCards</strong>
+            FlexCards can be placed on: Lightning Record Pages (via App Builder), Experience Cloud pages, OmniScript steps (embedded), other FlexCards (nested), Utility Bar items, and custom LWC components. They're the most versatile display component in OmniStudio.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 7: OmniScript Elements Deep Dive -->
+    <!-- ============================================================ -->
+    <div class="section" id="omniscript-elements">
+        <h2>7. OmniScript Elements — Deep Dive</h2>
+
+        <h3>Conditional Visibility</h3>
+        <p>Every OmniScript element supports <strong>conditional visibility</strong> — showing or hiding the element based on Data JSON values. This is configured via the "Show if true" property using a formula expression:</p>
+        <pre>// Show only if state is California
+%State% == "CA"
+
+// Show if amount is over $10,000 AND status is Draft
+%Amount% > 10000 && %Status% == "Draft"
+
+// Show if a checkbox is checked
+%AgreeToTerms% == true
+
+// Show if an array has items
+COUNT(%LineItems%) > 0
+
+// Nested JSON path
+%AccountInfo:BillingState% == "NY"</pre>
+
+        <div class="callout callout-blue">
+            <strong>Performance Note on Conditional Visibility</strong>
+            Elements with <code>Show if true = false</code> are <strong>not rendered in the DOM</strong> — they don't consume browser resources. This makes conditional visibility an effective performance tool: only render what the user needs to see.
+        </div>
+
+        <h3>Merge Fields</h3>
+        <p>Merge fields (<code>%fieldName%</code>) pull values from the Data JSON into element labels, text blocks, formulas, and action parameters. The syntax supports:</p>
+        <table>
+            <tr><th>Syntax</th><th>Description</th><th>Example</th></tr>
+            <tr><td><code>%fieldName%</code></td><td>Simple value</td><td><code>%FirstName%</code> &rarr; "Eddie"</td></tr>
+            <tr><td><code>%parent:fieldName%</code></td><td>Nested JSON path (colon separator)</td><td><code>%Account:Name%</code> &rarr; "Acme Corp"</td></tr>
+            <tr><td><code>%array[0]:field%</code></td><td>Array index access</td><td><code>%Lines[0]:Product%</code> &rarr; "Widget A"</td></tr>
+            <tr><td><code>%ContextId%</code></td><td>Current record ID (from URL)</td><td><code>001xx000003ABCD</code></td></tr>
+            <tr><td><code>%UserField%</code></td><td>Current user fields (if pre-loaded)</td><td>Requires a DataRaptor to load User data first</td></tr>
+        </table>
+
+        <h3>Edit Blocks (Repeating Groups)</h3>
+        <p>Edit Blocks create <strong>repeatable row structures</strong> — like a dynamic table where users can add, edit, and remove rows. Each row is a set of child elements that gets duplicated.</p>
+        <ul>
+            <li><strong>Use case:</strong> Line items on a quote, dependents on an insurance application, addresses on a contact form</li>
+            <li><strong>Data JSON structure:</strong> Edit Blocks store their data as a JSON array: <code>{"LineItems": [{"Product": "A", "Qty": 5}, {"Product": "B", "Qty": 3}]}</code></li>
+            <li><strong>Min/Max rows:</strong> Configure minimum and maximum number of rows</li>
+            <li><strong>Default rows:</strong> Pre-populate from a DataRaptor Extract result</li>
+            <li><strong>Aggregate element:</strong> Use the Aggregate element to SUM, COUNT, AVG across rows</li>
+        </ul>
+
+        <h3>Set Values Element</h3>
+        <p>Programmatically sets values in the Data JSON without user interaction. Runs automatically when the step loads (or can be triggered). Common patterns:</p>
+        <pre>// Set a calculated field
+TotalWithTax = %Subtotal% * 1.08
+
+// Set a default based on a condition
+Priority = IF(%Amount% > 50000, "High", "Normal")
+
+// Concatenate fields
+FullName = %FirstName% + " " + %LastName%
+
+// Copy data between JSON paths
+BillingAddress = %ShippingAddress%</pre>
+
+        <h3>Step Navigation &amp; Branching</h3>
+        <p>OmniScripts support several navigation patterns:</p>
+        <ul>
+            <li><strong>Linear:</strong> Steps progress sequentially (Step 1 &rarr; Step 2 &rarr; Step 3)</li>
+            <li><strong>Branching:</strong> Step Chart elements route to different steps based on conditions (e.g., if product type is "Insurance" go to Step 4, otherwise Step 5)</li>
+            <li><strong>Looping:</strong> Navigate back to a previous step based on user action</li>
+            <li><strong>Sub-OmniScript:</strong> Embed an entire OmniScript as a step within another OmniScript</li>
+            <li><strong>Chaining:</strong> Complete one OmniScript and seamlessly launch another, passing the Data JSON forward</li>
+        </ul>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 8: Data JSON -->
+    <!-- ============================================================ -->
+    <div class="section" id="data-json">
+        <h2>8. Data JSON — The State Engine</h2>
+
+        <p>The Data JSON is the single most important concept in OmniScript. It's the live state object that every element reads from and writes to. Understanding its structure is essential for debugging and building complex OmniScripts.</p>
+
+        <h3>Structure</h3>
+        <pre>{
+  // Step 1 inputs
+  "FirstName": "Eddie",
+  "LastName": "Zaragoza",
+  "Email": "eddie@example.com",
+
+  // Step 2 — DataRaptor results
+  "AccountLookup": {
+    "Id": "001xx000003ABCD",
+    "Name": "CrossCountry Consulting",
+    "Industry": "Consulting",
+    "Contacts": [
+      {"Name": "Alice", "Email": "alice@cc.com"},
+      {"Name": "Bob", "Email": "bob@cc.com"}
+    ]
+  },
+
+  // Step 3 — Edit Block
+  "LineItems": [
+    {"Product": "Widget A", "Qty": 5, "Price": 100},
+    {"Product": "Widget B", "Qty": 3, "Price": 200}
+  ],
+
+  // Computed values
+  "TotalAmount": 1100,
+  "TaxAmount": 88,
+
+  // Context (auto-populated)
+  "ContextId": "001xx000003ABCD",
+  "sOmniScriptId": "0jNxx0000004C1D"
+}</pre>
+
+        <h3>How Values Get Into the Data JSON</h3>
+        <table>
+            <tr><th>Source</th><th>How</th></tr>
+            <tr><td>User input</td><td>Each input element auto-writes its value using its element name as the JSON key</td></tr>
+            <tr><td>DataRaptor Extract</td><td>Results are merged into the Data JSON at the element's configured output path</td></tr>
+            <tr><td>Integration Procedure</td><td>Response JSON is merged at the configured output path</td></tr>
+            <tr><td>Set Values element</td><td>Formulas/merge fields write computed values to specified keys</td></tr>
+            <tr><td>URL parameters</td><td><code>?ContextId=001xx...</code> auto-populates <code>%ContextId%</code></td></tr>
+            <tr><td>Prefill JSON</td><td>Initial JSON passed when launching the OmniScript programmatically</td></tr>
+        </table>
+
+        <h3>Debugging the Data JSON</h3>
+        <p>During development, you can view the live Data JSON at any time:</p>
+        <ol>
+            <li>Open the OmniScript in <strong>Preview</strong> mode</li>
+            <li>Click the <strong>gear icon</strong> (developer options) in the preview toolbar</li>
+            <li>Enable <strong>"Show JSON"</strong> — this reveals a collapsible JSON viewer at the bottom of the preview</li>
+            <li>As you fill out the form and trigger actions, watch the JSON update in real time</li>
+        </ol>
+
+        <div class="callout callout-green">
+            <strong>Debugging Tip: Console Logging</strong>
+            In the browser console, OmniScript instances expose their Data JSON. You can use Custom LWC elements with <code>console.log(JSON.stringify(this.omniJsonData))</code> to inspect the complete state at any point during execution.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 9: Deployment -->
+    <!-- ============================================================ -->
+    <div class="section" id="deployment">
+        <h2>9. Deployment &amp; DevOps</h2>
+
+        <p>OmniStudio components have a unique deployment model that differs from standard Salesforce metadata. Understanding the options is critical for CI/CD and org-to-org migration.</p>
+
+        <h3>Deployment Methods</h3>
+
+        <table>
+            <tr><th>Method</th><th>Runtime</th><th>Best For</th><th>Notes</th></tr>
+            <tr>
+                <td><strong>Metadata API / sf CLI</strong></td>
+                <td>Standard</td>
+                <td>CI/CD pipelines, scratch org development</td>
+                <td>Requires OmniStudio Metadata enabled. Components deploy as metadata types (<code>OmniScript</code>, <code>OmniDataTransform</code>, etc.)</td>
+            </tr>
+            <tr>
+                <td><strong>Vlocity Build Tool</strong></td>
+                <td>Both</td>
+                <td>Legacy orgs, complex migrations</td>
+                <td>npm package: <code>vlocity</code>. Uses datapacks (JSON exports). Being phased out in favor of sf CLI.</td>
+            </tr>
+            <tr>
+                <td><strong>IDX Workbench</strong></td>
+                <td>Both</td>
+                <td>One-off migrations, visual deployment</td>
+                <td>Browser-based tool at <code>/apex/OmniStudioIDXWorkbench</code>. Point-and-click export/import.</td>
+            </tr>
+            <tr>
+                <td><strong>Change Sets</strong></td>
+                <td>Standard</td>
+                <td>Simple sandbox-to-production</td>
+                <td>Supported after Metadata API enablement. Same workflow as other metadata.</td>
+            </tr>
+            <tr>
+                <td><strong>Unlocked Packages</strong></td>
+                <td>Standard</td>
+                <td>ISV, modular architecture</td>
+                <td>OmniStudio components can be included in 2GP unlocked packages.</td>
+            </tr>
+        </table>
+
+        <h3>Metadata Types (Standard Runtime)</h3>
+        <p>When using the Metadata API, these are the types you'll work with:</p>
+        <table class="mapping-table">
+            <tr><th>Component</th><th>Metadata Type</th></tr>
+            <tr><td>OmniScript</td><td><code>OmniScript</code></td></tr>
+            <tr><td>DataRaptor</td><td><code>OmniDataTransform</code></td></tr>
+            <tr><td>Integration Procedure</td><td><code>OmniIntegrationProcedure</code></td></tr>
+            <tr><td>FlexCard</td><td><code>OmniUiCard</code></td></tr>
+            <tr><td>Decision Matrix</td><td><code>DecisionMatrix</code></td></tr>
+            <tr><td>Expression Set</td><td><code>ExpressionSet</code></td></tr>
+        </table>
+
+        <h3>sf CLI Retrieval Example</h3>
+        <pre># Retrieve all OmniScripts
+sf project retrieve start --metadata OmniScript
+
+# Retrieve a specific OmniScript by name
+sf project retrieve start --metadata "OmniScript:NewCustomerOnboarding"
+
+# Retrieve all OmniStudio components
+sf project retrieve start --metadata OmniScript,OmniDataTransform,OmniIntegrationProcedure,OmniUiCard
+
+# Deploy
+sf project deploy start --source-dir force-app/main/default/omniScripts
+
+# Deploy with specific test level
+sf project deploy start --source-dir force-app/main/default --test-level RunSpecifiedTests --tests MyOmniTestClass</pre>
+
+        <div class="callout callout-red">
+            <strong>Naming Convention Requirement</strong>
+            When using Metadata API deployment, OmniStudio component names must be <strong>alphanumeric only</strong> — no spaces, underscores, hyphens, or special characters. For example: <code>NewCustomerOnboarding</code> (valid) vs <code>New_Customer_Onboarding</code> (invalid for Metadata API). Components with non-compliant names must be renamed before migration.
+        </div>
+
+        <h3>Vlocity Build Tool</h3>
+        <p>The legacy deployment tool, still used in many orgs:</p>
+        <pre># Install
+npm install -g vlocity
+
+# Export all OmniScripts
+vlocity packExport -sfdx.username myOrg -job export.yaml
+
+# Import to target org
+vlocity packDeploy -sfdx.username targetOrg -job deploy.yaml
+
+# export.yaml example:
+projectPath: ./vlocity
+queries:
+  - VlocityDataPackType: OmniScript
+    query: "SELECT Id FROM vlocity_cmt__OmniScript__c WHERE vlocity_cmt__IsActive__c = true"</pre>
+
+        <h3>Activation After Deploy</h3>
+        <p>Deploying an OmniStudio component does <strong>not</strong> automatically activate it. After deployment, you must:</p>
+        <ol>
+            <li>Navigate to the component in the OmniStudio Designer</li>
+            <li>Click <strong>Activate</strong> (or activate via the API)</li>
+            <li>Activation compiles the component into an optimized LWC bundle</li>
+        </ol>
+        <p>For CI/CD, you can activate programmatically using the OmniStudio Compilation Service API or post-deploy scripts.</p>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 10: Licensing -->
+    <!-- ============================================================ -->
+    <div class="section" id="licensing">
+        <h2>10. Licensing &amp; Editions</h2>
+
+        <p>OmniStudio licensing can be confusing. Here's the breakdown:</p>
+
+        <table>
+            <tr><th>SKU</th><th>What's Included</th><th>Notes</th></tr>
+            <tr>
+                <td><strong>Industry Cloud License</strong></td>
+                <td>Full OmniStudio (OmniScript, DataRaptors, IPs, FlexCards, Decision Matrices, Expression Sets)</td>
+                <td>Included with Health Cloud, Financial Services Cloud, Communications Cloud, Energy & Utilities Cloud, etc.</td>
+            </tr>
+            <tr>
+                <td><strong>OmniStudio Add-On</strong></td>
+                <td>Full OmniStudio — standalone purchase</td>
+                <td>For orgs that want OmniStudio without an Industry Cloud. Purchased per-org.</td>
+            </tr>
+            <tr>
+                <td><strong>Salesforce Platform</strong></td>
+                <td>OmniStudio Standard Runtime included (limited)</td>
+                <td>Starting Spring '23, basic OmniStudio features available on Platform license. Check release notes for current scope.</td>
+            </tr>
+        </table>
+
+        <h3>Namespace Differences</h3>
+        <table>
+            <tr><th>Namespace</th><th>Context</th><th>Example Object</th></tr>
+            <tr><td><code>vlocity_cmt</code></td><td>Communications, Media & Technology</td><td><code>vlocity_cmt__OmniScript__c</code></td></tr>
+            <tr><td><code>vlocity_ins</code></td><td>Insurance, Financial Services</td><td><code>vlocity_ins__OmniScript__c</code></td></tr>
+            <tr><td><code>vlocity_ps</code></td><td>Public Sector, Government</td><td><code>vlocity_ps__OmniScript__c</code></td></tr>
+            <tr><td><code>omnistudio</code></td><td>Standard Runtime (current)</td><td><code>OmniProcess</code></td></tr>
+        </table>
+
+        <div class="callout callout-blue">
+            <strong>Which Should I Use?</strong>
+            For all new implementations, use the <strong>standard runtime</strong> (<code>omnistudio</code> namespace). The managed package namespaces (<code>vlocity_*</code>) are legacy. Salesforce provides a migration tool to move from managed package to standard. New Industry Cloud implementations default to standard runtime.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 11: Migration -->
+    <!-- ============================================================ -->
+    <div class="section" id="migration">
+        <h2>11. Migration: Vlocity &rarr; OmniStudio Standard</h2>
+
+        <p>For orgs running the legacy Vlocity managed package, Salesforce provides a migration path to the standard OmniStudio runtime. This is a significant undertaking — treat it as a project, not a task.</p>
+
+        <h3>Migration Tool</h3>
+        <pre># Install the migration plugin
+sf plugins install @salesforce/plugin-omnistudio-migration-tool
+
+# Assess migration readiness
+sf omnistudio migration assess --target-org myOrg
+
+# Run migration
+sf omnistudio migration run --target-org myOrg</pre>
+
+        <h3>Migration Steps (High Level)</h3>
+        <ol>
+            <li><strong>Assessment:</strong> Run the migration assessment tool — identifies incompatibilities, naming conflicts, custom code references</li>
+            <li><strong>Naming Cleanup:</strong> Rename components with spaces/special characters to alphanumeric names</li>
+            <li><strong>Enable Standard Runtime:</strong> Turn on OmniStudio Metadata API in Setup (one-way!)</li>
+            <li><strong>Run Migration Tool:</strong> Automatically copies components from <code>vlocity_*</code> objects to standard objects</li>
+            <li><strong>Update Custom Code:</strong> Any Apex, LWC, or Aura that references <code>vlocity_cmt__*</code> must be updated to reference <code>omnistudio__*</code> or the standard API names</li>
+            <li><strong>Re-activate &amp; Test:</strong> Activate all migrated components, run full regression testing</li>
+            <li><strong>Decommission Managed Package:</strong> Once validated, uninstall the Vlocity managed package (optional but recommended)</li>
+        </ol>
+
+        <h3>What Changes</h3>
+        <table class="mapping-table">
+            <tr><th>Managed Package (Before)</th><th>Standard Runtime (After)</th></tr>
+            <tr><td><code>vlocity_cmt__OmniScript__c</code></td><td><code>OmniProcess</code></td></tr>
+            <tr><td><code>vlocity_cmt__DRBundle__c</code></td><td><code>OmniDataTransform</code></td></tr>
+            <tr><td><code>vlocity_cmt__VqMachine__c</code></td><td><code>OmniIntegrationProcedure</code></td></tr>
+            <tr><td><code>vlocity_cmt__VlocityCard__c</code></td><td><code>OmniUiCard</code></td></tr>
+            <tr><td><code>vlocity_cmt__Element__c</code></td><td><code>OmniProcessElement</code></td></tr>
+            <tr><td>Aura-based rendering</td><td>LWC-based rendering (faster)</td></tr>
+            <tr><td>IDX Workbench / Vlocity Build Tool deploy</td><td>Metadata API / sf CLI deploy</td></tr>
+        </table>
+
+        <div class="callout callout-orange">
+            <strong>Migration Gotchas</strong>
+            <ul style="margin-top: 0.5rem;">
+                <li>Any custom Apex referencing <code>vlocity_cmt__</code> fields/objects must be manually refactored</li>
+                <li>Custom LWC components using Vlocity base classes need updating to OmniStudio base classes</li>
+                <li>Some advanced features (e.g., certain card actions) may behave differently in the standard runtime</li>
+                <li>Page layouts, record types, and profiles referencing managed package fields need updating</li>
+                <li>Integration tests with external systems that parse Vlocity field names will break</li>
+                <li>Test in a <strong>full sandbox</strong> before touching production — this is not a change set you can roll back</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 12: Experience Cloud -->
+    <!-- ============================================================ -->
+    <div class="section" id="experience-cloud">
+        <h2>12. OmniScript in Experience Cloud</h2>
+
+        <p>OmniScripts can be surfaced to external users — customers, partners, agents — through Experience Cloud (formerly Community Cloud). This unlocks self-service portals, onboarding wizards, and customer-facing processes.</p>
+
+        <h3>Setup Steps</h3>
+        <ol>
+            <li><strong>Enable OmniStudio for Experience Cloud:</strong> Setup &gt; OmniStudio Settings &gt; enable "Deploy OmniScript &amp; FlexCard for Experience Cloud Users"</li>
+            <li><strong>Create/Configure the Experience Site:</strong> Use the standard Experience Builder</li>
+            <li><strong>Add OmniScript Component:</strong> Drag the "OmniScript" Lightning component onto a page in Experience Builder</li>
+            <li><strong>Configure Properties:</strong> Set the OmniScript Type, SubType, and Language in the component properties</li>
+            <li><strong>Set Permissions:</strong> Guest user or community user profiles need access to:
+                <ul>
+                    <li>The OmniScript and its child elements (object permissions on <code>OmniProcess</code>)</li>
+                    <li>DataRaptor source objects (e.g., Account, Contact, custom objects)</li>
+                    <li>Integration Procedure endpoints (Apex class access)</li>
+                    <li>Any custom objects read/written by the process</li>
+                </ul>
+            </li>
+            <li><strong>Activate the OmniScript:</strong> Ensure it's activated — inactive OmniScripts won't render</li>
+        </ol>
+
+        <h3>Security Considerations</h3>
+        <div class="callout callout-red">
+            <strong>Critical: External User Permissions</strong>
+            OmniScripts in Experience Cloud run in the context of the <strong>guest user or community user profile</strong>. This means:
+            <ul style="margin-top: 0.5rem;">
+                <li>All CRUD/FLS (field-level security) is enforced — DataRaptors will fail silently if the user lacks read/edit access</li>
+                <li>Sharing rules apply — DataRaptor Extracts only return records the user has access to</li>
+                <li>Integration Procedures need their Apex classes exposed in the community user profile</li>
+                <li>Audit every DataRaptor and IP for data exposure — you don't want to leak internal records to external users</li>
+            </ul>
+        </div>
+
+        <h3>URL Parameters &amp; Deep Linking</h3>
+        <p>You can pass data into an Experience Cloud OmniScript via URL parameters:</p>
+        <pre>https://mysite.my.site.com/s/omni-form?c__ContextId=001xx000003ABCD&c__Type=Renewal
+
+// In the OmniScript, access as:
+%ContextId%  → "001xx000003ABCD"
+%Type%       → "Renewal"</pre>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 13: OmniScript vs Flow -->
+    <!-- ============================================================ -->
+    <div class="section" id="vs-flow">
+        <h2>13. OmniScript vs Flow — When to Use Which</h2>
+
+        <p>This is one of the most common questions for Salesforce architects. Both OmniScript and Flow Screen can build guided wizards — so when do you use which?</p>
+
+        <div class="vs-grid">
+            <div class="vs-card omni">
+                <div class="card-head">OmniScript — Best For</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Complex multi-step wizards with 5+ screens</li>
+                        <li>Industry-specific processes (insurance quotes, telecom orders, healthcare intake)</li>
+                        <li>Heavy integration with external systems via IPs</li>
+                        <li>Reusable data components (DataRaptors shared across OmniScripts)</li>
+                        <li>Advanced form logic: Edit Blocks, nested repeating groups, complex branching</li>
+                        <li>Experience Cloud self-service portals</li>
+                        <li>When you already have OmniStudio licensed</li>
+                        <li>Large-scale enterprise forms with 50+ fields per step</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card flow">
+                <div class="card-head">Flow Screen — Best For</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Simple 1-3 step wizards</li>
+                        <li>Internal-only processes (no external user facing)</li>
+                        <li>Tight integration with standard Salesforce automation (record-triggered, scheduled)</li>
+                        <li>Teams without OmniStudio licensing</li>
+                        <li>Simple record creation/update workflows</li>
+                        <li>Approval process launchers</li>
+                        <li>Quick actions on record pages</li>
+                        <li>When the team already knows Flow well</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>Feature Comparison</h3>
+        <table>
+            <tr><th>Feature</th><th>OmniScript</th><th>Flow Screen</th></tr>
+            <tr><td>Multi-step wizard</td><td>Native (Step elements)</td><td>Native (Screen elements)</td></tr>
+            <tr><td>Conditional branching</td><td>Step branching + conditional visibility</td><td>Decision elements + visibility rules</td></tr>
+            <tr><td>Repeating rows (Edit Block)</td><td>Native Edit Block element</td><td>Requires custom LWC or iteration workaround</td></tr>
+            <tr><td>External API calls</td><td>HTTP Action + Integration Procedures</td><td>External Services + Invocable Apex</td></tr>
+            <tr><td>Data transformation</td><td>DataRaptor Transform (no code)</td><td>Requires Apex or formula resources</td></tr>
+            <tr><td>Caching</td><td>IP-level caching (TTL-based)</td><td>Platform Cache (requires Apex)</td></tr>
+            <tr><td>Experience Cloud</td><td>Full support</td><td>Full support</td></tr>
+            <tr><td>Custom LWC embedding</td><td>Native support</td><td>Native support (Flow Screen Components)</td></tr>
+            <tr><td>Versioning</td><td>Type/SubType/Version</td><td>Version numbers with activation</td></tr>
+            <tr><td>Deployment</td><td>Metadata API, Vlocity Build, IDX</td><td>Metadata API, Change Sets, Packages</td></tr>
+            <tr><td>Learning curve</td><td>Steep — OmniStudio-specific concepts</td><td>Moderate — widely documented</td></tr>
+            <tr><td>Licensing</td><td>Requires OmniStudio / Industry Cloud</td><td>Included in all Salesforce editions</td></tr>
+        </table>
+
+        <div class="callout callout-blue">
+            <strong>Consultant's Rule of Thumb</strong>
+            If the client has Industry Cloud or OmniStudio licensing AND the use case involves complex forms, external integrations, or customer-facing portals → <strong>OmniScript</strong>. If the client is on standard Salesforce AND the use case is internal automation with simple screens → <strong>Flow</strong>. Don't introduce OmniStudio just for the sake of it — it adds complexity and licensing cost.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 14: Agentforce Integration -->
+    <!-- ============================================================ -->
+    <div class="section" id="agentforce">
+        <h2>14. OmniScript &amp; Agentforce</h2>
+
+        <p>With Salesforce's push into agentic AI via Agentforce, OmniStudio components are becoming first-class participants in AI-driven workflows.</p>
+
+        <h3>How OmniScript Connects to Agentforce</h3>
+
+        <h4>OmniScript as Agent Actions</h4>
+        <p>An OmniScript can be surfaced as an <strong>action</strong> that an Agentforce agent can invoke. When a user's intent matches a topic, the agent can launch an OmniScript to collect structured data through a guided form, then submit the result.</p>
+
+        <h4>Integration Procedures as Agent Actions</h4>
+        <p>IPs are ideal as Agentforce actions because they're already server-side, API-callable, and return structured JSON. An agent can invoke an IP to look up customer data, check eligibility, or process a request — all without a UI.</p>
+
+        <h4>FlexCards in Agent Conversations</h4>
+        <p>FlexCards can render rich, contextual data within an agent conversation — showing the customer's account summary, recent orders, or policy details alongside the chat. This gives agents (human or AI) real-time context.</p>
+
+        <h3>Architecture Pattern</h3>
+        <div class="diagram" id="agentforceDiagram"></div>
+
+        <h3>Use Cases</h3>
+        <table>
+            <tr><th>Scenario</th><th>OmniStudio Component</th><th>Agentforce Role</th></tr>
+            <tr><td>Customer requests address change</td><td>OmniScript: "Update Address" wizard</td><td>Agent detects "change address" intent, launches OmniScript in chat window</td></tr>
+            <tr><td>Agent needs customer 360 view</td><td>FlexCard: Account Summary</td><td>Agent surfaces FlexCard with account data alongside conversation</td></tr>
+            <tr><td>Eligibility check during conversation</td><td>IP: "CheckEligibility" procedure</td><td>Agent calls IP as an action, gets JSON response, summarizes in natural language</td></tr>
+            <tr><td>Insurance quote generation</td><td>OmniScript: "Quick Quote" + IP: "CalculatePremium"</td><td>Agent collects basic info via OmniScript, runs calculation via IP, presents result</td></tr>
+        </table>
+
+        <div class="callout callout-purple">
+            <strong>The Future: OmniScript + Agentforce + Data Cloud</strong>
+            Salesforce's vision is converging OmniStudio, Agentforce, and Data Cloud. Integration Procedures can pull from Data Cloud unified profiles, OmniScripts can present AI-generated recommendations, and FlexCards can display real-time customer signals. If you're building on Industry Cloud, expect this convergence to accelerate.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 15: Performance -->
+    <!-- ============================================================ -->
+    <div class="section" id="performance">
+        <h2>15. Performance Optimization</h2>
+
+        <p>OmniScript performance issues typically manifest as slow page loads, laggy form interactions, or timeout errors on data operations. Here are the most impactful optimizations.</p>
+
+        <h3>Client-Side (OmniScript Rendering)</h3>
+        <table>
+            <tr><th>Issue</th><th>Solution</th></tr>
+            <tr><td>Too many DOM elements</td><td>Use conditional visibility to hide elements not in use. Break large forms into multiple OmniScripts.</td></tr>
+            <tr><td>Slow step transitions</td><td>Minimize elements per step. Use lazy-loading DataRaptor actions (trigger on step entry, not on load).</td></tr>
+            <tr><td>Complex Edit Blocks</td><td>Limit initial row count. Use pagination for large datasets instead of rendering all rows.</td></tr>
+            <tr><td>Heavy custom LWC</td><td>Profile your custom components. Avoid expensive DOM operations in <code>renderedCallback()</code>.</td></tr>
+            <tr><td>Re-renders on every input</td><td>Use <code>debounce</code> on input elements that trigger DataRaptor calls. Set "Execute on change" carefully.</td></tr>
+        </table>
+
+        <h3>Server-Side (DataRaptors &amp; Integration Procedures)</h3>
+        <table>
+            <tr><th>Issue</th><th>Solution</th></tr>
+            <tr><td>Multiple round trips</td><td>Wrap related DataRaptor calls in a single Integration Procedure. One IP call = one server round trip.</td></tr>
+            <tr><td>Uncached reference data</td><td>Enable IP caching for data that doesn't change often (products, picklists, config). Set TTL appropriately.</td></tr>
+            <tr><td>Slow DataRaptor Extract</td><td>Use Turbo Extract for simple, single-object queries. Add selective filters. Avoid SELECT * patterns.</td></tr>
+            <tr><td>N+1 query pattern</td><td>If you're calling a DataRaptor inside a loop, refactor to bulk-query first, then transform in memory.</td></tr>
+            <tr><td>Large JSON payloads</td><td>Use Response Actions in IPs to return only needed fields. Don't return entire record structures.</td></tr>
+            <tr><td>Governor limit hits</td><td>Monitor SOQL query count — each DataRaptor Extract = 1+ SOQL. Consolidate into fewer, wider queries.</td></tr>
+        </table>
+
+        <h3>Performance Metrics to Monitor</h3>
+        <ul>
+            <li><strong>Time to Interactive (TTI):</strong> How long until the first step is fully usable — target under 2 seconds</li>
+            <li><strong>Step transition time:</strong> Time between clicking "Next" and the next step rendering — target under 1 second</li>
+            <li><strong>DataRaptor execution time:</strong> Visible in debug logs — target under 200ms per call</li>
+            <li><strong>IP total execution time:</strong> Sum of all actions in the IP — target under 3 seconds for user-facing IPs</li>
+            <li><strong>Total SOQL queries:</strong> Per-transaction count — stay well under the 100 limit</li>
+        </ul>
+
+        <div class="callout callout-green">
+            <strong>Quick Win: The "3-IP Rule"</strong>
+            A well-optimized OmniScript should make no more than <strong>3 server calls (IP calls) per step</strong>. If a step has more than 3, consolidate into fewer IPs. Each server call adds 100-300ms of round-trip latency — this adds up fast.
+        </div>
+    </div>
+
+
+    <!-- ============================================================ -->
+    <!-- SECTION 16: Troubleshooting -->
+    <!-- ============================================================ -->
+    <div class="section" id="troubleshooting">
+        <h2>16. Troubleshooting &amp; Common Issues</h2>
+
+        <h3>OmniScript Won't Render</h3>
+        <table>
+            <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+            <tr><td>Blank page / spinner forever</td><td>OmniScript not activated</td><td>Open in Designer, click Activate. Activation compiles the LWC.</td></tr>
+            <tr><td>"OmniScript not found" error</td><td>Wrong Type/SubType/Language</td><td>Verify the exact Type, SubType, and Language values match.</td></tr>
+            <tr><td>Works in preview, blank in Lightning</td><td>Missing permissions</td><td>User profile needs Read access to <code>OmniProcess</code>, <code>OmniProcessElement</code>.</td></tr>
+            <tr><td>Works for admin, fails for standard user</td><td>FLS on DataRaptor source objects</td><td>Grant field-level read access on every field the DataRaptor queries.</td></tr>
+            <tr><td>Components load but look broken</td><td>CSS conflicts with org customizations</td><td>Check for global CSS overrides in the org's theme. Use Salesforce Inspector to diagnose.</td></tr>
+        </table>
+
+        <h3>DataRaptor Errors</h3>
+        <table>
+            <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+            <tr><td>Returns empty results</td><td>Filter too restrictive OR FLS</td><td>Test the generated SOQL in Developer Console. Check user permissions.</td></tr>
+            <tr><td>"Insufficient access" error</td><td>Object/field permissions</td><td>Grant CRUD on the SObject and FLS on mapped fields.</td></tr>
+            <tr><td>DataRaptor Load fails silently</td><td>Required field missing</td><td>Check the Data JSON — ensure all required fields for the target object are populated.</td></tr>
+            <tr><td>Wrong data returned</td><td>Input parameter not binding</td><td>Verify merge field names match exactly (case-sensitive). Check Data JSON structure.</td></tr>
+            <tr><td>Turbo Extract fails</td><td>Uses unsupported features</td><td>Turbo only supports single object. Switch to standard Extract for relationships.</td></tr>
+        </table>
+
+        <h3>Integration Procedure Errors</h3>
+        <table>
+            <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+            <tr><td>Timeout error</td><td>Total execution exceeds limits</td><td>Profile each action. Enable caching. Reduce DataRaptor calls.</td></tr>
+            <tr><td>"Too many SOQL queries"</td><td>DataRaptors in a loop</td><td>Bulk-query outside the loop, then transform/filter in memory.</td></tr>
+            <tr><td>Response JSON is empty</td><td>Missing Response Action</td><td>Add a Response Action and map the fields you want to return.</td></tr>
+            <tr><td>HTTP Action returns error</td><td>Named Credential misconfigured</td><td>Verify Named Credential auth, endpoint URL, and certificate.</td></tr>
+            <tr><td>Works standalone, fails in OmniScript</td><td>Input JSON structure mismatch</td><td>Check the IP's expected input format vs what the OmniScript sends.</td></tr>
+        </table>
+
+        <h3>Deployment Errors</h3>
+        <table>
+            <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+            <tr><td>"Invalid component name"</td><td>Spaces/special chars in name</td><td>Rename to alphanumeric only before deploying via Metadata API.</td></tr>
+            <tr><td>"Dependent metadata missing"</td><td>DataRaptor/IP not deployed first</td><td>Deploy dependencies before the OmniScript. Order: DataRaptors → IPs → OmniScripts → FlexCards.</td></tr>
+            <tr><td>Component deploys but won't activate</td><td>Compilation error in elements</td><td>Open in Designer, check for red error indicators on elements. Fix and re-activate.</td></tr>
+            <tr><td>"Cannot retrieve OmniScript"</td><td>Metadata API not enabled</td><td>Enable OmniStudio Metadata in Setup (one-way switch).</td></tr>
+        </table>
+
+        <h3>Debugging Tools</h3>
+        <ul>
+            <li><strong>OmniScript Preview:</strong> Built-in preview with Data JSON viewer — first line of debugging</li>
+            <li><strong>Integration Procedure Preview:</strong> Test IPs with custom input JSON and see the response</li>
+            <li><strong>Debug Logs:</strong> Enable for the running user — shows SOQL, DML, Apex execution from DataRaptors and IPs</li>
+            <li><strong>Browser DevTools:</strong> Network tab shows all server calls. Console shows LWC errors. Performance tab profiles rendering.</li>
+            <li><strong>Salesforce Inspector:</strong> Chrome extension — inspect records, run SOQL, check object access</li>
+            <li><strong>OmniStudio Test Framework:</strong> Write Apex tests for Integration Procedures using <code>omnistudio.OmniProcess.execute()</code></li>
+        </ul>
+
+        <div class="callout callout-orange">
+            <strong>The #1 Debugging Tip</strong>
+            When an OmniScript isn't working as expected, <strong>always check the Data JSON first</strong>. Enable the JSON viewer in Preview mode and inspect the state at each step. 90% of issues come down to a merge field not resolving, a DataRaptor not writing to the expected path, or an element name not matching the expected JSON key.
+        </div>
+    </div>
+
+
+</div><!-- end container -->
+
+<div class="print-bar-bottom">
+    <button class="print-btn" onclick="window.print()">
+        <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+        Print / Save PDF
+    </button>
+</div>
+
+<div class="footer">
+    <p>Salesforce OmniStudio &amp; OmniScript — Complete Knowledge Guide</p>
+    <p>Prepared by Eddie Zaragoza &mdash; <a href="mailto:ezaragoza@crosscountry-consulting.com" style="color:var(--sf-blue);">ezaragoza@crosscountry-consulting.com</a></p>
+    <p>Generated February 2026</p>
+    <p>Sources include official Salesforce documentation, Trailhead, community blogs, and implementation experience.</p>
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Collapsible sticky nav
+    (function() {
+        const nav = document.getElementById('navBar');
+        const toggle = document.getElementById('navToggle');
+        const SCROLL_THRESHOLD = 120;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > SCROLL_THRESHOLD) {
+                if (!nav.classList.contains('collapsed')) {
+                    nav.classList.add('collapsed');
+                    nav.classList.remove('expanded');
+                    toggle.innerHTML = '&#9776; Show Links';
+                }
+            } else {
+                nav.classList.remove('collapsed', 'expanded');
+            }
+        }, { passive: true });
+
+        toggle.addEventListener('click', () => {
+            const isExpanded = nav.classList.toggle('expanded');
+            toggle.innerHTML = isExpanded ? '&#10005; Hide Links' : '&#9776; Show Links';
+        });
+
+        nav.querySelector('.nav-links').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && nav.classList.contains('collapsed')) {
+                nav.classList.remove('expanded');
+                toggle.innerHTML = '&#9776; Show Links';
+            }
+        });
+    })();
+</script>
+
+<!-- SVG Diagrams (programmatic) -->
+<script>
+(function() {
+    // === Architecture Diagram ===
+    const archEl = document.getElementById('archDiagram');
+    if (archEl) {
+        const w = 800, h = 420;
+        const boxes = [
+            // Client tier
+            { x: 50,  y: 30,  w: 200, h: 50, label: 'OmniScript (LWC)', fill: '#0d9dda', text: '#fff', tier: 'client' },
+            { x: 300, y: 30,  w: 200, h: 50, label: 'FlexCard (LWC)',    fill: '#0d9dda', text: '#fff', tier: 'client' },
+            { x: 550, y: 30,  w: 200, h: 50, label: 'Custom LWC',        fill: '#64b5f6', text: '#fff', tier: 'client' },
+
+            // Orchestration tier
+            { x: 175, y: 160, w: 250, h: 50, label: 'Integration Procedure', fill: '#0176d3', text: '#fff', tier: 'server' },
+            { x: 475, y: 160, w: 200, h: 50, label: 'Remote Actions (Apex)', fill: '#032d60', text: '#fff', tier: 'server' },
+
+            // Data tier
+            { x: 50,  y: 290, w: 160, h: 50, label: 'DR Extract',     fill: '#2e844a', text: '#fff', tier: 'data' },
+            { x: 230, y: 290, w: 160, h: 50, label: 'DR Load',         fill: '#2e844a', text: '#fff', tier: 'data' },
+            { x: 410, y: 290, w: 160, h: 50, label: 'DR Transform',    fill: '#2e844a', text: '#fff', tier: 'data' },
+            { x: 590, y: 290, w: 160, h: 50, label: 'HTTP Callouts',   fill: '#fe9339', text: '#fff', tier: 'data' },
+
+            // Database
+            { x: 250, y: 380, w: 300, h: 40, label: 'Salesforce Database (SObjects)', fill: '#032d60', text: '#fff', tier: 'db' },
+        ];
+
+        const arrows = [
+            // Client → Server
+            { from: 0, to: 3, label: 'IP Action' },
+            { from: 0, to: 4, label: '' },
+            { from: 1, to: 3, label: 'Data Source' },
+            // Server → Data
+            { from: 3, to: 5, label: '' },
+            { from: 3, to: 6, label: '' },
+            { from: 3, to: 7, label: '' },
+            { from: 3, to: 8, label: '' },
+            // Data → DB
+            { from: 5, to: 9, label: 'SOQL' },
+            { from: 6, to: 9, label: 'DML' },
+        ];
+
+        const tierLabels = [
+            { x: 5, y: 55, label: 'CLIENT', color: '#0d9dda' },
+            { x: 5, y: 185, label: 'SERVER', color: '#0176d3' },
+            { x: 5, y: 315, label: 'DATA', color: '#2e844a' },
+        ];
+
+        let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:sans-serif;">`;
+        svg += '<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/></marker></defs>';
+
+        // Tier backgrounds
+        svg += `<rect x="40" y="10" width="730" height="80" rx="8" fill="rgba(13,157,218,0.08)" stroke="rgba(13,157,218,0.2)" stroke-dasharray="4"/>`;
+        svg += `<rect x="40" y="140" width="730" height="80" rx="8" fill="rgba(1,118,211,0.08)" stroke="rgba(1,118,211,0.2)" stroke-dasharray="4"/>`;
+        svg += `<rect x="40" y="270" width="730" height="90" rx="8" fill="rgba(46,132,74,0.08)" stroke="rgba(46,132,74,0.2)" stroke-dasharray="4"/>`;
+
+        // Tier labels
+        tierLabels.forEach(t => {
+            svg += `<text x="${t.x}" y="${t.y}" fill="${t.color}" font-size="10" font-weight="700" transform="rotate(-90,${t.x},${t.y})" text-anchor="middle">${t.label}</text>`;
+        });
+
+        // Arrows
+        arrows.forEach(a => {
+            const f = boxes[a.from], t = boxes[a.to];
+            const fx = f.x + f.w/2, fy = f.y + f.h;
+            const tx = t.x + t.w/2, ty = t.y;
+            svg += `<line x1="${fx}" y1="${fy}" x2="${tx}" y2="${ty}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ah)"/>`;
+            if (a.label) {
+                const mx = (fx+tx)/2, my = (fy+ty)/2;
+                svg += `<text x="${mx+5}" y="${my-4}" fill="#64748b" font-size="9">${a.label}</text>`;
+            }
+        });
+
+        // Boxes
+        boxes.forEach(b => {
+            svg += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="6" fill="${b.fill}"/>`;
+            svg += `<text x="${b.x + b.w/2}" y="${b.y + b.h/2 + 5}" fill="${b.text}" font-size="12" font-weight="600" text-anchor="middle">${b.label}</text>`;
+        });
+
+        svg += '</svg>';
+        archEl.innerHTML = svg;
+        archEl.style.whiteSpace = 'normal';
+        archEl.style.background = 'white';
+        archEl.style.border = '2px solid #d8dde6';
+        archEl.style.color = '#181818';
+    }
+
+    // === Integration Procedure Flow Diagram ===
+    const ipEl = document.getElementById('ipDiagram');
+    if (ipEl) {
+        const w = 780, h = 180;
+        const steps = [
+            { x: 20,  label: 'Input\nJSON',        fill: '#64b5f6' },
+            { x: 150, label: 'DR\nExtract',         fill: '#2e844a' },
+            { x: 280, label: 'Set\nValues',          fill: '#0176d3' },
+            { x: 410, label: 'Conditional\nBlock',   fill: '#fe9339' },
+            { x: 540, label: 'DR Load\n/ HTTP',      fill: '#2e844a' },
+            { x: 670, label: 'Response\nAction',     fill: '#032d60' },
+        ];
+
+        let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:sans-serif;">`;
+        svg += '<defs><marker id="ah2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/></marker></defs>';
+
+        steps.forEach((s, i) => {
+            const bx = s.x, by = 40, bw = 100, bh = 65;
+            svg += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="${s.fill}"/>`;
+            const lines = s.label.split('\n');
+            lines.forEach((line, li) => {
+                svg += `<text x="${bx + bw/2}" y="${by + 30 + li*16}" fill="white" font-size="11" font-weight="600" text-anchor="middle">${line}</text>`;
+            });
+            // Arrow to next
+            if (i < steps.length - 1) {
+                const nx = steps[i+1].x;
+                svg += `<line x1="${bx + bw}" y1="${by + bh/2}" x2="${nx}" y2="${by + bh/2}" stroke="#94a3b8" stroke-width="2" marker-end="url(#ah2)"/>`;
+            }
+            // Step number
+            svg += `<text x="${bx + bw/2}" y="${by + bh + 22}" fill="#64748b" font-size="10" text-anchor="middle">Step ${i+1}</text>`;
+        });
+
+        // Title
+        svg += `<text x="${w/2}" y="22" fill="#032d60" font-size="13" font-weight="700" text-anchor="middle">Integration Procedure Execution Flow</text>`;
+
+        // Output label
+        svg += `<text x="${w/2}" y="${h - 10}" fill="#64748b" font-size="10" text-anchor="middle">Each action executes server-side in sequence. Response Action defines what JSON gets returned to the caller.</text>`;
+
+        svg += '</svg>';
+        ipEl.innerHTML = svg;
+        ipEl.style.whiteSpace = 'normal';
+        ipEl.style.background = 'white';
+        ipEl.style.border = '2px solid #d8dde6';
+        ipEl.style.color = '#181818';
+    }
+
+    // === Agentforce Integration Diagram ===
+    const agentEl = document.getElementById('agentforceDiagram');
+    if (agentEl) {
+        const w = 780, h = 260;
+        let svg = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:sans-serif;">`;
+        svg += '<defs><marker id="ah3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/></marker></defs>';
+
+        // Boxes
+        const b = [
+            { x: 20,  y: 90,  w: 120, h: 60, label: 'User / Chat',     fill: '#730394' },
+            { x: 190, y: 90,  w: 140, h: 60, label: 'Agentforce\nAgent', fill: '#032d60' },
+            { x: 390, y: 20,  w: 150, h: 50, label: 'OmniScript\n(Guided Form)', fill: '#0d9dda' },
+            { x: 390, y: 90,  w: 150, h: 50, label: 'Integration\nProcedure',     fill: '#0176d3' },
+            { x: 390, y: 160, w: 150, h: 50, label: 'FlexCard\n(Context Data)',    fill: '#0d9dda' },
+            { x: 610, y: 90,  w: 140, h: 60, label: 'Salesforce\nData + APIs',     fill: '#2e844a' },
+        ];
+
+        // Arrows
+        const arrows = [
+            [0, 1], [1, 2], [1, 3], [1, 4], [3, 5], [2, 5],
+        ];
+
+        arrows.forEach(([fi, ti]) => {
+            const f = b[fi], t = b[ti];
+            const fx = f.x + f.w, fy = f.y + f.h/2;
+            const tx = t.x, ty = t.y + t.h/2;
+            svg += `<line x1="${fx}" y1="${fy}" x2="${tx}" y2="${ty}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#ah3)"/>`;
+        });
+
+        b.forEach(box => {
+            svg += `<rect x="${box.x}" y="${box.y}" width="${box.w}" height="${box.h}" rx="8" fill="${box.fill}"/>`;
+            const lines = box.label.split('\n');
+            lines.forEach((line, i) => {
+                svg += `<text x="${box.x + box.w/2}" y="${box.y + box.h/2 + (i - (lines.length-1)/2) * 15 + 4}" fill="white" font-size="11" font-weight="600" text-anchor="middle">${line}</text>`;
+            });
+        });
+
+        svg += `<text x="${w/2}" y="${h - 5}" fill="#64748b" font-size="10" text-anchor="middle">Agentforce invokes OmniStudio components as actions during conversations</text>`;
+
+        svg += '</svg>';
+        agentEl.innerHTML = svg;
+        agentEl.style.whiteSpace = 'normal';
+        agentEl.style.background = 'white';
+        agentEl.style.border = '2px solid #d8dde6';
+        agentEl.style.color = '#181818';
+    }
+})();
+</script>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+<script>
+(function(){
+    const konamiSequence = [
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+        'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+        'KeyB','KeyA','Enter'
+    ];
+    let konamiIndex = 0;
+    let matrixActive = false;
+    let matrixRainId = null;
+
+    document.addEventListener('keydown', function(e) {
+        const expected = konamiSequence[konamiIndex];
+        if (e.code === expected || e.key === expected) {
+            konamiIndex++;
+            if (konamiIndex === konamiSequence.length) {
+                konamiIndex = 0;
+                matrixActive ? stopMatrixRain() : startMatrixRain();
+                matrixActive = !matrixActive;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    });
+
+    function startMatrixRain() {
+        const canvas = document.getElementById('matrixCanvas');
+        if (!canvas || matrixRainId) return;
+        document.body.classList.add('matrix-active');
+        canvas.style.display = 'block';
+        canvas.style.pointerEvents = 'none';
+        const ctx = canvas.getContext('2d');
+
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:・."=*+-<>¦|';
+        const charArr = Array.from(chars);
+        const fontSize = 14;
+        let columns, drops;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            const oldDrops = drops || [];
+            drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = oldDrops[i] !== undefined ? oldDrops[i] : Math.random() * -100;
+            }
+        }
+        resize();
+        window._matrixResize = resize;
+        window.addEventListener('resize', window._matrixResize);
+
+        let frameCount = 0;
+        function draw() {
+            frameCount++;
+            if (frameCount % 2 !== 0) {
+                matrixRainId = requestAnimationFrame(draw);
+                return;
+            }
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px Courier New';
+
+            for (let i = 0; i < columns; i++) {
+                const ch = charArr[Math.floor(Math.random() * charArr.length)];
+                const y = drops[i] * fontSize;
+
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = 'rgba(0,255,65,0.6)';
+                ctx.fillStyle = '#aaffaa';
+                ctx.fillText(ch, i * fontSize, y);
+
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                const ch2 = charArr[Math.floor(Math.random() * charArr.length)];
+                if (y - fontSize > 0) ctx.fillText(ch2, i * fontSize, y - fontSize);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+        matrixRainId = requestAnimationFrame(draw);
+    }
+
+    function stopMatrixRain() {
+        if (matrixRainId) {
+            cancelAnimationFrame(matrixRainId);
+            matrixRainId = null;
+        }
+        document.body.classList.remove('matrix-active');
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'none';
+        }
+        if (window._matrixResize) {
+            window.removeEventListener('resize', window._matrixResize);
+            delete window._matrixResize;
+        }
+    }
+})();
+</script>
+
+</body>
+</html>
