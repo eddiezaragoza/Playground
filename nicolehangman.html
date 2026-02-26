@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman for Nicole</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Sacramento&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Floating hearts background */
+    .hearts-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-heart {
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: 0.15;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.15;
+      }
+      90% {
+        opacity: 0.15;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .game-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 36px 40px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(233, 30, 99, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.6);
+      text-align: center;
+    }
+
+    .title {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.8rem;
+      color: #e91e63;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #f06292;
+      margin-bottom: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Hangman drawing */
+    .hangman-canvas {
+      margin: 0 auto 20px;
+    }
+
+    .hangman-canvas svg {
+      width: 180px;
+      height: 180px;
+    }
+
+    .hangman-canvas svg line,
+    .hangman-canvas svg circle {
+      stroke: #e91e63;
+      stroke-width: 3;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .hangman-part {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .hangman-part.visible {
+      opacity: 1;
+    }
+
+    /* Hint */
+    .hint-box {
+      background: linear-gradient(135deg, #fce4ec, #fff);
+      border: 2px dashed #f48fb1;
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 22px;
+      display: inline-block;
+    }
+
+    .hint-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #e91e63;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .hint-text {
+      font-size: 0.95rem;
+      color: #ad1457;
+      font-weight: 600;
+    }
+
+    /* Word display */
+    .word-display {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .word-group {
+      display: flex;
+      gap: 6px;
+      margin: 0 10px;
+    }
+
+    .letter-slot {
+      width: 36px;
+      height: 44px;
+      border-bottom: 3px solid #f48fb1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #880e4f;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .letter-slot.revealed {
+      border-bottom-color: #e91e63;
+      animation: popIn 0.4s ease;
+    }
+
+    .letter-slot.apostrophe {
+      width: 14px;
+      border-bottom: none;
+      font-size: 1.5rem;
+      color: #880e4f;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Keyboard */
+    .keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .key-btn {
+      width: 38px;
+      height: 42px;
+      border: 2px solid #f48fb1;
+      border-radius: 10px;
+      background: white;
+      color: #ad1457;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .key-btn:hover:not(:disabled) {
+      background: #fce4ec;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(233, 30, 99, 0.2);
+    }
+
+    .key-btn:disabled {
+      cursor: default;
+    }
+
+    .key-btn.correct {
+      background: #e91e63;
+      color: white;
+      border-color: #e91e63;
+    }
+
+    .key-btn.wrong {
+      background: #f5f5f5;
+      color: #ccc;
+      border-color: #e0e0e0;
+    }
+
+    /* Status */
+    .status {
+      font-size: 0.9rem;
+      color: #e91e63;
+      font-weight: 600;
+      margin-bottom: 8px;
+      min-height: 22px;
+    }
+
+    .lives-display {
+      font-size: 0.85rem;
+      color: #f48fb1;
+      margin-bottom: 6px;
+    }
+
+    /* Overlay messages */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .overlay-content {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 85%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .overlay-emoji {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+    }
+
+    .overlay-title {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.2rem;
+      color: #e91e63;
+      margin-bottom: 8px;
+    }
+
+    .overlay-message {
+      font-size: 1rem;
+      color: #777;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .overlay-phrase {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ad1457;
+      margin: 12px 0 20px;
+      letter-spacing: 1px;
+    }
+
+    .play-again-btn {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 36px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .play-again-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(233, 30, 99, 0.35);
+    }
+
+    /* Win confetti */
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .game-container {
+        padding: 24px 20px;
+      }
+      .title {
+        font-size: 2.2rem;
+      }
+      .key-btn {
+        width: 32px;
+        height: 36px;
+        font-size: 0.8rem;
+      }
+      .letter-slot {
+        width: 28px;
+        height: 36px;
+        font-size: 1.2rem;
+      }
+      .hangman-canvas svg {
+        width: 140px;
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts background -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="game-container">
+    <div class="title">Nicole's Hangman</div>
+    <div class="subtitle">Can you guess the phrase?</div>
+
+    <!-- Hangman SVG -->
+    <div class="hangman-canvas">
+      <svg viewBox="0 0 200 200">
+        <!-- Gallows -->
+        <line x1="20" y1="190" x2="80" y2="190" stroke="#f48fb1" stroke-width="3"/>
+        <line x1="50" y1="190" x2="50" y2="20" stroke="#f48fb1" stroke-width="3"/>
+        <line x1="50" y1="20" x2="130" y2="20" stroke="#f48fb1" stroke-width="3"/>
+        <line x1="130" y1="20" x2="130" y2="40" stroke="#f48fb1" stroke-width="3"/>
+
+        <!-- Body parts (hidden initially) -->
+        <circle cx="130" cy="55" r="15" class="hangman-part" id="head"/>
+        <line x1="130" y1="70" x2="130" y2="115" class="hangman-part" id="body"/>
+        <line x1="130" y1="82" x2="105" y2="100" class="hangman-part" id="leftArm"/>
+        <line x1="130" y1="82" x2="155" y2="100" class="hangman-part" id="rightArm"/>
+        <line x1="130" y1="115" x2="110" y2="145" class="hangman-part" id="leftLeg"/>
+        <line x1="130" y1="115" x2="150" y2="145" class="hangman-part" id="rightLeg"/>
+
+        <!-- Sad face (hidden initially) -->
+        <g class="hangman-part" id="face">
+          <circle cx="124" cy="52" r="2" fill="#e91e63" stroke="none"/>
+          <circle cx="136" cy="52" r="2" fill="#e91e63" stroke="none"/>
+          <path d="M122 62 Q130 57 138 62" stroke="#e91e63" stroke-width="2" fill="none"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint-box">
+      <div class="hint-label">Hint</div>
+      <div class="hint-text">A phrase you say all the time</div>
+    </div>
+
+    <!-- Phrase display -->
+    <div class="word-display" id="wordDisplay"></div>
+
+    <!-- Keyboard -->
+    <div class="keyboard" id="keyboard"></div>
+
+    <!-- Status -->
+    <div class="lives-display" id="livesDisplay"></div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="overlay" id="winOverlay">
+    <div class="overlay-content">
+      <div class="overlay-emoji">&#128149;</div>
+      <div class="overlay-title">Good girl...</div>
+      <div class="overlay-phrase">"YOU WERE RIGHT"</div>
+      <div class="overlay-message">You always are &#128536;</div>
+      <button class="play-again-btn" onclick="resetGame()">Play Again</button>
+    </div>
+  </div>
+
+  <!-- Lose Overlay -->
+  <div class="overlay" id="loseOverlay">
+    <div class="overlay-content">
+      <div class="overlay-emoji">&#128532;</div>
+      <div class="overlay-title">So close!</div>
+      <div class="overlay-message">Hmm, not this time... try again for me baby &#128536;</div>
+      <button class="play-again-btn" onclick="resetGame()">Try Again</button>
+    </div>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script>
+    const PHRASE = "YOU WERE RIGHT";
+    const MAX_WRONG = 6;
+
+    const hangmanParts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+
+    let guessedLetters = new Set();
+    let wrongGuesses = 0;
+    let gameOver = false;
+
+    // Create floating hearts background
+    function createFloatingHearts() {
+      const container = document.getElementById('heartsBg');
+      const hearts = ['\u2764', '\u2665', '\u2661', '\uD83D\uDC97', '\uD83D\uDC96'];
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'floating-heart';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 1.5 + 0.8) + 'rem';
+        heart.style.animationDuration = (Math.random() * 10 + 12) + 's';
+        heart.style.animationDelay = (Math.random() * 15) + 's';
+        container.appendChild(heart);
+      }
+    }
+
+    // Render the phrase display
+    function renderPhrase() {
+      const display = document.getElementById('wordDisplay');
+      display.innerHTML = '';
+      const words = PHRASE.split(' ');
+
+      words.forEach((word, wordIndex) => {
+        const wordGroup = document.createElement('div');
+        wordGroup.className = 'word-group';
+
+        for (let i = 0; i < word.length; i++) {
+          const ch = word[i];
+
+          if (ch === "'") {
+            const apos = document.createElement('div');
+            apos.className = 'letter-slot apostrophe';
+            apos.textContent = "'";
+            wordGroup.appendChild(apos);
+          } else {
+            const slot = document.createElement('div');
+            slot.className = 'letter-slot';
+            if (guessedLetters.has(ch.toUpperCase())) {
+              slot.textContent = ch;
+              slot.classList.add('revealed');
+            }
+            wordGroup.appendChild(slot);
+          }
+        }
+
+        display.appendChild(wordGroup);
+      });
+    }
+
+    // Create keyboard
+    function createKeyboard() {
+      const keyboard = document.getElementById('keyboard');
+      keyboard.innerHTML = '';
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+      for (const letter of letters) {
+        const btn = document.createElement('button');
+        btn.className = 'key-btn';
+        btn.textContent = letter;
+        btn.id = 'key-' + letter;
+
+        btn.addEventListener('click', () => guessLetter(letter));
+        keyboard.appendChild(btn);
+      }
+    }
+
+    // Guess a letter
+    function guessLetter(letter) {
+      if (gameOver || guessedLetters.has(letter)) return;
+
+      guessedLetters.add(letter);
+      const btn = document.getElementById('key-' + letter);
+
+      const phraseLetters = PHRASE.replace(/[^A-Z]/g, '').split('');
+      if (phraseLetters.includes(letter)) {
+        btn.classList.add('correct');
+        renderPhrase();
+        checkWin();
+      } else {
+        btn.classList.add('wrong');
+        btn.disabled = true;
+        wrongGuesses++;
+        showHangmanPart(wrongGuesses - 1);
+        updateLives();
+        checkLose();
+      }
+    }
+
+    // Show hangman part
+    function showHangmanPart(index) {
+      if (index < hangmanParts.length) {
+        const part = document.getElementById(hangmanParts[index]);
+        part.classList.add('visible');
+        if (index === hangmanParts.length - 1) {
+          document.getElementById('face').classList.add('visible');
+        }
+      }
+    }
+
+    // Update lives display
+    function updateLives() {
+      const remaining = MAX_WRONG - wrongGuesses;
+      const heartsFull = '\u2764\uFE0F'.repeat(remaining);
+      const heartsEmpty = '\uD83E\uDD0D'.repeat(wrongGuesses);
+      document.getElementById('livesDisplay').innerHTML = heartsFull + heartsEmpty;
+    }
+
+    // Check win
+    function checkWin() {
+      const uniqueLetters = new Set(PHRASE.replace(/[^A-Z]/g, '').split(''));
+      const allGuessed = [...uniqueLetters].every(l => guessedLetters.has(l));
+      if (allGuessed) {
+        gameOver = true;
+        document.getElementById('status').textContent = '';
+        setTimeout(() => {
+          document.getElementById('winOverlay').classList.add('active');
+          launchConfetti();
+        }, 600);
+      }
+    }
+
+    // Check lose
+    function checkLose() {
+      if (wrongGuesses >= MAX_WRONG) {
+        gameOver = true;
+        document.getElementById('status').textContent = '';
+        setTimeout(() => {
+          document.getElementById('loseOverlay').classList.add('active');
+        }, 600);
+      }
+    }
+
+    // Confetti
+    function launchConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const items = ['\u2764', '\uD83D\uDC96', '\uD83D\uDC95', '\u2728', '\uD83C\uDF38', '\uD83C\uDF39'];
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.textContent = items[Math.floor(Math.random() * items.length)];
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.fontSize = (Math.random() * 1.5 + 0.8) + 'rem';
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        piece.style.animationDelay = (Math.random() * 1.5) + 's';
+        container.appendChild(piece);
+      }
+    }
+
+    // Keyboard input
+    document.addEventListener('keydown', (e) => {
+      const letter = e.key.toUpperCase();
+      if (/^[A-Z]$/.test(letter) && !gameOver) {
+        guessLetter(letter);
+      }
+    });
+
+    // Reset game
+    function resetGame() {
+      guessedLetters = new Set();
+      wrongGuesses = 0;
+      gameOver = false;
+
+      hangmanParts.forEach(id => {
+        document.getElementById(id).classList.remove('visible');
+      });
+      document.getElementById('face').classList.remove('visible');
+      document.getElementById('winOverlay').classList.remove('active');
+      document.getElementById('loseOverlay').classList.remove('active');
+      document.getElementById('confettiContainer').innerHTML = '';
+      document.getElementById('status').textContent = '';
+
+      renderPhrase();
+      createKeyboard();
+      updateLives();
+    }
+
+    // Init
+    createFloatingHearts();
+    renderPhrase();
+    createKeyboard();
+    updateLives();
+  </script>
+</body>
+</html>
