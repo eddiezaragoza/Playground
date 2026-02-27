@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBKR Account Setup Guide — MNQ Futures Trading</title>
+    <style>
+        :root {
+            --accent: #0ea5e9;
+            --accent-dark: #0369a1;
+            --accent-light: #e0f2fe;
+            --green: #10b981;
+            --green-dark: #047857;
+            --green-light: #d1fae5;
+            --red: #ef4444;
+            --red-dark: #b91c1c;
+            --red-light: #fee2e2;
+            --orange: #f59e0b;
+            --orange-dark: #b45309;
+            --orange-light: #fef3c7;
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --navy: #0f172a;
+            --slate: #1e293b;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0ea5e9 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero * { position: relative; z-index: 1; }
+        .hero h1 { font-size: 2.6rem; margin-bottom: 0.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        .hero .subtitle { font-size: 1.15rem; opacity: 0.85; margin-bottom: 1.2rem; }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.12);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--bg);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.25s ease, border-radius 0.25s ease;
+        }
+
+        .nav-bar.collapsed {
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .nav-bar h3 {
+            color: var(--slate);
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-bar .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-bar.collapsed h3 { margin-bottom: 0; }
+
+        .nav-toggle {
+            display: none;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+        .nav-toggle:hover { background: var(--accent); color: white; }
+        .nav-bar.collapsed .nav-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .nav-links { max-height: 0; opacity: 0; margin: 0; }
+        .nav-bar.collapsed.expanded .nav-links { max-height: 500px; opacity: 1; margin-top: 0.6rem; }
+
+        .nav-links a {
+            padding: 0.4rem 0.9rem;
+            background: var(--bg);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--slate);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--accent); color: white; }
+        .nav-links a.setup { border-left: 3px solid var(--accent); }
+        .nav-links a.config { border-left: 3px solid var(--green); }
+        .nav-links a.run { border-left: 3px solid var(--purple); }
+        .nav-links a.ref { border-left: 3px solid var(--orange); }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            color: var(--navy);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .section h3 {
+            color: var(--accent-dark);
+            margin: 1.8rem 0 0.8rem 0;
+            font-size: 1.15rem;
+        }
+
+        .section h4 {
+            color: var(--slate);
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.02rem;
+        }
+
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+
+        /* Step number badges */
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .section h2 .step-num { vertical-align: middle; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: var(--navy);
+            color: white;
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) { background: #f8f9fb; }
+        tr:hover { background: var(--accent-light); }
+
+        /* Callout boxes */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .callout-blue { background: var(--accent-light); border-left: 4px solid var(--accent); }
+        .callout-green { background: var(--green-light); border-left: 4px solid var(--green); }
+        .callout-orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+        .callout-red { background: var(--red-light); border-left: 4px solid var(--red); }
+        .callout-purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--accent-dark); }
+        .callout-green strong { color: var(--green-dark); }
+        .callout-orange strong { color: var(--orange-dark); }
+        .callout-red strong { color: var(--red-dark); }
+        .callout-purple strong { color: #6d28d9; }
+
+        /* Code blocks */
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85em;
+            color: var(--accent-dark);
+        }
+
+        pre {
+            background: var(--slate);
+            color: #e2e8f0;
+            padding: 1.2rem 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .code-comment { color: #94a3b8; }
+        .code-string { color: #a5d6ff; }
+        .code-keyword { color: #ff7b72; }
+        .code-flag { color: #79c0ff; }
+
+        /* Checklist styling */
+        .checklist {
+            list-style: none;
+            padding-left: 0.5rem;
+        }
+
+        .checklist li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 0;
+            font-size: 1.1em;
+        }
+
+        .checklist li.checked::before {
+            content: '✓';
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .checklist li.warn::before {
+            content: '✗';
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        /* Comparison cards */
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .vs-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vs-card.recommended { border-top: 4px solid var(--green); }
+        .vs-card.advanced { border-top: 4px solid var(--purple); }
+
+        .vs-card .card-head {
+            padding: 0.8rem 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .vs-card.recommended .card-head { background: var(--green-light); color: var(--green-dark); }
+        .vs-card.advanced .card-head { background: var(--purple-light); color: #6d28d9; }
+
+        .vs-card .card-body { padding: 1rem; }
+        .vs-card .card-body ul { padding-left: 1.2rem; }
+        .vs-card .card-body li { margin-bottom: 0.3rem; font-size: 0.9rem; }
+
+        /* Progress tracker */
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin: 1rem 0 2rem;
+            padding: 0 1rem;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .progress-step .dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            z-index: 2;
+        }
+
+        .progress-step .label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 100%;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        /* Funding cards */
+        .funding-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .fund-card {
+            text-align: center;
+            padding: 1.2rem 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .fund-card .amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .fund-card .desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .fund-card.minimum { border-color: var(--orange); }
+        .fund-card.minimum .amount { color: var(--orange-dark); }
+
+        .fund-card.margin { border-color: var(--accent); }
+        .fund-card.margin .amount { color: var(--accent-dark); }
+
+        .fund-card.recommended { border-color: var(--green); background: var(--green-light); }
+        .fund-card.recommended .amount { color: var(--green-dark); }
+
+        /* Troubleshoot accordion */
+        .trouble-item {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .trouble-item summary {
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--red-dark);
+            background: #fff5f5;
+            list-style: none;
+        }
+
+        .trouble-item summary::-webkit-details-marker { display: none; }
+        .trouble-item summary::before { content: '+ '; color: var(--red); font-weight: 700; }
+        .trouble-item[open] summary::before { content: '- '; }
+        .trouble-item[open] summary { border-bottom: 1px solid var(--border); }
+
+        .trouble-item .trouble-body {
+            padding: 0.8rem 1rem;
+        }
+
+        .trouble-item .trouble-body ul {
+            padding-left: 1.2rem;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .footer p { margin-bottom: 0.2rem; }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--navy); }
+
+        /* Matrix Easter Egg */
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--green), var(--orange), var(--purple));
+            border-radius: 2px;
+        }
+
+        .tl-item {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+
+        .tl-item:last-child { margin-bottom: 0; }
+
+        .tl-dot {
+            position: absolute;
+            left: -2.5rem;
+            top: 0.15rem;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .tl-item .tl-time {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.2rem;
+        }
+
+        .tl-item .tl-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.3rem;
+        }
+
+        .tl-item .tl-body {
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .tl-item .tl-body ul {
+            padding-left: 1.2rem;
+            margin: 0.3rem 0 0;
+        }
+
+        .tl-item .tl-body li { margin-bottom: 0.25rem; }
+
+        .tl-item .tl-body code {
+            font-size: 0.8em;
+        }
+
+        /* Weekly card grid */
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .weekly-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .weekly-card .wk-head {
+            padding: 0.6rem 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .weekly-card .wk-body {
+            padding: 0.8rem 1rem;
+            font-size: 0.88rem;
+        }
+
+        .weekly-card .wk-body ul {
+            padding-left: 1.2rem;
+            margin: 0;
+        }
+
+        .weekly-card .wk-body li { margin-bottom: 0.25rem; }
+
+        .weekly-card.wk-weekend { border-top: 4px solid var(--accent); }
+        .weekly-card.wk-weekend .wk-head { background: var(--accent-light); color: var(--accent-dark); }
+
+        .weekly-card.wk-friday { border-top: 4px solid var(--green); }
+        .weekly-card.wk-friday .wk-head { background: var(--green-light); color: var(--green-dark); }
+
+        /* Matrix Easter Egg */
+        body.matrix-active { background: #000; }
+        body.matrix-active .container { position: relative; z-index: 1; background: var(--bg); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+
+        @media print {
+            .hero { background: var(--navy) !important; padding: 2rem; }
+            .nav-bar { display: none; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid var(--border); }
+            .back-to-top { display: none !important; }
+            #matrixCanvas { display: none !important; }
+        }
+
+        @media (max-width: 768px) {
+            .vs-grid, .funding-grid, .weekly-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+            .nav-bar { position: static; }
+            .section { padding: 1.5rem; }
+            .progress-bar { flex-wrap: wrap; gap: 0.5rem; }
+            .progress-step::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>IBKR Setup Guide</h1>
+    <p class="subtitle">From zero to paper trading MNQ with the ORB engine</p>
+    <div class="badges">
+        <span class="badge">Micro E-mini Nasdaq (MNQ)</span>
+        <span class="badge">Opening Range Breakout</span>
+        <span class="badge">Interactive Brokers</span>
+        <span class="badge">ib_async API</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-header">
+            <h3>Quick Navigation</h3>
+            <button class="nav-toggle" id="navToggle">Menu &#9662;</button>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#quickstart" class="ref">Quick Start</a>
+            <a href="#step1" class="setup">1. Open Account</a>
+            <a href="#step2" class="setup">2. Paper Trading</a>
+            <a href="#step3" class="setup">3. Install TWS</a>
+            <a href="#step4" class="config">4. API Settings</a>
+            <a href="#step5" class="config">5. Python Deps</a>
+            <a href="#step6" class="run">6. Test Connection</a>
+            <a href="#step7" class="run">7. Paper Trading</a>
+            <a href="#step8" class="run">8. Go Live</a>
+            <a href="#architecture" class="ref">Architecture</a>
+            <a href="#reference" class="ref">Quick Reference</a>
+            <a href="#workflow" class="ref">Dev Workflow</a>
+            <a href="#daily" class="run">Daily Routine</a>
+            <a href="#troubleshooting" class="ref">Troubleshooting</a>
+        </div>
+    </nav>
+
+    <!-- Progress Tracker -->
+    <div class="progress-bar">
+        <div class="progress-step"><div class="dot">1</div><div class="label">Open Account</div></div>
+        <div class="progress-step"><div class="dot">2</div><div class="label">Paper Trading</div></div>
+        <div class="progress-step"><div class="dot">3</div><div class="label">Install TWS</div></div>
+        <div class="progress-step"><div class="dot">4</div><div class="label">API Config</div></div>
+        <div class="progress-step"><div class="dot">5</div><div class="label">Python</div></div>
+        <div class="progress-step"><div class="dot">6</div><div class="label">Test</div></div>
+        <div class="progress-step"><div class="dot">7</div><div class="label">Paper Trade</div></div>
+        <div class="progress-step"><div class="dot">8</div><div class="label">Go Live</div></div>
+    </div>
+
+    <!-- Quick Start — Fresh Machine Setup -->
+    <div class="section" id="quickstart">
+        <h2>Quick Start &mdash; Fresh Machine Setup</h2>
+        <p>Setting up a new machine? Three commands and you're running backtests.</p>
+
+        <h3>Prerequisites</h3>
+        <table>
+            <tr><th>Tool</th><th>Version</th><th>Install</th></tr>
+            <tr><td>Python</td><td>3.10+</td><td>
+                <strong>Windows:</strong> Download from <a href="https://www.python.org/downloads/" target="_blank">python.org</a> &mdash; check "Add to PATH" during install<br>
+                <strong>WSL/Linux:</strong> <code>sudo apt install python3 python3-pip python3-venv</code>
+            </td></tr>
+            <tr><td>Git</td><td>Any</td><td>
+                <strong>Windows:</strong> <a href="https://git-scm.com/downloads" target="_blank">git-scm.com</a> or install <a href="https://desktop.github.com/" target="_blank">GitHub Desktop</a> (includes git)<br>
+                <strong>WSL/Linux:</strong> <code>sudo apt install git</code>
+            </td></tr>
+            <tr><td>pip</td><td>Any</td><td>Comes with Python. Upgrade: <code>python -m pip install --upgrade pip</code></td></tr>
+        </table>
+
+        <h3>Clone &amp; Install</h3>
+<pre><code><span class="code-comment"># 1. Clone the repo</span>
+<span class="code-keyword">git clone</span> <span class="code-string">https://github.com/YOUR_USERNAME/trading.git</span>
+<span class="code-keyword">cd</span> trading
+
+<span class="code-comment"># 2. Install the engine + all dependencies</span>
+<span class="code-keyword">pip install</span> <span class="code-flag">-e</span> <span class="code-string">".[dev,live]"</span>
+
+<span class="code-comment"># 3. Verify it works</span>
+<span class="code-keyword">python</span> <span class="code-flag">-m</span> trading backtest</code></pre>
+
+        <div class="callout callout-green">
+            <strong>That's it.</strong>
+            Step 3 runs a full backtest on synthetic data &mdash; no IBKR account, no data downloads, no configuration needed. If you see a summary with trades and PnL, everything is working.
+        </div>
+
+        <h3>Optional: Download Real Market Data</h3>
+<pre><code><span class="code-comment"># Download real MNQ data from Yahoo Finance (~30 days of 1-min bars)</span>
+<span class="code-keyword">python</span> <span class="code-flag">-m</span> trading download-all
+
+<span class="code-comment"># Backtest on real data</span>
+<span class="code-keyword">python</span> <span class="code-flag">-m</span> trading backtest <span class="code-flag">-c</span> <span class="code-string">config/mnq_real.yaml</span>
+
+<span class="code-comment"># Run a parameter sweep to find best settings</span>
+<span class="code-keyword">python</span> <span class="code-flag">-m</span> trading sweep <span class="code-flag">-c</span> <span class="code-string">config/mnq_real.yaml</span> <span class="code-flag">-s</span> <span class="code-string">config/sweep_real.yaml</span></code></pre>
+
+        <p>Run <code>download-all</code> weekly to grow your dataset over time &mdash; it appends new bars and deduplicates automatically.</p>
+
+        <div class="callout callout-blue">
+            <strong>Windows vs WSL?</strong>
+            The Python engine runs in either. If you use WSL, TWS still installs on the Windows side &mdash; the engine connects to it via <code>127.0.0.1</code>. If localhost doesn't work from WSL2, try the Windows host IP (run <code>ip route show default</code> in WSL to find it).
+        </div>
+
+        <h3>What Gets Installed</h3>
+        <table>
+            <tr><th>Package</th><th>Purpose</th></tr>
+            <tr><td><code>pydantic</code></td><td>Config validation &mdash; catches bad YAML before you run</td></tr>
+            <tr><td><code>pyyaml</code></td><td>Reads the strategy configuration files</td></tr>
+            <tr><td><code>pandas</code></td><td>Data handling &mdash; CSV loading, date parsing, exports</td></tr>
+            <tr><td><code>numpy</code></td><td>Math &mdash; used for metrics calculations (Sharpe, drawdown, etc.)</td></tr>
+            <tr><td><code>click</code></td><td>CLI framework &mdash; powers the <code>python -m trading</code> commands</td></tr>
+            <tr><td><code>ib_async</code></td><td>IBKR API wrapper &mdash; connects to TWS for live data &amp; order placement</td></tr>
+            <tr><td><code>pytest</code></td><td>Test runner &mdash; <code>pytest tests/</code> runs all 44 tests</td></tr>
+        </table>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="section" id="step1">
+        <h2><span class="step-num">1</span> Open an IBKR Account</h2>
+        <ol>
+            <li>Go to <a href="https://www.interactivebrokers.com" target="_blank">interactivebrokers.com</a></li>
+            <li>Click <strong>Open Account</strong> &rarr; choose <strong>Individual</strong></li>
+            <li>Fill out the application:
+                <ul>
+                    <li><strong>Account type:</strong> Margin account (required for futures)</li>
+                    <li><strong>Trading permissions:</strong> Select <strong>United States</strong> &rarr; <strong>Futures</strong></li>
+                    <li>When asked about experience, be honest &mdash; they use it for risk assessment, not approval</li>
+                </ul>
+            </li>
+            <li>You'll need:
+                <ul>
+                    <li>Government ID (driver's license or passport)</li>
+                    <li>SSN (for tax reporting)</li>
+                    <li>Bank account for funding</li>
+                </ul>
+            </li>
+            <li>Account approval typically takes <strong>1&ndash;2 business days</strong></li>
+        </ol>
+
+        <h3>Minimum Funding</h3>
+
+        <div class="funding-grid">
+            <div class="fund-card minimum">
+                <div class="amount">$0</div>
+                <div class="desc">To open the account &mdash; no deposit minimum</div>
+            </div>
+            <div class="fund-card margin">
+                <div class="amount">$2,000</div>
+                <div class="desc">Minimum to trade futures (margin requirement)</div>
+            </div>
+            <div class="fund-card recommended">
+                <div class="amount">$5,000</div>
+                <div class="desc">Recommended &mdash; room for margin + losing trades</div>
+            </div>
+        </div>
+
+        <div class="callout callout-blue">
+            <strong>Why $5,000?</strong>
+            MNQ intraday margin is roughly $1,000&ndash;1,500 per contract. With $5K you cover the $2K futures minimum plus enough cushion for a few losing trades without triggering a margin call.
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="section" id="step2">
+        <h2><span class="step-num">2</span> Enable Paper Trading</h2>
+        <p>Once your account is approved (even before funding):</p>
+        <ol>
+            <li>Log in to <a href="https://portal.interactivebrokers.com" target="_blank">Client Portal</a></li>
+            <li>Go to <strong>Settings</strong> &rarr; <strong>Paper Trading Account</strong></li>
+            <li>Click <strong>Create</strong> to set up a paper trading account</li>
+            <li>You'll get a separate username (usually your username with "paper" appended)</li>
+            <li>Paper account comes with <strong>$1,000,000</strong> of simulated money</li>
+        </ol>
+
+        <div class="callout callout-green">
+            <strong>Real data, fake money</strong>
+            Paper trading uses <strong>real market data</strong> with <strong>simulated execution</strong> &mdash; perfect for testing the ORB engine before risking real capital.
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="section" id="step3">
+        <h2><span class="step-num">3</span> Install TWS or IB Gateway</h2>
+        <p>You need one of these running locally for the API to connect to:</p>
+
+        <div class="vs-grid">
+            <div class="vs-card recommended">
+                <div class="card-head">Option A: Trader Workstation (TWS)</div>
+                <div class="card-body">
+                    <p style="font-size:0.85rem; color:var(--green-dark); font-weight:600; margin-bottom:0.5rem;">Recommended for starting out</p>
+                    <ul>
+                        <li>Full trading platform with charts and order entry</li>
+                        <li>GUI lets you see orders being placed visually</li>
+                        <li>Great for learning and debugging</li>
+                        <li>Log in with your <strong>paper trading</strong> credentials first</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card advanced">
+                <div class="card-head">Option B: IB Gateway</div>
+                <div class="card-body">
+                    <p style="font-size:0.85rem; color:#6d28d9; font-weight:600; margin-bottom:0.5rem;">Recommended for automated trading</p>
+                    <ul>
+                        <li>Lightweight &mdash; no GUI, just the API connection</li>
+                        <li>Uses fewer system resources</li>
+                        <li>Better for running headless (e.g., on a server)</li>
+                        <li>Included with the TWS installer</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <p>Download from the <a href="https://www.interactivebrokers.com/en/trading/tws.php" target="_blank">IBKR TWS page</a>.</p>
+
+        <div class="callout callout-blue">
+            <strong>Start with TWS</strong>
+            You'll want to see the bracket orders being placed visually as the ORB engine runs. Switch to Gateway later once you're confident everything works.
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="section" id="step4">
+        <h2><span class="step-num">4</span> Configure API Settings</h2>
+        <p>In TWS (or Gateway):</p>
+        <ol>
+            <li>Go to <strong>Edit</strong> &rarr; <strong>Global Configuration</strong> &rarr; <strong>API</strong> &rarr; <strong>Settings</strong></li>
+            <li>Enable these settings:</li>
+        </ol>
+
+        <ul class="checklist">
+            <li class="checked"><strong>Enable ActiveX and Socket Clients</strong> &mdash; this is the main API toggle</li>
+            <li class="checked"><strong>Allow connections from localhost only</strong> &mdash; security best practice</li>
+            <li class="warn"><strong>Read-Only API</strong> &mdash; turn this <strong>OFF</strong> (we need to place orders)</li>
+        </ul>
+
+        <ol start="3">
+            <li>Set the <strong>Socket Port:</strong></li>
+        </ol>
+
+        <table>
+            <tr><th>Port</th><th>Mode</th><th>Use Case</th></tr>
+            <tr><td><code>7497</code></td><td>Paper Trading</td><td>Default &mdash; start here. Simulated money.</td></tr>
+            <tr><td><code>7496</code></td><td>Live Trading</td><td>Real money. Only after paper validation.</td></tr>
+        </table>
+
+        <ol start="4">
+            <li>Set <strong>Master API client ID</strong> to blank (allows any client ID)</li>
+            <li>Click <strong>Apply</strong> and <strong>OK</strong></li>
+        </ol>
+
+        <h3>Market Data Subscriptions</h3>
+        <p>To get real-time MNQ data, you need the CME market data subscription:</p>
+        <ol>
+            <li>In Client Portal &rarr; <strong>Settings</strong> &rarr; <strong>Market Data Subscriptions</strong></li>
+            <li>Subscribe to: <strong>CME Real-Time</strong>
+                <ul>
+                    <li>The cheapest plan is fine &mdash; you just need Level 1 quotes for MNQ</li>
+                    <li>Costs ~<strong>$10/month</strong> (waived if you generate $30+/month in commissions)</li>
+                </ul>
+            </li>
+            <li>Takes effect immediately</li>
+        </ol>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="section" id="step5">
+        <h2><span class="step-num">5</span> Install Python Dependencies</h2>
+<pre><code><span class="code-keyword">cd</span> <span class="code-string">/mnt/c/projects/trading</span>
+<span class="code-keyword">pip install</span> <span class="code-flag">ib_async</span></code></pre>
+
+        <div class="callout callout-purple">
+            <strong>About ib_async</strong>
+            <code>ib_async</code> is the maintained successor to <code>ib_insync</code> (the original creator passed away in 2024, and the community forked it). It provides a Pythonic synchronous/async API wrapper around the IBKR native API. Our engine uses it for data streaming, order placement, and fill monitoring.
+        </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="section" id="step6">
+        <h2><span class="step-num">6</span> Test the Connection</h2>
+        <p>With TWS running and logged into your paper account:</p>
+
+<pre><code><span class="code-keyword">python3</span> <span class="code-flag">-c</span> <span class="code-string">"
+from ib_async import *
+ib = IB()
+ib.connect('127.0.0.1', 7497, clientId=1)
+print('Connected!')
+
+# Test MNQ contract
+contract = ContFuture('MNQ', 'CME')
+ib.qualifyContracts(contract)
+print(f'Contract: {contract}')
+
+# Get a snapshot quote
+ticker = ib.reqMktData(contract, '', True, False)
+ib.sleep(2)
+print(f'Last price: {ticker.last}')
+
+ib.disconnect()
+print('Done!')
+"</span></code></pre>
+
+        <div class="callout callout-green">
+            <strong>Success looks like:</strong>
+            If you see a price printed (e.g., <code>Last price: 21534.25</code>), your connection is working and you're ready to run the engine.
+        </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="section" id="step7">
+        <h2><span class="step-num">7</span> Run Paper Trading</h2>
+
+<pre><code><span class="code-comment"># Paper trading (default — port 7497)</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span>
+
+<span class="code-comment"># With verbose logging</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span> <span class="code-flag">-v</span></code></pre>
+
+        <p>The engine will:</p>
+        <ol>
+            <li>Connect to TWS via port 7497</li>
+            <li>Stream 1-minute bars for MNQ</li>
+            <li>Build the opening range at 9:30&ndash;9:35 ET</li>
+            <li>Watch for breakouts above OR high or below OR low</li>
+            <li>Place bracket orders (entry + stop + target) automatically</li>
+            <li>Log every trade to <code>output/live_trades.csv</code></li>
+        </ol>
+
+        <div class="callout callout-orange">
+            <strong>Let it cook</strong>
+            Run paper trading for at least a few days. Watch the orders in TWS to make sure entries, stops, and targets are placed correctly. Check the trade journal CSV to confirm PnL calculations match.
+        </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="section" id="step8">
+        <h2><span class="step-num">8</span> Go Live (When Ready)</h2>
+
+        <div class="callout callout-red">
+            <strong>REAL MONEY WARNING</strong>
+            Only proceed after paper trading results look solid. The <code>--live</code> flag switches from simulated to real money. There is a 5-second countdown delay so you can Ctrl+C if you hit it by accident.
+        </div>
+
+<pre><code><span class="code-comment"># REAL MONEY — 5-second safety delay before starting</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span> <span class="code-flag">--live</span></code></pre>
+
+        <p>This switches to port <code>7496</code> (live account). The <code>--live</code> flag adds a 5-second countdown so you can abort if you hit it by accident.</p>
+
+        <h3>Live vs Paper: What Changes</h3>
+        <table>
+            <tr><th>Aspect</th><th>Paper (<code>python -m trading live</code>)</th><th>Live (<code>--live</code> flag)</th></tr>
+            <tr><td>Port</td><td>7497</td><td>7496</td></tr>
+            <tr><td>Money</td><td>Simulated $1M</td><td>Your real account</td></tr>
+            <tr><td>Fills</td><td>Simulated (instant)</td><td>Real market execution</td></tr>
+            <tr><td>Safety delay</td><td>None</td><td>5-second countdown</td></tr>
+            <tr><td>Strategy code</td><td colspan="2" style="text-align:center;">Identical &mdash; zero changes</td></tr>
+        </table>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="section" id="architecture">
+        <h2>System Architecture</h2>
+        <p>How the ORB engine connects to IBKR for live trading:</p>
+        <div id="architectureDiagram"></div>
+
+        <h3>Data Flow</h3>
+        <div id="dataFlowDiagram"></div>
+    </div>
+
+    <!-- Quick Reference -->
+    <div class="section" id="reference">
+        <h2>Quick Reference</h2>
+
+        <table>
+            <tr><th>Item</th><th>Value</th></tr>
+            <tr><td>Paper port</td><td><code>7497</code></td></tr>
+            <tr><td>Live port</td><td><code>7496</code></td></tr>
+            <tr><td>MNQ symbol</td><td><code>MNQ</code> (exchange: CME)</td></tr>
+            <tr><td>MNQ point value</td><td>$2 per point</td></tr>
+            <tr><td>MNQ tick size</td><td>0.25 ($0.50 per tick)</td></tr>
+            <tr><td>Commission</td><td>~$0.62/side (IBKR tiered pricing)</td></tr>
+            <tr><td>Intraday margin</td><td>~$1,000&ndash;1,500/contract</td></tr>
+            <tr><td>RTH hours</td><td>9:30 AM &ndash; 4:00 PM ET</td></tr>
+            <tr><td>OR window</td><td>5 minutes (9:30&ndash;9:35 ET)</td></tr>
+            <tr><td>Default R:R</td><td>1:1.5</td></tr>
+            <tr><td>Max daily loss</td><td>$500</td></tr>
+            <tr><td>Max trades/day</td><td>3</td></tr>
+        </table>
+
+        <h3>Key Files</h3>
+        <table>
+            <tr><th>File</th><th>Purpose</th></tr>
+            <tr><td><code>config/mnq_live.yaml</code></td><td>Paper trading configuration</td></tr>
+            <tr><td><code>src/trading/data/ibkr.py</code></td><td>IBKR data provider (bar streaming)</td></tr>
+            <tr><td><code>src/trading/execution/live_broker.py</code></td><td>Live bracket order execution</td></tr>
+            <tr><td><code>src/trading/engine/live.py</code></td><td>Live trading engine loop</td></tr>
+            <tr><td><code>output/live_trades.csv</code></td><td>Trade journal (auto-generated)</td></tr>
+        </table>
+
+        <h3>CLI Commands</h3>
+<pre><code><span class="code-comment"># Paper trading</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span>
+
+<span class="code-comment"># Paper trading with verbose logging</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span> <span class="code-flag">-v</span>
+
+<span class="code-comment"># REAL MONEY (5-second safety delay)</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span> <span class="code-flag">--live</span>
+
+<span class="code-comment"># Backtest (no IBKR needed)</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading backtest <span class="code-flag">-c</span> <span class="code-string">config/mnq_real.yaml</span>
+
+<span class="code-comment"># Download more historical data</span>
+<span class="code-keyword">python3</span> <span class="code-flag">-m</span> trading download-all</code></pre>
+    </div>
+
+    <!-- Development Workflow -->
+    <div class="section" id="workflow">
+        <h2>Development Workflow</h2>
+        <p>Day-to-day commands and patterns for working on the engine.</p>
+
+        <h3>Project Structure</h3>
+<pre><code>trading/
+├── config/                <span class="code-comment"># Strategy configs (YAML)</span>
+│   ├── default.yaml       <span class="code-comment"># Synthetic data defaults</span>
+│   ├── mnq_real.yaml      <span class="code-comment"># Real MNQ data config</span>
+│   ├── mnq_live.yaml      <span class="code-comment"># Paper/live trading config</span>
+│   ├── mnq_5m.yaml        <span class="code-comment"># 5-minute bar config</span>
+│   └── sweep_*.yaml       <span class="code-comment"># Parameter sweep definitions</span>
+├── data/
+│   ├── calendars/         <span class="code-comment"># Economic event calendar</span>
+│   └── sample/            <span class="code-comment"># Downloaded market data (gitignored)</span>
+├── docs/                  <span class="code-comment"># This guide and docs</span>
+├── output/                <span class="code-comment"># Backtest results (gitignored)</span>
+│   ├── trade_journal.csv  <span class="code-comment"># Every trade with entry/exit/PnL</span>
+│   └── equity_curve.csv   <span class="code-comment"># Running equity after each trade</span>
+├── src/trading/           <span class="code-comment"># Engine source code</span>
+│   ├── data/              <span class="code-comment"># Data providers (synthetic, CSV, IBKR)</span>
+│   ├── strategy/          <span class="code-comment"># ORB strategy + filters</span>
+│   ├── execution/         <span class="code-comment"># Broker (simulated + live) + risk mgmt</span>
+│   ├── engine/            <span class="code-comment"># Backtest loop, live loop, sweep</span>
+│   └── reporting/         <span class="code-comment"># Metrics, trade journal, summaries</span>
+└── tests/                 <span class="code-comment"># 44 tests across 9 files</span></code></pre>
+
+        <h3>Common Commands</h3>
+        <table>
+            <tr><th>What</th><th>Command</th></tr>
+            <tr><td>Backtest (synthetic data)</td><td><code>python -m trading backtest</code></td></tr>
+            <tr><td>Backtest (real data)</td><td><code>python -m trading backtest -c config/mnq_real.yaml</code></td></tr>
+            <tr><td>Backtest (verbose &mdash; logs every signal)</td><td><code>python -m trading backtest -c config/mnq_real.yaml -v</code></td></tr>
+            <tr><td>Download latest MNQ data</td><td><code>python -m trading download-all</code></td></tr>
+            <tr><td>Generate synthetic data</td><td><code>python -m trading generate-data</code></td></tr>
+            <tr><td>Parameter sweep</td><td><code>python -m trading sweep -c config/mnq_real.yaml -s config/sweep_real.yaml</code></td></tr>
+            <tr><td>Paper trade (needs TWS)</td><td><code>python -m trading live -c config/mnq_live.yaml</code></td></tr>
+            <tr><td>Live trade (real money)</td><td><code>python -m trading live -c config/mnq_live.yaml --live</code></td></tr>
+            <tr><td>Run tests</td><td><code>pytest tests/ -v</code></td></tr>
+        </table>
+
+        <h3>Tuning the Strategy</h3>
+        <p>All strategy parameters live in YAML config files. Edit them directly &mdash; no code changes needed.</p>
+
+        <table>
+            <tr><th>Parameter</th><th>File Location</th><th>What It Does</th></tr>
+            <tr><td><code>or_window_minutes</code></td><td>session</td><td>How many minutes to build the opening range (default: 5)</td></tr>
+            <tr><td><code>target_rr_ratio</code></td><td>exit</td><td>Risk:reward ratio for profit target (default: 1.5 means risk 1 to make 1.5)</td></tr>
+            <tr><td><code>stop_method</code></td><td>exit</td><td>Where to place the stop: <code>or_opposite</code>, <code>fixed_points</code>, or <code>atr_multiple</code></td></tr>
+            <tr><td><code>min_or_size</code> / <code>max_or_size</code></td><td>filters</td><td>Skip days where the opening range is too small or too large</td></tr>
+            <tr><td><code>max_daily_loss</code></td><td>risk</td><td>Dollar amount &mdash; engine stops trading for the day if hit</td></tr>
+            <tr><td><code>max_trades_per_day</code></td><td>risk</td><td>Cap on entries per session (default: 3)</td></tr>
+            <tr><td><code>position_size</code></td><td>risk</td><td>Number of contracts per trade (start with 1)</td></tr>
+        </table>
+
+        <div class="callout callout-purple">
+            <strong>Sweep before you change</strong>
+            Instead of guessing, use the parameter sweep to test combinations. Create a sweep YAML listing the values you want to try, run <code>python -m trading sweep</code>, and check <code>output/sweep_results.csv</code> for the best-performing combos.
+        </div>
+
+        <h3>Reading Backtest Output</h3>
+        <p>After a backtest, the engine prints a summary and exports two files:</p>
+
+        <div class="vs-grid">
+            <div class="vs-card recommended">
+                <div class="card-head">trade_journal.csv</div>
+                <div class="card-body">
+                    <p style="font-size:0.85rem; margin-bottom:0.5rem;">Every trade, one row each. Key columns:</p>
+                    <ul>
+                        <li><strong>direction</strong> &mdash; LONG or SHORT</li>
+                        <li><strong>entry_price / exit_price</strong> &mdash; where you got in and out</li>
+                        <li><strong>net_pnl</strong> &mdash; profit/loss after commissions</li>
+                        <li><strong>exit_reason</strong> &mdash; target, stop, eod_close, risk_halt</li>
+                        <li><strong>mae / mfe</strong> &mdash; worst and best the trade got before closing (for optimizing stops)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card advanced">
+                <div class="card-head">equity_curve.csv</div>
+                <div class="card-body">
+                    <p style="font-size:0.85rem; margin-bottom:0.5rem;">Running balance after each trade. Use for:</p>
+                    <ul>
+                        <li>Plotting equity growth over time</li>
+                        <li>Spotting drawdown periods visually</li>
+                        <li>Comparing different config results side-by-side</li>
+                        <li>Open in Excel &mdash; insert a line chart on the equity column</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>Key Metrics Explained</h3>
+        <table>
+            <tr><th>Metric</th><th>What It Means</th><th>Good Target</th></tr>
+            <tr><td><strong>Win Rate</strong></td><td>Percentage of trades that made money</td><td>&gt; 50% for a 1.5:1 R:R strategy</td></tr>
+            <tr><td><strong>Profit Factor</strong></td><td>Gross profits &divide; gross losses. Above 1.0 = profitable.</td><td>&gt; 1.5</td></tr>
+            <tr><td><strong>Sharpe Ratio</strong></td><td>Risk-adjusted return. Higher = more consistent.</td><td>&gt; 1.0</td></tr>
+            <tr><td><strong>Max Drawdown</strong></td><td>Largest peak-to-trough equity drop</td><td>&lt; 20% of account</td></tr>
+            <tr><td><strong>Avg Win / Avg Loss</strong></td><td>How much you make vs lose per trade</td><td>Avg Win &gt; Avg Loss</td></tr>
+            <tr><td><strong>MAE</strong></td><td>Max Adverse Excursion &mdash; how far a trade went against you before closing</td><td>Use to tighten stops</td></tr>
+            <tr><td><strong>MFE</strong></td><td>Max Favorable Excursion &mdash; how far a trade went in your favor</td><td>Use to set better targets</td></tr>
+        </table>
+
+        <div class="callout callout-orange">
+            <strong>Data freshness matters</strong>
+            Yahoo Finance only keeps ~30 days of 1-minute data. Run <code>python -m trading download-all</code> weekly to accumulate more history. The downloader appends new bars and deduplicates automatically &mdash; your dataset grows over time.
+        </div>
+    </div>
+
+    <!-- Daily Trading Routine -->
+    <div class="section" id="daily">
+        <h2>Daily Trading Routine</h2>
+        <p>Here's what a typical trading day looks like with the ORB engine. The engine does the trading &mdash; your job is setup, monitoring, and review.</p>
+
+        <h3>Daily Timeline</h3>
+
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-dot" style="background:var(--accent);">1</div>
+                <div class="tl-time" style="color:var(--accent);">9:00 &ndash; 9:25 AM ET &mdash; Pre-Market</div>
+                <div class="tl-title">Start TWS &amp; Launch the Engine</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>Open TWS and log in with your paper (or live) credentials</li>
+                        <li>Wait for the connection status to show green (bottom-left of TWS)</li>
+                        <li>Check for any IBKR system messages or exchange holidays</li>
+                        <li>Launch the engine:</li>
+                    </ul>
+<pre style="margin:0.5rem 0;"><code><span class="code-keyword">python</span> <span class="code-flag">-m</span> trading live <span class="code-flag">-c</span> <span class="code-string">config/mnq_live.yaml</span></code></pre>
+                    <ul>
+                        <li>You should see the startup banner with your config settings</li>
+                        <li>The engine will say "Streaming bars..." &mdash; it's waiting for market open</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#6366f1;">2</div>
+                <div class="tl-time" style="color:#6366f1;">9:25 AM &mdash; Quick Sanity Check</div>
+                <div class="tl-title">Check for Economic Events</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>Glance at an economic calendar (<a href="https://www.forexfactory.com/calendar" target="_blank">ForexFactory</a> or <a href="https://www.investing.com/economic-calendar/" target="_blank">Investing.com</a>)</li>
+                        <li>Look for red/high-impact events during trading hours (FOMC, CPI, NFP, etc.)</li>
+                        <li>On major event days, consider sitting out &mdash; the opening range is often meaningless when a big number drops at 8:30 or 10:00 AM</li>
+                        <li>The economic filter can do this automatically if you keep the calendar CSV updated</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:var(--green);">3</div>
+                <div class="tl-time" style="color:var(--green);">9:30 &ndash; 9:35 AM &mdash; Opening Range</div>
+                <div class="tl-title">OR Building &mdash; Hands Off</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>Market opens. The engine records the high and low of the first 5 minutes.</li>
+                        <li>You'll see a log line like: <code>OR built: high=21550.25 low=21512.50 size=37.75</code></li>
+                        <li>If the OR size falls outside your <code>min_or_size</code> / <code>max_or_size</code> filter, the engine skips the day automatically</li>
+                        <li><strong>Don't touch anything.</strong> Let the range form.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:var(--orange);">4</div>
+                <div class="tl-time" style="color:var(--orange-dark);">9:35 &ndash; 11:00 AM &mdash; Active Window</div>
+                <div class="tl-title">Watching for Breakouts</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>The engine watches every 1-minute bar for a close above the OR high (long) or below the OR low (short)</li>
+                        <li>When a breakout fires, you'll see:</li>
+                    </ul>
+<pre style="margin:0.5rem 0;font-size:0.78rem;"><code>  ENTRY: LONG @ 21551.00 Stop=21510.50 Target=21611.75</code></pre>
+                    <ul>
+                        <li>The engine places a <strong>bracket order</strong> on IBKR: entry + stop-loss + profit target, all linked</li>
+                        <li>You can see the orders in TWS &mdash; they'll show as a group in the Orders panel</li>
+                        <li>After 11:00 AM, no new entries are allowed (<code>last_entry_time</code> config)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:var(--red);">5</div>
+                <div class="tl-time" style="color:var(--red-dark);">While In a Trade</div>
+                <div class="tl-title">Monitoring &mdash; Let It Work</div>
+                <div class="tl-body">
+                    <ul>
+                        <li><strong>Do not manually close or adjust the trade.</strong> The bracket order handles exits.</li>
+                        <li>One of three things will happen:
+                            <ul>
+                                <li>Price hits the <strong>target</strong> &rarr; profit taken automatically</li>
+                                <li>Price hits the <strong>stop</strong> &rarr; loss limited automatically</li>
+                                <li>Neither by 3:55 PM &rarr; <strong>EOD flatten</strong> at market price</li>
+                            </ul>
+                        </li>
+                        <li>When it exits, the terminal prints:</li>
+                    </ul>
+<pre style="margin:0.5rem 0;font-size:0.78rem;"><code>  EXIT: LONG @ 21611.75 PnL=+$120.26 (target)</code></pre>
+                    <ul>
+                        <li>The risk manager tracks your running daily P&amp;L &mdash; if you hit <code>max_daily_loss</code>, it halts for the day</li>
+                        <li>Up to <code>max_trades_per_day</code> trades can fire (default: 3)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:var(--purple);">6</div>
+                <div class="tl-time" style="color:#6d28d9;">3:55 &ndash; 4:00 PM &mdash; End of Day</div>
+                <div class="tl-title">EOD Flatten &amp; Shutdown</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>At 3:55 PM, any open position is closed at market (<code>eod_flatten_time</code>)</li>
+                        <li>At 4:00 PM, the session ends</li>
+                        <li>Press <strong>Ctrl+C</strong> to stop the engine (it will flatten any open position before exiting)</li>
+                        <li>The session summary prints:</li>
+                    </ul>
+<pre style="margin:0.5rem 0;font-size:0.78rem;"><code>  Session: 2 trades | 1W-1L | Net=+$58.14
+  Journal: output/live_trades.csv</code></pre>
+                </div>
+            </div>
+
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#475569;">7</div>
+                <div class="tl-time" style="color:#475569;">After Close</div>
+                <div class="tl-title">Review</div>
+                <div class="tl-body">
+                    <ul>
+                        <li>Open <code>output/live_trades.csv</code> in Excel or Google Sheets</li>
+                        <li>For each trade, check:
+                            <ul>
+                                <li>Did the entry make sense? Was it a clean breakout or a chop-fest?</li>
+                                <li>Was the OR size reasonable for the day?</li>
+                                <li>How much did the trade go against you before exiting? (MAE column)</li>
+                                <li>Did the trade reach the target and reverse, or blow through it? (MFE column)</li>
+                            </ul>
+                        </li>
+                        <li>Compare what the engine did vs what you see on the TWS chart &mdash; this builds intuition</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>Weekly Maintenance</h3>
+
+        <div class="weekly-grid">
+            <div class="weekly-card wk-weekend">
+                <div class="wk-head">Weekend Data Update</div>
+                <div class="wk-body">
+                    <ul>
+                        <li>Download the latest market data to grow your dataset:</li>
+                    </ul>
+<pre style="margin:0.4rem 0;font-size:0.78rem;"><code><span class="code-keyword">python</span> <span class="code-flag">-m</span> trading download-all</code></pre>
+                    <ul>
+                        <li>Automatically appends new bars, deduplicates, sorts</li>
+                        <li>Your backtest dataset grows every week</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="weekly-card wk-friday">
+                <div class="wk-head">Weekend Backtest Review</div>
+                <div class="wk-body">
+                    <ul>
+                        <li>Re-run the backtest on your updated data:</li>
+                    </ul>
+<pre style="margin:0.4rem 0;font-size:0.78rem;"><code><span class="code-keyword">python</span> <span class="code-flag">-m</span> trading backtest <span class="code-flag">-c</span> <span class="code-string">config/mnq_real.yaml</span></code></pre>
+                    <ul>
+                        <li>Compare backtest PnL to your actual live/paper results</li>
+                        <li>If they diverge a lot, investigate (slippage? fills? timing?)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="weekly-card wk-weekend">
+                <div class="wk-head">Parameter Check</div>
+                <div class="wk-body">
+                    <ul>
+                        <li>Run a sweep monthly (not weekly &mdash; avoid overfitting):</li>
+                    </ul>
+<pre style="margin:0.4rem 0;font-size:0.78rem;"><code><span class="code-keyword">python</span> <span class="code-flag">-m</span> trading sweep \
+  <span class="code-flag">-c</span> <span class="code-string">config/mnq_real.yaml</span> \
+  <span class="code-flag">-s</span> <span class="code-string">config/sweep_real.yaml</span></code></pre>
+                    <ul>
+                        <li>Check if your current settings are still in the "good" zone</li>
+                        <li>Don't chase the single best combo &mdash; pick settings that are good across multiple combos</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="weekly-card wk-friday">
+                <div class="wk-head">Economic Calendar</div>
+                <div class="wk-body">
+                    <ul>
+                        <li>Preview next week's economic events</li>
+                        <li>Mark FOMC, CPI, NFP, GDP days &mdash; consider skipping or reducing size</li>
+                        <li>Optionally update <code>data/calendars/economic_events.csv</code> so the filter handles it automatically</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>What NOT to Do</h3>
+
+        <div class="callout callout-red">
+            <strong>Common mistakes that kill systematic strategies:</strong>
+            <ul style="margin-top:0.5rem;">
+                <li><strong>Don't override the engine mid-trade.</strong> If you manually close a winning trade early or move a stop, you're no longer trading the system &mdash; you're trading emotions. The backtest results only hold if you let it run as designed.</li>
+                <li><strong>Don't tweak parameters after every losing day.</strong> Losses are part of the game. The system is designed to make money over many trades, not every trade. Change settings based on weekly/monthly reviews, not daily feelings.</li>
+                <li><strong>Don't increase position size after a win streak.</strong> Stick with 1 contract until you have at least 30+ live trades of data. Then scale slowly.</li>
+                <li><strong>Don't trade FOMC / CPI / NFP days</strong> until you have data showing the strategy works on those days. Major news events create fake breakouts that chop through both sides of the range.</li>
+                <li><strong>Don't skip the daily review.</strong> The 5 minutes you spend checking the trade journal is how you catch bugs, bad fills, or strategy drift before they cost real money.</li>
+            </ul>
+        </div>
+
+        <h3>When to Stop Paper Trading and Go Live</h3>
+
+        <p>There's no magic number, but here's a reasonable checklist:</p>
+        <ul class="checklist">
+            <li>At least <strong>20+ paper trades</strong> executed (roughly 2-3 weeks)</li>
+            <li>Paper results roughly match backtest expectations (within 10-15%)</li>
+            <li>No bugs &mdash; entries, stops, and targets all fire correctly</li>
+            <li>You've seen the engine handle a losing day without panicking</li>
+            <li>You understand every field in the trade journal CSV</li>
+            <li>You can explain the strategy to someone else in plain English</li>
+        </ul>
+
+        <div class="callout callout-green">
+            <strong>Start small when going live</strong>
+            1 contract of MNQ. That's $2/point, so a 20-point stop costs you $40. Real enough to matter, small enough to learn from mistakes without blowing up.
+        </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="section" id="troubleshooting">
+        <h2>Troubleshooting</h2>
+
+        <details class="trouble-item">
+            <summary>"Connection refused" error</summary>
+            <div class="trouble-body">
+                <ul>
+                    <li>Is TWS or IB Gateway running?</li>
+                    <li>Is it logged in? (TWS auto-locks after inactivity)</li>
+                    <li>Did you enable "Enable ActiveX and Socket Clients" in API settings?</li>
+                    <li>Is the port correct? <code>7497</code> for paper, <code>7496</code> for live</li>
+                    <li>Check if another application is already connected on the same client ID</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="trouble-item">
+            <summary>"No security definition" error</summary>
+            <div class="trouble-body">
+                <ul>
+                    <li>MNQ market data subscription is not active</li>
+                    <li>Go to Client Portal &rarr; <strong>Settings</strong> &rarr; <strong>Market Data Subscriptions</strong> &rarr; add <strong>CME</strong></li>
+                    <li>The subscription takes effect immediately</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="trouble-item">
+            <summary>"Not enough market data" error</summary>
+            <div class="trouble-body">
+                <ul>
+                    <li>The free delayed data won't work for live trading</li>
+                    <li>Subscribe to CME real-time data (~$10/month)</li>
+                    <li>This fee is waived if you generate $30+/month in commissions</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="trouble-item">
+            <summary>Orders rejected</summary>
+            <div class="trouble-body">
+                <ul>
+                    <li>Check that your paper account has enough margin</li>
+                    <li>MNQ requires ~$1,000&ndash;1,500 intraday margin per contract</li>
+                    <li>Make sure "Read-Only API" is turned <strong>OFF</strong></li>
+                    <li>Verify the contract was qualified successfully (check engine logs)</li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="trouble-item">
+            <summary>TWS keeps disconnecting / timing out</summary>
+            <div class="trouble-body">
+                <ul>
+                    <li>TWS has an auto-logoff timer &mdash; extend it in <strong>Global Configuration</strong> &rarr; <strong>Lock and Exit</strong></li>
+                    <li>IB Gateway is more stable for long-running automated sessions</li>
+                    <li>Consider switching to Gateway once you're confident in the engine</li>
+                </ul>
+            </div>
+        </details>
+    </div>
+
+</div><!-- /container -->
+
+<div class="footer">
+    <p>IBKR Account Setup Guide &mdash; MNQ Futures Trading</p>
+    <p>ORB Engine Documentation &mdash; February 2026</p>
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+<script>
+// ─── Sticky Nav Collapse ───
+(function() {
+    const nav = document.getElementById('navBar');
+    const toggle = document.getElementById('navToggle');
+    let lastY = 0;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) {
+            nav.classList.add('collapsed');
+        } else {
+            nav.classList.remove('collapsed', 'expanded');
+        }
+        lastY = window.scrollY;
+    });
+    toggle.addEventListener('click', () => {
+        nav.classList.toggle('expanded');
+    });
+})();
+
+// ─── Back to Top ───
+(function() {
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+
+// ─── Architecture Diagram (SVG) — orthogonal routing ───
+(function() {
+    const target = document.getElementById('architectureDiagram');
+    if (!target) return;
+
+    const W = 900, H = 350;
+
+    // Box positions — 3 columns, top/center/bottom rows
+    const boxes = [
+        { id: 'tws',      label: 'TWS / IB Gateway', sub: 'Port 7497 (paper)', x: 40,  y: 135, w: 160, h: 70, color: '#0ea5e9' },
+        { id: 'data',     label: 'IBKRDataProvider',  sub: 'ib_async',           x: 280, y: 35,  w: 170, h: 60, color: '#8b5cf6' },
+        { id: 'broker',   label: 'LiveBroker',        sub: 'Bracket Orders',     x: 280, y: 255, w: 170, h: 60, color: '#8b5cf6' },
+        { id: 'engine',   label: 'LiveEngine',        sub: 'Event Loop',         x: 530, y: 135, w: 150, h: 70, color: '#10b981' },
+        { id: 'strategy', label: 'ORBStrategy',       sub: 'State Machine',      x: 740, y: 35,  w: 140, h: 60, color: '#f59e0b' },
+        { id: 'risk',     label: 'RiskManager',       sub: 'Filters + Limits',   x: 740, y: 255, w: 140, h: 60, color: '#ef4444' },
+    ];
+
+    // Orthogonal path builder with rounded corners
+    function orthoPath(points, r) {
+        r = r || 8;
+        let d = 'M' + points[0][0] + ',' + points[0][1];
+        for (let i = 1; i < points.length - 1; i++) {
+            const prev = points[i - 1], curr = points[i], next = points[i + 1];
+            const dx1 = Math.sign(curr[0] - prev[0]), dy1 = Math.sign(curr[1] - prev[1]);
+            const dx2 = Math.sign(next[0] - curr[0]), dy2 = Math.sign(next[1] - curr[1]);
+            d += ' L' + (curr[0] - dx1 * r) + ',' + (curr[1] - dy1 * r);
+            d += ' Q' + curr[0] + ',' + curr[1] + ' ' + (curr[0] + dx2 * r) + ',' + (curr[1] + dy2 * r);
+        }
+        const last = points[points.length - 1];
+        d += ' L' + last[0] + ',' + last[1];
+        return d;
+    }
+
+    // Connections with explicit waypoints (no box overlap)
+    const connections = [
+        { points: [[200,170],[240,170],[240,65],[280,65]],   label: '1-min bars',    lx: 240, ly: 118, anchor: 'end', ldx: -6 },
+        { points: [[200,170],[240,170],[240,285],[280,285]], label: 'Order fills',   lx: 240, ly: 228, anchor: 'end', ldx: -6 },
+        { points: [[450,65],[490,65],[490,170],[530,170]],   label: 'Bar stream',    lx: 490, ly: 118, anchor: 'end', ldx: -6 },
+        { points: [[680,170],[710,170],[710,65],[740,65]],   label: 'on_bar()',      lx: 710, ly: 118, anchor: 'end', ldx: -6 },
+        { points: [[680,170],[710,170],[710,285],[740,285]], label: 'allow_entry()', lx: 710, ly: 228, anchor: 'end', ldx: -6 },
+        { points: [[605,205],[605,285],[450,285]],           label: 'enter_trade()', lx: 528, ly: 278, anchor: 'middle', ldx: 0 },
+    ];
+
+    let svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:' + W + 'px;background:#f8f9ff;border-radius:8px;border:1px solid #e2e8f0;">';
+    svg += '<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/></marker></defs>';
+
+    // Draw connections first (behind boxes)
+    connections.forEach(function(c) {
+        svg += '<path d="' + orthoPath(c.points) + '" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#ah)"/>';
+        svg += '<text x="' + (c.lx + (c.ldx||0)) + '" y="' + c.ly + '" text-anchor="' + (c.anchor||'middle') + '" font-size="10" fill="#64748b" font-family="system-ui">' + c.label + '</text>';
+    });
+
+    // Draw boxes (on top of lines)
+    boxes.forEach(function(b) {
+        svg += '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '" rx="8" fill="white" stroke="' + b.color + '" stroke-width="2"/>';
+        svg += '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '" rx="8" fill="' + b.color + '" opacity="0.08"/>';
+        svg += '<text x="' + (b.x + b.w/2) + '" y="' + (b.y + b.h/2 - 6) + '" text-anchor="middle" font-size="13" font-weight="700" fill="' + b.color + '" font-family="system-ui">' + b.label + '</text>';
+        svg += '<text x="' + (b.x + b.w/2) + '" y="' + (b.y + b.h/2 + 12) + '" text-anchor="middle" font-size="10" fill="#64748b" font-family="system-ui">' + b.sub + '</text>';
+    });
+
+    svg += '</svg>';
+    target.innerHTML = svg;
+})();
+
+// ─── Data Flow Diagram (SVG) ───
+(function() {
+    const target = document.getElementById('dataFlowDiagram');
+    if (!target) return;
+
+    const W = 900, H = 120;
+    const steps = [
+        { label: 'TWS streams\n1-min bars',      color: '#0ea5e9', x: 30 },
+        { label: 'IBKRDataProvider\nyields Bar objects', color: '#8b5cf6', x: 195 },
+        { label: 'ORBStrategy\nbuilds OR, detects\nbreakouts', color: '#f59e0b', x: 375 },
+        { label: 'RiskManager +\nFilters validate', color: '#ef4444', x: 555 },
+        { label: 'LiveBroker\nplaces bracket\norder on IBKR', color: '#10b981', x: 720 },
+    ];
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px;background:#f8f9ff;border-radius:8px;border:1px solid #e2e8f0;">`;
+    svg += `<defs><marker id="ah2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/></marker></defs>`;
+
+    const bw = 150, bh = 70, by = 25;
+
+    steps.forEach((s, i) => {
+        // Arrow from previous
+        if (i > 0) {
+            const prevX = steps[i-1].x + bw;
+            const curX = s.x;
+            svg += `<line x1="${prevX}" y1="${by + bh/2}" x2="${curX}" y2="${by + bh/2}" stroke="#94a3b8" stroke-width="2" marker-end="url(#ah2)"/>`;
+        }
+        svg += `<rect x="${s.x}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="${s.color}" opacity="0.1" stroke="${s.color}" stroke-width="2"/>`;
+        const lines = s.label.split('\n');
+        lines.forEach((line, li) => {
+            const ty = by + bh/2 + (li - (lines.length-1)/2) * 14;
+            const fw = li === 0 ? '700' : '400';
+            const fs = li === 0 ? '11' : '10';
+            const fc = li === 0 ? s.color : '#64748b';
+            svg += `<text x="${s.x + bw/2}" y="${ty}" text-anchor="middle" font-size="${fs}" font-weight="${fw}" fill="${fc}" font-family="system-ui">${line}</text>`;
+        });
+    });
+
+    svg += '</svg>';
+    target.innerHTML = svg;
+})();
+
+// ─── Konami Code Easter Egg: Matrix Rain ───
+(function(){
+    const konamiSequence = [
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+        'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+        'KeyB','KeyA','Enter'
+    ];
+    let konamiIndex = 0, matrixActive = false, matrixRainId = null;
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.code || e.key) === konamiSequence[konamiIndex]) {
+            if (++konamiIndex === konamiSequence.length) {
+                konamiIndex = 0;
+                matrixActive ? stopMatrixRain() : startMatrixRain();
+                matrixActive = !matrixActive;
+            }
+        } else { konamiIndex = 0; }
+    });
+
+    function startMatrixRain() {
+        const canvas = document.getElementById('matrixCanvas');
+        if (!canvas || matrixRainId) return;
+        document.body.classList.add('matrix-active');
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        const chars = Array.from('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        const fontSize = 14;
+        let columns, drops;
+        function resize() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            const old = drops || [];
+            drops = Array.from({length: columns}, (_, i) => old[i] !== undefined ? old[i] : Math.random() * -100);
+        }
+        resize();
+        window._matrixResize = resize;
+        window.addEventListener('resize', resize);
+        let fc = 0;
+        function draw() {
+            if (++fc % 2 !== 0) { matrixRainId = requestAnimationFrame(draw); return; }
+            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px Courier New';
+            for (let i = 0; i < columns; i++) {
+                const y = drops[i] * fontSize;
+                ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,255,65,0.6)'; ctx.fillStyle = '#aaffaa';
+                ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y);
+                ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                if (y - fontSize > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y - fontSize);
+                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+        matrixRainId = requestAnimationFrame(draw);
+    }
+
+    function stopMatrixRain() {
+        if (matrixRainId) { cancelAnimationFrame(matrixRainId); matrixRainId = null; }
+        document.body.classList.remove('matrix-active');
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+        if (window._matrixResize) { window.removeEventListener('resize', window._matrixResize); delete window._matrixResize; }
+    }
+})();
+</script>
+
+</body>
+</html>
