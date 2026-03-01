@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Speaking Tips</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #263548;
+      --accent: #3b82f6;
+      --accent-light: #60a5fa;
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border: #334155;
+      --radius: 12px;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 48px 24px 32px;
+      background: linear-gradient(180deg, #1e293b 0%, var(--bg) 100%);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent-light), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+
+    /* Stats bar */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 8px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-light);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Category filter */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 24px 32px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .filter-btn {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Main content */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    /* Tip cards grid */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .tip-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tip-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--cat-color, var(--accent));
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .tip-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .tip-card:hover::before {
+      opacity: 1;
+    }
+
+    .tip-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tip-icon {
+      font-size: 1.6rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .tip-card-header-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tip-number {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+    }
+
+    .tip-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .tip-category-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--cat-color, var(--text-muted));
+      margin-bottom: 12px;
+    }
+
+    .tip-description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .tip-expand-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      transition: color var(--transition);
+    }
+
+    .tip-card:hover .tip-expand-hint {
+      color: var(--accent-light);
+    }
+
+    /* Expanded tip detail */
+    .tip-detail {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .tip-card.expanded .tip-detail {
+      display: block;
+    }
+
+    .tip-card.expanded .tip-expand-hint {
+      display: none;
+    }
+
+    .tip-detail h4 {
+      font-size: 0.85rem;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .tip-detail ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tip-detail ul li {
+      padding: 6px 0;
+      padding-left: 20px;
+      position: relative;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .tip-detail ul li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--accent-light);
+      font-weight: 700;
+    }
+
+    .tip-detail .pro-tip {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--accent-glow);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .tip-detail .pro-tip strong {
+      color: var(--accent-light);
+    }
+
+    /* Progress tracker */
+    .progress-section {
+      margin-bottom: 32px;
+    }
+
+    .progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: var(--border);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      border-radius: 50px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Completed state */
+    .tip-card.completed {
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .tip-card.completed .tip-icon {
+      background: rgba(74, 222, 128, 0.1);
+    }
+
+    .tip-card.completed .tip-number::after {
+      content: " \2713";
+      color: #4ade80;
+    }
+
+    /* Mark complete button */
+    .mark-complete-btn {
+      margin-top: 14px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .mark-complete-btn:hover {
+      border-color: #4ade80;
+      color: #4ade80;
+    }
+
+    .tip-card.completed .mark-complete-btn {
+      border-color: #4ade80;
+      background: rgba(74, 222, 128, 0.1);
+      color: #4ade80;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-dim);
+    }
+
+    .empty-state span {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    /* Random tip button */
+    .random-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .random-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* Shuffle animation */
+    @keyframes shuffleIn {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .tip-card.animate-in {
+      animation: shuffleIn 0.35s ease forwards;
+    }
+
+    /* Footer */
+    .app-footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    .app-footer a {
+      color: var(--accent-light);
+      text-decoration: none;
+    }
+
+    .app-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.8rem; }
+      .header p { font-size: 1rem; }
+      .stats { gap: 24px; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .tip-card { padding: 22px; }
+    }
+
+    @media (max-width: 480px) {
+      .header { padding: 32px 16px 24px; }
+      .filter-bar { gap: 6px; padding: 0 16px 24px; }
+      .filter-btn { padding: 6px 14px; font-size: 0.8rem; }
+      .container { padding: 0 16px 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>Public Speaking Tips</h1>
+    <p>30 actionable tips to help you speak with confidence, connect with your audience, and deliver presentations that stick.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="total-tips">30</div>
+        <div class="stat-label">Tips</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="categories-count">6</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="completed-count">0</div>
+        <div class="stat-label">Practiced</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="filter-bar" id="filter-bar"></div>
+
+  <div class="container">
+    <div class="progress-section">
+      <div class="progress-bar-container">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <span class="progress-text" id="progress-text">0 / 30 practiced</span>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 28px;">
+      <button class="random-btn" id="random-btn">&#127922; Random Tip</button>
+    </div>
+
+    <div class="tips-grid" id="tips-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <span>&#128269;</span>
+      <p>No tips in this category yet.</p>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Built with vanilla JavaScript &mdash; zero dependencies. <a href="index.html">&larr; Back to Portfolio</a></p>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ============================================
+  // Tip Data
+  // ============================================
+  const CATEGORIES = {
+    preparation: { label: "Preparation", icon: "\uD83D\uDCCB", color: "#3b82f6" },
+    delivery: { label: "Delivery", icon: "\uD83C\uDFA4", color: "#8b5cf6" },
+    bodyLanguage: { label: "Body Language", icon: "\uD83E\uDDD1\u200D\uD83C\uDFED", color: "#f59e0b" },
+    nerves: { label: "Overcoming Nerves", icon: "\uD83E\uDDD8", color: "#10b981" },
+    audience: { label: "Audience Engagement", icon: "\uD83D\uDC65", color: "#ef4444" },
+    visualAids: { label: "Visual Aids", icon: "\uD83D\uDCCA", color: "#ec4899" },
+  };
+
+  const tips = [
+    // Preparation (5)
+    {
+      id: 1, cat: "preparation",
+      title: "Know Your Audience",
+      desc: "Research who you'll be speaking to. Tailor your vocabulary, examples, and depth of detail to their knowledge level and interests.",
+      actions: [
+        "Ask the organizer about audience demographics",
+        "Research common pain points of the audience",
+        "Prepare 2-3 relatable examples for this specific group",
+        "Adjust technical jargon to match their expertise"
+      ],
+      proTip: "Create a one-line audience persona before you start writing. Example: 'Mid-level managers who need to justify a budget increase to executives.'"
+    },
+    {
+      id: 2, cat: "preparation",
+      title: "Structure With the Rule of Three",
+      desc: "Organize your talk into three main points. Audiences remember groups of three far better than four or five ideas.",
+      actions: [
+        "Distill your message into exactly three key takeaways",
+        "Use a clear transition sentence between each point",
+        "Summarize all three at the end for reinforcement"
+      ],
+      proTip: "Steve Jobs consistently used the rule of three. His 2007 iPhone launch introduced 'a phone, an iPod, and an internet communicator' \u2014 three devices in one."
+    },
+    {
+      id: 3, cat: "preparation",
+      title: "Practice Out Loud",
+      desc: "Rehearse your entire presentation out loud at least three times. Silent reading doesn't prepare you for the real thing.",
+      actions: [
+        "Do a full run-through standing up, not sitting",
+        "Record yourself on your phone and review it",
+        "Time each section to stay within your slot",
+        "Practice in front of a mirror or a friend"
+      ],
+      proTip: "Practice in the actual room if possible. Familiarity with the space dramatically reduces anxiety on the day."
+    },
+    {
+      id: 4, cat: "preparation",
+      title: "Craft a Strong Opening",
+      desc: "Your first 30 seconds determine whether the audience leans in or checks out. Start with a hook, not a bio or agenda slide.",
+      actions: [
+        "Open with a surprising statistic or bold claim",
+        "Tell a brief, relevant personal story",
+        "Ask a thought-provoking question",
+        "Avoid starting with 'So, today I'm going to talk about...'"
+      ],
+      proTip: "Write your opening last. Once you know your content, the perfect hook becomes obvious."
+    },
+    {
+      id: 5, cat: "preparation",
+      title: "Prepare for Q&A",
+      desc: "Anticipate the toughest questions and prepare concise answers. Being caught off-guard erodes credibility fast.",
+      actions: [
+        "List 5-10 likely questions and draft short answers",
+        "Prepare a graceful 'I don't know' response",
+        "Practice bridging from tough questions back to your key points",
+        "Have backup data or slides ready for deep-dive questions"
+      ],
+      proTip: "If nobody asks a question, seed one yourself: 'A question I often get is...' This breaks the ice and gives others permission to ask."
+    },
+
+    // Delivery (5)
+    {
+      id: 6, cat: "delivery",
+      title: "Slow Down",
+      desc: "Nervous speakers rush. Deliberately slowing your pace gives you authority and gives the audience time to absorb your ideas.",
+      actions: [
+        "Aim for 130-150 words per minute (conversational pace)",
+        "Insert a deliberate 2-second pause after key points",
+        "Use pauses instead of filler words like 'um' or 'so'",
+        "Practice with a metronome app to build awareness"
+      ],
+      proTip: "A well-placed silence after a powerful statement is one of the most effective tools in public speaking. Let it land."
+    },
+    {
+      id: 7, cat: "delivery",
+      title: "Vary Your Vocal Range",
+      desc: "Monotone kills attention. Use pitch, volume, and speed variation to emphasize key ideas and maintain energy.",
+      actions: [
+        "Drop your voice low for dramatic emphasis",
+        "Speed up briefly to convey excitement or urgency",
+        "Whisper a key phrase to pull the audience in",
+        "Practice reading children's stories aloud for range"
+      ],
+      proTip: "Record a 2-minute section of your talk and listen back. If it sounds flat, mark your script with arrows: up for energy, down for gravity."
+    },
+    {
+      id: 8, cat: "delivery",
+      title: "Tell Stories, Not Bullet Points",
+      desc: "Stories activate more areas of the brain than facts alone. They make your message memorable and emotionally resonant.",
+      actions: [
+        "Include at least one personal anecdote per presentation",
+        "Use the structure: situation, conflict, resolution",
+        "Make the audience the hero of the story, not yourself",
+        "Keep stories under 90 seconds to maintain pace"
+      ],
+      proTip: "The best stories have a moment of vulnerability. Sharing a mistake you made is more relatable than sharing a triumph."
+    },
+    {
+      id: 9, cat: "delivery",
+      title: "End With a Clear Call to Action",
+      desc: "Don't trail off with 'so yeah, that's it.' End with one specific thing you want the audience to do, think, or feel.",
+      actions: [
+        "State your call to action in one sentence",
+        "Repeat your core message one final time",
+        "End on a high-energy or emotionally resonant note",
+        "Never end with 'Any questions?' \u2014 end with your closer, then open Q&A"
+      ],
+      proTip: "Write your closing line word for word and memorize it. The last thing you say is the first thing they'll remember."
+    },
+    {
+      id: 10, cat: "delivery",
+      title: "Use the Power of the Pause",
+      desc: "Pauses give weight to your words, let ideas sink in, and give you time to breathe and think. Most speakers don't pause enough.",
+      actions: [
+        "Pause for 2-3 seconds after asking a rhetorical question",
+        "Pause before revealing a key number or conclusion",
+        "Use pauses instead of 'um,' 'uh,' or 'like'",
+        "Practice pausing even when it feels uncomfortably long"
+      ],
+      proTip: "What feels like an eternity to you feels like a natural beat to the audience. Three seconds of silence is almost never too long."
+    },
+
+    // Body Language (5)
+    {
+      id: 11, cat: "bodyLanguage",
+      title: "Make Eye Contact",
+      desc: "Eye contact builds trust and connection. Look at individual audience members for 3-5 seconds each, not at the back wall.",
+      actions: [
+        "Pick 4-5 people in different sections of the room",
+        "Rotate between them naturally throughout your talk",
+        "In virtual talks, look at the camera lens, not the screen",
+        "Avoid scanning the room like a lighthouse"
+      ],
+      proTip: "If direct eye contact feels intense, look at the bridge of someone's nose or their forehead. They won't know the difference."
+    },
+    {
+      id: 12, cat: "bodyLanguage",
+      title: "Use Purposeful Gestures",
+      desc: "Hand gestures reinforce your message. Keep them above the waist, open-palmed, and intentional \u2014 not fidgety or repetitive.",
+      actions: [
+        "Use open palms to convey honesty and openness",
+        "Count on your fingers when listing items",
+        "Use wider gestures for big ideas, smaller for detail",
+        "Avoid clasping hands, crossing arms, or pocketing hands"
+      ],
+      proTip: "Watch TED speakers with the sound off. Notice how their gestures alone tell a story. That's what purposeful movement looks like."
+    },
+    {
+      id: 13, cat: "bodyLanguage",
+      title: "Own the Stage",
+      desc: "Move with intention. Walk to one side for one point, the center for your main idea, and the other side for a different topic.",
+      actions: [
+        "Assign each section of the stage to a theme or point",
+        "Walk during transitions, plant your feet during key points",
+        "Face the audience, never the screen behind you",
+        "Avoid pacing back and forth nervously"
+      ],
+      proTip: "If you're on a small stage or behind a podium, step to the side of it. Removing the physical barrier instantly increases connection."
+    },
+    {
+      id: 14, cat: "bodyLanguage",
+      title: "Stand With Confidence",
+      desc: "Your posture communicates before you say a word. Stand tall, shoulders back, weight evenly distributed on both feet.",
+      actions: [
+        "Plant your feet shoulder-width apart",
+        "Avoid leaning on the podium or shifting weight side to side",
+        "Keep your chin parallel to the floor",
+        "Take a deep breath and expand your chest before you begin"
+      ],
+      proTip: "Do a 2-minute 'power pose' backstage before your talk \u2014 hands on hips, chest open. Research shows it lowers cortisol and boosts confidence."
+    },
+    {
+      id: 15, cat: "bodyLanguage",
+      title: "Smile Genuinely",
+      desc: "A natural smile signals warmth and makes the audience feel at ease. It also releases endorphins that calm your own nerves.",
+      actions: [
+        "Smile when greeting the audience at the start",
+        "Let humor and stories bring out natural smiles",
+        "Don't force a permanent grin \u2014 match your expression to your content",
+        "Smile when making eye contact with individuals"
+      ],
+      proTip: "Think of something genuinely funny or joyful right before you walk on stage. An authentic smile is impossible to fake and impossible to resist."
+    },
+
+    // Overcoming Nerves (5)
+    {
+      id: 16, cat: "nerves",
+      title: "Reframe Anxiety as Excitement",
+      desc: "Nervousness and excitement have almost identical physical symptoms. Telling yourself 'I'm excited' genuinely shifts your mindset.",
+      actions: [
+        "Say 'I'm excited' out loud before going on stage",
+        "Focus on the opportunity to share, not on being judged",
+        "Remind yourself that adrenaline sharpens focus and energy",
+        "Visualize a positive audience reaction"
+      ],
+      proTip: "Harvard research by Alison Wood Brooks showed that people who reappraised anxiety as excitement performed better on public tasks than those who tried to calm down."
+    },
+    {
+      id: 17, cat: "nerves",
+      title: "Breathe With the 4-7-8 Technique",
+      desc: "Controlled breathing activates your parasympathetic nervous system and physically calms the fight-or-flight response.",
+      actions: [
+        "Inhale through your nose for 4 seconds",
+        "Hold your breath for 7 seconds",
+        "Exhale slowly through your mouth for 8 seconds",
+        "Repeat 3-4 times before you go on stage"
+      ],
+      proTip: "If 4-7-8 feels too long, start with box breathing: 4 in, 4 hold, 4 out, 4 hold. Any structured breathing pattern will help."
+    },
+    {
+      id: 18, cat: "nerves",
+      title: "Arrive Early and Own the Room",
+      desc: "Familiarity reduces anxiety. Get to the venue early, walk the stage, test the mic, and chat with early arrivals.",
+      actions: [
+        "Arrive 30-45 minutes before your time slot",
+        "Test your slides, clicker, and microphone",
+        "Stand at the podium or speaking spot and look out at the empty seats",
+        "Greet audience members as they arrive"
+      ],
+      proTip: "Greeting people before your talk turns strangers into familiar faces. When you spot them during your presentation, it feels like talking to friends."
+    },
+    {
+      id: 19, cat: "nerves",
+      title: "Accept Imperfection",
+      desc: "No talk is perfect. The audience doesn't have your script \u2014 they won't notice small stumbles unless you draw attention to them.",
+      actions: [
+        "If you lose your place, pause and breathe \u2014 don't apologize",
+        "Skip a section if you're running long; nobody will know",
+        "Turn mistakes into humor when possible",
+        "Focus on connection over perfection"
+      ],
+      proTip: "The audience is rooting for you. They want you to succeed. Remember: they chose to be there and they want value, not a flawless performance."
+    },
+    {
+      id: 20, cat: "nerves",
+      title: "Start With a Friendly Crowd",
+      desc: "Build speaking confidence gradually. Start with small, supportive groups before stepping onto bigger stages.",
+      actions: [
+        "Practice at team meetings or lunch-and-learns",
+        "Join a local Toastmasters club for structured practice",
+        "Volunteer for short presentations (5-10 minutes)",
+        "Ask a trusted colleague for honest feedback"
+      ],
+      proTip: "Confidence is a skill, not a trait. Every great speaker was once terrified. The difference is they kept doing it."
+    },
+
+    // Audience Engagement (5)
+    {
+      id: 21, cat: "audience",
+      title: "Ask Questions Early",
+      desc: "Get the audience participating in the first two minutes. A raised hand or a shout-out transforms passive listeners into active participants.",
+      actions: [
+        "Start with a show-of-hands question related to your topic",
+        "Use polling tools for virtual presentations",
+        "Ask a question they can answer in their heads first",
+        "Acknowledge responses with a nod or 'great'"
+      ],
+      proTip: "Start with an easy yes/no question before asking anything harder. 'How many of you have ever given a presentation?' gets hands up immediately."
+    },
+    {
+      id: 22, cat: "audience",
+      title: "Use the 10-Minute Rule",
+      desc: "Attention spans reset roughly every 10 minutes. Break your talk into 10-minute blocks separated by something engaging.",
+      actions: [
+        "Insert a story, demo, or audience interaction every 10 minutes",
+        "Change your visual aids at each break point",
+        "Shift your position on stage to signal a new section",
+        "Use a short video clip or live demo as a pattern interrupt"
+      ],
+      proTip: "Brain researcher John Medina calls this the '10-minute rule.' The key is to do something emotionally relevant at each reset point \u2014 surprise, humor, or a vivid image."
+    },
+    {
+      id: 23, cat: "audience",
+      title: "Read the Room",
+      desc: "Watch for body language cues. If people are checking phones or shifting in seats, change your energy, ask a question, or cut content.",
+      actions: [
+        "Scan the audience every 30 seconds for engagement cues",
+        "If energy drops, switch to a story or interactive moment",
+        "Speed up or slow down based on audience reactions",
+        "Don't be afraid to go off-script if something resonates"
+      ],
+      proTip: "If you see someone nodding, make eye contact with them more often. Their energy will lift yours, and others will mirror their engagement."
+    },
+    {
+      id: 24, cat: "audience",
+      title: "Make It About Them",
+      desc: "The best speakers focus outward. Use 'you' more than 'I.' Frame every point in terms of what the audience gains.",
+      actions: [
+        "Replace 'I think' with 'You might find' or 'What this means for you'",
+        "Include examples from the audience's industry or role",
+        "Show empathy: 'I know your time is valuable, so here's the key takeaway'",
+        "End each section with a benefit statement"
+      ],
+      proTip: "Count the pronouns in your slides. If 'I' and 'we' outnumber 'you,' flip them. Audiences care about their problems, not your resume."
+    },
+    {
+      id: 25, cat: "audience",
+      title: "Use Humor Wisely",
+      desc: "You don't need to be a comedian. A well-timed, self-deprecating remark or unexpected observation builds rapport and lowers defenses.",
+      actions: [
+        "Use observational humor about shared experiences",
+        "Self-deprecating humor works; deprecating others doesn't",
+        "If a joke falls flat, move on \u2014 don't explain it",
+        "Place humor near the beginning to set a relaxed tone"
+      ],
+      proTip: "The safest humor formula: setup + unexpected twist. 'I've been doing public speaking for 10 years. The first 9 were terrible.' It's relatable and low-risk."
+    },
+
+    // Visual Aids (5)
+    {
+      id: 26, cat: "visualAids",
+      title: "One Idea Per Slide",
+      desc: "Slides support your talk \u2014 they don't replace it. If a slide has more than one key idea, split it into two.",
+      actions: [
+        "Limit each slide to a single concept or image",
+        "Use a maximum of 6 words in a headline",
+        "Remove anything the audience doesn't absolutely need to see",
+        "Use blank or black slides during story-telling moments"
+      ],
+      proTip: "Guy Kawasaki's 10/20/30 rule: 10 slides, 20 minutes, 30-point minimum font. It forces clarity and prevents death-by-PowerPoint."
+    },
+    {
+      id: 27, cat: "visualAids",
+      title: "Use Images Over Text",
+      desc: "A single powerful image can communicate more than a paragraph of bullet points. Let visuals do the heavy lifting.",
+      actions: [
+        "Replace bullet points with a full-bleed photo when possible",
+        "Use high-quality, relevant images \u2014 not generic clip art",
+        "Add data visualizations instead of data tables",
+        "Ensure images have sufficient contrast for readability"
+      ],
+      proTip: "The 'picture superiority effect' means people remember 65% of information paired with an image after 3 days, versus only 10% from text alone."
+    },
+    {
+      id: 28, cat: "visualAids",
+      title: "Design for the Back Row",
+      desc: "If someone in the last row can't read your slide, the text is too small. Use large fonts, high contrast, and minimal detail.",
+      actions: [
+        "Use a minimum 28-point font for body text",
+        "Ensure strong contrast between text and background",
+        "Test your slides on a projector or large screen before presenting",
+        "Avoid thin fonts that wash out under bright room lighting"
+      ],
+      proTip: "Open your slides on your phone. If you can read them comfortably at arm's length, they'll work in the room."
+    },
+    {
+      id: 29, cat: "visualAids",
+      title: "Have a Backup Plan",
+      desc: "Technology fails. Have your slides on a USB drive, know your talk well enough to present without them, and arrive early to test.",
+      actions: [
+        "Save slides to USB, cloud storage, and email them to yourself",
+        "Practice delivering your talk with no slides at all",
+        "Bring your own laptop adapter and clicker",
+        "Know the venue's tech support contact"
+      ],
+      proTip: "The ultimate test: if the projector died 5 minutes before your talk, could you still deliver value? If yes, you're truly prepared."
+    },
+    {
+      id: 30, cat: "visualAids",
+      title: "Animate With Purpose",
+      desc: "Animations should reveal information at the right moment, not distract. Use simple fades and builds; avoid flashy transitions.",
+      actions: [
+        "Use 'appear' or 'fade in' \u2014 never 'fly,' 'bounce,' or 'spin'",
+        "Build complex diagrams step by step instead of showing everything at once",
+        "Reveal bullet points one at a time to keep focus",
+        "Eliminate all transition animations between slides"
+      ],
+      proTip: "If you remove an animation and nothing is lost, it shouldn't have been there. Every animation should serve the audience's understanding."
+    },
+  ];
+
+  // ============================================
+  // State
+  // ============================================
+  const STORAGE_KEY = "pst_completed";
+  let activeFilter = "all";
+  let completed = loadCompleted();
+
+  function loadCompleted() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? new Set(JSON.parse(data)) : new Set();
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveCompleted() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed]));
+    } catch { /* silently fail if storage is full */ }
+  }
+
+  // ============================================
+  // Render
+  // ============================================
+  const grid = document.getElementById("tips-grid");
+  const emptyState = document.getElementById("empty-state");
+  const filterBar = document.getElementById("filter-bar");
+  const progressFill = document.getElementById("progress-fill");
+  const progressText = document.getElementById("progress-text");
+  const completedCount = document.getElementById("completed-count");
+
+  function buildFilterBar() {
+    const allBtn = createFilterBtn("all", "All Tips");
+    filterBar.appendChild(allBtn);
+
+    Object.entries(CATEGORIES).forEach(([key, cat]) => {
+      const btn = createFilterBtn(key, cat.icon + " " + cat.label);
+      filterBar.appendChild(btn);
+    });
+
+    updateFilterState();
+  }
+
+  function createFilterBtn(key, label) {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn";
+    btn.dataset.filter = key;
+    btn.textContent = label;
+    btn.addEventListener("click", () => {
+      activeFilter = key;
+      updateFilterState();
+      renderTips();
+    });
+    return btn;
+  }
+
+  function updateFilterState() {
+    filterBar.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.filter === activeFilter);
+    });
+  }
+
+  function renderTips() {
+    const filtered = activeFilter === "all"
+      ? tips
+      : tips.filter((t) => t.cat === activeFilter);
+
+    grid.innerHTML = "";
+
+    if (filtered.length === 0) {
+      emptyState.style.display = "block";
+      return;
+    }
+    emptyState.style.display = "none";
+
+    filtered.forEach((tip, i) => {
+      const card = createTipCard(tip);
+      card.style.animationDelay = (i * 50) + "ms";
+      card.classList.add("animate-in");
+      grid.appendChild(card);
+    });
+
+    updateProgress();
+  }
+
+  function createTipCard(tip) {
+    const cat = CATEGORIES[tip.cat];
+    const isCompleted = completed.has(tip.id);
+
+    const card = document.createElement("div");
+    card.className = "tip-card" + (isCompleted ? " completed" : "");
+    card.style.setProperty("--cat-color", cat.color);
+
+    card.innerHTML =
+      '<div class="tip-card-header">' +
+        '<div class="tip-icon">' + cat.icon + '</div>' +
+        '<div class="tip-card-header-text">' +
+          '<div class="tip-number">Tip ' + tip.id + '</div>' +
+          '<div class="tip-title">' + tip.title + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tip-category-badge">' + cat.label + '</div>' +
+      '<div class="tip-description">' + tip.desc + '</div>' +
+      '<div class="tip-expand-hint">&#9660; Click to expand</div>' +
+      '<div class="tip-detail">' +
+        '<h4>Action Steps</h4>' +
+        '<ul>' + tip.actions.map(function (a) { return '<li>' + a + '</li>'; }).join("") + '</ul>' +
+        '<div class="pro-tip"><strong>Pro Tip:</strong> ' + tip.proTip + '</div>' +
+        '<button class="mark-complete-btn">' + (isCompleted ? "\u2713 Practiced" : "Mark as Practiced") + '</button>' +
+      '</div>';
+
+    // Toggle expand
+    card.addEventListener("click", function (e) {
+      if (e.target.classList.contains("mark-complete-btn")) return;
+      card.classList.toggle("expanded");
+    });
+
+    // Mark complete button
+    const markBtn = card.querySelector(".mark-complete-btn");
+    markBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (completed.has(tip.id)) {
+        completed.delete(tip.id);
+        card.classList.remove("completed");
+        markBtn.textContent = "Mark as Practiced";
+      } else {
+        completed.add(tip.id);
+        card.classList.add("completed");
+        markBtn.textContent = "\u2713 Practiced";
+      }
+      saveCompleted();
+      updateProgress();
+    });
+
+    return card;
+  }
+
+  function updateProgress() {
+    const total = tips.length;
+    const done = completed.size;
+    const pct = Math.round((done / total) * 100);
+    progressFill.style.width = pct + "%";
+    progressText.textContent = done + " / " + total + " practiced";
+    completedCount.textContent = done;
+  }
+
+  // ============================================
+  // Random Tip
+  // ============================================
+  document.getElementById("random-btn").addEventListener("click", function () {
+    activeFilter = "all";
+    updateFilterState();
+    renderTips();
+
+    const cards = grid.querySelectorAll(".tip-card");
+    if (cards.length === 0) return;
+
+    // Collapse all
+    cards.forEach(function (c) { c.classList.remove("expanded"); });
+
+    const randomIndex = Math.floor(Math.random() * cards.length);
+    const target = cards[randomIndex];
+
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    setTimeout(function () {
+      target.classList.add("expanded");
+      // Flash effect
+      target.style.boxShadow = "0 0 0 2px var(--accent), 0 8px 24px rgba(59, 130, 246, 0.3)";
+      setTimeout(function () {
+        target.style.boxShadow = "";
+      }, 1500);
+    }, 400);
+  });
+
+  // ============================================
+  // Initialize
+  // ============================================
+  buildFilterBar();
+  renderTips();
+})();
+</script>
+
+</body>
+</html>

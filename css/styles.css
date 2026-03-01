@@ -715,7 +715,6 @@ a {
    Responsive
    ============================================ */
 /* ============================================
-<<<<<<< HEAD
    Matrix Easter Egg — background mode
    ============================================ */
 body.matrix-active {
@@ -729,72 +728,6 @@ body.matrix-active .section { position: relative; z-index: 1; }
 body.matrix-active .section-alt { background: rgba(0, 0, 0, 0.7); }
 body.matrix-active .footer { position: relative; z-index: 1; background: #000; color: #ccc; }
 body.matrix-active .back-to-top { z-index: 1000; }
-=======
-   Konami Code Easter Egg
-   ============================================ */
-.konami-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s ease;
-}
-
-.konami-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.konami-content {
-  text-align: center;
-  color: #fff;
-  animation: konami-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.konami-content .konami-emoji {
-  font-size: 4rem;
-  display: block;
-  margin-bottom: 16px;
-}
-
-.konami-content h2 {
-  font-size: 2rem;
-  margin-bottom: 8px;
-  background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: konami-rainbow 2s linear infinite;
-}
-
-.konami-content p {
-  font-size: 1.1rem;
-  color: #ccc;
-  margin-bottom: 24px;
-}
-
-.konami-content .konami-code {
-  font-family: monospace;
-  font-size: 0.85rem;
-  color: #888;
-  letter-spacing: 2px;
-}
-
-@keyframes konami-pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes konami-rainbow {
-  to { background-position: 200% center; }
-}
->>>>>>> 990bbcd1d2e533586c747c41aecdb63a02902986
 
 @media (max-width: 768px) {
   .hero-inner {
