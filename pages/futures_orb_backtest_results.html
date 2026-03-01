@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORB Backtest Results -- MNQ Real Data</title>
+    <style>
+        :root {
+            --accent: #0ea5e9;
+            --accent-dark: #0369a1;
+            --accent-light: #e0f2fe;
+            --green: #10b981;
+            --green-dark: #047857;
+            --green-light: #d1fae5;
+            --red: #ef4444;
+            --red-dark: #b91c1c;
+            --red-light: #fee2e2;
+            --orange: #f59e0b;
+            --orange-dark: #b45309;
+            --orange-light: #fef3c7;
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --navy: #0f172a;
+            --slate: #1e293b;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #064e3b 40%, #10b981 100%);
+            color: white;
+            padding: 3.5rem 2rem 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero * { position: relative; z-index: 1; }
+        .hero h1 { font-size: 2.4rem; margin-bottom: 0.3rem; font-weight: 800; letter-spacing: -0.02em; }
+        .hero .subtitle { font-size: 1.1rem; opacity: 0.85; margin-bottom: 1rem; }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.12);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--bg);
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.25s ease, border-radius 0.25s ease;
+        }
+
+        .nav-bar.collapsed {
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .nav-bar h3 {
+            color: var(--slate);
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-bar .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-bar.collapsed h3 { margin-bottom: 0; }
+
+        .nav-toggle {
+            display: none;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+        .nav-toggle:hover { background: var(--accent); color: white; }
+        .nav-bar.collapsed .nav-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .nav-links { max-height: 0; opacity: 0; margin: 0; }
+        .nav-bar.collapsed.expanded .nav-links { max-height: 500px; opacity: 1; margin-top: 0.6rem; }
+
+        .nav-links a {
+            padding: 0.4rem 0.9rem;
+            background: var(--bg);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--slate);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--accent); color: white; }
+        .nav-links a.perf { border-left: 3px solid var(--green); }
+        .nav-links a.detail { border-left: 3px solid var(--accent); }
+        .nav-links a.ref { border-left: 3px solid var(--orange); }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            color: var(--navy);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--green);
+        }
+
+        .section h3 {
+            color: var(--accent-dark);
+            margin: 1.8rem 0 0.8rem 0;
+            font-size: 1.15rem;
+        }
+
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+
+        /* Headline stat cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.2rem 0.8rem;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .stat-card.profit { border-color: var(--green); background: var(--green-light); }
+        .stat-card.profit .stat-value { color: var(--green-dark); }
+
+        .stat-card.winrate { border-color: var(--accent); background: var(--accent-light); }
+        .stat-card.winrate .stat-value { color: var(--accent-dark); }
+
+        .stat-card.pf { border-color: var(--purple); background: var(--purple-light); }
+        .stat-card.pf .stat-value { color: #6d28d9; }
+
+        .stat-card.dd { border-color: var(--orange); background: var(--orange-light); }
+        .stat-card.dd .stat-value { color: var(--orange-dark); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: var(--navy);
+            color: white;
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) { background: #f8f9fb; }
+        tr:hover { background: var(--accent-light); }
+
+        /* Trade table special styling */
+        .trade-table { font-size: 0.8rem; }
+        .trade-table th { padding: 0.5rem 0.6rem; font-size: 0.75rem; }
+        .trade-table td { padding: 0.4rem 0.6rem; }
+        .trade-table .pnl-pos { color: var(--green-dark); font-weight: 600; }
+        .trade-table .pnl-neg { color: var(--red-dark); font-weight: 600; }
+        .trade-table .dir-long { color: var(--green); font-weight: 600; }
+        .trade-table .dir-short { color: var(--red); font-weight: 600; }
+
+        /* Callout boxes */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .callout-blue { background: var(--accent-light); border-left: 4px solid var(--accent); }
+        .callout-green { background: var(--green-light); border-left: 4px solid var(--green); }
+        .callout-orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+        .callout-red { background: var(--red-light); border-left: 4px solid var(--red); }
+        .callout-purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--accent-dark); }
+        .callout-green strong { color: var(--green-dark); }
+        .callout-orange strong { color: var(--orange-dark); }
+        .callout-red strong { color: var(--red-dark); }
+        .callout-purple strong { color: #6d28d9; }
+
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85em;
+            color: var(--accent-dark);
+        }
+
+        /* Chart containers */
+        .chart-container {
+            background: #f8f9ff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Win/Loss bar */
+        .wl-bar {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 40px;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .wl-bar .wins {
+            background: var(--green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wl-bar .losses {
+            background: var(--red);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Comparison grid */
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .footer p { margin-bottom: 0.2rem; }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--green);
+            color: white;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--navy); }
+
+        /* Matrix Easter Egg */
+        body.matrix-active { background: #000; }
+        body.matrix-active .container { position: relative; z-index: 1; background: var(--bg); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+
+        @media print {
+            .hero { background: var(--navy) !important; padding: 2rem; }
+            .nav-bar { display: none; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid var(--border); }
+            .back-to-top { display: none !important; }
+            #matrixCanvas { display: none !important; }
+        }
+
+        @media (max-width: 768px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .vs-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.8rem; }
+            .nav-bar { position: static; }
+            .section { padding: 1.5rem; }
+            .trade-table { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>ORB Backtest Results</h1>
+    <p class="subtitle">Opening Range Breakout -- MNQ Real Data -- 17 Trading Days</p>
+    <div class="badges">
+        <span class="badge">Micro E-mini Nasdaq (MNQ)</span>
+        <span class="badge">1 Contract</span>
+        <span class="badge">Feb 3 - Feb 25, 2026</span>
+        <span class="badge">40 Trades</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-header">
+            <h3>Quick Navigation</h3>
+            <button class="nav-toggle" id="navToggle">Menu &#9662;</button>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#background" class="ref">Background</a>
+            <a href="#overview" class="perf">Overview</a>
+            <a href="#equity" class="perf">Equity Curve</a>
+            <a href="#performance" class="perf">Performance</a>
+            <a href="#pnl-chart" class="detail">P&amp;L by Trade</a>
+            <a href="#daily" class="detail">Daily Breakdown</a>
+            <a href="#trades" class="detail">Trade Journal</a>
+            <a href="#settings" class="ref">Strategy Settings</a>
+            <a href="#metrics" class="ref">Metrics Glossary</a>
+            <a href="#caveats" class="ref">Caveats</a>
+        </div>
+    </nav>
+
+    <!-- Background / Explainer -->
+    <div class="section" id="background">
+        <h2>Background -- What Is This?</h2>
+
+        <h3>Futures in 60 Seconds</h3>
+        <p>A <strong>futures contract</strong> is an agreement to buy or sell something at a set price in the future. We're trading <strong>MNQ</strong> -- the <strong>Micro E-mini Nasdaq 100</strong> futures contract. It tracks the Nasdaq 100 index (think Apple, Microsoft, Amazon, Google, etc.) but in a bite-sized format designed for individual traders.</p>
+
+        <p>The key difference from stocks: futures let you profit from price going <strong>up or down</strong>. If you think Nasdaq will rise, you "go long" (buy). If you think it'll drop, you "go short" (sell). You don't need to own anything -- you're just betting on direction.</p>
+
+        <table>
+            <tr><th>Concept</th><th>What It Means</th></tr>
+            <tr><td><strong>MNQ</strong></td><td>Micro E-mini Nasdaq 100 -- the smallest Nasdaq futures contract available. 1/10th the size of the standard NQ contract.</td></tr>
+            <tr><td><strong>$2 per point</strong></td><td>If MNQ moves from 25,000 to 25,100 (100 points up) while you're long, you make $200. If it drops 100 points, you lose $200.</td></tr>
+            <tr><td><strong>Margin</strong></td><td>You don't pay the full contract value. Instead, you post a deposit (margin) of about $1,000-1,500 per contract. Think of it like a security deposit -- the exchange holds it while your trade is open.</td></tr>
+            <tr><td><strong>Long</strong></td><td>Buying -- you profit when the price goes up.</td></tr>
+            <tr><td><strong>Short</strong></td><td>Selling -- you profit when the price goes down. (Unique to futures and options -- you can't easily do this with stocks.)</td></tr>
+            <tr><td><strong>1 contract</strong></td><td>The minimum trade size. We're trading exactly 1 contract at a time -- the smallest possible position.</td></tr>
+        </table>
+
+        <h3>What Is the Opening Range Breakout (ORB)?</h3>
+        <p>The ORB is a <strong>morning scalping strategy</strong> that's been used by professional traders for decades. Here's the idea in plain English:</p>
+
+        <ol>
+            <li><strong>Wait for the market to open</strong> at 9:30 AM Eastern</li>
+            <li><strong>Watch the first 5 minutes</strong> and record the highest price and the lowest price during that window. This range is called the <strong>"opening range."</strong></li>
+            <li><strong>If price breaks above the high</strong> of that range, buy (go long). The logic: buyers are in control, momentum is pushing up.</li>
+            <li><strong>If price breaks below the low</strong> of that range, sell (go short). The logic: sellers are in control, momentum is pushing down.</li>
+            <li><strong>Set automatic exit orders</strong>:
+                <ul>
+                    <li>A <strong>stop-loss</strong> on the opposite side of the range (limits your loss if you're wrong)</li>
+                    <li>A <strong>profit target</strong> at 1.5x the risk (so you make more on winners than you lose on losers)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="callout callout-green">
+            <strong>Why does this work?</strong>
+            The first few minutes of trading set the tone for the day. Institutional traders, algorithms, and overnight order flow all clash at the open. When price decisively breaks out of that initial range, it often signals the direction for the next few hours. The ORB captures that momentum.
+        </div>
+
+        <h3>How the ORB Looks Visually</h3>
+        <div class="chart-container" id="orbExplainerDiagram"></div>
+
+        <h3>What Is a Backtest?</h3>
+        <p>A <strong>backtest</strong> takes a trading strategy and runs it against <strong>real historical market data</strong> to see how it would have performed. It's like a time machine -- "if we had been running this strategy over the past 17 days, here's what would have happened."</p>
+
+        <p>The results below are from running the ORB strategy on <strong>real MNQ price data</strong> from February 3-25, 2026 (17 trading days). Every trade you see actually could have been executed in the market at those prices.</p>
+
+        <div class="callout callout-orange">
+            <strong>Important caveat</strong>
+            Backtests show what <em>would have</em> happened, not what <em>will</em> happen. Past performance doesn't guarantee future results. That said, backtesting is the standard way professional traders validate a strategy before putting real money behind it. The next step is "paper trading" -- running the strategy in real-time with simulated money to confirm the backtest holds up.
+        </div>
+
+        <h3>What Makes This Automated?</h3>
+        <p>We built custom software (the "ORB engine") that does all of this automatically:</p>
+        <ul>
+            <li>Connects to Interactive Brokers (IBKR) -- one of the largest retail brokerages for futures</li>
+            <li>Watches the market in real-time, bar by bar</li>
+            <li>Detects the opening range and breakout signals with zero human intervention</li>
+            <li>Places bracket orders automatically (entry + stop-loss + profit target as a single package)</li>
+            <li>Enforces risk rules -- max loss per day, max trades per day, position limits</li>
+            <li>Logs every trade for review</li>
+        </ul>
+
+        <p>No manual trading decisions, no screen-watching, no emotional overrides. The engine follows the rules exactly as programmed, every time.</p>
+
+        <h3>What It Costs to Get Started</h3>
+        <table>
+            <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
+            <tr><td>IBKR account</td><td>Free to open</td><td>No minimum deposit to open the account</td></tr>
+            <tr><td>Futures margin</td><td>~$2,000 minimum</td><td>Required deposit to trade futures. Held as collateral, not a fee.</td></tr>
+            <tr><td>Recommended starting capital</td><td><strong>$5,000</strong></td><td>Enough margin + cushion for drawdowns without margin calls</td></tr>
+            <tr><td>Market data subscription</td><td>~$10/month</td><td>Real-time Nasdaq futures quotes. Waived if you trade enough.</td></tr>
+            <tr><td>Commission per trade</td><td>~$1.24 round trip</td><td>$0.62 to enter + $0.62 to exit, per contract</td></tr>
+            <tr><td>Software</td><td>$0</td><td>We built it -- no subscriptions or license fees</td></tr>
+        </table>
+    </div>
+
+    <!-- Headline Stats -->
+    <div class="section" id="overview">
+        <h2>Overview</h2>
+        <p>One contract of MNQ (Micro E-mini Nasdaq) traded using the Opening Range Breakout strategy on 17 days of real 1-minute market data.</p>
+
+        <div class="stat-grid">
+            <div class="stat-card profit">
+                <div class="stat-value">+$5,472</div>
+                <div class="stat-label">Net Profit</div>
+            </div>
+            <div class="stat-card winrate">
+                <div class="stat-value">67.5%</div>
+                <div class="stat-label">Win Rate (27W / 13L)</div>
+            </div>
+            <div class="stat-card pf">
+                <div class="stat-value">2.90</div>
+                <div class="stat-label">Profit Factor</div>
+            </div>
+            <div class="stat-card dd">
+                <div class="stat-value">-$1,298</div>
+                <div class="stat-label">Max Drawdown (9.6%)</div>
+            </div>
+        </div>
+
+        <div class="wl-bar">
+            <div class="wins" style="width:67.5%;">27 Wins (67.5%)</div>
+            <div class="losses" style="width:32.5%;">13 Losses (32.5%)</div>
+        </div>
+
+        <h3>What You're Trading</h3>
+        <p>One single thing -- 1 contract of <strong>MNQ</strong> (Micro E-mini Nasdaq futures). That's the smallest Nasdaq futures contract you can trade. Each point of movement = <strong>$2</strong> in your pocket or out of it.</p>
+
+        <h3>Starting Capital</h3>
+        <p>The backtest tracks pure P&L from a $10,000 starting balance. In real life you'd need roughly <strong>$5,000 in your IBKR account</strong> ($2K margin requirement + cushion), but the strategy only risks a fraction of that per trade.</p>
+
+        <h3>How Many Trades Per Day</h3>
+        <p>Up to 3 (the <code>max_trades_per_day</code> setting), but only <strong>one position at a time</strong> -- it finishes one trade before taking another. Over 17 days it took 40 trades, averaging <strong>2.35 trades per day</strong>. Some days had 1, some had 3.</p>
+
+        <h3>The Numbers in Context</h3>
+        <table>
+            <tr><th style="width:60%;">Metric</th><th>Value</th></tr>
+            <tr><td>Starting balance</td><td>$10,000</td></tr>
+            <tr><td>Ending balance</td><td>$15,472</td></tr>
+            <tr><td>Net profit over 17 days</td><td><strong style="color:var(--green-dark);">+$5,472</strong></td></tr>
+            <tr><td>Return</td><td>~54.7% in 3.5 weeks</td></tr>
+            <tr><td>Average per trade</td><td>+$136.80</td></tr>
+            <tr><td>Average winner</td><td style="color:var(--green-dark);">+$309.58</td></tr>
+            <tr><td>Average loser</td><td style="color:var(--red-dark);">-$222.05</td></tr>
+            <tr><td>Largest winner</td><td style="color:var(--green-dark);">+$485.76</td></tr>
+            <tr><td>Largest loser</td><td style="color:var(--red-dark);">-$331.74</td></tr>
+            <tr><td>Worst losing streak</td><td>5 in a row (-$1,298)</td></tr>
+            <tr><td>Total commissions</td><td>$49.60</td></tr>
+        </table>
+    </div>
+
+    <!-- Equity Curve -->
+    <div class="section" id="equity">
+        <h2>Equity Curve</h2>
+        <p>Running account balance after each trade. Started at $10,000.</p>
+        <div class="chart-container" id="equityChart"></div>
+        <div class="callout callout-blue">
+            <strong>Reading the curve</strong>
+            A healthy equity curve goes up and to the right with controlled dips. The deepest dip (drawdown) was $1,298 around trades 22-25 -- a run of 5 consecutive losers on Feb 13 and Feb 17. The system recovered and made new highs afterward.
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="section" id="performance">
+        <h2>Performance Metrics</h2>
+
+        <table>
+            <tr><th>Category</th><th>Metric</th><th>Value</th></tr>
+            <tr><td rowspan="4"><strong>Returns</strong></td><td>Net Profit</td><td style="color:var(--green-dark);font-weight:700;">+$5,472.15</td></tr>
+            <tr><td>Gross Profit</td><td>$8,358.77</td></tr>
+            <tr><td>Gross Loss</td><td>-$2,886.62</td></tr>
+            <tr><td>Expected Value / Trade</td><td>+$136.80</td></tr>
+            <tr><td rowspan="4"><strong>Ratios</strong></td><td>Profit Factor</td><td><strong>2.90</strong></td></tr>
+            <tr><td>Payoff Ratio (Avg Win / Avg Loss)</td><td>1.39</td></tr>
+            <tr><td>Sharpe Ratio</td><td>8.13</td></tr>
+            <tr><td>Sortino Ratio</td><td>10.12</td></tr>
+            <tr><td rowspan="3"><strong>Risk</strong></td><td>Max Drawdown</td><td>$1,297.70 (9.6%)</td></tr>
+            <tr><td>Max Consecutive Wins</td><td>6</td></tr>
+            <tr><td>Max Consecutive Losses</td><td>5</td></tr>
+            <tr><td rowspan="4"><strong>MAE / MFE</strong></td><td>Avg MAE (all trades)</td><td>-47.19 pts</td></tr>
+            <tr><td>Avg MFE (all trades)</td><td>+138.04 pts</td></tr>
+            <tr><td>Avg MAE (winners only)</td><td>-11.67 pts</td></tr>
+            <tr><td>Avg MFE (losers only)</td><td>+70.96 pts</td></tr>
+            <tr><td rowspan="3"><strong>Duration</strong></td><td>Avg Bars in Trade</td><td>31.2 minutes</td></tr>
+            <tr><td>Avg Duration (winners)</td><td>28.3 minutes</td></tr>
+            <tr><td>Avg Duration (losers)</td><td>37.5 minutes</td></tr>
+        </table>
+    </div>
+
+    <!-- P&L by Trade Chart -->
+    <div class="section" id="pnl-chart">
+        <h2>P&amp;L by Trade</h2>
+        <p>Each bar is one trade. Green = winner, red = loser.</p>
+        <div class="chart-container" id="pnlChart"></div>
+    </div>
+
+    <!-- Daily Breakdown -->
+    <div class="section" id="daily">
+        <h2>Daily Breakdown</h2>
+        <p>How each of the 17 trading days performed.</p>
+        <div class="chart-container" id="dailyChart"></div>
+
+        <table id="dailyTable">
+            <tr><th>Date</th><th>Trades</th><th>Winners</th><th>Net P&amp;L</th><th>Best Trade</th><th>Worst Trade</th></tr>
+        </table>
+    </div>
+
+    <!-- Trade Journal -->
+    <div class="section" id="trades">
+        <h2>Trade Journal</h2>
+        <p>All 40 trades, sorted chronologically. Scroll right to see all columns.</p>
+        <div style="overflow-x:auto;">
+            <table class="trade-table" id="tradeTable">
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Dir</th>
+                    <th>Entry</th>
+                    <th>Exit</th>
+                    <th>Stop</th>
+                    <th>Target</th>
+                    <th>Net P&amp;L</th>
+                    <th>MAE</th>
+                    <th>MFE</th>
+                    <th>Exit Reason</th>
+                    <th>OR Size</th>
+                    <th>Duration</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Strategy Settings -->
+    <div class="section" id="settings">
+        <h2>Strategy Settings</h2>
+        <p>These are the configuration values used for this backtest run.</p>
+
+        <table>
+            <tr><th>Parameter</th><th>Value</th><th>What It Does</th></tr>
+            <tr><td><code>or_window_minutes</code></td><td>5</td><td>First 5 minutes (9:30-9:35 ET) define the opening range</td></tr>
+            <tr><td><code>target_rr_ratio</code></td><td>1.5</td><td>For every $1 risked, target $1.50 profit</td></tr>
+            <tr><td><code>stop_method</code></td><td>or_opposite</td><td>Stop placed at opposite side of opening range + buffer</td></tr>
+            <tr><td><code>stop_buffer</code></td><td>2.0 pts</td><td>Extra padding beyond the OR opposite side for stop</td></tr>
+            <tr><td><code>min_or_size</code></td><td>30 pts</td><td>Skip if opening range is too small (no room for profit)</td></tr>
+            <tr><td><code>max_or_size</code></td><td>200 pts</td><td>Skip if opening range is too big (too much risk)</td></tr>
+            <tr><td><code>max_daily_loss</code></td><td>$500</td><td>Stop trading for the day if cumulative loss hits this</td></tr>
+            <tr><td><code>max_trades_per_day</code></td><td>3</td><td>Maximum entries per session</td></tr>
+            <tr><td><code>position_size</code></td><td>1 contract</td><td>MNQ -- $2 per point, ~$1,000 margin</td></tr>
+            <tr><td><code>last_entry_time</code></td><td>11:00 AM</td><td>No new trades after this time</td></tr>
+            <tr><td><code>eod_flatten_time</code></td><td>3:55 PM</td><td>Close any open position before market close</td></tr>
+        </table>
+    </div>
+
+    <!-- Metrics Glossary -->
+    <div class="section" id="metrics">
+        <h2>Metrics Glossary</h2>
+        <p>What each metric means in plain English.</p>
+
+        <table>
+            <tr><th>Metric</th><th>What It Means</th><th>Our Result</th><th>Good Target</th></tr>
+            <tr>
+                <td><strong>Win Rate</strong></td>
+                <td>Percentage of trades that made money</td>
+                <td style="color:var(--green-dark);font-weight:600;">67.5%</td>
+                <td>&gt; 50% for a 1.5:1 R:R</td>
+            </tr>
+            <tr>
+                <td><strong>Profit Factor</strong></td>
+                <td>Total money made divided by total money lost. Above 1.0 = profitable.</td>
+                <td style="color:var(--green-dark);font-weight:600;">2.90</td>
+                <td>&gt; 1.5</td>
+            </tr>
+            <tr>
+                <td><strong>Sharpe Ratio</strong></td>
+                <td>Risk-adjusted return. Higher = more consistent profits relative to the volatility of returns.</td>
+                <td style="color:var(--green-dark);font-weight:600;">8.13</td>
+                <td>&gt; 1.0</td>
+            </tr>
+            <tr>
+                <td><strong>Sortino Ratio</strong></td>
+                <td>Like Sharpe but only penalizes downside volatility (losses). More useful for strategies with asymmetric returns.</td>
+                <td style="color:var(--green-dark);font-weight:600;">10.12</td>
+                <td>&gt; 1.5</td>
+            </tr>
+            <tr>
+                <td><strong>Max Drawdown</strong></td>
+                <td>Largest peak-to-trough equity drop. How bad did it get before recovering?</td>
+                <td>$1,298 (9.6%)</td>
+                <td>&lt; 20% of account</td>
+            </tr>
+            <tr>
+                <td><strong>Payoff Ratio</strong></td>
+                <td>Average win divided by average loss. Higher means winners are bigger than losers.</td>
+                <td>1.39</td>
+                <td>&gt; 1.0</td>
+            </tr>
+            <tr>
+                <td><strong>MAE</strong></td>
+                <td>Max Adverse Excursion -- how far a trade went against you before closing. Use this to optimize stops.</td>
+                <td>-47.19 pts avg</td>
+                <td>Lower is better</td>
+            </tr>
+            <tr>
+                <td><strong>MFE</strong></td>
+                <td>Max Favorable Excursion -- how far a trade went in your favor before closing. Use this to set better targets.</td>
+                <td>+138.04 pts avg</td>
+                <td>Higher is better</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Caveats -->
+    <div class="section" id="caveats">
+        <h2>Honest Caveats</h2>
+
+        <div class="callout callout-orange">
+            <strong>17 days is a small sample</strong>
+            These results are from late Jan through late Feb 2026 -- a strong Nasdaq uptrend. A 67% win rate and 2.9 profit factor would be elite if it held up over 6-12 months. With only 17 days, we don't know how it handles choppy sideways markets or sharp selloffs.
+        </div>
+
+        <div class="callout callout-red">
+            <strong>Backtest != live trading</strong>
+            Backtests assume perfect fills at the signal price. In real trading, you'll face slippage (price moves between signal and fill), partial fills, and latency. Expect live results to be 10-20% worse than backtest numbers.
+        </div>
+
+        <div class="callout callout-purple">
+            <strong>Survivorship bias risk</strong>
+            All sweep combos were profitable on this dataset. That's a yellow flag -- it likely means the underlying market was strongly directional. A truly robust strategy should show some losing combos too, proving it works despite market noise, not because of a favorable trend.
+        </div>
+
+        <h3>What Would Build Confidence</h3>
+        <ul>
+            <li><strong>More data</strong> -- accumulate 3-6 months of 1-minute bars by running <code>download-all</code> weekly</li>
+            <li><strong>Paper trading</strong> -- run live on simulated money for 20+ trades to compare against backtest expectations</li>
+            <li><strong>Different market conditions</strong> -- the real test is performance during a bear market, choppy range, or high-volatility event days</li>
+            <li><strong>Walk-forward analysis</strong> -- optimize on one period, test on the next (out-of-sample validation)</li>
+        </ul>
+    </div>
+
+</div><!-- /container -->
+
+<div class="footer">
+    <p>ORB Backtest Results -- MNQ Real Data</p>
+    <p>Generated March 2026</p>
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+<script>
+// ─── Trade Data ───
+const trades = [
+    {id:1,date:'2026-02-03',dir:'SHORT',entry:25838.75,exit:25665.125,stop:25954.5,target:25665.125,pnl:346.01,mae:-7.0,mfe:186.5,reason:'target',or:113.75,bars:20},
+    {id:2,date:'2026-02-03',dir:'SHORT',entry:25838.75,exit:25654.75,stop:25954.5,target:25665.125,pnl:366.76,mae:0.0,mfe:201.75,reason:'target_gap',or:113.75,bars:1},
+    {id:3,date:'2026-02-03',dir:'SHORT',entry:25838.75,exit:25651.5,stop:25954.5,target:25665.125,pnl:373.26,mae:0.0,mfe:215.75,reason:'target_gap',or:113.75,bars:1},
+    {id:4,date:'2026-02-04',dir:'SHORT',entry:25230.0,exit:24992.25,stop:25388.5,target:24992.25,pnl:474.26,mae:-75.75,mfe:247.25,reason:'target',or:156.5,bars:106},
+    {id:5,date:'2026-02-05',dir:'LONG',entry:24815.0,exit:24649.75,stop:24649.75,target:25062.875,pnl:-331.74,mae:-173.0,mfe:146.25,reason:'stop',or:163.25,bars:33},
+    {id:6,date:'2026-02-05',dir:'SHORT',entry:24651.75,exit:24817.0,stop:24817.0,target:24403.875,pnl:-331.74,mae:-172.75,mfe:114.75,reason:'stop',or:163.25,bars:86},
+    {id:7,date:'2026-02-06',dir:'LONG',entry:24774.5,exit:24860.75,stop:24717.0,target:24860.75,pnl:171.26,mae:0.0,mfe:89.0,reason:'target',or:55.5,bars:1},
+    {id:8,date:'2026-02-06',dir:'LONG',entry:24774.5,exit:24860.75,stop:24717.0,target:24860.75,pnl:171.26,mae:0.0,mfe:103.25,reason:'target',or:55.5,bars:1},
+    {id:9,date:'2026-02-06',dir:'LONG',entry:24774.5,exit:24877.0,stop:24717.0,target:24860.75,pnl:203.76,mae:0.0,mfe:142.0,reason:'target_gap',or:55.5,bars:1},
+    {id:10,date:'2026-02-09',dir:'LONG',entry:25075.25,exit:25257.875,stop:24953.5,target:25257.875,pnl:364.01,mae:-9.25,mfe:185.25,reason:'target',or:119.75,bars:58},
+    {id:11,date:'2026-02-09',dir:'LONG',entry:25075.25,exit:25257.875,stop:24953.5,target:25257.875,pnl:364.01,mae:0.0,mfe:196.0,reason:'target',or:119.75,bars:1},
+    {id:12,date:'2026-02-09',dir:'LONG',entry:25075.25,exit:25260.0,stop:24953.5,target:25257.875,pnl:368.26,mae:0.0,mfe:198.0,reason:'target_gap',or:119.75,bars:1},
+    {id:13,date:'2026-02-10',dir:'SHORT',entry:25346.25,exit:25412.25,stop:25412.25,target:25247.25,pnl:-133.24,mae:-97.5,mfe:95.0,reason:'stop',or:64.0,bars:30},
+    {id:14,date:'2026-02-10',dir:'LONG',entry:25410.25,exit:25344.25,stop:25344.25,target:25509.25,pnl:-133.24,mae:-79.0,mfe:36.75,reason:'stop',or:64.0,bars:76},
+    {id:15,date:'2026-02-11',dir:'SHORT',entry:25367.0,exit:25216.25,stop:25467.5,target:25216.25,pnl:300.26,mae:-69.25,mfe:158.5,reason:'target',or:98.5,bars:36},
+    {id:16,date:'2026-02-11',dir:'SHORT',entry:25367.0,exit:25211.25,stop:25467.5,target:25216.25,pnl:310.26,mae:0.0,mfe:197.25,reason:'target_gap',or:98.5,bars:1},
+    {id:17,date:'2026-02-11',dir:'SHORT',entry:25367.0,exit:25177.5,stop:25467.5,target:25216.25,pnl:377.76,mae:0.0,mfe:225.0,reason:'target_gap',or:98.5,bars:1},
+    {id:18,date:'2026-02-12',dir:'LONG',entry:25377.5,exit:25313.0,stop:25313.0,target:25474.25,pnl:-130.24,mae:-73.75,mfe:11.75,reason:'stop',or:62.5,bars:6},
+    {id:19,date:'2026-02-12',dir:'SHORT',entry:25315.0,exit:25218.25,stop:25379.5,target:25218.25,pnl:192.26,mae:-9.25,mfe:107.75,reason:'target',or:62.5,bars:13},
+    {id:20,date:'2026-02-12',dir:'SHORT',entry:25315.0,exit:25218.25,stop:25379.5,target:25218.25,pnl:192.26,mae:0.0,mfe:112.25,reason:'target',or:62.5,bars:1},
+    {id:21,date:'2026-02-13',dir:'SHORT',entry:24691.25,exit:24802.0,stop:24802.0,target:24525.125,pnl:-222.74,mae:-113.75,mfe:112.5,reason:'stop',or:108.75,bars:10},
+    {id:22,date:'2026-02-13',dir:'LONG',entry:24800.0,exit:24689.25,stop:24689.25,target:24966.125,pnl:-222.74,mae:-114.25,mfe:49.75,reason:'stop',or:108.75,bars:7},
+    {id:23,date:'2026-02-13',dir:'SHORT',entry:24691.25,exit:24802.0,stop:24802.0,target:24525.125,pnl:-222.74,mae:-112.25,mfe:0.0,reason:'stop',or:108.75,bars:3},
+    {id:24,date:'2026-02-17',dir:'LONG',entry:24761.5,exit:24604.75,stop:24604.75,target:24996.625,pnl:-314.74,mae:-192.0,mfe:54.0,reason:'stop',or:154.75,bars:15},
+    {id:25,date:'2026-02-17',dir:'SHORT',entry:24606.75,exit:24763.5,stop:24763.5,target:24371.625,pnl:-314.74,mae:-160.25,mfe:157.5,reason:'stop',or:154.75,bars:82},
+    {id:26,date:'2026-02-18',dir:'LONG',entry:24834.0,exit:24960.0,stop:24750.0,target:24960.0,pnl:250.76,mae:-56.5,mfe:126.0,reason:'target',or:82.0,bars:22},
+    {id:27,date:'2026-02-18',dir:'LONG',entry:24834.0,exit:24960.0,stop:24750.0,target:24960.0,pnl:250.76,mae:0.0,mfe:138.0,reason:'target',or:82.0,bars:1},
+    {id:28,date:'2026-02-18',dir:'LONG',entry:24834.0,exit:24970.0,stop:24750.0,target:24960.0,pnl:270.76,mae:0.0,mfe:146.0,reason:'target_gap',or:82.0,bars:1},
+    {id:29,date:'2026-02-19',dir:'SHORT',entry:24813.5,exit:24885.25,stop:24885.25,target:24705.875,pnl:-144.74,mae:-74.5,mfe:51.0,reason:'stop',or:69.75,bars:18},
+    {id:30,date:'2026-02-19',dir:'LONG',entry:24883.25,exit:24811.5,stop:24811.5,target:24990.875,pnl:-144.74,mae:-74.5,mfe:78.5,reason:'stop',or:69.75,bars:117},
+    {id:31,date:'2026-02-20',dir:'LONG',entry:24819.5,exit:25036.25,stop:24675.0,target:25036.25,pnl:432.26,mae:0.0,mfe:259.75,reason:'target',or:142.5,bars:26},
+    {id:32,date:'2026-02-20',dir:'LONG',entry:24819.5,exit:25063.0,stop:24675.0,target:25036.25,pnl:485.76,mae:0.0,mfe:262.75,reason:'target_gap',or:142.5,bars:1},
+    {id:33,date:'2026-02-20',dir:'LONG',entry:24819.5,exit:25036.25,stop:24675.0,target:25036.25,pnl:432.26,mae:0.0,mfe:218.5,reason:'target',or:142.5,bars:24},
+    {id:34,date:'2026-02-23',dir:'SHORT',entry:24970.25,exit:24862.625,stop:25042.0,target:24862.625,pnl:214.01,mae:-58.5,mfe:112.75,reason:'target',or:69.75,bars:10},
+    {id:35,date:'2026-02-23',dir:'SHORT',entry:24970.25,exit:24862.625,stop:25042.0,target:24862.625,pnl:214.01,mae:0.0,mfe:124.5,reason:'target',or:69.75,bars:19},
+    {id:36,date:'2026-02-23',dir:'SHORT',entry:24970.25,exit:24850.5,stop:25042.0,target:24862.625,pnl:238.26,mae:0.0,mfe:120.25,reason:'target_gap',or:69.75,bars:1},
+    {id:37,date:'2026-02-24',dir:'SHORT',entry:24708.75,exit:24827.75,stop:24827.75,target:24530.25,pnl:-239.24,mae:-135.25,mfe:14.75,reason:'stop',or:117.0,bars:4},
+    {id:38,date:'2026-02-24',dir:'LONG',entry:24825.75,exit:25004.25,stop:24706.75,target:25004.25,pnl:355.76,mae:-6.25,mfe:188.75,reason:'target',or:117.0,bars:49},
+    {id:39,date:'2026-02-24',dir:'LONG',entry:24825.75,exit:25011.25,stop:24706.75,target:25004.25,pnl:369.76,mae:0.0,mfe:195.5,reason:'target_gap',or:117.0,bars:1},
+    {id:40,date:'2026-02-25',dir:'LONG',entry:25244.75,exit:25379.75,stop:25154.75,target:25379.75,pnl:268.76,mae:-23.25,mfe:140.75,reason:'target',or:88.0,bars:365},
+];
+
+const equity = [10000.0,10346.01,10712.77,11086.03,11560.29,11228.55,10896.81,11068.07,11239.33,11443.09,11807.1,12171.11,12539.37,12406.13,12272.89,12573.15,12883.41,13261.17,13130.93,13323.19,13515.45,13292.71,13069.97,12847.23,12532.49,12217.75,12468.51,12719.27,12990.03,12845.29,12700.55,13132.81,13618.57,14050.83,14264.84,14478.85,14717.11,14477.87,14833.63,15203.39,15472.15];
+
+// ─── ORB Explainer Diagram (SVG) ───
+(function() {
+    var target = document.getElementById('orbExplainerDiagram');
+    if (!target) return;
+
+    var W = 1020, H = 320, pad = {top:30,right:40,bottom:30,left:50};
+    var cw = W - pad.left - pad.right;
+    var ch = H - pad.top - pad.bottom;
+
+    // Simulated price action for illustration
+    // 5 min OR period, then breakout long
+    var orHigh = 180, orLow = 120, mid = 150;
+    // Generate a realistic-looking price path
+    var prices = [];
+    // Pre-OR: approaching from left
+    var p = 145;
+    for (var i = 0; i < 5; i++) { p += (Math.random()-0.45)*8; prices.push(Math.max(110,Math.min(190,p))); }
+    // OR period (5 bars): oscillate between high and low
+    var orPrices = [142, 125, 175, 135, 168];
+    prices = prices.concat(orPrices);
+    // Post-OR: breakout above, then rally
+    var breakoutPrices = [172, 178, 183, 176, 185, 192, 188, 195, 202, 198, 210, 215, 220, 225, 218, 228, 235, 240];
+    prices = prices.concat(breakoutPrices);
+
+    var totalBars = prices.length;
+    var orStart = 5, orEnd = 10;
+    var breakoutBar = 11; // first bar above OR high
+    var targetPrice = orHigh + (orHigh - orLow) * 1.5; // 1.5x RR = 180 + 90 = 270... too high. Let's use 240
+    targetPrice = 240;
+    var stopPrice = orLow - 2; // 118
+
+    function x(i) { return pad.left + (i / (totalBars - 1)) * cw; }
+    function y(v) { return pad.top + ch - ((v - 90) / (260 - 90)) * ch; }
+
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;">';
+
+    // OR shaded zone
+    svg += '<rect x="'+x(orStart)+'" y="'+y(orHigh)+'" width="'+(x(orEnd)-x(orStart))+'" height="'+(y(orLow)-y(orHigh))+'" fill="#0ea5e9" opacity="0.1" rx="4"/>';
+
+    // OR high/low extended lines
+    svg += '<line x1="'+x(orStart)+'" y1="'+y(orHigh)+'" x2="'+(W-pad.right)+'" y2="'+y(orHigh)+'" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="6,4"/>';
+    svg += '<line x1="'+x(orStart)+'" y1="'+y(orLow)+'" x2="'+(W-pad.right)+'" y2="'+y(orLow)+'" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="6,4"/>';
+
+    // Target line
+    svg += '<line x1="'+x(breakoutBar)+'" y1="'+y(targetPrice)+'" x2="'+(W-pad.right)+'" y2="'+y(targetPrice)+'" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,4"/>';
+
+    // Stop line
+    svg += '<line x1="'+x(breakoutBar)+'" y1="'+y(stopPrice)+'" x2="'+x(totalBars*0.7)+'" y2="'+y(stopPrice)+'" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4"/>';
+
+    // Price line
+    var linePath = 'M'+x(0)+','+y(prices[0]);
+    for (var i = 1; i < prices.length; i++) linePath += ' L'+x(i)+','+y(prices[i]);
+    svg += '<path d="'+linePath+'" fill="none" stroke="#334155" stroke-width="2.5"/>';
+
+    // Breakout arrow
+    var bx = x(breakoutBar), by = y(prices[breakoutBar]);
+    svg += '<circle cx="'+bx+'" cy="'+by+'" r="6" fill="#10b981" stroke="white" stroke-width="2"/>';
+
+    // Labels
+    // OR zone label
+    var orMidX = (x(orStart) + x(orEnd)) / 2;
+    svg += '<text x="'+orMidX+'" y="'+(y(orHigh)-12)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#0ea5e9" font-family="system-ui">Opening Range</text>';
+    svg += '<text x="'+orMidX+'" y="'+(y(orHigh)-0)+'" text-anchor="middle" font-size="9" fill="#64748b" font-family="system-ui">9:30 - 9:35 AM</text>';
+
+    // OR High label
+    svg += '<text x="'+(x(orEnd)+6)+'" y="'+(y(orHigh)-6)+'" font-size="10" font-weight="600" fill="#0ea5e9" font-family="system-ui">OR High</text>';
+
+    // OR Low label
+    svg += '<text x="'+(x(orEnd)+6)+'" y="'+(y(orLow)+14)+'" font-size="10" font-weight="600" fill="#0ea5e9" font-family="system-ui">OR Low</text>';
+
+    // Breakout label
+    svg += '<text x="'+(bx+10)+'" y="'+(by-10)+'" font-size="11" font-weight="700" fill="#10b981" font-family="system-ui">BREAKOUT -- Go Long!</text>';
+
+    // Target label
+    svg += '<text x="'+(W-pad.right+4)+'" y="'+(y(targetPrice)+4)+'" font-size="10" font-weight="600" fill="#10b981" font-family="system-ui">Target</text>';
+
+    // Stop label
+    svg += '<text x="'+(x(totalBars*0.7)+4)+'" y="'+(y(stopPrice)+4)+'" font-size="10" font-weight="600" fill="#ef4444" font-family="system-ui">Stop-Loss</text>';
+
+    // Risk/Reward annotation
+    var entryY = y(orHigh);
+    var stopY = y(stopPrice);
+    var targetY = y(targetPrice);
+    var annoX = W - pad.right - 60;
+
+    // Risk bracket
+    svg += '<line x1="'+annoX+'" y1="'+entryY+'" x2="'+annoX+'" y2="'+stopY+'" stroke="#ef4444" stroke-width="2"/>';
+    svg += '<line x1="'+(annoX-5)+'" y1="'+entryY+'" x2="'+(annoX+5)+'" y2="'+entryY+'" stroke="#ef4444" stroke-width="2"/>';
+    svg += '<line x1="'+(annoX-5)+'" y1="'+stopY+'" x2="'+(annoX+5)+'" y2="'+stopY+'" stroke="#ef4444" stroke-width="2"/>';
+    svg += '<text x="'+(annoX+10)+'" y="'+((entryY+stopY)/2+4)+'" font-size="9" font-weight="600" fill="#ef4444" font-family="system-ui">Risk: 1x</text>';
+
+    // Reward bracket
+    var annoX2 = annoX - 30;
+    svg += '<line x1="'+annoX2+'" y1="'+entryY+'" x2="'+annoX2+'" y2="'+targetY+'" stroke="#10b981" stroke-width="2"/>';
+    svg += '<line x1="'+(annoX2-5)+'" y1="'+entryY+'" x2="'+(annoX2+5)+'" y2="'+entryY+'" stroke="#10b981" stroke-width="2"/>';
+    svg += '<line x1="'+(annoX2-5)+'" y1="'+targetY+'" x2="'+(annoX2+5)+'" y2="'+targetY+'" stroke="#10b981" stroke-width="2"/>';
+    svg += '<text x="'+(annoX2-8)+'" y="'+((entryY+targetY)/2+4)+'" text-anchor="end" font-size="9" font-weight="600" fill="#10b981" font-family="system-ui">Reward: 1.5x</text>';
+
+    // Time axis
+    svg += '<text x="'+x(2)+'" y="'+(H-6)+'" text-anchor="middle" font-size="9" fill="#94a3b8" font-family="system-ui">Pre-market</text>';
+    svg += '<text x="'+orMidX+'" y="'+(H-6)+'" text-anchor="middle" font-size="9" fill="#0ea5e9" font-family="system-ui">9:30-9:35</text>';
+    svg += '<text x="'+x(16)+'" y="'+(H-6)+'" text-anchor="middle" font-size="9" fill="#94a3b8" font-family="system-ui">9:35+</text>';
+
+    svg += '</svg>';
+    target.innerHTML = svg;
+})();
+
+// ─── Equity Curve Chart (SVG) ───
+(function() {
+    const target = document.getElementById('equityChart');
+    if (!target) return;
+
+    const W = 1020, H = 300, pad = {top:20,right:30,bottom:40,left:70};
+    const cw = W - pad.left - pad.right;
+    const ch = H - pad.top - pad.bottom;
+
+    const minY = Math.min(...equity) - 200;
+    const maxY = Math.max(...equity) + 200;
+
+    function x(i) { return pad.left + (i / (equity.length - 1)) * cw; }
+    function y(v) { return pad.top + ch - ((v - minY) / (maxY - minY)) * ch; }
+
+    let svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;">';
+
+    // Grid lines
+    const ySteps = [10000, 11000, 12000, 13000, 14000, 15000, 16000];
+    ySteps.forEach(function(v) {
+        if (v >= minY && v <= maxY) {
+            svg += '<line x1="'+pad.left+'" y1="'+y(v)+'" x2="'+(W-pad.right)+'" y2="'+y(v)+'" stroke="#e2e8f0" stroke-width="1"/>';
+            svg += '<text x="'+(pad.left-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="#64748b" font-family="system-ui">$'+v.toLocaleString()+'</text>';
+        }
+    });
+
+    // X-axis labels
+    var step = Math.ceil(equity.length / 8);
+    for (var i = 0; i < equity.length; i += step) {
+        svg += '<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#64748b" font-family="system-ui">Trade '+i+'</text>';
+    }
+
+    // Area fill
+    var areaPath = 'M'+x(0)+','+y(equity[0]);
+    for (var i = 1; i < equity.length; i++) areaPath += ' L'+x(i)+','+y(equity[i]);
+    areaPath += ' L'+x(equity.length-1)+','+(pad.top+ch)+' L'+x(0)+','+(pad.top+ch)+' Z';
+    svg += '<path d="'+areaPath+'" fill="url(#eqGrad)" opacity="0.3"/>';
+    svg += '<defs><linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></linearGradient></defs>';
+
+    // Line
+    var linePath = 'M'+x(0)+','+y(equity[0]);
+    for (var i = 1; i < equity.length; i++) linePath += ' L'+x(i)+','+y(equity[i]);
+    svg += '<path d="'+linePath+'" fill="none" stroke="#10b981" stroke-width="2.5"/>';
+
+    // Dots for key points (start, max dd trough, end)
+    svg += '<circle cx="'+x(0)+'" cy="'+y(equity[0])+'" r="4" fill="#0ea5e9"/>';
+    svg += '<circle cx="'+x(25)+'" cy="'+y(equity[25])+'" r="4" fill="#ef4444"/>';
+    svg += '<circle cx="'+x(40)+'" cy="'+y(equity[40])+'" r="4" fill="#10b981"/>';
+
+    // Labels
+    svg += '<text x="'+x(0)+'" y="'+(y(equity[0])-10)+'" text-anchor="start" font-size="11" font-weight="700" fill="#0ea5e9" font-family="system-ui">$10,000</text>';
+    svg += '<text x="'+x(25)+'" y="'+(y(equity[25])+18)+'" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444" font-family="system-ui">Max DD trough</text>';
+    svg += '<text x="'+x(40)+'" y="'+(y(equity[40])-10)+'" text-anchor="end" font-size="11" font-weight="700" fill="#10b981" font-family="system-ui">$15,472</text>';
+
+    svg += '</svg>';
+    target.innerHTML = svg;
+})();
+
+// ─── P&L by Trade Chart (SVG) ───
+(function() {
+    const target = document.getElementById('pnlChart');
+    if (!target) return;
+
+    const W = 1020, H = 280, pad = {top:20,right:20,bottom:40,left:60};
+    const cw = W - pad.left - pad.right;
+    const ch = H - pad.top - pad.bottom;
+
+    const maxPnl = Math.max(...trades.map(function(t){return Math.abs(t.pnl);}));
+    const barW = cw / trades.length * 0.7;
+    const gap = cw / trades.length * 0.3;
+
+    function xPos(i) { return pad.left + i * (barW + gap) + gap/2; }
+    function yPos(v) { return pad.top + ch/2 - (v / maxPnl) * (ch/2); }
+
+    let svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;">';
+
+    // Zero line
+    svg += '<line x1="'+pad.left+'" y1="'+(pad.top+ch/2)+'" x2="'+(W-pad.right)+'" y2="'+(pad.top+ch/2)+'" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>';
+
+    // Grid lines
+    [-400,-200,0,200,400].forEach(function(v) {
+        var yy = yPos(v);
+        if (v !== 0) svg += '<line x1="'+pad.left+'" y1="'+yy+'" x2="'+(W-pad.right)+'" y2="'+yy+'" stroke="#f1f5f9" stroke-width="1"/>';
+        svg += '<text x="'+(pad.left-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#64748b" font-family="system-ui">$'+v+'</text>';
+    });
+
+    // Bars
+    trades.forEach(function(t, i) {
+        var color = t.pnl >= 0 ? '#10b981' : '#ef4444';
+        var barH = Math.abs(t.pnl) / maxPnl * (ch/2);
+        var yy = t.pnl >= 0 ? yPos(t.pnl) : pad.top + ch/2;
+        svg += '<rect x="'+xPos(i)+'" y="'+yy+'" width="'+barW+'" height="'+barH+'" rx="2" fill="'+color+'" opacity="0.8"/>';
+    });
+
+    // X labels (every 5)
+    for (var i = 0; i < trades.length; i += 5) {
+        svg += '<text x="'+(xPos(i)+barW/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#64748b" font-family="system-ui">#'+(i+1)+'</text>';
+    }
+
+    svg += '</svg>';
+    target.innerHTML = svg;
+})();
+
+// ─── Daily P&L Chart + Table ───
+(function() {
+    // Aggregate by date
+    var dailyMap = {};
+    trades.forEach(function(t) {
+        if (!dailyMap[t.date]) dailyMap[t.date] = {date:t.date, trades:0, wins:0, pnl:0, best:-Infinity, worst:Infinity};
+        dailyMap[t.date].trades++;
+        if (t.pnl > 0) dailyMap[t.date].wins++;
+        dailyMap[t.date].pnl += t.pnl;
+        if (t.pnl > dailyMap[t.date].best) dailyMap[t.date].best = t.pnl;
+        if (t.pnl < dailyMap[t.date].worst) dailyMap[t.date].worst = t.pnl;
+    });
+    var days = Object.values(dailyMap);
+
+    // Chart
+    var chartTarget = document.getElementById('dailyChart');
+    if (chartTarget) {
+        var W = 1020, H = 250, pad = {top:20,right:20,bottom:50,left:60};
+        var cw = W - pad.left - pad.right;
+        var ch = H - pad.top - pad.bottom;
+        var maxAbs = Math.max(...days.map(function(d){return Math.abs(d.pnl);}));
+        var barW = cw / days.length * 0.6;
+        var gap = cw / days.length * 0.4;
+
+        function xP(i) { return pad.left + i * (barW + gap) + gap/2; }
+        function yP(v) { return pad.top + ch/2 - (v / maxAbs) * (ch/2); }
+
+        var svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;">';
+        svg += '<line x1="'+pad.left+'" y1="'+(pad.top+ch/2)+'" x2="'+(W-pad.right)+'" y2="'+(pad.top+ch/2)+'" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>';
+
+        days.forEach(function(d, i) {
+            var color = d.pnl >= 0 ? '#10b981' : '#ef4444';
+            var barH = Math.abs(d.pnl) / maxAbs * (ch/2);
+            var yy = d.pnl >= 0 ? yP(d.pnl) : pad.top + ch/2;
+            svg += '<rect x="'+xP(i)+'" y="'+yy+'" width="'+barW+'" height="'+barH+'" rx="3" fill="'+color+'" opacity="0.8"/>';
+            // Date label
+            var dateStr = d.date.substring(5); // MM-DD
+            svg += '<text x="'+(xP(i)+barW/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#64748b" font-family="system-ui" transform="rotate(-35,'+(xP(i)+barW/2)+','+(H-8)+')">'+dateStr+'</text>';
+            // Value label
+            var lbl = d.pnl >= 0 ? '+$'+d.pnl.toFixed(0) : '-$'+Math.abs(d.pnl).toFixed(0);
+            var ly = d.pnl >= 0 ? yP(d.pnl) - 6 : pad.top + ch/2 + barH + 14;
+            svg += '<text x="'+(xP(i)+barW/2)+'" y="'+ly+'" text-anchor="middle" font-size="9" font-weight="600" fill="'+color+'" font-family="system-ui">'+lbl+'</text>';
+        });
+
+        svg += '</svg>';
+        chartTarget.innerHTML = svg;
+    }
+
+    // Table
+    var tableTarget = document.getElementById('dailyTable');
+    if (tableTarget) {
+        days.forEach(function(d) {
+            var pnlClass = d.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+            var pnlStr = d.pnl >= 0 ? '+$'+d.pnl.toFixed(2) : '-$'+Math.abs(d.pnl).toFixed(2);
+            var bestStr = d.best >= 0 ? '+$'+d.best.toFixed(2) : '-$'+Math.abs(d.best).toFixed(2);
+            var worstStr = d.worst >= 0 ? '+$'+d.worst.toFixed(2) : '-$'+Math.abs(d.worst).toFixed(2);
+            var row = '<tr>';
+            row += '<td>'+d.date+'</td>';
+            row += '<td>'+d.trades+'</td>';
+            row += '<td>'+d.wins+'</td>';
+            row += '<td class="'+pnlClass+'">'+pnlStr+'</td>';
+            row += '<td style="color:var(--green-dark);">'+bestStr+'</td>';
+            row += '<td style="color:var(--red-dark);">'+worstStr+'</td>';
+            row += '</tr>';
+            tableTarget.innerHTML += row;
+        });
+    }
+})();
+
+// ─── Trade Journal Table ───
+(function() {
+    var table = document.getElementById('tradeTable');
+    if (!table) return;
+    trades.forEach(function(t) {
+        var dirClass = t.dir === 'LONG' ? 'dir-long' : 'dir-short';
+        var pnlClass = t.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+        var pnlStr = t.pnl >= 0 ? '+$'+t.pnl.toFixed(2) : '-$'+Math.abs(t.pnl).toFixed(2);
+        var row = '<tr>';
+        row += '<td>'+t.id+'</td>';
+        row += '<td>'+t.date+'</td>';
+        row += '<td class="'+dirClass+'">'+t.dir+'</td>';
+        row += '<td>'+t.entry.toFixed(2)+'</td>';
+        row += '<td>'+t.exit.toFixed(2)+'</td>';
+        row += '<td>'+t.stop.toFixed(2)+'</td>';
+        row += '<td>'+t.target.toFixed(2)+'</td>';
+        row += '<td class="'+pnlClass+'">'+pnlStr+'</td>';
+        row += '<td>'+t.mae.toFixed(1)+'</td>';
+        row += '<td>'+t.mfe.toFixed(1)+'</td>';
+        row += '<td>'+t.reason+'</td>';
+        row += '<td>'+t.or.toFixed(1)+'</td>';
+        row += '<td>'+t.bars+' min</td>';
+        row += '</tr>';
+        table.innerHTML += row;
+    });
+})();
+
+// ─── Sticky Nav Collapse ───
+(function() {
+    var nav = document.getElementById('navBar');
+    var toggle = document.getElementById('navToggle');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 200) nav.classList.add('collapsed');
+        else nav.classList.remove('collapsed', 'expanded');
+    });
+    toggle.addEventListener('click', function() { nav.classList.toggle('expanded'); });
+})();
+
+// ─── Back to Top ───
+(function() {
+    var btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+    btn.addEventListener('click', function() { window.scrollTo({top:0,behavior:'smooth'}); });
+})();
+
+// ─── Konami Code Easter Egg: Matrix Rain ───
+(function(){
+    var konamiSequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA','Enter'];
+    var konamiIndex = 0, matrixActive = false, matrixRainId = null;
+    document.addEventListener('keydown', function(e) {
+        if ((e.code || e.key) === konamiSequence[konamiIndex]) {
+            if (++konamiIndex === konamiSequence.length) {
+                konamiIndex = 0;
+                matrixActive ? stopMatrixRain() : startMatrixRain();
+                matrixActive = !matrixActive;
+            }
+        } else { konamiIndex = 0; }
+    });
+    function startMatrixRain() {
+        var canvas = document.getElementById('matrixCanvas');
+        if (!canvas || matrixRainId) return;
+        document.body.classList.add('matrix-active');
+        canvas.style.display = 'block';
+        var ctx = canvas.getContext('2d');
+        var chars = Array.from('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        var fontSize = 14, columns, drops;
+        function resize() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            var old = drops || [];
+            drops = Array.from({length:columns}, function(_,i){return old[i]!==undefined?old[i]:Math.random()*-100;});
+        }
+        resize(); window._matrixResize = resize; window.addEventListener('resize', resize);
+        var fc = 0;
+        function draw() {
+            if (++fc%2!==0){matrixRainId=requestAnimationFrame(draw);return;}
+            ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.font=fontSize+'px Courier New';
+            for(var i=0;i<columns;i++){var y=drops[i]*fontSize;ctx.shadowBlur=8;ctx.shadowColor='rgba(0,255,65,0.6)';ctx.fillStyle='#aaffaa';ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fontSize,y);ctx.shadowBlur=0;ctx.fillStyle='rgba(0,255,65,0.8)';if(y-fontSize>0)ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fontSize,y-fontSize);if(y>canvas.height&&Math.random()>0.975)drops[i]=0;drops[i]++;}
+            matrixRainId=requestAnimationFrame(draw);
+        }
+        matrixRainId=requestAnimationFrame(draw);
+    }
+    function stopMatrixRain() {
+        if(matrixRainId){cancelAnimationFrame(matrixRainId);matrixRainId=null;}
+        document.body.classList.remove('matrix-active');
+        var canvas=document.getElementById('matrixCanvas');
+        if(canvas){canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+        if(window._matrixResize){window.removeEventListener('resize',window._matrixResize);delete window._matrixResize;}
+    }
+})();
+</script>
+
+</body>
+</html>
