@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scoro + Claude Setup Guide for Mac</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0f;
+    --surface: #161618;
+    --surface2: #1e1e21;
+    --border: #2a2a2f;
+    --accent: #d4a853;
+    --accent2: #7c9e87;
+    --text: #e8e5de;
+    --text-muted: #7a7870;
+    --text-dim: #4a4845;
+    --scoro: #d4a853;
+    --claude: #7c9e87;
+    --terminal-bg: #0a0a0b;
+    --terminal-green: #7ec89e;
+    --terminal-yellow: #d4a853;
+    --terminal-blue: #7ba7d4;
+    --terminal-comment: #4a5a4e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 40px 60px;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(38px, 6vw, 64px);
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 540px;
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+  }
+
+  .badge-mac { background: #2a2520; color: var(--accent); border: 1px solid #3a3020; }
+  .badge-claude { background: #1a2420; color: var(--claude); border: 1px solid #2a3a30; }
+  .badge-scoro { background: #2a2520; color: #e8c080; border: 1px solid #3a3020; }
+
+  /* ── TIMELINE LAYOUT ── */
+  .guide {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    position: relative;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+
+  .section:hover {
+    border-color: #3a3a40;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px 30px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    line-height: 1;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    width: 52px;
+    transition: color 0.2s;
+  }
+
+  .section.open .step-num,
+  .section-header:hover .step-num {
+    color: var(--accent);
+  }
+
+  .section-meta {
+    flex: 1;
+  }
+
+  .section-category {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .section-toggle {
+    font-size: 20px;
+    color: var(--text-dim);
+    transition: transform 0.25s, color 0.2s;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .section.open .section-toggle {
+    transform: rotate(45deg);
+    color: var(--accent);
+  }
+
+  .section-body {
+    display: none;
+    padding: 0 30px 30px 102px;
+    border-top: 1px solid var(--border);
+  }
+
+  .section.open .section-body {
+    display: block;
+  }
+
+  /* ── TIME ESTIMATE ── */
+  .time-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* ── STEPS ── */
+  .step {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .step:last-child {
+    border-bottom: none;
+  }
+
+  .step-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .step-text {
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .step-text a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid #3a3020;
+    transition: border-color 0.15s;
+  }
+
+  .step-text a:hover {
+    border-color: var(--accent);
+  }
+
+  /* ── TERMINAL BLOCK ── */
+  .terminal {
+    background: var(--terminal-bg);
+    border: 1px solid #1e2220;
+    border-radius: 6px;
+    margin: 14px 0;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    padding: 9px 14px;
+    background: #111210;
+    border-bottom: 1px solid #1e2220;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #3a1a1a; }
+  .dot-y { background: #3a2e10; }
+  .dot-g { background: #1a3020; }
+
+  .terminal-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-left: 6px;
+    letter-spacing: 0.1em;
+  }
+
+  .terminal-copy {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .terminal-copy:hover {
+    color: var(--accent);
+    border-color: #3a3020;
+  }
+
+  .terminal-copy.copied {
+    color: var(--terminal-green);
+    border-color: #1e3a28;
+  }
+
+  .terminal-code {
+    padding: 16px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .cmd { color: var(--terminal-green); }
+  .flag { color: var(--terminal-blue); }
+  .val { color: var(--terminal-yellow); }
+  .comment { color: var(--terminal-comment); }
+  .prompt { color: var(--text-dim); margin-right: 6px; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid;
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .callout-tip {
+    border-color: var(--accent2);
+    background: #141e18;
+    color: #a8c4b0;
+  }
+
+  .callout-warn {
+    border-color: var(--accent);
+    background: #1e1810;
+    color: #c4a870;
+  }
+
+  .callout-info {
+    border-color: var(--terminal-blue);
+    background: #121820;
+    color: #90b4d4;
+  }
+
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    opacity: 0.7;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist {
+    list-style: none;
+    margin: 10px 0;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .checklist li::before {
+    content: '\u25c7';
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 12px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-track {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+  }
+
+  .progress-steps {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .prog-dot {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--surface2);
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+
+  .prog-dot.done { background: var(--accent); }
+  .prog-dot.active { background: var(--accent2); }
+
+  /* ── FINAL ── */
+  .final-card {
+    margin-top: 40px;
+    padding: 40px;
+    border: 1px solid #2a3028;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #141e18 0%, #111210 100%);
+    text-align: center;
+  }
+
+  .final-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+
+  .final-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .final-sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .example-prompts {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .prompt-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    color: var(--accent2);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 50px 20px 40px; }
+    .guide { padding: 0 20px 60px; }
+    .section-body { padding-left: 20px; }
+    .step-num { font-size: 28px; width: 36px; }
+    .progress-track { padding: 12px 20px; }
+    .example-prompts { grid-template-columns: 1fr; }
+  }
+
+  /* ── EXPAND ALL ── */
+  .expand-all {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 10px;
+    transition: all 0.15s;
+  }
+
+  .expand-all:hover {
+    color: var(--accent);
+    border-color: #3a3020;
+  }
+
+  kbd {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- STICKY PROGRESS -->
+<div class="progress-track" id="progressTrack">
+  <span class="progress-label">PROGRESS</span>
+  <div class="progress-steps" id="progressSteps"></div>
+  <button class="expand-all" onclick="toggleAll()">EXPAND ALL</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Setup Guide</div>
+  <h1>Scoro + Claude<br><em>on your Mac</em></h1>
+  <p class="hero-sub">A complete walkthrough from a brand-new Mac to managing your Scoro projects with Claude Code CLI &mdash; no experience required.</p>
+  <div class="hero-badges">
+    <span class="badge badge-mac">&#127822; macOS</span>
+    <span class="badge badge-claude">Claude Code CLI</span>
+    <span class="badge badge-scoro">Scoro MCP</span>
+  </div>
+</div>
+
+<!-- GUIDE CONTENT -->
+<div class="guide">
+
+  <!-- SECTION 1 -->
+  <div class="section" id="s1">
+    <div class="section-header" onclick="toggle('s1')">
+      <div class="step-num">1</div>
+      <div class="section-meta">
+        <div class="section-category">System</div>
+        <div class="section-title">Install Homebrew</div>
+        <div class="section-desc">macOS's missing package manager &mdash; installs everything else</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~3 minutes</div>
+
+      <div class="step">
+        <div class="step-label">OPEN TERMINAL</div>
+        <div class="step-text">Press <kbd>&#8984;</kbd> + <kbd>Space</kbd>, type <strong>Terminal</strong>, and hit Enter. This is your command-line interface &mdash; you'll use it for everything in this guide.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">RUN INSTALLER</div>
+        <div class="step-text">Paste this single command and press Enter:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, '/bin/bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)&quot;')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">/bin/bash</span> <span class="flag">-c</span> <span class="val">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></div>
+        </div>
+        <div class="callout callout-warn">
+          <div class="callout-label">&#9888; Note</div>
+          Your Mac will ask for your password. Type it (nothing will appear on screen &mdash; that's normal) and press Enter. It may also prompt you to install Xcode Command Line Tools &mdash; click Install if asked.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">ADD TO PATH (Apple Silicon Macs)</div>
+        <div class="step-text">If you have an M1/M2/M3/M4 Mac (most Macs from 2021 onward), run these two commands after installation finishes:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'echo \'eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;\' >> ~/.zprofile\neval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="comment"># Add Homebrew to your shell profile</span>
+<span class="prompt">%</span><span class="cmd">echo</span> <span class="val">'eval "$(/opt/homebrew/bin/brew shellenv)"'</span> >> ~/.zprofile
+<span class="prompt">%</span><span class="cmd">eval</span> <span class="val">"$(/opt/homebrew/bin/brew shellenv)"</span></div>
+        </div>
+        <div class="callout callout-tip">
+          <div class="callout-label">&#10003; Tip</div>
+          Not sure which Mac you have? Click the Apple menu () &rarr; <em>About This Mac</em>. If "Chip" says M1/M2/M3/M4, you need these commands. If it says "Intel", skip them.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">VERIFY</div>
+        <div class="step-text">Confirm Homebrew installed correctly:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'brew --version')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">brew</span> <span class="flag">--version</span>
+<span class="comment"># Should output something like: Homebrew 4.x.x</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="s2">
+    <div class="section-header" onclick="toggle('s2')">
+      <div class="step-num">2</div>
+      <div class="section-meta">
+        <div class="section-category">Runtime</div>
+        <div class="section-title">Install Node.js</div>
+        <div class="section-desc">Required to run Claude Code CLI</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~2 minutes</div>
+
+      <div class="step">
+        <div class="step-label">INSTALL WITH HOMEBREW</div>
+        <div class="step-text">Node.js powers Claude Code under the hood. Install it via Homebrew:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'brew install node')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">brew install</span> <span class="val">node</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">VERIFY</div>
+        <div class="step-text">Check that both Node.js and npm are available:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'node --version\nnpm --version')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">node</span> <span class="flag">--version</span>
+<span class="comment"># Should output: v22.x.x or similar</span>
+<span class="prompt">%</span><span class="cmd">npm</span> <span class="flag">--version</span>
+<span class="comment"># Should output: 10.x.x or similar</span></div>
+        </div>
+        <div class="callout callout-tip">
+          <div class="callout-label">&#10003; Good to know</div>
+          As long as you see version numbers &mdash; any version &mdash; you're good to go!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="s3">
+    <div class="section-header" onclick="toggle('s3')">
+      <div class="step-num">3</div>
+      <div class="section-meta">
+        <div class="section-category">Core App</div>
+        <div class="section-title">Install Claude Code</div>
+        <div class="section-desc">The CLI that lets you interact with Claude from your terminal</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~2 minutes</div>
+
+      <div class="step">
+        <div class="step-label">INSTALL GLOBALLY</div>
+        <div class="step-text">Install Claude Code via npm so it's available anywhere on your system:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'npm install -g @anthropic-ai/claude-code')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">npm install</span> <span class="flag">-g</span> <span class="val">@anthropic-ai/claude-code</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">SIGN IN</div>
+        <div class="step-text">Launch Claude Code for the first time &mdash; it will open your browser to sign in with your Anthropic account:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'claude')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">claude</span>
+<span class="comment"># Your browser will open — sign in and return to the terminal</span></div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-label">&#8505; Info</div>
+          If your browser doesn't open automatically, copy the URL shown in the terminal and paste it into your browser manually.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">VERIFY</div>
+        <div class="step-text">After signing in, confirm Claude Code is working:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'claude --version')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">claude</span> <span class="flag">--version</span>
+<span class="comment"># Should output a version number like: 1.x.x</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="s4">
+    <div class="section-header" onclick="toggle('s4')">
+      <div class="step-num">4</div>
+      <div class="section-meta">
+        <div class="section-category">API Key</div>
+        <div class="section-title">Get Your Scoro API Credentials</div>
+        <div class="section-desc">Retrieve the credentials Claude needs to talk to Scoro</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~5 minutes</div>
+
+      <div class="step">
+        <div class="step-label">LOG IN TO SCORO</div>
+        <div class="step-text">Open your Scoro instance in a browser and navigate to <strong>Settings &rarr; Integrations &rarr; API</strong>.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">LOCATE YOUR CREDENTIALS</div>
+        <div class="step-text">You will need these three values for the next step:</div>
+        <ul class="checklist">
+          <li><strong>Company Account ID</strong> &mdash; your unique Scoro subdomain (e.g. <code>yourcompany</code>)</li>
+          <li><strong>API Key</strong> &mdash; a long string used to authenticate requests</li>
+          <li><strong>Site URL</strong> &mdash; your full Scoro URL (e.g. <code>https://yourcompany.scoro.com</code>)</li>
+        </ul>
+        <div class="callout callout-warn">
+          <div class="callout-label">&#9888; Important</div>
+          Keep your API key private. Never share it in public channels or commit it to version control.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="s5">
+    <div class="section-header" onclick="toggle('s5')">
+      <div class="step-num">5</div>
+      <div class="section-meta">
+        <div class="section-category">Integration</div>
+        <div class="section-title">Configure Scoro MCP Server</div>
+        <div class="section-desc">Connect Claude Code to your Scoro account via MCP</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~5 minutes</div>
+
+      <div class="step">
+        <div class="step-label">WHAT IS MCP?</div>
+        <div class="step-text">MCP (Model Context Protocol) lets Claude Code talk directly to external services like Scoro. You'll register Scoro as an MCP server so Claude can read and manage your projects, tasks, contacts, and more.</div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">ADD THE SCORO MCP SERVER</div>
+        <div class="step-text">Run this command in your terminal to add the Scoro MCP server to Claude Code. Replace the placeholder values with your actual credentials from the previous step:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'claude mcp add scoro \\\n  -e SCORO_API_KEY=your_api_key_here \\\n  -e SCORO_COMPANY_ID=your_company_id \\\n  -e SCORO_SITE_URL=https://yourcompany.scoro.com \\\n  -- npx -y @anthropic-ai/scoro-mcp-server')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">claude mcp add</span> <span class="val">scoro</span> \
+  <span class="flag">-e</span> <span class="val">SCORO_API_KEY=your_api_key_here</span> \
+  <span class="flag">-e</span> <span class="val">SCORO_COMPANY_ID=your_company_id</span> \
+  <span class="flag">-e</span> <span class="val">SCORO_SITE_URL=https://yourcompany.scoro.com</span> \
+  <span class="flag">--</span> npx <span class="flag">-y</span> <span class="val">@anthropic-ai/scoro-mcp-server</span></div>
+        </div>
+        <div class="callout callout-tip">
+          <div class="callout-label">&#10003; Tip</div>
+          You can edit this later by running <code>claude mcp list</code> to see your servers and <code>claude mcp remove scoro</code> to start over.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">VERIFY THE CONNECTION</div>
+        <div class="step-text">Confirm the MCP server was added successfully:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'claude mcp list')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">claude mcp list</span>
+<span class="comment"># You should see "scoro" listed with a ✓ status</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="s6">
+    <div class="section-header" onclick="toggle('s6')">
+      <div class="step-num">6</div>
+      <div class="section-meta">
+        <div class="section-category">Test Drive</div>
+        <div class="section-title">Your First Scoro Query</div>
+        <div class="section-desc">Make sure everything works end to end</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="time-pill">&#9201; ~2 minutes</div>
+
+      <div class="step">
+        <div class="step-label">LAUNCH CLAUDE</div>
+        <div class="step-text">Open Claude Code in any directory:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Terminal</span>
+            <button class="terminal-copy" onclick="copyCode(this, 'claude')">&gt;_ copy</button>
+          </div>
+          <div class="terminal-code"><span class="prompt">%</span><span class="cmd">claude</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">ASK ABOUT YOUR PROJECTS</div>
+        <div class="step-text">Once Claude is running, type a natural-language prompt to query Scoro:</div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <span class="terminal-label">Claude Code</span>
+          </div>
+          <div class="terminal-code"><span class="prompt">&gt;</span><span class="val"> List all my active projects in Scoro</span></div>
+        </div>
+        <div class="callout callout-tip">
+          <div class="callout-label">&#10003; What to expect</div>
+          Claude will use the Scoro MCP server to call the Scoro API and return a list of your active projects, including names, statuses, and deadlines. If you see project data, everything is working!
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-label">TROUBLESHOOTING</div>
+        <div class="step-text">If something doesn't look right:</div>
+        <ul class="checklist">
+          <li>Double-check your API key and company ID are correct</li>
+          <li>Run <code>claude mcp list</code> to confirm the server is registered</li>
+          <li>Restart Claude Code by typing <code>/exit</code> and then <code>claude</code> again</li>
+          <li>Make sure your Scoro account has API access enabled</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CARD -->
+  <div class="final-card">
+    <div class="final-icon">&#9889;</div>
+    <div class="final-title">You're all set.</div>
+    <div class="final-sub">Claude can now read and manage your Scoro data directly from the terminal. Here are some things to try:</div>
+    <div class="example-prompts">
+      <div class="prompt-chip">"Show me overdue tasks across all projects"</div>
+      <div class="prompt-chip">"Summarize time entries for this week"</div>
+      <div class="prompt-chip">"Create a new task in Project X due Friday"</div>
+      <div class="prompt-chip">"List all contacts added this month"</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Section Toggle ──
+  function toggle(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    updateProgress();
+  }
+
+  function toggleAll() {
+    const sections = document.querySelectorAll('.section');
+    const allOpen = [...sections].every(s => s.classList.contains('open'));
+    sections.forEach(s => {
+      if (allOpen) s.classList.remove('open');
+      else s.classList.add('open');
+    });
+    document.querySelector('.expand-all').textContent = allOpen ? 'EXPAND ALL' : 'COLLAPSE ALL';
+    updateProgress();
+  }
+
+  // ── Progress Bar ──
+  function initProgress() {
+    const sections = document.querySelectorAll('.section');
+    const container = document.getElementById('progressSteps');
+    sections.forEach((s, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'prog-dot';
+      dot.title = 'Step ' + (i + 1);
+      dot.onclick = () => {
+        s.classList.add('open');
+        s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        updateProgress();
+      };
+      container.appendChild(dot);
+    });
+  }
+
+  function updateProgress() {
+    const sections = document.querySelectorAll('.section');
+    const dots = document.querySelectorAll('.prog-dot');
+    sections.forEach((s, i) => {
+      dots[i].className = 'prog-dot' + (s.classList.contains('open') ? ' done' : '');
+    });
+  }
+
+  // ── Copy Code ──
+  function copyCode(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '>_ copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // Init
+  initProgress();
+</script>
+
+</body>
+</html>
