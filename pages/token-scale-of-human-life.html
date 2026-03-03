@@ -321,6 +321,7 @@
             <a href="#diagram" class="teal">Visual Scale</a>
             <a href="#math" class="green">The Math Checks Out</a>
             <a href="#mindbender" class="orange">The Mind-Bender</a>
+            <a href="#sources" class="blue">Sources</a>
         </div>
     </nav>
 
@@ -334,7 +335,7 @@
         <p>Mapping tokens to human activities means asking a deceptively deep question: <em>How much information does a human brain actually process during any given activity?</em></p>
 
         <div class="callout blue">
-            <strong>Here's the wild part:</strong> Your brain processes about <strong>11 million bits of sensory input per second</strong>, but your <em>conscious</em> mind only handles about <strong>50 bits per second</strong>. That's a 220,000x gap between what you're absorbing and what you're aware of.
+            <strong>Here's the wild part:</strong> Your brain processes about <strong>11 million bits of sensory input per second</strong> <sup><a href="#ref1" style="color:var(--blue);">[1]</a></sup>, but your <em>conscious</em> mind only handles about <strong>10 bits per second</strong> <sup><a href="#ref2" style="color:var(--blue);">[2]</a></sup>. That's a 1,000,000x gap between what you're absorbing and what you're aware of.
         </div>
 
         <p>So the question becomes: are we counting the autopilot stuff (your hands gripping the steering wheel, your lungs breathing) or just the <strong>conscious decisions</strong> -- the stuff you'd need to write down if you were teaching a robot to do it?</p>
@@ -427,7 +428,7 @@
         <h2><span class="icon">&#128290;</span> The Math Checks Out</h2>
         <p class="section-sub">Let's validate that 40,000-token driving estimate.</p>
 
-        <p>Take a 10-minute drive. You make a <strong>conscious micro-decision</strong> roughly every half-second: check mirror, adjust speed, read a sign, track the car ahead, scan an intersection.</p>
+        <p>Take a 10-minute drive. You make a <strong>conscious micro-decision</strong> roughly every half-second: check mirror, adjust speed, read a sign, track the car ahead, scan an intersection. Research suggests drivers make approximately <strong>20 decisions per mile</strong> <sup><a href="#ref4" style="color:var(--blue);">[4]</a></sup> -- at 30 mph over 10 minutes, that's 5 miles and roughly 100 major decisions, with hundreds more micro-adjustments in between.</p>
 
         <div class="stats-row">
             <div class="stat-card">
@@ -487,10 +488,57 @@
         </div>
 
         <div class="callout orange">
-            <strong>The real flex:</strong> AI processes tokens about 1,000x faster than human conscious thought. But humans have that 11-million-bit-per-second sensory engine running underneath that AI can't touch. You can catch a ball thrown at your face. AI can't. That's an 11-million-token-per-second flex.
+            <strong>The real flex:</strong> AI processes tokens about 1,000x faster than human conscious thought <sup><a href="#ref3" style="color:var(--blue);">[3]</a></sup>. But humans have that 11-million-bit-per-second sensory engine running underneath that AI can't touch <sup><a href="#ref1" style="color:var(--blue);">[1]</a></sup>. You can catch a ball thrown at your face. AI can't. That's an 11-million-token-per-second flex.
         </div>
 
         <p style="margin-top: 1.5rem;">At the end of the day, tokens are just a unit of measurement -- like calories or steps. But framing your daily life through them reveals something genuinely interesting: <strong>the most mundane parts of being human are computationally wild</strong>. Your morning commute is a supercomputer-grade operation. Your brain just makes it feel boring.</p>
+    </section>
+
+    <!-- Section 6: Sources -->
+    <section class="section" id="sources">
+        <h2><span class="icon">&#128218;</span> Sources</h2>
+        <p class="section-sub">The science behind the numbers.</p>
+
+        <table class="token-table">
+            <thead>
+                <tr>
+                    <th style="width:5%;">#</th>
+                    <th style="width:30%;">Claim</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="ref1">
+                    <td class="tokens" style="color: var(--blue);">1</td>
+                    <td class="activity">11 million bits/sec sensory input</td>
+                    <td class="why">Zimmerman, M. (1989). "The Nervous System in the Context of Information Theory." In <em>Human Physiology</em>, R.F. Schmidt & G. Thews, eds. Also extensively cited in Norretranders, T. (1998). <a href="https://en.wikipedia.org/wiki/The_User_Illusion" target="_blank" style="color:var(--blue);"><em>The User Illusion: Cutting Consciousness Down to Size</em></a>. Penguin Books.</td>
+                </tr>
+                <tr id="ref2">
+                    <td class="tokens" style="color: var(--blue);">2</td>
+                    <td class="activity">10-50 bits/sec conscious processing</td>
+                    <td class="why">Norretranders (1998) estimated ~50 bits/sec. Updated by Zheng, J. & Meister, M. (2024). <a href="https://www.sciencedirect.com/science/article/pii/S0896627324008080" target="_blank" style="color:var(--blue);">"The unbearable slowness of being: Why do we live at 10 bits/s?"</a> <em>Neuron</em>, Dec 2024. Caltech researchers measured conscious processing at just <strong>10 bits/sec</strong> across reading, writing, gaming, and puzzle-solving tasks.</td>
+                </tr>
+                <tr id="ref3">
+                    <td class="tokens" style="color: var(--blue);">3</td>
+                    <td class="activity">1 token ~ 4 characters / 0.75 words</td>
+                    <td class="why"><a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them" target="_blank" style="color:var(--blue);">OpenAI Help Center: "What are tokens and how to count them?"</a> -- "A helpful rule of thumb is that one token generally corresponds to ~4 characters of text... 75 words ~ 100 tokens."</td>
+                </tr>
+                <tr id="ref4">
+                    <td class="tokens" style="color: var(--blue);">4</td>
+                    <td class="activity">~20 decisions per mile while driving</td>
+                    <td class="why">Commonly cited in U.S. driver education curricula (AAA, state DMV programs). Estimates range from 20 to 200 decisions per mile depending on how granularly "decision" is defined. <a href="https://www.sciencedirect.com/science/article/pii/S1369847822002819" target="_blank" style="color:var(--blue);">He et al. (2022)</a> studied cognitive load via eye-tracking and fNIRS, confirming the high sustained demand of driving.</td>
+                </tr>
+                <tr id="ref5">
+                    <td class="tokens" style="color: var(--blue);">5</td>
+                    <td class="activity">Brain's 1,000,000x processing gap</td>
+                    <td class="why"><a href="https://www.caltech.edu/about/news/thinking-slowly-the-paradoxical-slowness-of-human-behavior" target="_blank" style="color:var(--blue);">Caltech News: "Thinking Slowly: The Paradoxical Slowness of Human Behavior"</a> (2024). Summarizes the Zheng & Meister findings and the paradox of why 86 billion neurons produce only 10 bits/sec of conscious output.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout teal" style="margin-top: 1.5rem;">
+            <strong>A note on precision:</strong> The token estimates for human activities are extrapolations -- a thought experiment, not a peer-reviewed measurement. The underlying neuroscience (sensory bandwidth, conscious processing speed, driving cognitive load) is well-established. The "token mapping" is our own framework for making those numbers tangible and fun.
+        </div>
     </section>
 </div>
 
