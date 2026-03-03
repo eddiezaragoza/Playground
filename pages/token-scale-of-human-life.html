@@ -407,11 +407,6 @@
                     <td class="tokens" style="color: var(--red);">~500K - 1M</td>
                     <td class="why">Hundreds of tasks, context switches, conversations, problem-solving, decision fatigue.</td>
                 </tr>
-                <tr>
-                    <td class="activity">Building a project solo</td>
-                    <td class="tokens" style="color: var(--red);">~5 - 10M</td>
-                    <td class="why">Days of research, architecture, coding, testing, debugging, deploying, documenting.</td>
-                </tr>
             </tbody>
         </table>
     </section>
@@ -561,7 +556,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Token Scale Diagram (programmatic SVG)
+    // Token Scale Diagram (programmatic SVG — true linear scale)
     (function() {
         const data = [
             { label: 'Check time',      tokens: 100,       color: '#06d6a0' },
@@ -574,7 +569,6 @@
             { label: 'Grocery trip',    tokens: 120000,    color: '#7209b7' },
             { label: 'Write report',    tokens: 150000,    color: '#e65100' },
             { label: 'Full workday',    tokens: 750000,    color: '#ef476f' },
-            { label: 'Build project',   tokens: 7500000,   color: '#ef476f' },
         ];
 
         const maxTokens = data[data.length - 1].tokens;
@@ -585,16 +579,14 @@
         const chartLeft = labelWidth + 10;
         const chartRight = 700;
         const barAreaWidth = chartRight - chartLeft - valueWidth;
-        const totalHeight = data.length * (barHeight + gap) + 20;
+        const totalHeight = data.length * (barHeight + gap) + 40;
 
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${chartRight + 20} ${totalHeight}" style="width:100%;height:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">`;
 
         data.forEach((d, i) => {
             const y = i * (barHeight + gap) + 10;
-            // Use log scale so small values are still visible
-            const logMax = Math.log10(maxTokens);
-            const logVal = Math.log10(Math.max(d.tokens, 1));
-            const barWidth = Math.max(4, (logVal / logMax) * barAreaWidth);
+            // True linear scale — tiny bars show as a 3px minimum sliver
+            const barWidth = Math.max(3, (d.tokens / maxTokens) * barAreaWidth);
 
             // Label
             svg += `<text x="${labelWidth}" y="${y + barHeight / 2 + 5}" text-anchor="end" font-size="13" font-weight="600" fill="#1e293b">${d.label}</text>`;
@@ -611,8 +603,8 @@
             svg += `<text x="${chartLeft + barWidth + 8}" y="${y + barHeight / 2 + 5}" font-size="13" font-weight="700" fill="${d.color}">${tokenStr}</text>`;
         });
 
-        // Note about log scale
-        svg += `<text x="${chartLeft}" y="${totalHeight - 2}" font-size="10" fill="#94a3b8" font-style="italic">Logarithmic scale -- each step is roughly 2-3x the previous</text>`;
+        // Note about linear scale
+        svg += `<text x="${chartLeft}" y="${totalHeight - 8}" font-size="10" fill="#94a3b8" font-style="italic">Linear scale -- bar width is proportional to token count (that tiny sliver for "Check time"? That's the point.)</text>`;
 
         svg += '</svg>';
 
