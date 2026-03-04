@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manus AI vs Claude -- Platform Comparison</title>
+    <style>
+        :root {
+            --blue: #0176d3;
+            --dark: #032d60;
+            --light: #f4f6f9;
+            --green: #2e844a;
+            --orange: #fe9339;
+            --red: #ea001e;
+            --purple: #730394;
+            --teal: #0d9dda;
+            --border: #d8dde6;
+            --text: #181818;
+            --text-muted: #5a6872;
+            --manus-color: #6366f1;
+            --claude-color: #d97706;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--light);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 40%, #6366f1 70%, #d97706 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.5rem; font-weight: 800; }
+        .hero .subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 1rem; }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.25s ease, border-radius 0.25s ease;
+        }
+
+        .nav-bar.collapsed {
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .nav-bar h3 { color: var(--dark); margin-bottom: 0.8rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .nav-bar .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-bar.collapsed h3 { margin-bottom: 0; }
+
+        .nav-toggle {
+            display: none;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--blue);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+        .nav-toggle:hover { background: var(--blue); color: white; }
+        .nav-bar.collapsed .nav-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .nav-links { max-height: 0; opacity: 0; margin: 0; }
+        .nav-bar.collapsed.expanded .nav-links { max-height: 500px; opacity: 1; margin-top: 0.6rem; }
+
+        .nav-links a {
+            padding: 0.4rem 0.9rem;
+            background: var(--light);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--blue); color: white; }
+        .nav-links a.manus { border-left: 3px solid var(--manus-color); }
+        .nav-links a.claude { border-left: 3px solid var(--claude-color); }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            color: var(--dark);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--blue);
+        }
+
+        .section h3 {
+            color: var(--blue);
+            margin: 1.8rem 0 0.8rem 0;
+            font-size: 1.2rem;
+        }
+
+        .section h4 {
+            color: var(--dark);
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: var(--dark);
+            color: white;
+            padding: 0.7rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) { background: #f8f9fb; }
+        tr:hover { background: #e8f0fe; }
+
+        /* Callout boxes */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .callout-blue { background: #f0f7ff; border-left: 4px solid var(--blue); }
+        .callout-green { background: #e8f5e9; border-left: 4px solid var(--green); }
+        .callout-orange { background: #fff8e1; border-left: 4px solid var(--orange); }
+        .callout-red { background: #ffeef0; border-left: 4px solid var(--red); }
+        .callout-purple { background: #f3e5f5; border-left: 4px solid var(--purple); }
+
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--blue); }
+        .callout-green strong { color: var(--green); }
+        .callout-orange strong { color: #e65100; }
+        .callout-red strong { color: var(--red); }
+        .callout-purple strong { color: var(--purple); }
+
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85em;
+            color: var(--purple);
+        }
+
+        /* VS Cards */
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .vs-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vs-card.manus { border-top: 4px solid var(--manus-color); }
+        .vs-card.claude { border-top: 4px solid var(--claude-color); }
+
+        .vs-card .card-head {
+            padding: 0.8rem 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .vs-card.manus .card-head { background: #eef2ff; color: #4338ca; }
+        .vs-card.claude .card-head { background: #fffbeb; color: #92400e; }
+
+        .vs-card .card-body { padding: 1rem; }
+        .vs-card .card-body ul { padding-left: 1.2rem; }
+        .vs-card .card-body li { margin-bottom: 0.3rem; font-size: 0.9rem; }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .feature-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .feature-card h4 { color: var(--blue); margin-bottom: 0.5rem; }
+
+        /* Verdict banner */
+        .verdict {
+            background: linear-gradient(135deg, #032d60, #0176d3);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
+            margin: 1.5rem 0;
+        }
+        .verdict h3 { color: white; margin-bottom: 0.8rem; font-size: 1.3rem; }
+        .verdict p { opacity: 0.95; }
+        .verdict ul { padding-left: 1.5rem; }
+        .verdict li { margin-bottom: 0.3rem; opacity: 0.9; }
+
+        /* Score cards */
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .score-card {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .score-card .score {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0.3rem 0;
+        }
+        .score-card .label { font-size: 0.85rem; color: var(--text-muted); }
+        .score-card.manus .score { color: var(--manus-color); }
+        .score-card.claude .score { color: var(--claude-color); }
+
+        @media (max-width: 768px) {
+            .vs-grid, .three-col, .score-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+            .nav-bar { position: static; }
+            .nav-bar.collapsed .nav-links { max-height: none; opacity: 1; }
+            .nav-toggle { display: none !important; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            line-height: 48px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(1, 118, 211, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+            z-index: 999;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { background: var(--dark); box-shadow: 0 6px 16px rgba(3, 45, 96, 0.5); }
+
+        @media print {
+            .hero { padding: 2rem 1rem; }
+            .nav-bar, .back-to-top, #matrixCanvas { display: none !important; }
+            .section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+        }
+
+        /* Matrix Easter Egg */
+        body.matrix-active { background: #000; }
+        body.matrix-active .container { position: relative; z-index: 1; background: var(--light); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Manus AI vs Claude</h1>
+    <p class="subtitle">A Non-Biased Platform Comparison -- Architecture, Capabilities & Real-World Fit</p>
+    <div class="badges">
+        <span class="badge">Last Updated: March 2026</span>
+        <span class="badge">Autonomous Agents</span>
+        <span class="badge">Developer Workflows</span>
+        <span class="badge">Salesforce Consulting</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-header">
+            <h3>Quick Navigation</h3>
+            <button class="nav-toggle" id="navToggle">Sections &#9660;</button>
+        </div>
+        <div class="nav-links">
+            <a href="#what-they-are">What They Are</a>
+            <a href="#architecture" class="manus">Architecture</a>
+            <a href="#head-to-head">Head-to-Head</a>
+            <a href="#manus-wins" class="manus">Where Manus Wins</a>
+            <a href="#claude-wins" class="claude">Where Claude Wins</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#criticisms" class="manus">Criticisms</a>
+            <a href="#sf-workflow" class="claude">Salesforce Workflows</a>
+            <a href="#verdict">Bottom Line</a>
+            <a href="#sources">Sources</a>
+        </div>
+    </nav>
+
+    <!-- Section 1: What They Are -->
+    <div class="section" id="what-they-are">
+        <h2>1. What They Actually Are</h2>
+
+        <div class="vs-grid">
+            <div class="vs-card manus">
+                <div class="card-head">Manus AI</div>
+                <div class="card-body">
+                    <p><strong>Autonomous task-execution agent.</strong> You give it a goal -- "build me a competitive analysis report," "create a React prototype" -- and it plans all the steps, browses the web, writes code, generates files, and hands you a finished deliverable.</p>
+                    <ul>
+                        <li>Runs in a <strong>cloud Ubuntu VM</strong> (not your machine)</li>
+                        <li>You set the destination; it drives</li>
+                        <li>Minimal human oversight by design</li>
+                        <li>Launched March 2025 by Butterfly Effect (Singapore)</li>
+                        <li>Acquired by Meta for ~$2B in December 2025</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card claude">
+                <div class="card-head">Claude (Web + Code CLI)</div>
+                <div class="card-body">
+                    <p><strong>Claude Web</strong> is a conversational reasoning partner -- you drive the session, iterate on ideas, and decide next steps.</p>
+                    <p><strong>Claude Code CLI</strong> is an agentic developer assistant that runs <strong>on your local machine</strong>. It reads your codebase, edits files, runs terminal commands, interacts with git -- with you approving each action.</p>
+                    <ul>
+                        <li>Your local filesystem, your repos, your tools</li>
+                        <li>Semi-agentic: it plans and acts, you approve</li>
+                        <li>Built by Anthropic</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-blue">
+            <strong>Key Insight</strong>
+            Manus is a <em>delegation</em> tool (set a goal, walk away). Claude Code is a <em>collaboration</em> tool (work together on your codebase). They solve different problems.
+        </div>
+    </div>
+
+    <!-- Section 2: Architecture -->
+    <div class="section" id="architecture">
+        <h2>2. What's Under the Hood</h2>
+
+        <p>Here's the part most people miss: <strong>Manus is not its own AI model.</strong> It's an orchestration layer on top of existing foundation models.</p>
+
+        <h3>Manus Architecture</h3>
+        <ul>
+            <li><strong>Primary LLM:</strong> Claude 3.5 Sonnet v1 (at launch), testing Claude 3.7 for upgrades</li>
+            <li><strong>Chinese-language model:</strong> Fine-tuned Alibaba Qwen</li>
+            <li><strong>Action paradigm:</strong> "CodeAct" -- generates Python code as its primary execution mechanism</li>
+            <li><strong>Environment:</strong> Cloud-hosted Ubuntu VM with shell access, headless browser (Selenium), Python/Node.js, full file system within the VM</li>
+        </ul>
+
+        <h4>Multi-Agent Loop</h4>
+        <div class="three-col">
+            <div class="feature-card">
+                <h4>Planner Agent</h4>
+                <p>Decomposes the goal into ordered steps</p>
+            </div>
+            <div class="feature-card">
+                <h4>Execution Agent</h4>
+                <p>Carries out steps using tools (shell, browser, code)</p>
+            </div>
+            <div class="feature-card">
+                <h4>Monitor Agent</h4>
+                <p>Evaluates progress and adjusts strategy</p>
+            </div>
+        </div>
+
+        <div class="callout callout-orange">
+            <strong>Translation</strong>
+            When you use Manus, you're often paying Manus to call Claude for you, with automation wrapped around it. TechCrunch and The Decoder both confirmed this after leaked code analysis.
+        </div>
+
+        <h3>Claude Architecture</h3>
+        <ul>
+            <li><strong>Model:</strong> Anthropic's proprietary Claude models (Opus, Sonnet, Haiku)</li>
+            <li><strong>Claude Web:</strong> Runs on Anthropic's servers, conversational interface</li>
+            <li><strong>Claude Code CLI:</strong> Runs locally in your terminal -- direct access to filesystem, git, shell commands, IDE integration</li>
+            <li><strong>Context window:</strong> 400,000+ tokens (vs. Manus's ~200K)</li>
+        </ul>
+    </div>
+
+    <!-- Section 3: Head-to-Head -->
+    <div class="section" id="head-to-head">
+        <h2>3. Head-to-Head Comparison</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:25%">Dimension</th>
+                    <th style="width:25%">Manus AI</th>
+                    <th style="width:25%">Claude Code CLI</th>
+                    <th style="width:25%">Claude Web</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Where it runs</strong></td>
+                    <td>Cloud Ubuntu VM</td>
+                    <td>Your local terminal</td>
+                    <td>Browser</td>
+                </tr>
+                <tr>
+                    <td><strong>Local file access</strong></td>
+                    <td>No</td>
+                    <td>Yes -- full native</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Git/repo access</strong></td>
+                    <td>Via GitHub API (cloud)</td>
+                    <td>Your local repos directly</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>CLI tool access (sf, npm, etc.)</strong></td>
+                    <td>No (VM-only tools)</td>
+                    <td>Yes -- any local CLI</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Autonomy level</strong></td>
+                    <td>High -- set goal, it executes</td>
+                    <td>Medium -- you guide, approve</td>
+                    <td>Low -- conversational</td>
+                </tr>
+                <tr>
+                    <td><strong>Human control per step</strong></td>
+                    <td>Minimal (by design)</td>
+                    <td>High (approve each action)</td>
+                    <td>Full</td>
+                </tr>
+                <tr>
+                    <td><strong>Context window</strong></td>
+                    <td>~200K tokens</td>
+                    <td>400K+ tokens</td>
+                    <td>200K tokens</td>
+                </tr>
+                <tr>
+                    <td><strong>LLM under the hood</strong></td>
+                    <td>Claude + Qwen + others</td>
+                    <td>Claude Opus/Sonnet</td>
+                    <td>Claude Opus/Sonnet</td>
+                </tr>
+                <tr>
+                    <td><strong>Web browsing</strong></td>
+                    <td>Yes -- autonomous</td>
+                    <td>Via WebSearch/WebFetch</td>
+                    <td>Limited</td>
+                </tr>
+                <tr>
+                    <td><strong>IDE integration</strong></td>
+                    <td>None</td>
+                    <td>VS Code, Cursor, etc.</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Works offline</strong></td>
+                    <td>No -- fully cloud-dependent</td>
+                    <td>Yes (for local work)</td>
+                    <td>No</td>
+                </tr>
+                <tr>
+                    <td><strong>Privacy / data residency</strong></td>
+                    <td>Cloud-stored (now Meta-owned)</td>
+                    <td>Local -- zero data retention option</td>
+                    <td>Cloud (Anthropic)</td>
+                </tr>
+                <tr>
+                    <td><strong>Parallel task execution</strong></td>
+                    <td>Yes (2-10 concurrent)</td>
+                    <td>Sequential (one session)</td>
+                    <td>Sequential</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 4: Where Manus Wins -->
+    <div class="section" id="manus-wins">
+        <h2>4. Where Manus Wins</h2>
+
+        <div class="three-col">
+            <div class="feature-card">
+                <h4>"Just Go Do It" Tasks</h4>
+                <p>Research reports, competitive analyses, market reports where you don't want to manage each step. Give it a goal, get a deliverable.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Multi-Tool Workflows from Scratch</h4>
+                <p>"Build me a prototype landing page" or "create an SEO audit from this URL" -- it chains web browsing + code + document generation autonomously.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Non-Technical Users</h4>
+                <p>People who can't or don't want to set up dev environments. Manus gives them a computer that "just does things."</p>
+            </div>
+        </div>
+
+        <h3>Strong Documented Use Cases</h3>
+        <ul>
+            <li>Research reports and competitive intelligence gathering</li>
+            <li>Candidate screening and interview scheduling (HR workflows)</li>
+            <li>SEO audits from a single URL submission</li>
+            <li>Real estate listing analysis and comparison documents</li>
+            <li>Front-end code generation (agencies report ~40% time savings on React components)</li>
+            <li>E-commerce product description writing (80% faster listing creation)</li>
+            <li>Full "idea to deployed prototype" workflows for non-developers</li>
+        </ul>
+
+        <h3>Benchmark Performance</h3>
+        <p>On the <strong>GAIA benchmark</strong> (tests AI ability to reason, use tools, and automate real-world tasks), Manus scored <strong>86.5%</strong>, outperforming OpenAI's GPT-4 and Deep Research on all three difficulty levels. This is a legitimate achievement in agentic task completion.</p>
+    </div>
+
+    <!-- Section 5: Where Claude Wins -->
+    <div class="section" id="claude-wins">
+        <h2>5. Where Claude Wins</h2>
+
+        <div class="three-col">
+            <div class="feature-card">
+                <h4>Working on YOUR Codebase</h4>
+                <p>Manus can't touch your local files, metadata, or git history. Claude Code lives in your terminal with full access to everything.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Precision & Control</h4>
+                <p>You review every edit, every command. For production systems and client orgs, this step-by-step approval matters.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Security & Privacy</h4>
+                <p>Your code never leaves your machine with Claude Code. Manus stores everything in Meta's cloud. Zero data retention is available with Claude.</p>
+            </div>
+        </div>
+
+        <h3>Claude Code CLI Advantages</h3>
+        <ul>
+            <li><strong>Local CLI tools:</strong> Run <code>sf project deploy start</code>, <code>npm test</code>, <code>git commit</code> directly from the same session</li>
+            <li><strong>Longer context:</strong> 400K+ tokens means entire codebases in memory. Manus fragments on long tasks</li>
+            <li><strong>Cost predictability:</strong> Flat monthly fee vs. Manus's opaque credit system</li>
+            <li><strong>Proactive quality:</strong> Tests show Claude flags security issues, suggests better patterns, and explains trade-offs. Manus completes tasks but with less nuance</li>
+            <li><strong>IDE integration:</strong> Works inside VS Code, Cursor, and other editors</li>
+            <li><strong>Reasoning depth:</strong> Claude Opus/Sonnet are the same models Manus uses under the hood -- except you get them directly without the wrapper</li>
+        </ul>
+
+        <div class="callout callout-green">
+            <strong>Real-World Test Result</strong>
+            When asked to write a WordPress plugin, Claude "flagged a security issue, suggested a more maintainable approach, followed coding standards without being asked, and explained decisions." Manus completed the same task but with less nuance and no proactive quality concerns raised. (Source: jock.pl AI agent comparison)
+        </div>
+    </div>
+
+    <!-- Section 6: Pricing -->
+    <div class="section" id="pricing">
+        <h2>6. Pricing Comparison</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Plan</th>
+                    <th>Manus AI</th>
+                    <th>Claude (Anthropic)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Free Tier</strong></td>
+                    <td>Limited (post-Meta acquisition)</td>
+                    <td>Yes -- web + limited Claude Code</td>
+                </tr>
+                <tr>
+                    <td><strong>Starter / Pro</strong></td>
+                    <td>$39/mo (3,900 credits) -- Starter<br>$199/mo (19,900 credits) -- Pro</td>
+                    <td>$20/mo -- Claude Pro (web + Code CLI)</td>
+                </tr>
+                <tr>
+                    <td><strong>Credit System</strong></td>
+                    <td>Yes -- credits consumed per task, <strong>no upfront cost estimate</strong></td>
+                    <td>No -- flat monthly, usage-based on heavy use</td>
+                </tr>
+                <tr>
+                    <td><strong>Concurrent Tasks</strong></td>
+                    <td>2 (Starter), 10 (Pro)</td>
+                    <td>1 session at a time</td>
+                </tr>
+                <tr>
+                    <td><strong>Scheduled Tasks</strong></td>
+                    <td>Pro only (10 scheduled)</td>
+                    <td>Not available</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout callout-red">
+            <strong>Pricing Gotcha</strong>
+            Manus does not tell you how many credits a task will consume before you start. A single moderately complex task can burn 900+ credits. Users on Starter ($39/mo = 3,900 credits) have reported burning through their monthly allocation in just a few tasks with no way to predict cost upfront.
+        </div>
+    </div>
+
+    <!-- Section 7: Criticisms -->
+    <div class="section" id="criticisms">
+        <h2>7. Criticisms & Concerns</h2>
+
+        <h3>Technical Reliability</h3>
+        <ul>
+            <li>Frequently gets stuck on CAPTCHAs and paywalled sites</li>
+            <li>Context window limits cause long tasks to fragment or fail</li>
+            <li>Documented bugs: empty ZIP file outputs, infinite browser refresh loops, task timeouts</li>
+            <li>High service load errors were common at launch due to viral demand</li>
+        </ul>
+
+        <h3>Transparency Concerns</h3>
+        <ul>
+            <li>Leaked code showed the system is essentially a wrapper around existing models (Claude, DeepSeek) with Selenium and web scraping</li>
+            <li>TechCrunch concluded it "probably isn't China's second DeepSeek moment" -- the hype outpaced the novelty</li>
+            <li>MIT Technology Review called it impressive but noted the marketing was ahead of the product</li>
+        </ul>
+
+        <h3>Privacy & Data Concerns</h3>
+        <ul>
+            <li>Originally collected IP addresses, keystrokes, and behavioral data stored on Chinese servers</li>
+            <li>Terms of service allowed generated content to be used for AI training</li>
+            <li>Independent monitoring found ~15MB of memory data uploaded hourly to a Shenzhen server</li>
+            <li><strong>Tennessee banned Manus on government networks</strong> on launch day (March 6, 2025)</li>
+            <li>Post-Meta acquisition: Chinese ownership divested, but Meta's data practices are now the concern</li>
+            <li>Some enterprise customers left after the Meta acquisition</li>
+        </ul>
+
+        <h3>Marketing Tactics</h3>
+        <ul>
+            <li>Launched invite-only; invitation codes sold for up to 50,000 RMB (~$7K) on secondary markets</li>
+            <li>Criticized as manufactured scarcity ("hunger marketing")</li>
+        </ul>
+
+        <div class="callout callout-orange">
+            <strong>Fair Balance</strong>
+            Claude has its own limitations: it can hallucinate, it doesn't have real-time web browsing in the web app, and Claude Code CLI requires technical comfort with a terminal. No tool is perfect -- the question is which trade-offs matter for your work.
+        </div>
+    </div>
+
+    <!-- Section 8: Salesforce Workflow Fit -->
+    <div class="section" id="sf-workflow">
+        <h2>8. For Salesforce Consulting Workflows</h2>
+
+        <p>If your daily work involves Apex development, Flow building, CPQ/QCP configuration, metadata deployments, sf CLI operations, and managing multiple Salesforce orgs -- here's the honest assessment:</p>
+
+        <div class="score-grid">
+            <div class="score-card manus">
+                <div class="label">Manus for Salesforce Dev</div>
+                <div class="score">2/10</div>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Cannot access local files, sf CLI, or Salesforce orgs</p>
+            </div>
+            <div class="score-card claude">
+                <div class="label">Claude Code for Salesforce Dev</div>
+                <div class="score">9/10</div>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Full local access, sf CLI, metadata, git, Apex, Flows</p>
+            </div>
+        </div>
+
+        <h3>Why Claude Code Wins for Salesforce</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Salesforce Task</th>
+                    <th>Claude Code CLI</th>
+                    <th>Manus AI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Deploy metadata to a sandbox</td>
+                    <td>Runs <code>sf project deploy start</code> directly</td>
+                    <td>Cannot connect to your orgs</td>
+                </tr>
+                <tr>
+                    <td>Edit an Apex class</td>
+                    <td>Reads, edits, saves in your local repo</td>
+                    <td>Would need code pushed to GitHub first</td>
+                </tr>
+                <tr>
+                    <td>Build/modify a Flow (XML)</td>
+                    <td>Reads flow XML, makes precise edits</td>
+                    <td>No access to your flow files</td>
+                </tr>
+                <tr>
+                    <td>QCP transpilation & deploy</td>
+                    <td>Runs Babel, pushes via Tooling API</td>
+                    <td>No org access, no transpile toolchain</td>
+                </tr>
+                <tr>
+                    <td>Run regression tests</td>
+                    <td>Executes <code>sf apex run test</code>, reads results</td>
+                    <td>Cannot run tests against your orgs</td>
+                </tr>
+                <tr>
+                    <td>Data migration between orgs</td>
+                    <td>Queries source, inserts to target via CLI</td>
+                    <td>No org authentication possible</td>
+                </tr>
+                <tr>
+                    <td>Deployment impact assessment</td>
+                    <td>Queries live org data, counts records</td>
+                    <td>Cannot query your org</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Where Manus COULD Help a Salesforce Consultant</h3>
+        <ul>
+            <li>Self-contained research: "Compare Salesforce CPQ vs. Revenue Cloud pricing across 5 competitors"</li>
+            <li>Document generation: "Build a client-facing migration timeline deck"</li>
+            <li>Market analysis: "Find all Salesforce ISV partners doing WFM integrations and build a spreadsheet"</li>
+            <li>Prototype UIs: "Create a mockup landing page for a Salesforce app"</li>
+        </ul>
+        <p>These are tasks where the deliverable is a document or prototype -- not a code change to your codebase or a deployment to an org.</p>
+    </div>
+
+    <!-- Section 9: Bottom Line -->
+    <div class="section" id="verdict">
+        <h2>9. The Bottom Line</h2>
+
+        <div class="verdict">
+            <h3>They're Not Really Competitors</h3>
+            <p>Manus and Claude solve different problems. Manus is impressive for autonomous task delegation -- and it demos incredibly well ("watch it build a whole app from one sentence!"). But that's a different use case than working on an existing codebase with production systems.</p>
+            <ul>
+                <li><strong>Manus</strong> = "Here's my goal, go figure it out" (delegation)</li>
+                <li><strong>Claude Code</strong> = "Let's work on this together in my environment" (collaboration)</li>
+                <li><strong>Claude Web</strong> = "Help me think through this" (conversation)</li>
+            </ul>
+        </div>
+
+        <h3>When to Recommend Each</h3>
+        <div class="vs-grid">
+            <div class="vs-card manus">
+                <div class="card-head">Choose Manus When...</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Task is self-contained with a clear deliverable</li>
+                        <li>Involves web research + document generation</li>
+                        <li>You want to delegate and check back later</li>
+                        <li>No sensitive/proprietary data involved</li>
+                        <li>You're not a developer and need a "do it for me" tool</li>
+                        <li>Building from-scratch prototypes, not modifying existing code</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card claude">
+                <div class="card-head">Choose Claude When...</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Working on your existing codebase</li>
+                        <li>Need CLI/terminal tool access (sf, git, npm, etc.)</li>
+                        <li>Production systems where you need control per step</li>
+                        <li>Data privacy matters (code stays local)</li>
+                        <li>Complex reasoning and architecture decisions</li>
+                        <li>Learning and understanding the "why" behind solutions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-purple">
+            <strong>The Irony</strong>
+            Manus uses Claude under the hood. When your buddy uses Manus, he's often paying Manus to call Claude for him -- with an autonomy wrapper and a cloud VM on top. You're going directly to the source, with more control and local access.
+        </div>
+    </div>
+
+    <!-- Section 10: Key Vocabulary -->
+    <div class="section">
+        <h2>10. Key Terms</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>What It Means</th>
+                    <th>Analogy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Agentic AI</strong></td>
+                    <td>AI that can take multiple steps autonomously toward a goal (plan, act, observe, adjust) rather than just responding to one prompt</td>
+                    <td>Like hiring someone who can plan their own work vs. someone who waits for each instruction</td>
+                </tr>
+                <tr>
+                    <td><strong>Orchestration Layer</strong></td>
+                    <td>Software that coordinates between multiple AI models and tools but isn't an AI model itself</td>
+                    <td>Like a general contractor who hires specialists -- they don't do the plumbing, they manage who does</td>
+                </tr>
+                <tr>
+                    <td><strong>Foundation Model</strong></td>
+                    <td>The base AI model trained on massive data (Claude, GPT-4, etc.) that other products build on top of</td>
+                    <td>The engine in a car -- different car brands can use the same engine</td>
+                </tr>
+                <tr>
+                    <td><strong>Context Window</strong></td>
+                    <td>How much text/code the AI can "hold in memory" at once during a conversation</td>
+                    <td>Like the size of your desk -- a bigger desk lets you spread out more documents at once</td>
+                </tr>
+                <tr>
+                    <td><strong>CodeAct</strong></td>
+                    <td>A paradigm where AI writes executable code to take actions rather than making structured API calls</td>
+                    <td>Instead of pressing buttons on a remote, writing a script to control the TV</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sources -->
+    <div class="section" id="sources">
+        <h2>Sources</h2>
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Manus_(AI_agent)" target="_blank">Manus (AI agent) -- Wikipedia</a></li>
+            <li><a href="https://www.technologyreview.com/2025/03/11/1113133/manus-ai-review/" target="_blank">Everyone in AI is talking about Manus -- MIT Technology Review</a></li>
+            <li><a href="https://techcrunch.com/2025/03/09/manus-probably-isnt-chinas-second-deepseek-moment/" target="_blank">Manus probably isn't China's second DeepSeek moment -- TechCrunch</a></li>
+            <li><a href="https://the-decoder.com/chinese-ai-agent-manus-uses-claude-sonnet-and-open-source-technology/" target="_blank">Chinese AI agent Manus uses Claude Sonnet -- The Decoder</a></li>
+            <li><a href="https://www.theunwindai.com/p/architecture-behind-manus-ai-agent" target="_blank">Architecture Behind Manus AI Agent -- The Unwind AI</a></li>
+            <li><a href="https://gist.github.com/renschni/4fbc70b31bad8dd57f3370239dccd58f" target="_blank">In-depth Manus AI technical investigation -- GitHub Gist</a></li>
+            <li><a href="https://www.eesel.ai/blog/manus-ai-pricing" target="_blank">Manus AI pricing 2025 -- eesel.ai</a></li>
+            <li><a href="https://techcrunch.com/2025/12/29/meta-just-bought-manus-an-ai-startup-everyone-has-been-talking-about/" target="_blank">Meta just bought Manus -- TechCrunch</a></li>
+            <li><a href="https://www.cnbc.com/2025/12/30/meta-acquires-singapore-ai-agent-firm-manus-china-butterfly-effect-monicai.html" target="_blank">Meta acquires Manus -- CNBC</a></li>
+            <li><a href="https://www.cnbc.com/2026/01/21/metas-2b-manus-deal-pushes-away-some-customers-sad-it-happened.html" target="_blank">Meta's $2B Manus deal pushes away customers -- CNBC</a></li>
+            <li><a href="https://thoughts.jock.pl/p/ai-agent-comparison-claude-manus-zapier-real-testing-results-2025" target="_blank">AI Agent Comparison: Claude vs Manus vs Zapier -- jock.pl</a></li>
+            <li><a href="https://createaiagent.net/comparisons/claude-code-vs-manus/" target="_blank">Claude Code vs Manus -- createaiagent.net</a></li>
+        </ul>
+    </div>
+
+</div><!-- /container -->
+
+<div class="footer">
+    <p>Platform Comparison -- March 2026 -- Research compiled from 12+ independent sources</p>
+</div>
+
+<!-- Back to Top -->
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+<script>
+    // Sticky nav collapse
+    const navBar = document.getElementById('navBar');
+    const navToggle = document.getElementById('navToggle');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            navBar.classList.add('collapsed');
+        } else {
+            navBar.classList.remove('collapsed', 'expanded');
+        }
+        lastScroll = window.scrollY;
+    });
+    navToggle.addEventListener('click', () => {
+        navBar.classList.toggle('expanded');
+    });
+
+    // Back to top
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Konami Code Matrix Rain
+    (function(){
+        const konamiSequence = [
+            'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+            'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+            'KeyB','KeyA','Enter'
+        ];
+        let konamiIndex = 0, matrixActive = false, matrixRainId = null;
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.code || e.key) === konamiSequence[konamiIndex]) {
+                if (++konamiIndex === konamiSequence.length) {
+                    konamiIndex = 0;
+                    matrixActive ? stopMatrixRain() : startMatrixRain();
+                    matrixActive = !matrixActive;
+                }
+            } else { konamiIndex = 0; }
+        });
+
+        function startMatrixRain() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas || matrixRainId) return;
+            document.body.classList.add('matrix-active');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            const chars = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*(){}[]|;:<>?/~');
+            const fontSize = 14;
+            let columns, drops;
+            function resize() {
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                columns = Math.floor(canvas.width / fontSize);
+                const old = drops || [];
+                drops = Array.from({length: columns}, (_, i) => old[i] !== undefined ? old[i] : Math.random() * -100);
+            }
+            resize();
+            window._matrixResize = resize;
+            window.addEventListener('resize', resize);
+            let fc = 0;
+            function draw() {
+                if (++fc % 2 !== 0) { matrixRainId = requestAnimationFrame(draw); return; }
+                ctx.fillStyle = 'rgba(0,0,0,0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = fontSize + 'px Courier New';
+                for (let i = 0; i < columns; i++) {
+                    const y = drops[i] * fontSize;
+                    ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,255,65,0.6)'; ctx.fillStyle = '#aaffaa';
+                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y);
+                    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                    if (y - fontSize > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y - fontSize);
+                    if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+                matrixRainId = requestAnimationFrame(draw);
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+
+        function stopMatrixRain() {
+            if (matrixRainId) { cancelAnimationFrame(matrixRainId); matrixRainId = null; }
+            document.body.classList.remove('matrix-active');
+            const canvas = document.getElementById('matrixCanvas');
+            if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+            if (window._matrixResize) { window.removeEventListener('resize', window._matrixResize); delete window._matrixResize; }
+        }
+    })();
+</script>
+
+</body>
+</html>
