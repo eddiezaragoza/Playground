@@ -649,6 +649,10 @@
 
         <p>Assign these PSLs based on user role. Each PSL unlocks a set of permission sets.</p>
 
+        <div class="critical">
+            <strong>Order Matters:</strong> All PSLs must be assigned BEFORE any Permission Sets or Permission Set Groups (Step 3). Assigning a PS without its corresponding PSL will fail silently or throw a cryptic error.
+        </div>
+
         <h3>Core (All RCA Users)</h3>
         <ul class="checklist">
             <li data-check-id="s2-revcloud"><code>Revenue Cloud User</code></li>
@@ -687,8 +691,16 @@
             <li data-check-id="s2-rate-dt"><code>Rate Management Design Time</code> &mdash; Rate card admins</li>
             <li data-check-id="s2-rate-rt"><code>Rate Management Run Time</code> &mdash; Rate card users</li>
             <li data-check-id="s2-wallet"><code>Wallet Management User</code> &mdash; Credits/wallet features</li>
-            <li data-check-id="s2-data"><code>Data Pipelines Base User</code> &mdash; Data sync operations</li>
+            <li data-check-id="s2-data"><code>Data Pipelines Base User</code> &mdash; Data sync operations <strong>(limited seats &mdash; check your org's allocation)</strong></li>
         </ul>
+
+        <div class="warning">
+            <strong>Missing PSLs?</strong> The list above covers the most common PSLs. Depending on your RCA features, you may also need: <code>OmniStudio</code>, <code>Clause Management User</code>, <code>DocGen Designer</code>, <code>Decimal Quantity DesignTime User</code>, <code>Expression Set Designer</code>, <code>Expression Set Runtime</code>, <code>Obligation Management User</code>, <code>Process Automation Flow Design Time</code>, <code>Rule Engine</code>, <code>Product Catalog Management Cache</code>, <code>Product Discovery User</code>. Query your org&rsquo;s available PSLs: <code>SELECT DeveloperName, MasterLabel FROM PermissionSetLicense WHERE Status = 'Active'</code>.
+        </div>
+
+        <div class="tip">
+            <strong>Bulk Assignment:</strong> The <code>sf</code> CLI can only assign PSLs to the currently authenticated user. To assign PSLs to multiple users, use Apex anonymous execution (see <a href="#automation">Automation Script</a> section).
+        </div>
     </div>
 
     <!-- STEP 3 -->
@@ -773,6 +785,22 @@
         <div class="warning">
             <strong>CLI Bug:</strong> <code>sf data query</code> does NOT return Standard-type (PSL-based) permission set assignments. Only Regular-type PS appear in results. Use Apex to query <code>PermissionSetAssignment</code> with <code>WHERE PermissionSet.Type = 'Standard'</code> to see the full picture. The Setup UI always shows all assignments correctly.
         </div>
+
+        <div class="tip">
+            <strong>PSG Creation Order:</strong> Create the PSG first &rarr; assign to user (can assign empty) &rarr; then add Permission Set components. Adding components to an already-assigned PSG propagates automatically if compatible. The PSG <strong>Status</strong> field shows "Updating" while recalculating and "Updated" when ready.
+        </div>
+
+        <div class="tip">
+            <strong>Assignment Order:</strong> Always assign in this order: <strong>PSLs first</strong> (Step 2) &rarr; <strong>PSGs</strong> (Step 3) &rarr; <strong>Standalone PS</strong> last. Assigning out of order causes failures.
+        </div>
+
+        <div class="tip">
+            <strong>Debugging New PSG Conflicts:</strong> If you encounter a new aggregation conflict when adding a PS to a PSG, use the <strong>binary search method</strong>: assign an empty PSG to the user, then add components one at a time (or in batches) to isolate which PS causes the conflict. The error message will name the conflicting permission.
+        </div>
+
+        <div class="tip">
+            <strong>Deploying PSGs:</strong> PSGs are deployable via change sets (Component Type: <strong>Permission Set Group</strong>). The individual Standard PS inside them are Salesforce-managed and don&rsquo;t need deployment &mdash; only the PSG container and its component linkages deploy. PSL assignments are NOT deployable and must be re-done in the target org before assigning PSGs.
+        </div>
     </div>
 
     <!-- STEP 4 -->
@@ -785,8 +813,13 @@
             <li data-check-id="s4-quotes">Enable Quotes</li>
             <li data-check-id="s4-no-opp">Allow quote creation without opportunities (optional)</li>
             <li data-check-id="s4-negative">Enable negative and zero order quantities</li>
-            <li data-check-id="s4-config-rules">Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+            <li data-check-id="s4-advanced-order">Advanced Order Creation From Quote</li>
+            <li data-check-id="s4-config-rules">Enable "Set Up Advanced Configuration Rules and Constraints" <strong>(may be greyed out &mdash; requires Rule Library activation first; defer if not ready)</strong></li>
         </ul>
+
+        <div class="warning">
+            <strong>Toggle Dependencies:</strong> Some Revenue Settings toggles depend on others. You must enable <strong>Groups</strong> and <strong>Clone Quotes</strong> before <strong>Ramp Deals for Groups</strong> becomes available. If a toggle is greyed out, check its prerequisites.
+        </div>
 
         <h3>Salesforce Pricing</h3>
         <div class="setup-path">Setup → Salesforce Pricing</div>
@@ -875,6 +908,10 @@
 
         <h3>Product2 Layout</h3>
         <p>Add these fields to the Product page layout. <em>Field descriptions based on Haley Bates' RCA training documentation.</em></p>
+
+        <div class="warning">
+            <strong>Field Availability Varies:</strong> Not all fields below may exist in your org. Fields like <code>ConfigurableDuringSale</code>, <code>TaxPolicy</code>, <code>BasedOn</code>, and <code>SellOnlyWithOtherProducts</code> may only appear after specific licenses or features are enabled. Check <strong>Object Manager &rarr; Product &rarr; Fields</strong> for actual availability before updating layouts. CLI-based layout deployment is fragile for RCA fields &mdash; manual layout updates are recommended.
+        </div>
         <ul class="checklist">
             <li data-check-id="s6-basedon"><code>Based On</code> &mdash; If the product is based on a template</li>
             <li data-check-id="s6-configurable"><code>ConfigurableDuringSale</code> &mdash; Whether users can access the configurator during quoting</li>
@@ -907,6 +944,10 @@
         <ul class="checklist">
             <li data-check-id="s6-quote-account"><code>Account</code> (for Quote) &mdash; Enables quotes without Opportunities (RCA standalone quoting)</li>
         </ul>
+
+        <div class="warning">
+            <strong>Multiple Quote Layouts:</strong> Your org may have multiple Quote page layouts (we found 9 in the Verint sandbox). You must add <code>Account for Quote</code> to <strong>ALL</strong> Quote layouts, not just the default. Check <strong>Object Manager &rarr; Quote &rarr; Page Layouts</strong> for the complete list.
+        </div>
     </div>
 
     <!-- STEP 7 -->
@@ -915,6 +956,10 @@
 
         <div class="critical">
             <strong>Do NOT build pricing procedures from scratch.</strong> Always clone from Salesforce-provided templates. Missing required elements will cause pricing to fail silently.
+        </div>
+
+        <div class="critical">
+            <strong>UI-Only Operation:</strong> Pricing Procedures must be created from Expression Set Templates via "Save As" in the UI. This cannot be automated via CLI, API, or metadata deployment. However, once created, pricing procedure metadata <em>can</em> be included in change sets.
         </div>
 
         <h3>Understanding Expression Set Templates</h3>
@@ -994,6 +1039,7 @@
             <li data-check-id="s8a-term"><strong>Term-Defined Annual</strong> (<code>TermDefined</code>, PricingTerm=1, PricingTermUnit=<code>Annual</code>) &mdash; Annual subscriptions</li>
             <li data-check-id="s8a-evergreen"><strong>Evergreen</strong> (<code>Evergreen</code>, PricingTerm=1, PricingTermUnit=<code>Months</code>) &mdash; Month-to-month services</li>
             <li data-check-id="s8a-usage"><strong>Usage-Based</strong> (<code>UsageBased</code>) &mdash; Consumption pricing, metered billing</li>
+            <li data-check-id="s8a-activate">All Product Selling Models <strong>activated</strong> (Status = Active)</li>
         </ul>
 
         <div class="warning">
@@ -1007,6 +1053,9 @@
         </ul>
 
         <h3>8c. Create Products</h3>
+        <div class="critical">
+            <strong>Set ProductType at creation time.</strong> The <code>ProductType</code> field (Simple or Bundle) <strong>cannot be changed after creation</strong> (Spring &rsquo;25+). Decide before creating the record. There is no going back.
+        </div>
         <ul class="checklist">
             <li data-check-id="s8c-create">Create Product2 records with correct <strong>ProductType</strong> (Simple or Bundle)</li>
             <li data-check-id="s8c-active">Set <code>IsActive = true</code></li>
@@ -1017,12 +1066,31 @@
 
         <h3>8d. Create Price Book Entries</h3>
         <ul class="checklist">
+            <li data-check-id="s8d-stdpb">Verify the <strong>Standard Price Book is active</strong> (required before creating entries)</li>
             <li data-check-id="s8d-pbe">Add products to Price Book with List Prices</li>
             <li data-check-id="s8d-psm">Link <code>ProductSellingModel</code> on each PricebookEntry</li>
         </ul>
 
         <div class="tip">
             <strong>Tip:</strong> One product can have multiple ProductSellingModelOptions, allowing you to sell the same product as one-time OR subscription without creating duplicate SKUs.
+        </div>
+
+        <h3>8e. Build and Search Index</h3>
+        <div class="setup-path">App Launcher &rarr; Product Catalog Management &rarr; Build and Search Index</div>
+        <p>The product search index powers the <strong>Browse Catalog</strong> experience in quotes. Without it, users cannot search or add products to quotes.</p>
+
+        <div class="critical">
+            <strong>Products Required First:</strong> "Create Full Index" will fail with <em>"No products are assigned to any catalog"</em> if no products have been assigned to categories yet. You must complete steps 8b&ndash;8d before building the index.
+        </div>
+
+        <ul class="checklist">
+            <li data-check-id="s8e-index">Navigate to <strong>Build and Search Index</strong> tab &rarr; Click <strong>Create Full Index</strong></li>
+            <li data-check-id="s8e-verify">Verify: Index Status shows <strong>Active</strong> with product count &gt; 0</li>
+            <li data-check-id="s8e-fields">Review <strong>Manage Fields &amp; Attributes</strong> tab for searchable/filterable fields (optional)</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Rebuild Required:</strong> You must rebuild the index whenever you update product information, add new products, change categories, or modify search options. This is a manual step that is easy to forget.
         </div>
     </div>
 
@@ -1034,12 +1102,24 @@
         <div class="setup-path">Setup → Sync Pricing Data → Execute</div>
 
         <div class="critical">
-            <strong>CRITICAL:</strong> You MUST run "Sync Pricing Data" after EVERY pricing configuration change. This includes new products, new price book entries, pricing procedure changes, and decision table updates. Forgetting this is the #1 cause of "my pricing isn't working" issues.
+            <strong>CRITICAL for Initial Setup:</strong> You MUST run "Sync Pricing Data" at least once during initial setup to populate the pricing engine with your product and price book data. Without this, pricing will not work at all.
         </div>
 
+        <div class="warning">
+            <strong>Ongoing Changes &mdash; Use Decision Tables Refresh Instead:</strong> After the initial sync, do NOT use "Sync Pricing Data" for every change &mdash; it <strong>burns through your org&rsquo;s allotment</strong>. For ongoing product/pricing changes (new PBEs, updated prices), use <strong>Decision Tables Refresh</strong> instead. <em>&mdash; Haley Bates</em>
+        </div>
+
+        <ul class="checklist">
+            <li data-check-id="s9-sync">Run <strong>Sync Pricing Data</strong> (initial setup only)</li>
+        </ul>
+
         <h3>Refresh Decision Tables</h3>
-        <div class="setup-path">Setup → Decision Tables → Refresh</div>
-        <p>Ensures new pricing data is available for quoting operations.</p>
+        <div class="setup-path">Setup &rarr; Decision Tables &rarr; Price Book Entries &rarr; Refresh</div>
+        <p>The <strong>preferred method</strong> for ongoing pricing changes. Ensures new pricing data is available for quoting operations without burning your sync allotment.</p>
+
+        <ul class="checklist">
+            <li data-check-id="s9-dt-refresh">Decision Tables refreshed after product/pricing changes</li>
+        </ul>
 
         <h3>Test Your Configuration</h3>
         <ul class="checklist">
@@ -1720,6 +1800,35 @@ sf org login web -a myorg
                 </div>
             </details>
 
+        </div>
+
+        <h3 style="margin-top:1.5rem;">Deployment Reference</h3>
+        <p>When moving RCA setup from sandbox to production, know what deploys and what must be re-done manually:</p>
+        <table>
+            <tr><th>Component</th><th>Deployable?</th><th>Method</th></tr>
+            <tr><td>Permission Set Groups</td><td>Yes</td><td>Change Set (type: Permission Set Group)</td></tr>
+            <tr><td>Custom Fields (ConstraintEngineNodeStatus)</td><td>Yes</td><td>Change Set / Metadata API</td></tr>
+            <tr><td>Page Layouts</td><td>Yes</td><td>Change Set / Metadata API</td></tr>
+            <tr><td>Context Definitions (once extended)</td><td>Yes</td><td>Change Set / Metadata API</td></tr>
+            <tr><td>Pricing Procedures (once created)</td><td>Yes</td><td>Change Set</td></tr>
+            <tr><td>PSL Assignments</td><td><strong>No</strong></td><td>Re-assign via Apex in target org</td></tr>
+            <tr><td>Settings Toggles (Revenue, Pricing, etc.)</td><td><strong>No</strong></td><td>Manual toggle in target org</td></tr>
+            <tr><td>Release Updates</td><td><strong>No</strong></td><td>Manual activation in target org</td></tr>
+            <tr><td>Context Definition "Extend" operation</td><td><strong>No</strong></td><td>Must extend from Standard Definitions manually, then deploy the result</td></tr>
+            <tr><td>Build and Search Index</td><td><strong>No</strong></td><td>Rebuild in target org</td></tr>
+            <tr><td>Sync Pricing Data</td><td><strong>No</strong></td><td>Re-run in target org</td></tr>
+        </table>
+
+        <div class="tip">
+            <strong>Implementation Strategy:</strong> For maximum efficiency, split work between an admin (UI) and a developer (CLI):
+            <table style="margin-top:0.5rem; font-size:0.88rem;">
+                <tr><th>Admin (UI-Only Tasks)</th><th>Developer (CLI/Automatable)</th></tr>
+                <tr><td>Context Definitions &mdash; Extend from OOTB</td><td>PSL assignments (bulk via Apex)</td></tr>
+                <tr><td>Pricing Procedures &mdash; Save As from templates</td><td>PSG creation + component assignment</td></tr>
+                <tr><td>Feature Settings toggles</td><td>Custom field deployment</td></tr>
+                <tr><td>Page Layouts (drag &amp; drop)</td><td>Product catalog data (selling models, catalogs, categories)</td></tr>
+                <tr><td>Link procedures to settings</td><td>Org assessment &amp; gap analysis</td></tr>
+            </table>
         </div>
 
         <h3 style="margin-top:1.5rem;">Post-Setup Governance</h3>
