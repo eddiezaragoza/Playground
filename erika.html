@@ -206,6 +206,42 @@
     font-weight: 600;
   }
 
+  /* Welcome state */
+  .welcome-state {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 24px 20px;
+  }
+
+  .welcome-state .welcome-emoji {
+    font-size: 3.2rem;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  .welcome-state .welcome-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+
+  .welcome-state .welcome-sub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
   /* Center line */
   .center-line {
     position: absolute;
@@ -395,7 +431,12 @@
   <div class="machine" id="machine">
     <div class="reel-window">
       <div class="reel-container">
-        <div class="reel-strip" id="reelStrip"></div>
+        <div class="welcome-state" id="welcomeState">
+          <div class="welcome-emoji">🍳☀️🥂</div>
+          <div class="welcome-text">Ready for brunch?</div>
+          <div class="welcome-sub">Pull the lever to find<br>your perfect spot!</div>
+        </div>
+        <div class="reel-strip" id="reelStrip" style="display:none;"></div>
       </div>
       <div class="center-line" id="centerLine"></div>
     </div>
@@ -564,6 +605,12 @@ function spin() {
   const machine = document.getElementById('machine');
   const resultCard = document.getElementById('resultCard');
   const centerLine = document.getElementById('centerLine');
+
+  // Hide welcome state, show reel strip
+  const welcome = document.getElementById('welcomeState');
+  const stripEl = document.getElementById('reelStrip');
+  if (welcome) welcome.style.display = 'none';
+  stripEl.style.display = '';
 
   btn.disabled = true;
   btn.textContent = '🌟  Spinning...  🌟';
