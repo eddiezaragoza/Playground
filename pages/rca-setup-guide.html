@@ -518,7 +518,7 @@
 <div class="header">
     <h1>Revenue Cloud Advanced (RCA)</h1>
     <div class="subtitle">Complete Setup &amp; Configuration Guide</div>
-    <div class="badge">Salesforce Revenue Lifecycle Management &bull; Updated February 2026</div>
+    <div class="badge">Salesforce Revenue Lifecycle Management &bull; Updated March 2026</div>
     <div style="margin-top:0.6rem; font-size:0.85rem; opacity:0.8;">Prepared by Eddie Zaragoza &mdash; <a href="mailto:ezaragoza@crosscountry-consulting.com" style="color:white;">ezaragoza@crosscountry-consulting.com</a></div>
 </div>
 
@@ -560,6 +560,7 @@
             <a href="#step10"><span class="step-num">10</span> Set Up a Bundle</a>
             <a href="#step11"><span class="step-num">11</span> Configure Price Waterfall</a>
             <a href="#step12"><span class="step-num">12</span> Use Quote Line Groups</a>
+            <a href="#step13"><span class="step-num">13</span> Document Generation</a>
             <a href="#automation"><span class="step-num">A</span> Automation Script</a>
             <a href="#checklist"><span class="step-num">✓</span> Final Checklist</a>
         </div>
@@ -602,6 +603,10 @@
         <h3>1a. Enable New Order Save Behavior (Release Update)</h3>
         <div class="setup-path">Setup &rarr; Release Updates &rarr; "Enable New Order Save Behavior"</div>
         <p>Click <strong>"Enable Test Run"</strong> on this release update. This is a <strong>hidden prerequisite</strong> &mdash; the Revenue Cloud Features toggle will remain greyed out without it.</p>
+        <p>After the New Order Save Behavior is enabled, whenever an order product update causes a change to the parent order, Salesforce runs custom application logic (validation rules, Apex triggers and classes, workflow rules, and flows). Previously, Salesforce did not correctly evaluate custom application logic on the parent record in this scenario. <em>&mdash; Based on Haley Bates' RCA training documentation</em></p>
+        <div class="warning">
+            <strong>Package Compatibility Warning:</strong> Packages with orders created before Winter '21 don't support the New Order Save Behavior release update by default. If you use a package involving orders, wait for confirmation from your package provider before enabling the release update.
+        </div>
         <div class="critical">
             <strong>Undocumented Prerequisite:</strong> Salesforce does not document this dependency. The "Enable New Order Save Behavior" release update must be activated (via "Enable Test Run") before the Revenue Cloud Features toggle becomes clickable. This is confirmed by Salesforce Support (Case #472941736, March 2026) &mdash; other customers have reported the same issue. "Revenue Lifecycle Management Settings" may not appear in Setup search; use the Revenue Settings page under Feature Settings &rarr; Revenue Cloud instead.
         </div>
@@ -854,30 +859,35 @@
         <h2><span class="num">6</span> Update Page Layouts</h2>
 
         <h3>Product2 Layout</h3>
-        <p>Add these fields to the Product page layout:</p>
-        <div class="two-col">
-            <ul>
-                <li><code>ConfigurableDuringSale</code></li>
-                <li><code>DisplayUrl</code></li>
-                <li><code>ProductType</code></li>
-            </ul>
-            <ul>
-                <li><code>QuantityUnitOfMeasure</code></li>
-                <li><code>TaxPolicy</code></li>
-                <li><code>IsAssetizable</code></li>
-            </ul>
-        </div>
+        <p>Add these fields to the Product page layout. <em>Field descriptions based on Haley Bates' RCA training documentation.</em></p>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><code>Based On</code></td><td>If the product is based on a template</td></tr>
+            <tr><td><code>ConfigurableDuringSale</code></td><td>Whether users can access the configurator for the product during quoting</td></tr>
+            <tr><td><code>DisplayUrl</code></td><td>Shows an image in the "Browse Catalog" page for the product</td></tr>
+            <tr><td><code>IsAssetizable</code></td><td>Whether or not assets are created for that product when an order is activated</td></tr>
+            <tr><td><code>ProductType</code></td><td>Standard Simple Product or Bundle &mdash; <strong>cannot be changed after creation</strong></td></tr>
+            <tr><td><code>QuantityUnitOfMeasure</code></td><td>Unit of measure for the product quantity</td></tr>
+            <tr><td><code>Sell Only With Other Products</code></td><td>Equivalent of the "Component" checkbox in CPQ &mdash; product can only be sold as part of a bundle</td></tr>
+            <tr><td><code>SpecificationType</code></td><td>Specification type for the product</td></tr>
+            <tr><td><code>TaxPolicy</code></td><td>Tax policy applied to the product</td></tr>
+            <tr><td><code>UsageModelType</code></td><td>Usage model type for consumption-based products</td></tr>
+        </table>
         <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
 
         <h3>PricebookEntry Layout</h3>
-        <ul>
-            <li><code>ProductSellingModel</code></li>
-            <li><code>IsDerived</code></li>
-        </ul>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><code>ProductSellingModel</code></td><td>Links the price book entry to a selling model (One-Time, Term-Defined, etc.)</td></tr>
+            <tr><td><code>IsDerived</code></td><td>Derived Pricing &mdash; equivalent of Percent of Total Pricing in CPQ</td></tr>
+        </table>
+        <div class="tip">
+            <strong>Best Practice:</strong> Make <code>ProductSellingModel</code> a required field on the PricebookEntry layout, since RCA needs it for every price book entry. <em>&mdash; Haley Bates</em>
+        </div>
 
         <h3>Quote Layout</h3>
         <ul>
-            <li><code>Account</code> (for Quote)</li>
+            <li><code>Account</code> (for Quote) &mdash; This field enables quotes that don't have Opportunities, which is an RCA feature allowing standalone quoting</li>
         </ul>
     </div>
 
@@ -889,13 +899,52 @@
             <strong>Do NOT build pricing procedures from scratch.</strong> Always clone from Salesforce-provided templates. Missing required elements will cause pricing to fail silently.
         </div>
 
-        <h3>Clone Templates</h3>
-        <div class="setup-path">Setup → Expression Set Templates</div>
+        <h3>Understanding Expression Set Templates</h3>
+        <p>Expression Set Templates are found via <strong>App Launcher &rarr; Expression Set Templates</strong>. These are templates of the different procedures that need to be set up for RCA. When you click to open one, it takes you to a builder that looks like Flow where you create the procedure. <em>&mdash; Haley Bates</em></p>
+
+        <h3>7a. Clone the Revenue Management Default Pricing Procedure</h3>
+        <div class="setup-path">App Launcher &rarr; Expression Set Templates</div>
         <ol>
-            <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> → Clone</li>
-            <li>Find <strong>"Product Discovery Pricing Procedure"</strong> → Clone</li>
-            <li>Set activation dates on both cloned procedures</li>
-            <li>Enable them</li>
+            <li>Open the <strong>"Revenue Management Default Pricing Procedure"</strong> template</li>
+            <li>Click <strong>Save As &rarr; New Pricing Procedure</strong></li>
+            <li>Set <strong>Rank = 1</strong></li>
+            <li><strong>Keep it inactive</strong> so you can change the context definition to your custom one first</li>
+            <li>Save the new Pricing Procedure</li>
+        </ol>
+
+        <div class="critical">
+            <strong>Important:</strong> On the new Pricing Procedure, click the cog wheel (settings) to the right of the page. Ensure that the <strong>Start Date Time</strong> is set at least one day AFTER the Start Date Time specified on the custom Context Definition. Mismatched dates will cause silent failures.
+        </div>
+
+        <h3>7b. Link the Custom Context Definition</h3>
+        <div class="setup-path">App Launcher &rarr; Pricing Procedures</div>
+        <ol>
+            <li>Navigate to <strong>App Launcher &rarr; Pricing Procedures</strong> &mdash; you should see the newly created Pricing Procedure</li>
+            <li>Click into the Pricing Procedure</li>
+            <li>Change the <strong>Context Definition</strong> to the custom <code>SalesTransactionContext</code> you created in Step 4e</li>
+            <li>Save</li>
+            <li>In the <strong>Pricing Procedure Versions</strong> related list below, click to open the Revenue Management Default Pricing Procedure version</li>
+            <li><strong>Activate</strong> the Pricing Procedure from the builder</li>
+        </ol>
+
+        <h3>7c. Clone the Product Discovery Pricing Procedure</h3>
+        <p>Repeat the same process for the Product Discovery procedure, but use the custom <code>ProductDiscoveryContext</code> definition instead:</p>
+        <ol>
+            <li>Open the <strong>"Product Discovery Pricing Procedure"</strong> template from Expression Set Templates</li>
+            <li>Save As &rarr; New Pricing Procedure &rarr; Set Rank &rarr; Keep inactive</li>
+            <li>Link it to your custom <code>ProductDiscoveryContext</code> definition</li>
+            <li>Activate the procedure version</li>
+        </ol>
+
+        <h3>7d. Link Pricing Procedures to Settings</h3>
+        <p>After creating and activating both procedures, connect them in three places:</p>
+        <ol>
+            <li><div class="setup-path">Setup &rarr; Product Catalog Management &rarr; Product Discovery &rarr; Product Discovery Settings</div>
+                Change the <strong>Context Definition</strong> to your custom <code>ProductDiscoveryContext</code> definition. Enable Pricing Procedure if needed, then set the <strong>Pricing Procedure</strong> to the Product Discovery procedure you just created.</li>
+            <li><div class="setup-path">Setup &rarr; Feature Settings &rarr; Salesforce Pricing &rarr; Salesforce Pricing Setup</div>
+                Set the <strong>Pricing Procedure</strong> to the Revenue Management Default Pricing Procedure.</li>
+            <li><div class="setup-path">Setup &rarr; Feature Settings &rarr; Revenue Cloud &rarr; Revenue Settings</div>
+                Set the <strong>Pricing Procedure</strong> to the Revenue Management Default Pricing Procedure.</li>
         </ol>
 
         <h3>Pricing Procedure Architecture</h3>
@@ -904,7 +953,7 @@
         <h3>Context Definitions</h3>
         <p>If you need custom fields in pricing calculations:</p>
         <ol>
-            <li>Create extended versions of standard context definitions</li>
+            <li>Create extended versions of standard context definitions (see Step 4e)</li>
             <li>Add custom fields to the appropriate section (Sales Transaction or Sales Transaction Item)</li>
             <li>Map to the correct Quote or QuoteLineItem fields</li>
         </ol>
@@ -1138,11 +1187,36 @@
         </ol>
 
         <h3>Automatic Grouping</h3>
+        <p>Automatic grouping is possible based on fields or field values. Manual grouping is also supported. Order line groups are created from quote line groups when an order is created from a quote. <em>&mdash; Haley Bates</em></p>
         <ol>
             <li>Click the <strong>Group</strong> action in the TLE toolbar</li>
             <li>Select a column to group by (e.g., Product Family, Category)</li>
             <li>Lines auto-organize into groups — names are editable</li>
             <li>Use <strong>"Ungroup"</strong> to return to flat view</li>
+        </ol>
+
+        <h3>Grouping Field Compatibility</h3>
+        <p>Not all field types work for automatic grouping:</p>
+        <table>
+            <tr><th>Supported Field Types</th><th>Unsupported Field Types</th></tr>
+            <tr><td>Text</td><td>Number</td></tr>
+            <tr><td>Picklist</td><td>Date</td></tr>
+            <tr><td>Formula (must use fields on the QuoteLineItem object only &mdash; no cross-object fields)</td><td>Lookup</td></tr>
+            <tr><td></td><td>Cross-object formulas</td></tr>
+        </table>
+        <div class="warning">
+            <strong>Limitation:</strong> Salesforce Revenue Cloud cannot group by cross-object fields or complex formulas. Only formulas referencing fields directly on the <code>QuoteLineItem</code> object are supported.
+        </div>
+
+        <h3>Adding Grouping Fields to Context Definition</h3>
+        <p>You must make any grouping fields available within the Pricing Procedure's context definition. <em>&mdash; Haley Bates</em></p>
+        <ol>
+            <li>Find your custom <code>SalesTransactionContext</code> definition in Setup</li>
+            <li>Go to the <strong>Map Data</strong> tab</li>
+            <li>Click <strong>Edit</strong> at the top right to create a new attribute</li>
+            <li>Click <strong>SalesTransactionItem</strong> to create the attribute (set INPUT/OUTPUT to the same data type)</li>
+            <li>Click <strong>Next</strong>, then click <strong>SalesTransactionItem</strong>, find the new attribute and create a <strong>tag</strong> for it (use the same name as the attribute, no spaces)</li>
+            <li>Save, then <strong>Edit the QuoteEntitiesMapping</strong> on the Map Data tab to map the new attribute to the corresponding QuoteLineItem field</li>
         </ol>
 
         <h3>Ramp Deals for Groups (Winter '26+)</h3>
@@ -1156,6 +1230,48 @@
 
         <div class="tip">
             <strong>Tip:</strong> With Winter '26+, you can generate <strong>separate orders from groups</strong> — each QLG becomes its own order, or you can group by a specific line field value.
+        </div>
+    </div>
+
+    <!-- STEP 13: DOCUMENT GENERATION -->
+    <div class="section" id="step13">
+        <h2><span class="num">13</span> Document Generation</h2>
+
+        <p>Document Generation in RCA enables the creation of key documents &mdash; quotes, contracts, invoices, etc. &mdash; by merging Salesforce data with templates. <em>Based on Haley Bates' RCA training documentation.</em></p>
+
+        <h3>Key Capabilities</h3>
+        <ul>
+            <li>Supports <strong>template-driven documents</strong>, including configurable formatting and logic</li>
+            <li>Offers both <strong>manual and batch generation</strong>, enabling high-volume workflows</li>
+            <li>Integrates with <strong>OmniStudio DocGen</strong> for advanced, no-code document logic and workflows</li>
+        </ul>
+
+        <h3>13a. Enable Document Generation</h3>
+        <div class="setup-path">Setup &rarr; Document Generation Settings</div>
+        <ol>
+            <li>Choose the DocGen record and enable features (batch generation, templating)</li>
+            <li>Assign <strong>DocGen Designer</strong> and <strong>DocGen User</strong> permission sets to appropriate users</li>
+            <li>Set the percent limit per hour (<code>1</code> = 100%). Optionally schedule batch jobs using Apex</li>
+        </ol>
+
+        <h3>13b. Create Document Templates</h3>
+        <ol>
+            <li>In <strong>OmniStudio</strong>, create mappers (Extract, Transform) to pull data from Salesforce objects</li>
+            <li>Link templates to mappers</li>
+            <li>Use buttons, flows, or Integration Procedures to trigger DocGen</li>
+        </ol>
+
+        <h3>13c. Invoice PDF Generation</h3>
+        <p>The Default Invoice Template document template derives its field values from:</p>
+        <table>
+            <tr><th>Source Object</th><th>Fields Used</th></tr>
+            <tr><td>Invoice</td><td>Invoice Date, Invoice Number, Due Date, Description, Total Amount, Total Tax, Balance, Net Credits Applied</td></tr>
+            <tr><td>Account</td><td>Billing Address, Shipping Address</td></tr>
+            <tr><td>Invoice Line</td><td>Product, Quantity, Unit Price, Tax Amount, Line Amount, Start Date, End Date (determines billing period)</td></tr>
+        </table>
+
+        <div class="tip">
+            <strong>Tip:</strong> The start and end dates on the invoice line determine the billing period displayed on the invoice PDF. Ensure these are populated correctly for accurate invoice output.
         </div>
     </div>
 
@@ -1376,19 +1492,34 @@ sf org login web -a myorg
                     Enable Feature Settings
                 </summary>
                 <div class="step-body">
-                    <div class="setup-path">Setup &rarr; Revenue Settings</div>
+                    <p class="step-category">Revenue Settings</p>
+                    <div class="setup-path">Setup &rarr; Feature Settings &rarr; Revenue Cloud &rarr; Revenue Settings</div>
                     <ul class="checklist">
-                        <li data-check-id="s4-quotes">Enable Quotes (check "Enable Quotes")</li>
+                        <li data-check-id="s4-quotes">Set Up Quotes &rarr; Enable Quotes</li>
                         <li data-check-id="s4-no-opp">Allow quote creation without opportunities (optional)</li>
                         <li data-check-id="s4-negative">Enable negative and zero order quantities</li>
                         <li data-check-id="s4-config-rules">Enable "Set Up Advanced Configuration Rules and Constraints"</li>
+                        <li data-check-id="s4-docbuilder">Document Builder enabled</li>
+                        <li data-check-id="s4-ramp">Ramp Deals enabled</li>
+                        <li data-check-id="s4-clonequotes">Clone Quotes enabled</li>
+                        <li data-check-id="s4-asis">As-Is Renewals enabled</li>
+                        <li data-check-id="s4-groups">Groups enabled</li>
+                        <li data-check-id="s4-groupactions">Group Actions enabled</li>
+                        <li data-check-id="s4-rampgroups">Ramp Deals for Groups enabled</li>
                     </ul>
-                    <div class="setup-path">Setup &rarr; Salesforce Pricing</div>
+                    <p class="step-category">Salesforce Pricing</p>
+                    <div class="setup-path">Setup &rarr; Feature Settings &rarr; Salesforce Pricing &rarr; Salesforce Pricing Settings</div>
                     <ul class="checklist">
-                        <li data-check-id="s4-pricing">Toggle ON "Salesforce Pricing"</li>
-                        <li data-check-id="s4-context">Enable Context Definitions</li>
+                        <li data-check-id="s4-pricing">Toggle ON "Salesforce Pricing" (verify new Salesforce Pricing Setup tab appears)</li>
+                        <li data-check-id="s4-context">Enable Context Service (verify Context Definitions tab appears)</li>
                     </ul>
-                    <p><strong>Additional Feature Toggles:</strong></p>
+                    <p class="step-category">Context Definitions</p>
+                    <ul class="checklist">
+                        <li>Extended ProductDiscoveryContext created and set as default</li>
+                        <li>Extended SalesTransactionContext created and set as default</li>
+                        <li>Both custom context definitions activated</li>
+                    </ul>
+                    <p class="step-category">Additional Feature Toggles</p>
                     <ul class="checklist">
                         <li>Contract Lifecycle Management (Setup &rarr; CLM Settings)</li>
                         <li>Document Generation (Setup &rarr; DocGen Settings)</li>
@@ -1427,8 +1558,9 @@ sf org login web -a myorg
                 <div class="step-body">
                     <p><strong>Product2 Layout</strong> &mdash; Add fields:</p>
                     <ul>
-                        <li><code>ConfigurableDuringSale</code>, <code>DisplayUrl</code>, <code>ProductType</code></li>
-                        <li><code>QuantityUnitOfMeasure</code>, <code>TaxPolicy</code>, <code>IsAssetizable</code></li>
+                        <li><code>Based On</code>, <code>ConfigurableDuringSale</code>, <code>DisplayUrl</code>, <code>IsAssetizable</code></li>
+                        <li><code>ProductType</code>, <code>QuantityUnitOfMeasure</code>, <code>Sell Only With Other Products</code></li>
+                        <li><code>SpecificationType</code>, <code>TaxPolicy</code>, <code>UsageModelType</code></li>
                     </ul>
                     <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
 
@@ -1444,7 +1576,7 @@ sf org login web -a myorg
                     </ul>
 
                     <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
-                        <li>Product2 layout updated with all 6 RCA fields</li>
+                        <li>Product2 layout updated with all 10 RCA fields</li>
                         <li>Product2 related lists added</li>
                         <li>PricebookEntry layout updated</li>
                         <li>Quote layout updated</li>
@@ -1464,20 +1596,24 @@ sf org login web -a myorg
                         <strong>Do NOT build from scratch.</strong> Always clone from Salesforce-provided templates. Missing required elements will cause pricing to fail silently.
                     </div>
                     <ol>
-                        <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> &rarr; Clone</li>
-                        <li>Find <strong>"Product Discovery Pricing Procedure"</strong> &rarr; Clone</li>
-                        <li>Set activation dates on both cloned procedures</li>
-                        <li>Enable both procedures</li>
+                        <li>Open <strong>"Revenue Management Default Pricing Procedure"</strong> in Expression Set Templates &rarr; Save As &rarr; New Pricing Procedure &rarr; Set Rank = 1 &rarr; Keep inactive</li>
+                        <li>Set Start Date Time at least one day AFTER the custom Context Definition's Start Date Time</li>
+                        <li>Navigate to Pricing Procedures &rarr; Change Context Definition to custom SalesTransactionContext &rarr; Save</li>
+                        <li>Activate the Pricing Procedure version from the builder</li>
+                        <li>Repeat for <strong>"Product Discovery Pricing Procedure"</strong> using custom ProductDiscoveryContext</li>
                     </ol>
-                    <p style="margin-top:0.8rem;"><strong>Context Definitions</strong> (if custom fields needed in pricing):</p>
+                    <p style="margin-top:0.8rem;"><strong>Link Pricing Procedures to Settings:</strong></p>
                     <ol>
-                        <li>Create extended versions of standard context definitions</li>
-                        <li>Add custom fields to the appropriate section (Sales Transaction or Sales Transaction Item)</li>
-                        <li>Map to correct Quote or QuoteLineItem fields</li>
+                        <li>Product Discovery Settings: set Context Definition and Pricing Procedure</li>
+                        <li>Salesforce Pricing Setup: set Pricing Procedure to Revenue Management Default</li>
+                        <li>Revenue Settings: set Pricing Procedure to Revenue Management Default</li>
                     </ol>
                     <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
-                        <li>Default Pricing Procedure cloned and enabled</li>
-                        <li>Discovery Pricing Procedure cloned and enabled</li>
+                        <li>Default Pricing Procedure cloned, linked to custom context, and activated</li>
+                        <li>Discovery Pricing Procedure cloned, linked to custom context, and activated</li>
+                        <li>Product Discovery Settings linked to custom context and procedure</li>
+                        <li>Salesforce Pricing Setup linked to pricing procedure</li>
+                        <li>Revenue Settings linked to pricing procedure</li>
                         <li>Context Definitions extended (if applicable)</li>
                         <li>Decision Tables configured for lookup-based pricing (if applicable)</li>
                     </ul>
@@ -1611,7 +1747,7 @@ sf org login web -a myorg
 <div class="footer">
     <p>Salesforce Revenue Cloud Advanced — Setup &amp; Configuration Guide</p>
     <p>Prepared by Eddie Zaragoza &mdash; <a href="mailto:ezaragoza@crosscountry-consulting.com" style="color:var(--sf-blue);">ezaragoza@crosscountry-consulting.com</a></p>
-    <p>Generated February 2026</p>
+    <p>Generated March 2026</p>
     <p>Sources include official Salesforce documentation, Trailhead, community blogs, and implementation experience.</p>
 </div>
 
