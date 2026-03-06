@@ -802,6 +802,49 @@
             <li data-check-id="s4-dro">Dynamic Revenue Orchestrator <small>(Setup &rarr; DRO Settings)</small></li>
             <li data-check-id="s4-schedules">Product Schedules <small>(Setup &rarr; Product Schedule Settings)</small></li>
         </ul>
+
+        <h3>4e. Extend Context Definitions</h3>
+        <div class="setup-path">Setup &rarr; Feature Settings &rarr; Context Service &rarr; Context Definitions</div>
+
+        <p>Context Definitions tell the Pricing Procedure what data fields are available during pricing calculations. Salesforce ships two standard definitions, but you must <strong>extend</strong> them to create custom versions that can be modified and linked to your procedures. This is <strong>required</strong> before configuring Pricing Procedures (Step 7).</p>
+
+        <div class="critical">
+            <strong>UI-Only Operation:</strong> Extending Context Definitions cannot be done via CLI, API, Tooling API, or Metadata API. This must be done manually in the Setup UI. However, once created, the extended definitions <em>are</em> deployable via change sets or metadata packages.
+        </div>
+
+        <h4>Why Extend?</h4>
+        <p>The standard (OOTB) context definitions are read-only &mdash; you can't modify them, set them as default, or link them to your Pricing Procedures. Extending creates a custom copy that inherits all standard mappings while allowing you to add custom fields, change mappings, and set it as the default for your org.</p>
+
+        <h4>4e-i. Extend SalesTransactionContext</h4>
+        <p>This context definition maps Quote and QuoteLineItem fields into the pricing engine. It's used by the Revenue Management Default Pricing Procedure.</p>
+        <ul class="checklist">
+            <li data-check-id="s4e-st-nav">Navigate to <strong>Context Definitions</strong> &rarr; <strong>Standard Definitions</strong> tab</li>
+            <li data-check-id="s4e-st-find">Find <strong>SalesTransactionContext</strong> and click on it</li>
+            <li data-check-id="s4e-st-extend">Click the <strong>Extend</strong> button (top-right area of the definition page)</li>
+            <li data-check-id="s4e-st-name">Name it <code>EXT_SalesTransactionContext</code> (Salesforce will auto-prefix with your namespace if applicable)</li>
+            <li data-check-id="s4e-st-default">Go to the <strong>Map Data</strong> tab &rarr; Click <strong>Edit SObject Mapping</strong> &rarr; Check <strong>"Mark as Default"</strong> &rarr; Save</li>
+            <li data-check-id="s4e-st-activate">Click <strong>Activate</strong> on the extended definition</li>
+            <li data-check-id="s4e-st-verify">Verify: Status shows <strong>Active</strong> and it appears on the <strong>Custom Definitions</strong> tab</li>
+        </ul>
+
+        <h4>4e-ii. Extend ProductDiscoveryContext</h4>
+        <p>This context definition maps product catalog fields into the pricing engine. It's used by the Product Discovery Pricing Procedure (the "Browse Catalog" experience).</p>
+        <ul class="checklist">
+            <li data-check-id="s4e-pd-find">Find <strong>ProductDiscoveryContext</strong> on the <strong>Standard Definitions</strong> tab</li>
+            <li data-check-id="s4e-pd-extend">Click <strong>Extend</strong></li>
+            <li data-check-id="s4e-pd-name">Name it <code>EXT_ProductDiscoveryContext</code></li>
+            <li data-check-id="s4e-pd-default">Go to <strong>Map Data</strong> tab &rarr; <strong>Edit SObject Mapping</strong> &rarr; Check <strong>"Mark as Default"</strong> &rarr; Save</li>
+            <li data-check-id="s4e-pd-activate">Click <strong>Activate</strong></li>
+            <li data-check-id="s4e-pd-verify">Verify: Status shows <strong>Active</strong>, appears on <strong>Custom Definitions</strong> tab</li>
+        </ul>
+
+        <div class="warning">
+            <strong>Effective Date Dependency:</strong> Note the <strong>Effective From</strong> date on your extended context definitions. When you create Pricing Procedures in Step 7, the procedure's <strong>Start Date Time</strong> must be at least one day AFTER this date. Mismatched dates cause silent pricing failures with no error message.
+        </div>
+
+        <div class="tip">
+            <strong>Adding Custom Fields Later:</strong> To add custom fields to pricing calculations (e.g., customer tier, region), return to the extended context definition &rarr; <strong>Map Data</strong> tab &rarr; <strong>Edit</strong> &rarr; click <strong>SalesTransactionItem</strong> &rarr; create a new attribute (set INPUT/OUTPUT to the same data type) &rarr; create a tag &rarr; then map it to the corresponding QuoteLineItem field in the SObject Mapping. See Step 12 for grouping field examples.
+        </div>
     </div>
 
     <!-- STEP 5 -->
@@ -926,7 +969,7 @@
         <h3>Context Definitions</h3>
         <p>If you need custom fields in pricing calculations:</p>
         <ol>
-            <li>Create extended versions of standard context definitions (see Step 4e)</li>
+            <li>Create extended versions of standard context definitions (see <a href="#step4">Step 4e</a>)</li>
             <li>Add custom fields to the appropriate section (Sales Transaction or Sales Transaction Item)</li>
             <li>Map to the correct Quote or QuoteLineItem fields</li>
         </ol>
@@ -1476,11 +1519,14 @@ sf org login web -a myorg
                         <li data-check-id="s4-pricing">Toggle ON "Salesforce Pricing" (verify new Salesforce Pricing Setup tab appears)</li>
                         <li data-check-id="s4-context">Enable Context Service (verify Context Definitions tab appears)</li>
                     </ul>
-                    <p class="step-category">Context Definitions</p>
+                    <p class="step-category">Context Definitions (see Step 4e)</p>
                     <ul class="checklist">
-                        <li>Extended ProductDiscoveryContext created and set as default</li>
-                        <li>Extended SalesTransactionContext created and set as default</li>
-                        <li>Both custom context definitions activated</li>
+                        <li data-check-id="s4e-st-extend">Extended <strong>SalesTransactionContext</strong> &rarr; <code>EXT_SalesTransactionContext</code></li>
+                        <li data-check-id="s4e-st-default">SalesTransactionContext set as default (Map Data &rarr; Edit SObject Mapping &rarr; Mark as Default)</li>
+                        <li data-check-id="s4e-st-activate">SalesTransactionContext activated</li>
+                        <li data-check-id="s4e-pd-extend">Extended <strong>ProductDiscoveryContext</strong> &rarr; <code>EXT_ProductDiscoveryContext</code></li>
+                        <li data-check-id="s4e-pd-default">ProductDiscoveryContext set as default</li>
+                        <li data-check-id="s4e-pd-activate">ProductDiscoveryContext activated</li>
                     </ul>
                     <p class="step-category">Additional Feature Toggles</p>
                     <ul class="checklist">
