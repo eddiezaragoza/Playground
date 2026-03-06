@@ -571,13 +571,13 @@
         <h2><span class="num">0</span> Prerequisites &amp; Planning</h2>
 
         <h3>Required Before Starting</h3>
-        <ul>
-            <li><strong>Revenue Cloud Advanced license</strong> provisioned on your org (contact your Salesforce AE)</li>
-            <li><strong>System Administrator profile</strong> or equivalent for the setup user</li>
-            <li><strong>Sandbox environment</strong> — never configure RCA directly in production first</li>
-            <li><strong>"Enable New Order Save Behavior" release update activated</strong> — this is a hidden prerequisite for enabling Revenue Cloud Features (see Step 1)</li>
-            <li><strong>Order Settings</strong> — Enable Orders, Enable Reduction Orders, Enable Negative Quantity, Enable Zero Quantity, Enable Enhanced Commerce Orders</li>
-            <li><strong>Salesforce CLI (sf)</strong> installed if using the automation script</li>
+        <ul class="checklist">
+            <li data-check-id="s0-license"><strong>Revenue Cloud Advanced license</strong> provisioned on your org (contact your Salesforce AE)</li>
+            <li data-check-id="s0-admin"><strong>System Administrator profile</strong> or equivalent for the setup user</li>
+            <li data-check-id="s0-sandbox"><strong>Sandbox environment</strong> — never configure RCA directly in production first</li>
+            <li data-check-id="s0-order-save"><strong>"Enable New Order Save Behavior" release update activated</strong> — this is a hidden prerequisite for enabling Revenue Cloud Features (see Step 1)</li>
+            <li data-check-id="s0-order-settings"><strong>Order Settings</strong> — Enable Orders, Enable Reduction Orders, Enable Negative Quantity, Enable Zero Quantity, Enable Enhanced Commerce Orders</li>
+            <li data-check-id="s0-cli"><strong>Salesforce CLI (sf)</strong> installed if using the automation script</li>
         </ul>
 
         <h3>Recommended Environment Strategy</h3>
@@ -614,22 +614,22 @@
         <h3>1b. Enable Order Settings Prerequisites</h3>
         <div class="setup-path">Setup &rarr; Order Settings</div>
         <p>Check <strong>all</strong> of the following:</p>
-        <ul>
-            <li><code>Enable Orders</code></li>
-            <li><code>Enable Reduction Orders</code></li>
-            <li><code>Enable Negative Quantity</code></li>
-            <li><code>Enable Zero Quantity</code></li>
-            <li><code>Enable Enhanced Commerce Orders</code> &mdash; <strong>Warning: cannot be disabled once enabled</strong></li>
+        <ul class="checklist">
+            <li data-check-id="s1-orders"><code>Enable Orders</code></li>
+            <li data-check-id="s1-reduction"><code>Enable Reduction Orders</code></li>
+            <li data-check-id="s1-negative"><code>Enable Negative Quantity</code></li>
+            <li data-check-id="s1-zero"><code>Enable Zero Quantity</code></li>
+            <li data-check-id="s1-enhanced"><code>Enable Enhanced Commerce Orders</code> &mdash; <strong>Warning: cannot be disabled once enabled</strong></li>
         </ul>
 
         <h3>1c. Enable Revenue Cloud Features</h3>
         <div class="setup-path">Setup &rarr; Feature Settings &rarr; Revenue Cloud &rarr; Revenue Settings</div>
         <p>After completing 1a and 1b:</p>
-        <ul>
-            <li>The "Enable New Order Save Behavior" prerequisite will show <strong>Enabled</strong></li>
-            <li>The "Enable Revenue Cloud Features" toggle will now be clickable &mdash; toggle it <strong>ON</strong></li>
-            <li>A green banner <strong>"Revenue Cloud has been enabled"</strong> confirms success</li>
-            <li><strong>This setting cannot be disabled once enabled</strong></li>
+        <ul class="checklist">
+            <li data-check-id="s1-order-save-verified">"Enable New Order Save Behavior" prerequisite shows <strong>Enabled</strong></li>
+            <li data-check-id="s1-revcloud-toggle">"Enable Revenue Cloud Features" toggled <strong>ON</strong></li>
+            <li data-check-id="s1-revcloud-confirmed">Green banner <strong>"Revenue Cloud has been enabled"</strong> confirmed</li>
+            <li data-check-id="s1-pricing-toggle">Salesforce Pricing toggled ON (Step 1d)</li>
         </ul>
 
         <h3>1d. Enable Salesforce Pricing</h3>
@@ -649,30 +649,46 @@
 
         <p>Assign these PSLs based on user role. Each PSL unlocks a set of permission sets.</p>
 
-        <table>
-            <tr><th>Category</th><th>Permission Set License</th><th>Required For</th></tr>
-            <tr><td>Core</td><td><code>Revenue Cloud User</code></td><td>All RCA users</td></tr>
-            <tr><td>Core</td><td><code>Revenue Lifecycle Management User</code></td><td>All RCA users</td></tr>
-            <tr><td>Catalog</td><td><code>Product Catalog Mgmt Administrator</code></td><td>Product admins</td></tr>
-            <tr><td>Catalog</td><td><code>Product Catalog Mgmt Viewer</code></td><td>Sales users</td></tr>
-            <tr><td>Pricing</td><td><code>Salesforce Pricing Design Time</code></td><td>Pricing admins</td></tr>
-            <tr><td>Pricing</td><td><code>Salesforce Pricing Run Time</code></td><td>All quoting users</td></tr>
-            <tr><td>Config</td><td><code>Product Configuration User</code></td><td>Users who configure products</td></tr>
-            <tr><td>Rules</td><td><code>Business Rules Engine Designer</code></td><td>Rule authors</td></tr>
-            <tr><td>Rules</td><td><code>Business Rules Engine Runtime</code></td><td>Users who run rules</td></tr>
-            <tr><td>Context</td><td><code>Context Service Admin</code></td><td>Admins setting up pricing</td></tr>
-            <tr><td>Context</td><td><code>Context Service Runtime</code></td><td>All pricing users</td></tr>
-            <tr><td>CLM</td><td><code>Contract Lifecycle Mgmt User</code></td><td>Contract managers</td></tr>
-            <tr><td>DocGen</td><td><code>Document Builder User</code></td><td>Quote document users</td></tr>
-            <tr><td>Fulfillment</td><td><code>Fulfillment User PSL</code></td><td>Order fulfillment users</td></tr>
-            <tr><td>Billing</td><td><code>Billing</code></td><td>Billing &amp; invoicing users</td></tr>
-            <tr><td>Usage</td><td><code>Usage Management Design Time</code></td><td>Usage-based pricing admins</td></tr>
-            <tr><td>Usage</td><td><code>Usage Management Run Time</code></td><td>Usage-based pricing users</td></tr>
-            <tr><td>Rate</td><td><code>Rate Management Design Time</code></td><td>Rate card admins</td></tr>
-            <tr><td>Rate</td><td><code>Rate Management Run Time</code></td><td>Rate card users</td></tr>
-            <tr><td>Wallet</td><td><code>Wallet Management User</code></td><td>Credits/wallet feature users</td></tr>
-            <tr><td>Data</td><td><code>Data Pipelines Base User</code></td><td>Data sync operations</td></tr>
-        </table>
+        <h3>Core (All RCA Users)</h3>
+        <ul class="checklist">
+            <li data-check-id="s2-revcloud"><code>Revenue Cloud User</code></li>
+            <li data-check-id="s2-revlm"><code>Revenue Lifecycle Management User</code></li>
+        </ul>
+
+        <h3>Product Catalog</h3>
+        <ul class="checklist">
+            <li data-check-id="s2-pcm-admin"><code>Product Catalog Mgmt Administrator</code> &mdash; Product admins</li>
+            <li data-check-id="s2-pcm-viewer"><code>Product Catalog Mgmt Viewer</code> &mdash; Sales users</li>
+        </ul>
+
+        <h3>Pricing</h3>
+        <ul class="checklist">
+            <li data-check-id="s2-pricing-dt"><code>Salesforce Pricing Design Time</code> &mdash; Pricing admins</li>
+            <li data-check-id="s2-pricing-rt"><code>Salesforce Pricing Run Time</code> &mdash; All quoting users</li>
+        </ul>
+
+        <h3>Configuration &amp; Rules</h3>
+        <ul class="checklist">
+            <li data-check-id="s2-prodconfig"><code>Product Configuration User</code> &mdash; Users who configure products</li>
+            <li data-check-id="s2-bre-designer"><code>Business Rules Engine Designer</code> &mdash; Rule authors</li>
+            <li data-check-id="s2-bre-runtime"><code>Business Rules Engine Runtime</code> &mdash; Users who run rules</li>
+            <li data-check-id="s2-ctx-admin"><code>Context Service Admin</code> &mdash; Admins setting up pricing</li>
+            <li data-check-id="s2-ctx-runtime"><code>Context Service Runtime</code> &mdash; All pricing users</li>
+        </ul>
+
+        <h3>Optional (Assign as Needed)</h3>
+        <ul class="checklist">
+            <li data-check-id="s2-clm"><code>Contract Lifecycle Mgmt User</code> &mdash; Contract managers</li>
+            <li data-check-id="s2-docbuilder"><code>Document Builder User</code> &mdash; Quote document users</li>
+            <li data-check-id="s2-fulfillment"><code>Fulfillment User PSL</code> &mdash; Order fulfillment users</li>
+            <li data-check-id="s2-billing"><code>Billing</code> &mdash; Billing &amp; invoicing users</li>
+            <li data-check-id="s2-usage-dt"><code>Usage Management Design Time</code> &mdash; Usage-based pricing admins</li>
+            <li data-check-id="s2-usage-rt"><code>Usage Management Run Time</code> &mdash; Usage-based pricing users</li>
+            <li data-check-id="s2-rate-dt"><code>Rate Management Design Time</code> &mdash; Rate card admins</li>
+            <li data-check-id="s2-rate-rt"><code>Rate Management Run Time</code> &mdash; Rate card users</li>
+            <li data-check-id="s2-wallet"><code>Wallet Management User</code> &mdash; Credits/wallet features</li>
+            <li data-check-id="s2-data"><code>Data Pipelines Base User</code> &mdash; Data sync operations</li>
+        </ul>
     </div>
 
     <!-- STEP 3 -->
@@ -685,105 +701,63 @@
 
         <h3>RCA Admin (22 Permission Sets)</h3>
         <p>Design-time, configuration, and builder access. Assign to admins and configurators.</p>
-        <div class="two-col">
-            <div>
-                <h4>Pricing &amp; Catalog</h4>
-                <ul>
-                    <li><code>Salesforce Pricing Admin</code></li>
-                    <li><code>Salesforce Pricing Design Time User</code></li>
-                    <li><code>Salesforce Pricing Manager</code></li>
-                    <li><code>Product Catalog Mgmt Designer</code></li>
-                    <li><code>Product Discovery Admin</code></li>
-                </ul>
-                <h4>Billing &amp; Tax</h4>
-                <ul>
-                    <li><code>Billing Admin</code></li>
-                    <li><code>Tax Admin</code></li>
-                </ul>
-                <h4>Rate Management</h4>
-                <ul>
-                    <li><code>Rate Management: Admin</code></li>
-                    <li><code>Rate Management: Design Time User</code></li>
-                    <li><code>Rate Management: Manager</code></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Rules &amp; Configuration</h4>
-                <ul>
-                    <li><code>Rule Engine Designer</code></li>
-                    <li><code>Product Configuration Constraints Designer</code></li>
-                    <li><code>DecimalQuantityDesigntime</code></li>
-                </ul>
-                <h4>Contract &amp; Document</h4>
-                <ul>
-                    <li><code>CLM Admin User</code></li>
-                    <li><code>Clause Designer User</code></li>
-                    <li><code>Contracts AI Clause Designer</code></li>
-                    <li><code>DocGen Designer</code></li>
-                    <li><code>Microsoft 365 Word Designer</code></li>
-                </ul>
-                <h4>Orchestration &amp; Data</h4>
-                <ul>
-                    <li><code>Orchestration Process Manager</code></li>
-                    <li><code>Usage: Design User</code></li>
-                    <li><code>Advanced CSV Data Import</code></li>
-                    <li><code>Data Pipelines Base User</code></li>
-                </ul>
-            </div>
-        </div>
+        <ul class="checklist">
+            <li data-check-id="s3a-pricing-admin"><code>Salesforce Pricing Admin</code></li>
+            <li data-check-id="s3a-pricing-dt"><code>Salesforce Pricing Design Time User</code></li>
+            <li data-check-id="s3a-pricing-mgr"><code>Salesforce Pricing Manager</code></li>
+            <li data-check-id="s3a-pcm-designer"><code>Product Catalog Mgmt Designer</code></li>
+            <li data-check-id="s3a-prod-disc-admin"><code>Product Discovery Admin</code></li>
+            <li data-check-id="s3a-billing-admin"><code>Billing Admin</code></li>
+            <li data-check-id="s3a-tax-admin"><code>Tax Admin</code></li>
+            <li data-check-id="s3a-rate-admin"><code>Rate Management: Admin</code></li>
+            <li data-check-id="s3a-rate-dt"><code>Rate Management: Design Time User</code></li>
+            <li data-check-id="s3a-rate-mgr"><code>Rate Management: Manager</code></li>
+            <li data-check-id="s3a-bre-designer"><code>Rule Engine Designer</code></li>
+            <li data-check-id="s3a-config-designer"><code>Product Configuration Constraints Designer</code></li>
+            <li data-check-id="s3a-decimal-dt"><code>DecimalQuantityDesigntime</code></li>
+            <li data-check-id="s3a-clm-admin"><code>CLM Admin User</code></li>
+            <li data-check-id="s3a-clause-designer"><code>Clause Designer User</code></li>
+            <li data-check-id="s3a-contracts-ai"><code>Contracts AI Clause Designer</code></li>
+            <li data-check-id="s3a-docgen-designer"><code>DocGen Designer</code></li>
+            <li data-check-id="s3a-ms365"><code>Microsoft 365 Word Designer</code></li>
+            <li data-check-id="s3a-orch-mgr"><code>Orchestration Process Manager</code></li>
+            <li data-check-id="s3a-usage-design"><code>Usage: Design User</code></li>
+            <li data-check-id="s3a-csv-import"><code>Advanced CSV Data Import</code></li>
+            <li data-check-id="s3a-data-pipelines"><code>Data Pipelines Base User</code></li>
+        </ul>
 
         <h3>RCA User (20 Permission Sets)</h3>
         <p>Runtime, operational, and viewer access. Assign to all RCA users (including admins).</p>
-        <div class="two-col">
-            <div>
-                <h4>Pricing &amp; Catalog</h4>
-                <ul>
-                    <li><code>Salesforce Pricing Run Time User</code></li>
-                    <li><code>Product Catalog Mgmt Viewer</code></li>
-                    <li><code>Product Catalog Mgmt Cache</code></li>
-                    <li><code>Product Discovery User</code></li>
-                </ul>
-                <h4>Rules &amp; Runtime</h4>
-                <ul>
-                    <li><code>Rule Engine Runtime</code></li>
-                    <li><code>CLM Runtime User</code></li>
-                    <li><code>Contracts AI User</code></li>
-                </ul>
-                <h4>Document</h4>
-                <ul>
-                    <li><code>DocGen User</code></li>
-                    <li><code>Document Builder User</code></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Orders &amp; Fulfillment</h4>
-                <ul>
-                    <li><code>Fulfillment Manager/Operator</code></li>
-                    <li><code>Submit Transactions and Orchestrate User</code></li>
-                    <li><code>Submit Transactions User</code></li>
-                    <li><code>Submit Transactions and Fulfillment User</code></li>
-                    <li><code>Assetize Order</code></li>
-                    <li><code>PlaceOrder API</code></li>
-                    <li><code>Create Orders from Quotes</code></li>
-                </ul>
-                <h4>Billing</h4>
-                <ul>
-                    <li><code>Rate Management: Run Time User</code></li>
-                    <li><code>Generate Invoices From Billing Schedule API</code></li>
-                    <li><code>Credit Memo Operations User</code></li>
-                    <li><code>Create Billing Schedules From Billing Transactions API</code></li>
-                </ul>
-            </div>
-        </div>
+        <ul class="checklist">
+            <li data-check-id="s3u-pricing-rt"><code>Salesforce Pricing Run Time User</code></li>
+            <li data-check-id="s3u-pcm-viewer"><code>Product Catalog Mgmt Viewer</code></li>
+            <li data-check-id="s3u-pcm-cache"><code>Product Catalog Mgmt Cache</code></li>
+            <li data-check-id="s3u-prod-disc"><code>Product Discovery User</code></li>
+            <li data-check-id="s3u-bre-runtime"><code>Rule Engine Runtime</code></li>
+            <li data-check-id="s3u-clm-runtime"><code>CLM Runtime User</code></li>
+            <li data-check-id="s3u-contracts-ai"><code>Contracts AI User</code></li>
+            <li data-check-id="s3u-docgen-user"><code>DocGen User</code></li>
+            <li data-check-id="s3u-docbuilder"><code>Document Builder User</code></li>
+            <li data-check-id="s3u-fulfillment-mgr"><code>Fulfillment Manager/Operator</code></li>
+            <li data-check-id="s3u-dro-orchestrate"><code>Submit Transactions and Orchestrate User</code></li>
+            <li data-check-id="s3u-dro-submit"><code>Submit Transactions User</code></li>
+            <li data-check-id="s3u-order-submit"><code>Submit Transactions and Fulfillment User</code></li>
+            <li data-check-id="s3u-assetize"><code>Assetize Order</code></li>
+            <li data-check-id="s3u-placeorder"><code>PlaceOrder API</code></li>
+            <li data-check-id="s3u-create-orders"><code>Create Orders from Quotes</code></li>
+            <li data-check-id="s3u-rate-rt"><code>Rate Management: Run Time User</code></li>
+            <li data-check-id="s3u-billing-invoice"><code>Generate Invoices From Billing Schedule API</code></li>
+            <li data-check-id="s3u-credit-memo"><code>Credit Memo Operations User</code></li>
+            <li data-check-id="s3u-billing-sched"><code>Create Billing Schedules From Billing Transactions API</code></li>
+        </ul>
 
         <h3>Standalone Permission Sets (3) &mdash; Assign Individually</h3>
         <p>These 3 PS cause license-level aggregation conflicts when combined inside a Permission Set Group. They work fine as individual assignments &mdash; the conflict only occurs when the PSG engine merges all permissions into a single combined set.</p>
-        <table>
-            <tr><th>Permission Set</th><th>Conflict Reason</th></tr>
-            <tr><td><code>Omnistudio Admin</code></td><td><code>UseTemplatedApp</code> permission conflicts with user license in PSG aggregation</td></tr>
-            <tr><td><code>DRO Admin User</code></td><td><code>View All Product2</code> permission conflicts with user license in PSG aggregation</td></tr>
-            <tr><td><code>Fulfillment Designer</code></td><td><code>View All Product2</code> permission conflicts with user license in PSG aggregation</td></tr>
-        </table>
+        <ul class="checklist">
+            <li data-check-id="s3s-omnistudio"><code>Omnistudio Admin</code> &mdash; Admin only &mdash; <small>Standalone due to <code>UseTemplatedApp</code> PSG aggregation conflict</small></li>
+            <li data-check-id="s3s-dro-admin"><code>DRO Admin User</code> &mdash; Admin only &mdash; <small>Standalone due to <code>View All Product2</code> PSG aggregation conflict</small></li>
+            <li data-check-id="s3s-fulfillment"><code>Fulfillment Designer</code> &mdash; Admin only &mdash; <small>Standalone due to <code>View All Product2</code> PSG aggregation conflict</small></li>
+        </ul>
 
         <h3>Assignment Guide by Role</h3>
         <table>
@@ -822,13 +796,12 @@
         </ul>
 
         <h3>Additional Features</h3>
-        <table>
-            <tr><th>Setting</th><th>Location</th><th>Action</th></tr>
-            <tr><td>Contract Lifecycle Management</td><td>Setup → CLM Settings</td><td>Enable</td></tr>
-            <tr><td>Document Generation</td><td>Setup → DocGen Settings</td><td>Enable</td></tr>
-            <tr><td>Dynamic Revenue Orchestrator</td><td>Setup → DRO Settings</td><td>Enable</td></tr>
-            <tr><td>Product Schedules</td><td>Setup → Product Schedule Settings</td><td>Enable</td></tr>
-        </table>
+        <ul class="checklist">
+            <li data-check-id="s4-clm">Contract Lifecycle Management <small>(Setup &rarr; CLM Settings)</small></li>
+            <li data-check-id="s4-docgen">Document Generation <small>(Setup &rarr; DocGen Settings)</small></li>
+            <li data-check-id="s4-dro">Dynamic Revenue Orchestrator <small>(Setup &rarr; DRO Settings)</small></li>
+            <li data-check-id="s4-schedules">Product Schedules <small>(Setup &rarr; Product Schedule Settings)</small></li>
+        </ul>
     </div>
 
     <!-- STEP 5 -->
@@ -837,12 +810,11 @@
 
         <p>The Advanced Configurator requires a hidden diagnostics field on three objects:</p>
 
-        <table>
-            <tr><th>Object</th><th>Field Name</th><th>Type</th><th>Length</th></tr>
-            <tr><td>QuoteLineItem</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
-            <tr><td>OrderItem</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
-            <tr><td>AssetActionSource</td><td><code>ConstraintEngineNodeStatus</code></td><td>Long Text Area</td><td>5000</td></tr>
-        </table>
+        <ul class="checklist">
+            <li data-check-id="s5-qli"><code>ConstraintEngineNodeStatus</code> on <strong>QuoteLineItem</strong> (Long Text Area, 5000)</li>
+            <li data-check-id="s5-oi"><code>ConstraintEngineNodeStatus</code> on <strong>OrderItem</strong> (Long Text Area, 5000)</li>
+            <li data-check-id="s5-aas"><code>ConstraintEngineNodeStatus</code> on <strong>AssetActionSource</strong> (Long Text Area, 5000)</li>
+        </ul>
 
         <div class="warning">
             <strong>Important:</strong> Create these fields BEFORE enabling Advanced Configuration Rules in Revenue Settings. Without them, the rules engine will fail silently.
@@ -860,34 +832,37 @@
 
         <h3>Product2 Layout</h3>
         <p>Add these fields to the Product page layout. <em>Field descriptions based on Haley Bates' RCA training documentation.</em></p>
-        <table>
-            <tr><th>Field</th><th>Description</th></tr>
-            <tr><td><code>Based On</code></td><td>If the product is based on a template</td></tr>
-            <tr><td><code>ConfigurableDuringSale</code></td><td>Whether users can access the configurator for the product during quoting</td></tr>
-            <tr><td><code>DisplayUrl</code></td><td>Shows an image in the "Browse Catalog" page for the product</td></tr>
-            <tr><td><code>IsAssetizable</code></td><td>Whether or not assets are created for that product when an order is activated</td></tr>
-            <tr><td><code>ProductType</code></td><td>Standard Simple Product or Bundle &mdash; <strong>cannot be changed after creation</strong></td></tr>
-            <tr><td><code>QuantityUnitOfMeasure</code></td><td>Unit of measure for the product quantity</td></tr>
-            <tr><td><code>Sell Only With Other Products</code></td><td>Equivalent of the "Component" checkbox in CPQ &mdash; product can only be sold as part of a bundle</td></tr>
-            <tr><td><code>SpecificationType</code></td><td>Specification type for the product</td></tr>
-            <tr><td><code>TaxPolicy</code></td><td>Tax policy applied to the product</td></tr>
-            <tr><td><code>UsageModelType</code></td><td>Usage model type for consumption-based products</td></tr>
-        </table>
-        <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
+        <ul class="checklist">
+            <li data-check-id="s6-basedon"><code>Based On</code> &mdash; If the product is based on a template</li>
+            <li data-check-id="s6-configurable"><code>ConfigurableDuringSale</code> &mdash; Whether users can access the configurator during quoting</li>
+            <li data-check-id="s6-displayurl"><code>DisplayUrl</code> &mdash; Shows an image in the "Browse Catalog" page</li>
+            <li data-check-id="s6-assetizable"><code>IsAssetizable</code> &mdash; Whether assets are created when an order is activated</li>
+            <li data-check-id="s6-producttype"><code>ProductType</code> &mdash; Simple or Bundle &mdash; <strong>cannot be changed after creation</strong></li>
+            <li data-check-id="s6-uom"><code>QuantityUnitOfMeasure</code> &mdash; Unit of measure for the product quantity</li>
+            <li data-check-id="s6-sellonly"><code>Sell Only With Other Products</code> &mdash; Equivalent of CPQ "Component" checkbox</li>
+            <li data-check-id="s6-spectype"><code>SpecificationType</code> &mdash; Specification type for the product</li>
+            <li data-check-id="s6-taxpolicy"><code>TaxPolicy</code> &mdash; Tax policy applied to the product</li>
+            <li data-check-id="s6-usagemodel"><code>UsageModelType</code> &mdash; Usage model type for consumption-based products</li>
+        </ul>
+        <h4>Related Lists</h4>
+        <ul class="checklist">
+            <li data-check-id="s6-rl-psm"><strong>Product Selling Models</strong> related list added</li>
+            <li data-check-id="s6-rl-categories"><strong>Categories</strong> related list added</li>
+            <li data-check-id="s6-rl-children"><strong>Child Components</strong> related list added (Structure tab)</li>
+        </ul>
 
         <h3>PricebookEntry Layout</h3>
-        <table>
-            <tr><th>Field</th><th>Description</th></tr>
-            <tr><td><code>ProductSellingModel</code></td><td>Links the price book entry to a selling model (One-Time, Term-Defined, etc.)</td></tr>
-            <tr><td><code>IsDerived</code></td><td>Derived Pricing &mdash; equivalent of Percent of Total Pricing in CPQ</td></tr>
-        </table>
+        <ul class="checklist">
+            <li data-check-id="s6-pbe-psm"><code>ProductSellingModel</code> &mdash; Links PBE to a selling model (One-Time, Term-Defined, etc.)</li>
+            <li data-check-id="s6-pbe-derived"><code>IsDerived</code> &mdash; Derived Pricing (equivalent of Percent of Total in CPQ)</li>
+        </ul>
         <div class="tip">
             <strong>Best Practice:</strong> Make <code>ProductSellingModel</code> a required field on the PricebookEntry layout, since RCA needs it for every price book entry. <em>&mdash; Haley Bates</em>
         </div>
 
         <h3>Quote Layout</h3>
-        <ul>
-            <li><code>Account</code> (for Quote) &mdash; This field enables quotes that don't have Opportunities, which is an RCA feature allowing standalone quoting</li>
+        <ul class="checklist">
+            <li data-check-id="s6-quote-account"><code>Account</code> (for Quote) &mdash; Enables quotes without Opportunities (RCA standalone quoting)</li>
         </ul>
     </div>
 
@@ -904,13 +879,13 @@
 
         <h3>7a. Clone the Revenue Management Default Pricing Procedure</h3>
         <div class="setup-path">App Launcher &rarr; Expression Set Templates</div>
-        <ol>
-            <li>Open the <strong>"Revenue Management Default Pricing Procedure"</strong> template</li>
-            <li>Click <strong>Save As &rarr; New Pricing Procedure</strong></li>
-            <li>Set <strong>Rank = 1</strong></li>
-            <li><strong>Keep it inactive</strong> so you can change the context definition to your custom one first</li>
-            <li>Save the new Pricing Procedure</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s7a-open">Open the <strong>"Revenue Management Default Pricing Procedure"</strong> template</li>
+            <li data-check-id="s7a-saveas">Click <strong>Save As &rarr; New Pricing Procedure</strong></li>
+            <li data-check-id="s7a-rank">Set <strong>Rank = 1</strong></li>
+            <li data-check-id="s7a-inactive"><strong>Keep it inactive</strong> so you can change the context definition to your custom one first</li>
+            <li data-check-id="s7a-save">Save the new Pricing Procedure</li>
+        </ul>
 
         <div class="critical">
             <strong>Important:</strong> On the new Pricing Procedure, click the cog wheel (settings) to the right of the page. Ensure that the <strong>Start Date Time</strong> is set at least one day AFTER the Start Date Time specified on the custom Context Definition. Mismatched dates will cause silent failures.
@@ -918,34 +893,32 @@
 
         <h3>7b. Link the Custom Context Definition</h3>
         <div class="setup-path">App Launcher &rarr; Pricing Procedures</div>
-        <ol>
-            <li>Navigate to <strong>App Launcher &rarr; Pricing Procedures</strong> &mdash; you should see the newly created Pricing Procedure</li>
-            <li>Click into the Pricing Procedure</li>
-            <li>Change the <strong>Context Definition</strong> to the custom <code>SalesTransactionContext</code> you created in Step 4e</li>
-            <li>Save</li>
-            <li>In the <strong>Pricing Procedure Versions</strong> related list below, click to open the Revenue Management Default Pricing Procedure version</li>
-            <li><strong>Activate</strong> the Pricing Procedure from the builder</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s7b-navigate">Navigate to <strong>App Launcher &rarr; Pricing Procedures</strong></li>
+            <li data-check-id="s7b-context">Change <strong>Context Definition</strong> to custom <code>SalesTransactionContext</code></li>
+            <li data-check-id="s7b-save">Save</li>
+            <li data-check-id="s7b-activate">Open Pricing Procedure version &rarr; <strong>Activate</strong> from the builder</li>
+        </ul>
 
         <h3>7c. Clone the Product Discovery Pricing Procedure</h3>
         <p>Repeat the same process for the Product Discovery procedure, but use the custom <code>ProductDiscoveryContext</code> definition instead:</p>
-        <ol>
-            <li>Open the <strong>"Product Discovery Pricing Procedure"</strong> template from Expression Set Templates</li>
-            <li>Save As &rarr; New Pricing Procedure &rarr; Set Rank &rarr; Keep inactive</li>
-            <li>Link it to your custom <code>ProductDiscoveryContext</code> definition</li>
-            <li>Activate the procedure version</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s7c-open">Open <strong>"Product Discovery Pricing Procedure"</strong> template from Expression Set Templates</li>
+            <li data-check-id="s7c-saveas">Save As &rarr; New Pricing Procedure &rarr; Set Rank &rarr; Keep inactive</li>
+            <li data-check-id="s7c-context">Link to custom <code>ProductDiscoveryContext</code> definition</li>
+            <li data-check-id="s7c-activate">Activate the procedure version</li>
+        </ul>
 
         <h3>7d. Link Pricing Procedures to Settings</h3>
         <p>After creating and activating both procedures, connect them in three places:</p>
-        <ol>
-            <li><div class="setup-path">Setup &rarr; Product Catalog Management &rarr; Product Discovery &rarr; Product Discovery Settings</div>
-                Change the <strong>Context Definition</strong> to your custom <code>ProductDiscoveryContext</code> definition. Enable Pricing Procedure if needed, then set the <strong>Pricing Procedure</strong> to the Product Discovery procedure you just created.</li>
-            <li><div class="setup-path">Setup &rarr; Feature Settings &rarr; Salesforce Pricing &rarr; Salesforce Pricing Setup</div>
-                Set the <strong>Pricing Procedure</strong> to the Revenue Management Default Pricing Procedure.</li>
-            <li><div class="setup-path">Setup &rarr; Feature Settings &rarr; Revenue Cloud &rarr; Revenue Settings</div>
-                Set the <strong>Pricing Procedure</strong> to the Revenue Management Default Pricing Procedure.</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s7d-discovery"><strong>Product Discovery Settings</strong> &mdash; Set Context Definition to custom <code>ProductDiscoveryContext</code>, set Pricing Procedure to Product Discovery procedure
+                <div class="setup-path">Setup &rarr; Product Catalog Management &rarr; Product Discovery &rarr; Product Discovery Settings</div></li>
+            <li data-check-id="s7d-pricing"><strong>Salesforce Pricing Setup</strong> &mdash; Set Pricing Procedure to Revenue Management Default
+                <div class="setup-path">Setup &rarr; Feature Settings &rarr; Salesforce Pricing &rarr; Salesforce Pricing Setup</div></li>
+            <li data-check-id="s7d-revenue"><strong>Revenue Settings</strong> &mdash; Set Pricing Procedure to Revenue Management Default
+                <div class="setup-path">Setup &rarr; Feature Settings &rarr; Revenue Cloud &rarr; Revenue Settings</div></li>
+        </ul>
 
         <h3>Pricing Procedure Architecture</h3>
         <div class="diagram" id="pricingArchDiagram"></div>
@@ -973,38 +946,37 @@
 
         <h3>8a. Create Product Selling Models</h3>
         <div class="setup-path">App Launcher → Product Catalog Management</div>
-        <table>
-            <tr><th>Model Name</th><th>Type</th><th>PricingTerm</th><th>PricingTermUnit</th><th>Use Case</th></tr>
-            <tr><td>One-Time</td><td><code>OneTime</code></td><td>&mdash;</td><td>&mdash;</td><td>Single purchases, hardware, professional services</td></tr>
-            <tr><td>Term-Defined Annual</td><td><code>TermDefined</code></td><td>1</td><td><code>Annual</code></td><td>Annual subscriptions, 1-year licenses</td></tr>
-            <tr><td>Evergreen</td><td><code>Evergreen</code></td><td>1</td><td><code>Months</code></td><td>Month-to-month, ongoing services</td></tr>
-            <tr><td>Usage-Based</td><td><code>UsageBased</code></td><td>&mdash;</td><td>&mdash;</td><td>Consumption pricing, metered billing</td></tr>
-        </table>
+        <ul class="checklist">
+            <li data-check-id="s8a-onetime"><strong>One-Time</strong> (<code>OneTime</code>) &mdash; Single purchases, hardware, professional services</li>
+            <li data-check-id="s8a-term"><strong>Term-Defined Annual</strong> (<code>TermDefined</code>, PricingTerm=1, PricingTermUnit=<code>Annual</code>) &mdash; Annual subscriptions</li>
+            <li data-check-id="s8a-evergreen"><strong>Evergreen</strong> (<code>Evergreen</code>, PricingTerm=1, PricingTermUnit=<code>Months</code>) &mdash; Month-to-month services</li>
+            <li data-check-id="s8a-usage"><strong>Usage-Based</strong> (<code>UsageBased</code>) &mdash; Consumption pricing, metered billing</li>
+        </ul>
 
         <div class="warning">
             <strong>PricingTermUnit gotcha:</strong> The <code>PricingTermUnit</code> restricted picklist uses <code>Annual</code> (not "Years") and <code>Months</code>. For Term-Defined annual models, set <code>PricingTerm = 1</code> with <code>PricingTermUnit = Annual</code>. For Evergreen monthly, use <code>PricingTerm = 1</code> with <code>PricingTermUnit = Months</code>. These are restricted picklist values &mdash; query <code>Schema.DescribeFieldResult</code> in your org to confirm available options.
         </div>
 
         <h3>8b. Create Catalog Structure</h3>
-        <ol>
-            <li>Create a <strong>ProductCatalog</strong> (e.g., "Enterprise Catalog")</li>
-            <li>Create <strong>ProductCategory</strong> hierarchy (e.g., Hardware → Software → Services)</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s8b-catalog">Create a <strong>ProductCatalog</strong> (e.g., "Enterprise Catalog")</li>
+            <li data-check-id="s8b-categories">Create <strong>ProductCategory</strong> hierarchy (e.g., Hardware &rarr; Software &rarr; Services)</li>
+        </ul>
 
         <h3>8c. Create Products</h3>
-        <ol>
-            <li>Create Product2 records with correct <strong>ProductType</strong> (Simple or Bundle)</li>
-            <li>Set <code>IsActive = true</code></li>
-            <li>Assign <strong>ProductSellingModelOption</strong> (junction linking product to selling model)</li>
-            <li>For bundles: use the <strong>Structure tab</strong> to add components and groups</li>
-            <li>Run <strong>"Validate Product Definition"</strong> before activating bundles</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s8c-create">Create Product2 records with correct <strong>ProductType</strong> (Simple or Bundle)</li>
+            <li data-check-id="s8c-active">Set <code>IsActive = true</code></li>
+            <li data-check-id="s8c-psmo">Assign <strong>ProductSellingModelOption</strong> (junction linking product to selling model)</li>
+            <li data-check-id="s8c-bundles">For bundles: use the <strong>Structure tab</strong> to add components and groups</li>
+            <li data-check-id="s8c-validate">Run <strong>"Validate Product Definition"</strong> before activating bundles</li>
+        </ul>
 
         <h3>8d. Create Price Book Entries</h3>
-        <ol>
-            <li>Add products to Price Book with List Prices</li>
-            <li>Link <code>ProductSellingModel</code> on each PricebookEntry</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s8d-pbe">Add products to Price Book with List Prices</li>
+            <li data-check-id="s8d-psm">Link <code>ProductSellingModel</code> on each PricebookEntry</li>
+        </ul>
 
         <div class="tip">
             <strong>Tip:</strong> One product can have multiple ProductSellingModelOptions, allowing you to sell the same product as one-time OR subscription without creating duplicate SKUs.
@@ -1027,15 +999,13 @@
         <p>Ensures new pricing data is available for quoting operations.</p>
 
         <h3>Test Your Configuration</h3>
-        <ol>
-            <li>Navigate to <strong>Quotes → New</strong></li>
-            <li>Populate required fields (Quote Name, Account)</li>
-            <li>Click <strong>Browse Catalog</strong></li>
-            <li>Select products from your catalog</li>
-            <li>Verify pricing calculates correctly</li>
-            <li>Test bundle configuration if applicable</li>
-            <li>Generate a test order from the quote</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s9-quote">Create a test Quote (Quotes &rarr; New)</li>
+            <li data-check-id="s9-catalog">Click <strong>Browse Catalog</strong> and select products</li>
+            <li data-check-id="s9-pricing">Verify pricing calculates correctly</li>
+            <li data-check-id="s9-bundle">Test bundle configuration (if applicable)</li>
+            <li data-check-id="s9-order">Generate a test order from the quote</li>
+        </ul>
     </div>
 
     <!-- STEP 10: BUNDLES -->
@@ -1050,47 +1020,39 @@
 
         <h3>10a. Create the Bundle Product</h3>
         <div class="setup-path">App Launcher → Product Catalog Management → Products → New</div>
-        <ol>
-            <li>Set <code>ProductType</code> = <strong>Bundle</strong></li>
-            <li>Set <code>IsActive</code> = true</li>
-            <li>Set <code>ConfigurableDuringSale</code> = <strong>true</strong> (if reps should modify components during quoting)</li>
-            <li>Set <code>IsAssetizable</code> = true (if the bundle creates assets on order activation)</li>
-            <li>Add ProductSellingModels and PricebookEntries for the bundle</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s10a-type">Set <code>ProductType</code> = <strong>Bundle</strong></li>
+            <li data-check-id="s10a-active">Set <code>IsActive</code> = true</li>
+            <li data-check-id="s10a-config">Set <code>ConfigurableDuringSale</code> = <strong>true</strong> (if reps should modify components during quoting)</li>
+            <li data-check-id="s10a-asset">Set <code>IsAssetizable</code> = true (if the bundle creates assets on order activation)</li>
+            <li data-check-id="s10a-psm">Add ProductSellingModels and PricebookEntries for the bundle</li>
+        </ul>
 
         <h3>10b. Create Component Groups</h3>
         <div class="setup-path">Product Record → Structure Tab → Add Group</div>
-        <ol>
-            <li>Click <strong>Add Group</strong></li>
-            <li>Name the group (e.g., "Compute Options", "Support Tier")</li>
-            <li>Set <strong>Cardinality</strong> (min/max selections):
-                <ul>
-                    <li>Min=1, Max=1 → exactly one required (radio-button behavior)</li>
-                    <li>Min=0, Max=3 → up to 3 optional selections</li>
-                    <li>Min=2, Max=5 → at least 2, up to 5</li>
-                </ul>
-            </li>
-            <li>Set <strong>Sequence</strong> for display order</li>
-            <li>Repeat for each group</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s10b-addgroup">Click <strong>Add Group</strong> and name it (e.g., "Compute Options", "Support Tier")</li>
+            <li data-check-id="s10b-cardinality">Set <strong>Cardinality</strong> (min/max selections) &mdash; e.g., Min=1/Max=1 for radio-button, Min=0/Max=3 for optional</li>
+            <li data-check-id="s10b-sequence">Set <strong>Sequence</strong> for display order</li>
+            <li data-check-id="s10b-repeat">Repeat for each component group</li>
+        </ul>
 
         <h3>10c. Add Child Products to Groups</h3>
         <div class="setup-path">Product Record → Structure Tab → Group → Add Component</div>
-        <ol>
-            <li>Click <strong>Add Component</strong> within a group</li>
-            <li>Search for and select the child product (must already exist and be Active)</li>
-            <li>Set <strong>Default Quantity</strong></li>
-            <li>Set <strong>Is Required</strong> = true for mandatory components</li>
-            <li>Optionally configure <strong>BundleBasedAdjustment</strong> for bundle-specific pricing</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s10c-add">Click <strong>Add Component</strong> and select child product (must already exist and be Active)</li>
+            <li data-check-id="s10c-qty">Set <strong>Default Quantity</strong></li>
+            <li data-check-id="s10c-required">Set <strong>Is Required</strong> = true for mandatory components</li>
+            <li data-check-id="s10c-pricing">Configure <strong>BundleBasedAdjustment</strong> for bundle-specific pricing (optional)</li>
+        </ul>
 
         <h3>10d. Validate and Test</h3>
-        <ol>
-            <li>On the Product record, click <strong>Validate Product Definition</strong></li>
-            <li>Fix any issues flagged</li>
-            <li>Run <strong>Sync Pricing Data</strong> (if pricing was changed)</li>
-            <li>Create a test Quote → Browse Catalog → add the bundle → verify configurator shows groups with correct cardinality</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s10d-validate">Click <strong>Validate Product Definition</strong> on the Product record</li>
+            <li data-check-id="s10d-fix">Fix any issues flagged</li>
+            <li data-check-id="s10d-sync">Run <strong>Sync Pricing Data</strong> (if pricing was changed)</li>
+            <li data-check-id="s10d-test">Test Quote &rarr; Browse Catalog &rarr; add bundle &rarr; verify configurator shows groups with correct cardinality</li>
+        </ul>
 
         <div class="tip">
             <strong>Static vs. Configurable:</strong> If <code>ConfigurableDuringSale</code> = false, the bundle has a fixed configuration and groups are optional. If true (configurable), <code>ProductComponentGroup</code> records are <strong>required</strong>.
@@ -1105,12 +1067,11 @@
 
         <h3>11a. Clone Pricing Procedure Templates</h3>
         <div class="setup-path">Setup → Expression Set Templates</div>
-        <ol>
-            <li>Find <strong>"Revenue Management Default Pricing Procedure"</strong> → click <strong>Clone</strong></li>
-            <li>Name it descriptively (e.g., "Standard Product Pricing")</li>
-            <li>Also clone <strong>"Product Discovery Pricing Procedure"</strong> (used during catalog browsing)</li>
-            <li>Set <strong>Activation Start/End Dates</strong> on each clone</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s11a-clone">Clone <strong>"Revenue Management Default Pricing Procedure"</strong> and name descriptively</li>
+            <li data-check-id="s11a-discovery">Clone <strong>"Product Discovery Pricing Procedure"</strong></li>
+            <li data-check-id="s11a-dates">Set <strong>Activation Start/End Dates</strong> on each clone</li>
+        </ul>
 
         <div class="critical">
             <strong>CRITICAL:</strong> Never build pricing procedures from scratch. Always clone from templates. Missing required internal elements causes silent pricing failures.
@@ -1118,21 +1079,21 @@
 
         <h3>11b. Configure Context Definitions</h3>
         <div class="setup-path">Setup → Context Definitions</div>
-        <ol>
-            <li>Create an <strong>EXT (Extended)</strong> Context Definition if you need custom fields</li>
-            <li>Map <strong>Sales Transaction</strong> → Quote fields (Account, Opportunity, custom fields)</li>
-            <li>Map <strong>Sales Transaction Item</strong> → QuoteLineItem fields (Product, Quantity, etc.)</li>
-            <li>Add any custom fields your pricing logic needs (e.g., customer tier, region)</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s11b-ext">Create an <strong>EXT (Extended)</strong> Context Definition if you need custom fields</li>
+            <li data-check-id="s11b-st">Map <strong>Sales Transaction</strong> &rarr; Quote fields (Account, Opportunity, custom fields)</li>
+            <li data-check-id="s11b-sti">Map <strong>Sales Transaction Item</strong> &rarr; QuoteLineItem fields (Product, Quantity, etc.)</li>
+            <li data-check-id="s11b-custom">Add any custom fields your pricing logic needs (e.g., customer tier, region)</li>
+        </ul>
 
         <h3>11c. Build Decision Tables</h3>
         <div class="setup-path">Setup → Decision Tables</div>
-        <ol>
-            <li>Create a Decision Table (e.g., "Volume Discount Entries")</li>
-            <li>Define <strong>Input columns</strong> (conditions): Product, Quantity Range, Customer Tier</li>
-            <li>Define <strong>Output columns</strong> (results): Discount Percentage, Adjustment Amount</li>
-            <li>Add rows — each row is one pricing rule</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s11c-create">Create a Decision Table (e.g., "Volume Discount Entries")</li>
+            <li data-check-id="s11c-inputs">Define <strong>Input columns</strong> (conditions): Product, Quantity Range, Customer Tier</li>
+            <li data-check-id="s11c-outputs">Define <strong>Output columns</strong> (results): Discount Percentage, Adjustment Amount</li>
+            <li data-check-id="s11c-rows">Add rows &mdash; each row is one pricing rule</li>
+        </ul>
 
         <h3>11d. Add Pricing Elements to the Procedure</h3>
         <p>Open your cloned Pricing Procedure in the Expression Set designer. Add elements in waterfall order:</p>
@@ -1151,13 +1112,12 @@
         </table>
 
         <h3>11e. Link and Sync</h3>
-        <ol>
-            <li>Navigate to <strong>Setup → Sales Transaction Types</strong></li>
-            <li>Associate your Pricing Procedure with the transaction type</li>
-            <li>Run <strong>Sync Pricing Data</strong></li>
-            <li>Refresh Decision Tables</li>
-            <li>Use the <strong>Simulation</strong> feature in the Pricing Procedure designer to test</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s11e-assoc">Associate Pricing Procedure with transaction type <small>(Setup &rarr; Sales Transaction Types)</small></li>
+            <li data-check-id="s11e-sync">Run <strong>Sync Pricing Data</strong></li>
+            <li data-check-id="s11e-refresh">Refresh Decision Tables</li>
+            <li data-check-id="s11e-simulate">Test using <strong>Simulation</strong> feature in the Pricing Procedure designer</li>
+        </ul>
 
         <div class="tip">
             <strong>Tip:</strong> Use the Simulation feature's <strong>Basic mode</strong> to quickly test with a product, or <strong>Advanced mode</strong> with JSON input for precise testing. The Price Waterfall log shows each element's input, calculation, and output for debugging.
@@ -1171,10 +1131,10 @@
         <p>RCA has a native <code>QuoteLineGroup</code> object (API v61.0+) managed through the Transaction Line Editor (TLE). This replaces CPQ's <code>SBQQ__QuoteLineGroup__c</code>.</p>
 
         <h3>Prerequisites</h3>
-        <ol>
-            <li>Deploy the <strong>Sales Transaction Line Editor (LWC)</strong> component on Quote and Order Lightning record pages</li>
-            <li>If using ramp deals: enable in <strong>Revenue Settings</strong> and activate <strong>"Clone Quote Line Groups"</strong></li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s12-tle">Deploy the <strong>Sales Transaction Line Editor (LWC)</strong> component on Quote and Order Lightning record pages</li>
+            <li data-check-id="s12-ramp">If using ramp deals: enable in <strong>Revenue Settings</strong> and activate <strong>"Clone Quote Line Groups"</strong></li>
+        </ul>
 
         <h3>Manual Grouping</h3>
         <ol>
@@ -1248,18 +1208,18 @@
 
         <h3>13a. Enable Document Generation</h3>
         <div class="setup-path">Setup &rarr; Document Generation Settings</div>
-        <ol>
-            <li>Choose the DocGen record and enable features (batch generation, templating)</li>
-            <li>Assign <strong>DocGen Designer</strong> and <strong>DocGen User</strong> permission sets to appropriate users</li>
-            <li>Set the percent limit per hour (<code>1</code> = 100%). Optionally schedule batch jobs using Apex</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s13a-enable">Enable DocGen record features (batch generation, templating)</li>
+            <li data-check-id="s13a-perms">Assign <strong>DocGen Designer</strong> and <strong>DocGen User</strong> permission sets to appropriate users</li>
+            <li data-check-id="s13a-limit">Set the percent limit per hour (<code>1</code> = 100%)</li>
+        </ul>
 
         <h3>13b. Create Document Templates</h3>
-        <ol>
-            <li>In <strong>OmniStudio</strong>, create mappers (Extract, Transform) to pull data from Salesforce objects</li>
-            <li>Link templates to mappers</li>
-            <li>Use buttons, flows, or Integration Procedures to trigger DocGen</li>
-        </ol>
+        <ul class="checklist">
+            <li data-check-id="s13b-mappers">In <strong>OmniStudio</strong>, create mappers (Extract, Transform) to pull data from Salesforce objects</li>
+            <li data-check-id="s13b-link">Link templates to mappers</li>
+            <li data-check-id="s13b-trigger">Use buttons, flows, or Integration Procedures to trigger DocGen</li>
+        </ul>
 
         <h3>13c. Invoice PDF Generation</h3>
         <p>The Default Invoice Template document template derives its field values from:</p>
@@ -1399,37 +1359,40 @@ sf org login web -a myorg
                     <div class="setup-path">Setup &rarr; Users &rarr; [Select User] &rarr; Permission Set License Assignments</div>
                     <p>Assign PSLs per user role. Each PSL unlocks a set of permission sets.</p>
                     <p class="step-category">Core (all RCA users)</p>
-                    <ul>
-                        <li><code>Revenue Cloud User</code></li>
-                        <li><code>Revenue Lifecycle Management User</code></li>
+                    <ul class="checklist">
+                        <li data-check-id="s2-revcloud"><code>Revenue Cloud User</code></li>
+                        <li data-check-id="s2-revlm"><code>Revenue Lifecycle Management User</code></li>
                     </ul>
                     <p class="step-category">Product Catalog</p>
-                    <ul>
-                        <li><code>Product Catalog Mgmt Administrator</code></li>
-                        <li><code>Product Catalog Mgmt Viewer</code></li>
+                    <ul class="checklist">
+                        <li data-check-id="s2-pcm-admin"><code>Product Catalog Mgmt Administrator</code></li>
+                        <li data-check-id="s2-pcm-viewer"><code>Product Catalog Mgmt Viewer</code></li>
                     </ul>
                     <p class="step-category">Pricing</p>
-                    <ul>
-                        <li><code>Salesforce Pricing Design Time</code></li>
-                        <li><code>Salesforce Pricing Run Time</code></li>
+                    <ul class="checklist">
+                        <li data-check-id="s2-pricing-dt"><code>Salesforce Pricing Design Time</code></li>
+                        <li data-check-id="s2-pricing-rt"><code>Salesforce Pricing Run Time</code></li>
                     </ul>
                     <p class="step-category">Configuration &amp; Rules</p>
-                    <ul>
-                        <li><code>Product Configuration User</code></li>
-                        <li><code>Business Rules Engine Designer</code></li>
-                        <li><code>Business Rules Engine Runtime</code></li>
-                        <li><code>Context Service Admin</code> / <code>Context Service Runtime</code></li>
+                    <ul class="checklist">
+                        <li data-check-id="s2-prodconfig"><code>Product Configuration User</code></li>
+                        <li data-check-id="s2-bre-designer"><code>Business Rules Engine Designer</code></li>
+                        <li data-check-id="s2-bre-runtime"><code>Business Rules Engine Runtime</code></li>
+                        <li data-check-id="s2-ctx-admin"><code>Context Service Admin</code></li>
+                        <li data-check-id="s2-ctx-runtime"><code>Context Service Runtime</code></li>
                     </ul>
                     <p class="step-category">Optional (assign as needed)</p>
-                    <ul>
-                        <li><code>Contract Lifecycle Mgmt User</code> &mdash; Contract managers</li>
-                        <li><code>Document Builder User</code> &mdash; Quote document generation</li>
-                        <li><code>Fulfillment User PSL</code> &mdash; Order fulfillment</li>
-                        <li><code>Billing</code> &mdash; Billing &amp; invoicing</li>
-                        <li><code>Usage Management Design Time / Run Time</code> &mdash; Usage-based pricing</li>
-                        <li><code>Rate Management Design Time / Run Time</code> &mdash; Rate cards</li>
-                        <li><code>Wallet Management User</code> &mdash; Credits/wallet features</li>
-                        <li><code>Data Pipelines Base User</code> &mdash; Data sync operations</li>
+                    <ul class="checklist">
+                        <li data-check-id="s2-clm"><code>Contract Lifecycle Mgmt User</code> &mdash; Contract managers</li>
+                        <li data-check-id="s2-docbuilder"><code>Document Builder User</code> &mdash; Quote document generation</li>
+                        <li data-check-id="s2-fulfillment"><code>Fulfillment User PSL</code> &mdash; Order fulfillment</li>
+                        <li data-check-id="s2-billing"><code>Billing</code> &mdash; Billing &amp; invoicing</li>
+                        <li data-check-id="s2-usage-dt"><code>Usage Management Design Time</code> &mdash; Usage-based pricing</li>
+                        <li data-check-id="s2-usage-rt"><code>Usage Management Run Time</code> &mdash; Usage-based pricing</li>
+                        <li data-check-id="s2-rate-dt"><code>Rate Management Design Time</code> &mdash; Rate cards</li>
+                        <li data-check-id="s2-rate-rt"><code>Rate Management Run Time</code> &mdash; Rate cards</li>
+                        <li data-check-id="s2-wallet"><code>Wallet Management User</code> &mdash; Credits/wallet features</li>
+                        <li data-check-id="s2-data"><code>Data Pipelines Base User</code> &mdash; Data sync operations</li>
                     </ul>
                     <ul class="checklist" style="margin-top:1rem; border-top: 1px solid #e0e0e0; padding-top: 0.8rem;">
                         <li>PSL assignments verified for all target users (admin + end users)</li>
@@ -1448,20 +1411,20 @@ sf org login web -a myorg
                     <p>Use <strong>two Permission Set Groups</strong> instead of 40+ individual assignments. This simplifies user onboarding and permission auditing.</p>
 
                     <p class="step-category">Permission Set Groups</p>
-                    <ul>
-                        <li><strong>RCA Admin</strong> (22 PS) &mdash; Design-time, configuration, builder access. Assign to admins/configurators.</li>
-                        <li><strong>RCA User</strong> (20 PS) &mdash; Runtime, operational, viewer access. Assign to all RCA users (including admins).</li>
+                    <ul class="checklist">
+                        <li data-check-id="s3-psg-admin"><strong>RCA Admin</strong> (22 PS) &mdash; Design-time, configuration, builder access. Assign to admins/configurators.</li>
+                        <li data-check-id="s3-psg-user"><strong>RCA User</strong> (20 PS) &mdash; Runtime, operational, viewer access. Assign to all RCA users (including admins).</li>
                     </ul>
 
-                    <p class="step-category">Standalone PS (assign individually &mdash; cannot go in PSGs)</p>
-                    <ul>
-                        <li><code>Omnistudio Admin</code> &mdash; <code>UseTemplatedApp</code> PSG aggregation conflict</li>
-                        <li><code>DRO Admin User</code> &mdash; <code>View All Product2</code> PSG aggregation conflict</li>
-                        <li><code>Fulfillment Designer</code> &mdash; <code>View All Product2</code> PSG aggregation conflict</li>
+                    <p class="step-category">Standalone PS (assign individually to admins &mdash; cannot go in PSGs)</p>
+                    <ul class="checklist">
+                        <li data-check-id="s3s-omnistudio"><code>Omnistudio Admin</code> &mdash; Admin only &mdash; <code>UseTemplatedApp</code> PSG conflict</li>
+                        <li data-check-id="s3s-dro-admin"><code>DRO Admin User</code> &mdash; Admin only &mdash; <code>View All Product2</code> PSG conflict</li>
+                        <li data-check-id="s3s-fulfillment"><code>Fulfillment Designer</code> &mdash; Admin only &mdash; <code>View All Product2</code> PSG conflict</li>
                     </ul>
 
                     <p class="step-category">Assignment by role</p>
-                    <ul>
+                    <ul class="checklist">
                         <li><strong>Admin/Configurator:</strong> RCA Admin + RCA User + all 3 standalone PS</li>
                         <li><strong>Standard User:</strong> RCA User only</li>
                     </ul>
@@ -1557,7 +1520,7 @@ sf org login web -a myorg
                 </summary>
                 <div class="step-body">
                     <p><strong>Product2 Layout</strong> &mdash; Add fields:</p>
-                    <ul>
+                    <ul class="checklist">
                         <li><code>Based On</code>, <code>ConfigurableDuringSale</code>, <code>DisplayUrl</code>, <code>IsAssetizable</code></li>
                         <li><code>ProductType</code>, <code>QuantityUnitOfMeasure</code>, <code>Sell Only With Other Products</code></li>
                         <li><code>SpecificationType</code>, <code>TaxPolicy</code>, <code>UsageModelType</code></li>
@@ -1565,13 +1528,13 @@ sf org login web -a myorg
                     <p>Add Related Lists: <strong>Product Selling Models</strong>, <strong>Categories</strong>, <strong>Child Components</strong> (Structure tab)</p>
 
                     <p style="margin-top:0.8rem;"><strong>PricebookEntry Layout</strong> &mdash; Add fields:</p>
-                    <ul>
+                    <ul class="checklist">
                         <li><code>ProductSellingModel</code></li>
                         <li><code>IsDerived</code></li>
                     </ul>
 
                     <p style="margin-top:0.8rem;"><strong>Quote Layout</strong> &mdash; Add fields:</p>
-                    <ul>
+                    <ul class="checklist">
                         <li><code>Account</code> (for Quote)</li>
                     </ul>
 
