@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taco Tuesday Tampa 🌮</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&family=Lobster&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --salsa: #D4371C;
+    --salsa-light: #E85D3A;
+    --guac: #4CAF50;
+    --guac-dark: #388E3C;
+    --queso: #FFC107;
+    --queso-light: #FFD54F;
+    --tortilla: #F5E6CA;
+    --chile: #FF5722;
+    --lime: #8BC34A;
+    --cream: #FFFDF5;
+    --warm-white: #FFF8EE;
+    --light-bg: #FFF3E0;
+    --card-bg: #FFFFFF;
+    --text-dark: #3E2723;
+    --text-muted: #795548;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    padding: 20px;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(212,55,28,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(255,193,7,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(76,175,80,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, var(--warm-white) 0%, var(--light-bg) 100%);
+    z-index: -1;
+  }
+
+  .machine-wrapper {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    animation: fadeDown 0.8s ease-out;
+  }
+
+  .header h1 {
+    font-family: 'Lobster', cursive;
+    font-size: clamp(2rem, 7vw, 3rem);
+    background: linear-gradient(135deg, var(--salsa), var(--chile), var(--queso));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 8px rgba(212,55,28,0.25));
+    line-height: 1.2;
+  }
+
+  .header p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header .location-tag {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 14px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.25);
+    border-radius: 20px;
+    font-size: 0.72rem;
+    color: var(--guac-dark);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Machine body */
+  .machine {
+    width: 100%;
+    background: linear-gradient(180deg, var(--card-bg) 0%, #FFF5E6 100%);
+    border: 2px solid rgba(212,55,28,0.2);
+    border-radius: 24px;
+    padding: 28px 20px;
+    position: relative;
+    box-shadow:
+      0 0 60px rgba(212,55,28,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      0 20px 60px rgba(0,0,0,0.06);
+    animation: fadeUp 0.8s ease-out 0.2s both;
+  }
+
+  .machine::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--salsa), var(--queso), var(--guac), transparent);
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* Reel window */
+  .reel-window {
+    background: linear-gradient(180deg, #FFF3E0, #FFFDF5, #FFF3E0);
+    border-radius: 16px;
+    border: 1px solid rgba(212,55,28,0.12);
+    padding: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .reel-window::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg,
+        rgba(255,248,238,0.95) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(255,248,238,0.95) 100%
+      );
+    z-index: 2;
+  }
+
+  .reel-container {
+    height: 260px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 12px;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .reel-container.dragging {
+    cursor: grabbing;
+  }
+
+  .reel-strip {
+    transition: transform 0.1s;
+    will-change: transform;
+  }
+
+  .reel-item {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .reel-item .emoji {
+    font-size: 2.8rem;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+  }
+
+  .reel-item .name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.25;
+  }
+
+  .reel-item .stars {
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--queso);
+    filter: drop-shadow(0 1px 2px rgba(255,193,7,0.4));
+  }
+
+  .reel-item .address {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  .reel-item .vibe-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    background: rgba(212,55,28,0.08);
+    border: 1px solid rgba(212,55,28,0.18);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    color: var(--salsa);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Welcome state */
+  .welcome-state {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 24px 20px;
+  }
+
+  .welcome-state .welcome-emoji {
+    font-size: 3.2rem;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  .welcome-state .welcome-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+
+  .welcome-state .welcome-sub {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* Center line */
+  .center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    height: 260px;
+    border: 2px solid rgba(212,55,28,0.12);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .center-line.visible {
+    opacity: 1;
+    border-color: var(--salsa);
+    box-shadow: 0 0 20px rgba(212,55,28,0.15);
+  }
+
+  /* Pull lever / Spin button */
+  .spin-btn {
+    width: 100%;
+    padding: 18px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--salsa), var(--chile));
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(212,55,28,0.25);
+  }
+
+  .spin-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.2));
+    pointer-events: none;
+  }
+
+  .spin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212,55,28,0.35);
+    border-color: rgba(255,255,255,0.5);
+  }
+
+  .spin-btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Result card (shown after spin) */
+  .result-card {
+    width: 100%;
+    background: linear-gradient(135deg, var(--card-bg), #FFF3E0);
+    border: 1px solid rgba(212,55,28,0.15);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    display: none;
+    animation: fadeUp 0.5s ease-out;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  }
+
+  .result-card.show { display: block; }
+
+  .result-card .result-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--salsa);
+    margin-bottom: 4px;
+  }
+
+  .result-card .result-rating {
+    color: var(--queso);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 1px 2px rgba(255,193,7,0.3));
+  }
+
+  .result-card .result-address {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-card .result-hours {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .result-card .result-vibe {
+    font-size: 0.85rem;
+    color: #5D4037;
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .result-card .taco-deal {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(76,175,80,0.1);
+    border: 1px solid rgba(76,175,80,0.25);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--guac-dark);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .maps-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(212,55,28,0.1);
+    border: 1px solid var(--salsa);
+    border-radius: 12px;
+    color: var(--salsa);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+
+  .maps-btn:hover {
+    background: rgba(212,55,28,0.2);
+    transform: translateY(-1px);
+  }
+
+  /* Footer message */
+  .footer-msg {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    animation: fadeUp 0.8s ease-out 0.4s both;
+  }
+
+  .footer-msg span {
+    color: var(--salsa);
+  }
+
+  /* Confetti canvas */
+  #confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(212,55,28,0.08); }
+    50% { box-shadow: 0 0 40px rgba(212,55,28,0.2); }
+  }
+
+  .spinning .reel-window {
+    animation: glow 0.6s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="machine-wrapper">
+  <div class="header">
+    <h1>Taco Tuesday Slots</h1>
+    <p>Spin to pick our taco spot</p>
+    <div class="location-tag">Near Tampa Premium Outlets</div>
+  </div>
+
+  <div class="machine" id="machine">
+    <div class="reel-window">
+      <div class="reel-container">
+        <div class="welcome-state" id="welcomeState">
+          <div class="welcome-emoji">🌮🔥🌶️</div>
+          <div class="welcome-text">It's Taco Tuesday!</div>
+          <div class="welcome-sub">Pull the lever to find<br>your perfect taco spot!</div>
+        </div>
+        <div class="reel-strip" id="reelStrip" style="display:none;"></div>
+      </div>
+      <div class="center-line" id="centerLine"></div>
+    </div>
+    <button class="spin-btn" id="spinBtn" onclick="spin()">
+      🌮 &nbsp; Pull the Lever &nbsp; 🌮
+    </button>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+
+  <div class="footer-msg">
+    Eddie & Erika's Taco Tuesday <span>🌶️</span>
+  </div>
+</div>
+
+<script>
+const restaurants = [
+  {
+    name: "Taco Bus",
+    rating: 4.3,
+    ratingCount: "4,200+",
+    address: "2301 E Hillsborough Ave, Tampa",
+    emoji: "🚌",
+    vibe: "Iconic · Street-Style",
+    hours: "Sun–Thu 10AM–12AM\nFri–Sat 10AM–3AM",
+    blurb: "Tampa's legendary converted school bus turned taco empire — authentic Mexican street tacos, burritos, and late-night eats that started it all.",
+    deal: "Taco specials all day Tuesday",
+  },
+  {
+    name: "Taco Dirty",
+    rating: 4.4,
+    ratingCount: "1,100+",
+    address: "1907 E 7th Ave, Tampa (Ybor City)",
+    emoji: "😈",
+    vibe: "Creative · Late Night",
+    hours: "Mon–Thu 11AM–10PM\nFri–Sat 11AM–12AM · Sun 11AM–9PM",
+    blurb: "Wild and creative tacos in Ybor City — think birria ramen tacos, loaded queso, and a fun party atmosphere with killer margaritas.",
+    deal: "$2 tacos & $5 margs on Tuesdays",
+  },
+  {
+    name: "Bartaco",
+    rating: 4.5,
+    ratingCount: "3,800+",
+    address: "1501 W Swann Ave, Tampa",
+    emoji: "🌊",
+    vibe: "Upscale Casual · Beachy",
+    hours: "Mon–Thu 11AM–10PM\nFri 11AM–11PM · Sat 10AM–11PM · Sun 10AM–10PM",
+    blurb: "Breezy coastal-inspired tacos with global flavors — duck, brisket, and cauliflower tacos plus fresh-squeezed margaritas in a gorgeous setting.",
+    deal: "Tuesday happy hour specials",
+  },
+  {
+    name: "Casita Taqueria",
+    rating: 4.6,
+    ratingCount: "620+",
+    address: "3326 W Gandy Blvd, Tampa",
+    emoji: "🏠",
+    vibe: "Authentic · Hidden Gem",
+    hours: "Daily 10AM–9PM",
+    blurb: "Tiny but mighty — handmade tortillas, perfectly seasoned al pastor, and homemade salsas that pack serious heat. A local favorite.",
+    deal: "Tuesday taco platters at special prices",
+  },
+  {
+    name: "Chili's Grill & Bar",
+    rating: 4.0,
+    ratingCount: "950+",
+    address: "2364 Grand Cypress Dr, Lutz (near Outlets)",
+    emoji: "🌶️",
+    vibe: "Classic · Family-Friendly",
+    hours: "Mon–Thu 11AM–10PM\nFri–Sat 11AM–11PM · Sun 11AM–10PM",
+    blurb: "A reliable crowd-pleaser right near the outlets — sizzling fajitas, crispy tacos, and their famous bottomless chips & salsa.",
+    deal: "$5 Margarita of the Month + taco deals",
+  },
+  {
+    name: "Tijuana Flats",
+    rating: 4.2,
+    ratingCount: "780+",
+    address: "2102 Grand Cypress Dr, Lutz (near Outlets)",
+    emoji: "🔥",
+    vibe: "Tex-Mex · Fun Vibes",
+    hours: "Daily 11AM–9PM",
+    blurb: "Build-your-own tacos with their legendary hot sauce bar — over a dozen house-made salsas from mild to absolutely nuclear. Taco Tuesday HQ!",
+    deal: "Taco Tuesday: $1.50 tacos all day",
+  },
+  {
+    name: "Taqueria Don Julio",
+    rating: 4.5,
+    ratingCount: "340+",
+    address: "8826 N Armenia Ave, Tampa",
+    emoji: "🇲🇽",
+    vibe: "Traditional · No-Frills",
+    hours: "Daily 9AM–9PM",
+    blurb: "The real deal — family-run taqueria with legit street tacos, fresh horchata, and weekend barbacoa that sells out fast. Cash-friendly prices.",
+    deal: "Tuesday specials on combo plates",
+  },
+  {
+    name: "Chipotle Mexican Grill",
+    rating: 4.1,
+    ratingCount: "1,500+",
+    address: "2118 Grand Cypress Dr, Lutz (near Outlets)",
+    emoji: "🌯",
+    vibe: "Fast-Casual · Customizable",
+    hours: "Daily 10:45AM–10PM",
+    blurb: "Build your perfect burrito bowl or tacos with responsibly-sourced ingredients — quick, fresh, and consistent right next to the outlets.",
+    deal: "Rewards members get Tuesday bonuses",
+  },
+  {
+    name: "Moe's Southwest Grill",
+    rating: 4.0,
+    ratingCount: "450+",
+    address: "2020 Grand Cypress Dr, Lutz (near Outlets)",
+    emoji: "🤠",
+    vibe: "Southwest · Lively",
+    hours: "Daily 11AM–9PM",
+    blurb: "Welcome to Moe's! Free chips & salsa with every order, loaded nachos, and customizable tacos in a fun, energetic atmosphere.",
+    deal: "Taco Tuesday deals + free queso upgrades",
+  },
+  {
+    name: "El Huarache Veloz",
+    rating: 4.7,
+    ratingCount: "510+",
+    address: "8807 N Armenia Ave, Tampa",
+    emoji: "⚡",
+    vibe: "Authentic Mexican · Street Food",
+    hours: "Daily 8AM–10PM",
+    blurb: "Outstanding authentic Mexican street food — huaraches, tacos de lengua, and some of the best birria in Tampa. Worth the short drive!",
+    deal: "Taco Tuesday platters with free agua fresca",
+  },
+];
+
+const ITEM_HEIGHT = 260;
+let isSpinning = false;
+let selectedIndex = null;
+let manualOffset = 0;
+let isDragging = false;
+let dragStartY = 0;
+let dragStartOffset = 0;
+
+// Build reel strip
+function buildReel() {
+  const strip = document.getElementById('reelStrip');
+  strip.innerHTML = '';
+  for (let cycle = 0; cycle < 8; cycle++) {
+    restaurants.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'reel-item';
+      const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.3 ? '½' : '');
+      div.innerHTML = `
+        <div class="emoji">${r.emoji}</div>
+        <div class="name">${r.name}</div>
+        <div class="stars">${stars} ${r.rating}</div>
+        <div class="address">${r.address}</div>
+        <div class="vibe-tag">${r.vibe.split('·')[0].trim()}</div>
+      `;
+      strip.appendChild(div);
+    });
+  }
+}
+
+function spin() {
+  if (isSpinning) return;
+  isSpinning = true;
+
+  const btn = document.getElementById('spinBtn');
+  const strip = document.getElementById('reelStrip');
+  const machine = document.getElementById('machine');
+  const resultCard = document.getElementById('resultCard');
+  const centerLine = document.getElementById('centerLine');
+
+  const welcome = document.getElementById('welcomeState');
+  const stripEl = document.getElementById('reelStrip');
+  if (welcome) welcome.style.display = 'none';
+  stripEl.style.display = '';
+
+  btn.disabled = true;
+  btn.textContent = '🌶️  Spinning...  🌶️';
+  machine.classList.add('spinning');
+  resultCard.classList.remove('show');
+  centerLine.classList.remove('visible');
+
+  const winnerIdx = Math.floor(Math.random() * restaurants.length);
+  selectedIndex = winnerIdx;
+
+  const targetCycle = 5;
+  const targetItemIndex = targetCycle * restaurants.length + winnerIdx;
+  const targetOffset = targetItemIndex * ITEM_HEIGHT;
+
+  const totalDistance = targetOffset;
+  const duration = 3500;
+  let startTime = null;
+
+  manualOffset = 0;
+  strip.style.transition = 'none';
+  strip.style.transform = 'translateY(0)';
+
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function animateReel(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutQuart(progress);
+
+    const currentPos = eased * totalDistance;
+    strip.style.transform = `translateY(-${currentPos}px)`;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateReel);
+    } else {
+      onSpinComplete(winnerIdx);
+    }
+  }
+
+  requestAnimationFrame(animateReel);
+}
+
+function onSpinComplete(winnerIdx) {
+  const btn = document.getElementById('spinBtn');
+  const machine = document.getElementById('machine');
+  const centerLine = document.getElementById('centerLine');
+  const resultCard = document.getElementById('resultCard');
+  const r = restaurants[winnerIdx];
+
+  machine.classList.remove('spinning');
+  centerLine.classList.add('visible');
+
+  const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.3 ? '½' : '');
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name + ' ' + r.address)}`;
+
+  resultCard.innerHTML = `
+    <div class="result-name">${r.emoji} ${r.name}</div>
+    <div class="result-rating">${stars} ${r.rating} · ${r.ratingCount} reviews</div>
+    <div class="result-address">${r.address}</div>
+    <div class="taco-deal">🌮 ${r.deal}</div>
+    <div class="result-vibe">"${r.blurb}"</div>
+    <div class="result-hours">${r.hours.replace(/\n/g, '<br>')}</div>
+    <a class="maps-btn" href="${mapsUrl}" target="_blank" rel="noopener">
+      📍 Open in Maps
+    </a>
+  `;
+  resultCard.classList.add('show');
+
+  launchConfetti();
+
+  btn.disabled = false;
+  btn.innerHTML = '🌮 &nbsp; Spin Again &nbsp; 🌮';
+  isSpinning = false;
+}
+
+// Confetti with taco-themed colors
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#D4371C', '#FFC107', '#4CAF50', '#FF5722', '#8BC34A', '#F5E6CA', '#E85D3A'];
+  const particles = [];
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 1) * 14 - 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 6 + 3,
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 10,
+      life: 1
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.vy += 0.25;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.life -= 0.012;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+
+    frame++;
+    if (alive && frame < 200) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  animate();
+}
+
+// Manual scroll / drag handling
+function initDrag() {
+  const container = document.querySelector('.reel-container');
+
+  container.addEventListener('mousedown', onDragStart);
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  container.addEventListener('touchstart', onDragStart, { passive: false });
+  window.addEventListener('touchmove', onDragMove, { passive: false });
+  window.addEventListener('touchend', onDragEnd);
+}
+
+function onDragStart(e) {
+  if (isSpinning) return;
+  isDragging = true;
+  const container = document.querySelector('.reel-container');
+  container.classList.add('dragging');
+  const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+  dragStartY = y;
+  dragStartOffset = manualOffset;
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('centerLine').classList.remove('visible');
+}
+
+function onDragMove(e) {
+  if (!isDragging) return;
+  e.preventDefault();
+  const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+  const delta = dragStartY - y;
+  const maxOffset = (restaurants.length - 1) * ITEM_HEIGHT;
+  manualOffset = Math.max(0, Math.min(maxOffset, dragStartOffset + delta));
+  document.getElementById('reelStrip').style.transform = `translateY(-${manualOffset}px)`;
+}
+
+function onDragEnd() {
+  if (!isDragging) return;
+  isDragging = false;
+  const container = document.querySelector('.reel-container');
+  container.classList.remove('dragging');
+  const nearestIndex = Math.round(manualOffset / ITEM_HEIGHT);
+  const maxIndex = restaurants.length - 1;
+  const snappedIndex = Math.max(0, Math.min(maxIndex, nearestIndex));
+  manualOffset = snappedIndex * ITEM_HEIGHT;
+  const strip = document.getElementById('reelStrip');
+  strip.style.transition = 'transform 0.3s ease-out';
+  strip.style.transform = `translateY(-${manualOffset}px)`;
+  setTimeout(() => { strip.style.transition = 'none'; }, 300);
+}
+
+// Init
+buildReel();
+initDrag();
+</script>
+
+</body>
+</html>
