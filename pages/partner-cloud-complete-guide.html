@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce Partner Cloud (PRM) — Complete Knowledge Guide</title>
+    <style>
+        :root {
+            --sf-blue: #0176d3;
+            --sf-dark: #032d60;
+            --sf-light: #f4f6f9;
+            --sf-green: #2e844a;
+            --sf-orange: #fe9339;
+            --sf-red: #ea001e;
+            --sf-purple: #730394;
+            --sf-teal: #0d9dda;
+            --border: #d8dde6;
+            --text: #181818;
+            --text-muted: #5a6872;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--sf-light);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #032d60 0%, #0176d3 50%, #1b96ff 100%);
+            color: white;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 { font-size: 2.8rem; margin-bottom: 0.5rem; font-weight: 800; }
+        .hero .subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 1rem; }
+
+        .hero .badges {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .badge {
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* Navigation */
+        .nav-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: padding 0.25s ease, border-radius 0.25s ease;
+        }
+
+        .nav-bar.collapsed {
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        }
+
+        .nav-bar h3 { color: var(--sf-dark); margin-bottom: 0.8rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .nav-bar .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-bar.collapsed h3 { margin-bottom: 0; }
+
+        .nav-toggle {
+            display: none;
+            background: var(--sf-light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--sf-blue);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+
+        .nav-toggle:hover { background: var(--sf-blue); color: white; }
+
+        .nav-bar.collapsed .nav-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+            overflow: hidden;
+        }
+
+        .nav-bar.collapsed .nav-links {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+        }
+
+        .nav-bar.collapsed.expanded .nav-links {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 0.6rem;
+        }
+
+        .nav-links a {
+            padding: 0.4rem 0.9rem;
+            background: var(--sf-light);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--sf-dark);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { background: var(--sf-blue); color: white; }
+
+        .nav-links a.prm { border-left: 3px solid var(--sf-teal); }
+        .nav-links a.pem { border-left: 3px solid var(--sf-purple); }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            color: var(--sf-dark);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--sf-blue);
+        }
+
+        .section h3 {
+            color: var(--sf-blue);
+            margin: 1.8rem 0 0.8rem 0;
+            font-size: 1.2rem;
+        }
+
+        .section h4 {
+            color: var(--sf-dark);
+            margin: 1.2rem 0 0.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .section p { margin-bottom: 0.7rem; }
+        .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .section li { margin-bottom: 0.4rem; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: var(--sf-dark);
+            color: white;
+            padding: 0.7rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) { background: #f8f9fb; }
+        tr:hover { background: #e8f0fe; }
+
+        /* Callout boxes */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+        }
+
+        .callout-blue { background: #f0f7ff; border-left: 4px solid var(--sf-blue); }
+        .callout-green { background: #e8f5e9; border-left: 4px solid var(--sf-green); }
+        .callout-orange { background: #fff8e1; border-left: 4px solid var(--sf-orange); }
+        .callout-red { background: #ffeef0; border-left: 4px solid var(--sf-red); }
+        .callout-purple { background: #f3e5f5; border-left: 4px solid var(--sf-purple); }
+        .callout-teal { background: #e0f7fa; border-left: 4px solid var(--sf-teal); }
+
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+        .callout-blue strong { color: var(--sf-blue); }
+        .callout-green strong { color: var(--sf-green); }
+        .callout-orange strong { color: #e65100; }
+        .callout-red strong { color: var(--sf-red); }
+        .callout-purple strong { color: var(--sf-purple); }
+        .callout-teal strong { color: #00838f; }
+
+        code {
+            background: #f0f2f5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85em;
+            color: var(--sf-purple);
+        }
+
+        /* Comparison */
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .vs-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vs-card.prm { border-top: 4px solid var(--sf-teal); }
+        .vs-card.pem { border-top: 4px solid var(--sf-purple); }
+        .vs-card.sf { border-top: 4px solid var(--sf-blue); }
+        .vs-card.comp { border-top: 4px solid var(--sf-orange); }
+
+        .vs-card .card-head {
+            padding: 0.8rem 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .vs-card.prm .card-head { background: #e0f7fa; color: #006064; }
+        .vs-card.pem .card-head { background: #f3e5f5; color: var(--sf-purple); }
+        .vs-card.sf .card-head { background: #e3f2fd; color: var(--sf-dark); }
+        .vs-card.comp .card-head { background: #fff3e0; color: #e65100; }
+
+        .vs-card .card-body { padding: 1rem; }
+        .vs-card .card-body ul { padding-left: 1.2rem; }
+        .vs-card .card-body li { margin-bottom: 0.3rem; font-size: 0.9rem; }
+
+        /* Multi-column layouts */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .feature-card {
+            background: var(--sf-light);
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .feature-card h4 { color: var(--sf-blue); margin-bottom: 0.5rem; }
+
+        /* Flow diagrams - pure HTML/CSS */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f8f9fb;
+            border-radius: 8px;
+        }
+
+        .flow-box {
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-box.blue { background: var(--sf-blue); color: white; }
+        .flow-box.dark { background: var(--sf-dark); color: white; }
+        .flow-box.teal { background: var(--sf-teal); color: white; }
+        .flow-box.green { background: var(--sf-green); color: white; }
+        .flow-box.orange { background: var(--sf-orange); color: white; }
+        .flow-box.purple { background: var(--sf-purple); color: white; }
+        .flow-box.light { background: white; color: var(--sf-dark); border: 2px solid var(--border); }
+
+        .flow-arrow {
+            font-size: 1.3rem;
+            color: var(--sf-blue);
+            font-weight: bold;
+        }
+
+        /* Tier badges */
+        .tier-row {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tier-badge {
+            flex: 1;
+            min-width: 140px;
+            padding: 1.2rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .tier-bronze { background: linear-gradient(135deg, #cd7f32, #b8860b); color: white; }
+        .tier-silver { background: linear-gradient(135deg, #a8a9ad, #c0c0c0); color: #333; }
+        .tier-gold { background: linear-gradient(135deg, #d4a017, #ffd700); color: #333; }
+        .tier-platinum { background: linear-gradient(135deg, #4a90d9, #1e3a5f); color: white; }
+
+        .tier-badge small {
+            display: block;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        @media (max-width: 768px) {
+            .vs-grid, .two-col, .three-col { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+            .nav-bar { position: static; }
+            .nav-bar.collapsed .nav-links { max-height: none; opacity: 1; }
+            .nav-toggle { display: none !important; }
+            .flow-diagram { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--sf-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            line-height: 48px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(1, 118, 211, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: var(--sf-dark);
+            box-shadow: 0 6px 16px rgba(3, 45, 96, 0.5);
+        }
+
+        /* Print Button */
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.4rem;
+            background: var(--sf-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .print-btn:hover { background: var(--sf-blue); transform: translateY(-1px); }
+        .print-btn:active { transform: translateY(0); }
+
+        .print-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .print-bar-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .print-bar-bottom {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0 0.5rem;
+        }
+
+        /* Matrix Easter Egg */
+        body.matrix-active { background: #000; }
+        body.matrix-active .hero { position: relative; z-index: 1; }
+        body.matrix-active .container { position: relative; z-index: 1; }
+        body.matrix-active .nav-bar { z-index: 100; }
+        body.matrix-active .section { position: relative; z-index: 1; }
+        body.matrix-active .footer { position: relative; z-index: 1; background: #000; color: #ccc; }
+        body.matrix-active .back-to-top { z-index: 1000; }
+        body.matrix-active .print-bar-top,
+        body.matrix-active .print-bar-bottom { position: relative; z-index: 1; }
+
+        @media print {
+            body { background: white !important; font-size: 10pt; line-height: 1.45; color: #000; }
+            .container { max-width: 100%; padding: 0; margin: 0; }
+            .nav-bar, .back-to-top, .print-btn, .print-bar-top, .print-bar-bottom, #matrixCanvas { display: none !important; }
+            .hero {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 1.5rem 1rem 1rem;
+                break-after: avoid;
+            }
+            .hero h1 { font-size: 1.8rem; }
+            .hero .subtitle { font-size: 1rem; }
+            .section {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                border-radius: 0;
+                padding: 1rem 1.2rem;
+                margin-bottom: 0.8rem;
+                break-inside: avoid;
+            }
+            .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; padding-bottom: 0.3rem; }
+            .section h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; }
+            .section h4 { font-size: 0.95rem; margin: 0.8rem 0 0.3rem; }
+            table { font-size: 8.5pt; }
+            th { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0.4rem 0.5rem; }
+            td { padding: 0.3rem 0.5rem; }
+            tr { break-inside: avoid; }
+            .vs-grid, .two-col { grid-template-columns: 1fr; gap: 0.5rem; }
+            .three-col { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+            .vs-card { break-inside: avoid; }
+            .feature-card { break-inside: avoid; }
+            .callout {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                break-inside: avoid;
+                padding: 0.6rem 0.8rem;
+                margin: 0.5rem 0;
+            }
+            .tier-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            code { font-size: 8pt; }
+            a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 7.5pt; color: #666; word-break: break-all; }
+            .nav-links a::after { content: none; }
+            .footer { font-size: 8.5pt; break-before: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Salesforce Partner Cloud</h1>
+    <p class="subtitle">Partner Relationship Management (PRM) &mdash; Complete Knowledge Guide</p>
+    <div class="badges">
+        <span class="badge">Experience Cloud</span>
+        <span class="badge">Sales Cloud</span>
+        <span class="badge">PRM &amp; PEM</span>
+        <span class="badge">Channel Sales</span>
+        <span class="badge">Agentforce</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- NAVIGATION -->
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-header">
+            <h3>Quick Navigation</h3>
+            <button class="nav-toggle" id="navToggle">&#9776; Show Links</button>
+        </div>
+        <div class="nav-links">
+            <a href="#overview" class="prm">Overview</a>
+            <a href="#features" class="prm">Key Features</a>
+            <a href="#architecture" class="prm">Architecture</a>
+            <a href="#data-model" class="prm">Data Model</a>
+            <a href="#setup" class="prm">Setup Guide</a>
+            <a href="#licensing" class="pem">Licensing</a>
+            <a href="#deal-registration" class="prm">Deal Registration</a>
+            <a href="#channel-programs" class="prm">Channel Programs</a>
+            <a href="#mdf" class="prm">MDF &amp; Co-Op</a>
+            <a href="#integrations" class="pem">Integrations</a>
+            <a href="#ai-features" class="pem">AI &amp; Agentforce</a>
+            <a href="#best-practices" class="prm">Best Practices</a>
+            <a href="#use-cases" class="prm">Use Cases</a>
+            <a href="#competitors" class="pem">Competitor Comparison</a>
+            <a href="#resources" class="prm">Resources</a>
+        </div>
+    </nav>
+
+    <!-- PRINT BUTTON (TOP) -->
+    <div class="print-bar-top">
+        <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Print to PDF
+        </button>
+    </div>
+
+
+    <!-- ==================== SECTION 1: OVERVIEW ==================== -->
+    <div class="section" id="overview">
+        <h2>1. What is Salesforce Partner Cloud?</h2>
+
+        <p>Partner Relationship Management (PRM) is Salesforce's solution for managing <strong>indirect sales channels</strong> &mdash; the relationships with resellers, distributors, affiliates, brokers, and agents who sell your products to their own customers. While CRM manages your direct customer relationships, PRM manages the business-to-business relationships that power your channel revenue.</p>
+
+        <div class="callout callout-blue">
+            <strong>Partner Cloud Rebrand (June 2025)</strong>
+            Salesforce consolidated its PRM offerings under the <strong>Partner Cloud</strong> umbrella with three distinct SKUs: PRM ($25/member/month), Partner Ecosystem Management ($50/member/month), and Channel Revenue Management (add-on for physical goods distribution).
+        </div>
+
+        <h3>Where Does Partner Cloud Fit?</h3>
+        <p>Partner Cloud sits at the intersection of two major Salesforce products:</p>
+
+        <div class="flow-diagram">
+            <div class="flow-box dark">Sales Cloud<br><small>CRM + Pipeline</small></div>
+            <div class="flow-arrow">+</div>
+            <div class="flow-box blue">Experience Cloud<br><small>Portal + Communities</small></div>
+            <div class="flow-arrow">=</div>
+            <div class="flow-box teal">Partner Cloud<br><small>PRM + Channel Mgmt</small></div>
+        </div>
+
+        <ul>
+            <li><strong>Sales Cloud</strong> provides the CRM foundation &mdash; Accounts, Contacts, Leads, Opportunities, pipeline management</li>
+            <li><strong>Experience Cloud</strong> provides the portal &mdash; the branded website where partners log in, register deals, access training, and collaborate</li>
+            <li><strong>Partner Cloud</strong> adds PRM-specific capabilities &mdash; deal registration, channel programs, MDF, lead distribution, partner scorecards, and AI-powered channel management</li>
+        </ul>
+
+        <h3>Why PRM Matters</h3>
+        <p>Companies with indirect channel programs often generate <strong>30&ndash;70%+ of revenue through partners</strong>. Without PRM, channel management relies on email chains, spreadsheets, and manual tracking &mdash; leading to channel conflicts, lost deals, and partner disengagement. PRM centralizes everything into one platform that both your internal channel team and your external partners use.</p>
+
+        <div class="three-col">
+            <div class="feature-card">
+                <h4>For Channel Managers</h4>
+                <ul>
+                    <li>Pipeline visibility across all partners</li>
+                    <li>Lead routing and assignment</li>
+                    <li>Partner performance analytics</li>
+                    <li>Channel conflict prevention</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>For Partners</h4>
+                <ul>
+                    <li>Self-service portal access</li>
+                    <li>Deal registration and tracking</li>
+                    <li>Marketing funds management</li>
+                    <li>Training and certification</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>For Executives</h4>
+                <ul>
+                    <li>Unified direct + channel reporting</li>
+                    <li>Channel ROI measurement</li>
+                    <li>Partner program optimization</li>
+                    <li>Scalable partner ecosystem</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== SECTION 2: KEY FEATURES ==================== -->
+    <div class="section" id="features">
+        <h2>2. Key Features &amp; Capabilities</h2>
+
+        <h3>Partner Portal</h3>
+        <p>The partner portal is a branded digital experience built with Experience Builder. Partners log in to access everything they need: pipeline, leads, training, marketing content, and support.</p>
+        <ul>
+            <li><strong>Partner Central Template</strong> &mdash; pre-built template for rapid portal deployment</li>
+            <li><strong>Experience Builder</strong> &mdash; drag-and-drop customization for branding and layout</li>
+            <li><strong>Audience Targeting</strong> &mdash; show different content based on region, profile, partner tier, or user attributes</li>
+            <li><strong>Custom URLs</strong> &mdash; seamless integration with your domain (e.g., partners.yourcompany.com)</li>
+            <li><strong>CMS Connect</strong> &mdash; render content from Adobe Experience Manager, WordPress, Sitecore, or Drupal</li>
+            <li><strong>Files Connect</strong> &mdash; access Google Drive, SharePoint, OneDrive, or Box from within the portal</li>
+            <li><strong>50+ Lightning Bolt Templates</strong> &mdash; industry-specific portal configurations available on AppExchange</li>
+        </ul>
+
+        <h3>Channel Sales Management</h3>
+        <ul>
+            <li><strong>Pipeline Inspection</strong> &mdash; real-time visibility into partner opportunity pipelines</li>
+            <li><strong>Sales Path</strong> &mdash; guided selling stages that standardize partner sales processes</li>
+            <li><strong>Kanban &amp; List Views</strong> &mdash; flexible workflow layouts for opportunity management</li>
+            <li><strong>Revenue Cloud Integration</strong> &mdash; automated quoting, product configuration, and guided selling for partners</li>
+            <li><strong>Tier-Specific Price Books</strong> &mdash; different pricing for different partner levels</li>
+            <li><strong>Discount &amp; Approval Workflows</strong> &mdash; automated discount requests and approval chains</li>
+            <li><strong>Partner Connect</strong> &mdash; cross-CRM co-selling with real-time data sharing between vendor and partner CRM systems</li>
+        </ul>
+
+        <h3>Lead Distribution</h3>
+        <ul>
+            <li><strong>Lead Inbox</strong> &mdash; centralized component for routing leads to partners without email</li>
+            <li><strong>Automated Assignment Rules</strong> &mdash; route leads based on geography, product line, partner tier, or capacity</li>
+            <li><strong>Lead Acceptance/Rejection</strong> &mdash; partners accept or decline leads with reason codes</li>
+            <li><strong>Notifications</strong> &mdash; automated alerts when new leads are assigned</li>
+            <li><strong>Deal Scoring</strong> &mdash; AI-powered prioritization (Enterprise Edition+)</li>
+        </ul>
+
+        <h3>Partner Onboarding &amp; Enablement</h3>
+        <ul>
+            <li><strong>Web-to-Lead</strong> &mdash; forms for partner recruitment from your website</li>
+            <li><strong>Partner Recruitment App</strong> &mdash; AppExchange app for structured partner recruitment</li>
+            <li><strong>In-App Guidance (Partner Tracks)</strong> &mdash; contextual help and walkthroughs embedded in the portal</li>
+            <li><strong>Sales Programs</strong> &mdash; data-driven enablement with guided selling (add-on)</li>
+            <li><strong>Learning Management</strong> &mdash; embedded LMS components (Appinium, NetExam) for certification tracking</li>
+            <li><strong>Automated Progression</strong> &mdash; training completion triggers certification and tier advancement</li>
+        </ul>
+
+        <h3>Self-Service &amp; Support</h3>
+        <ul>
+            <li><strong>Knowledge Base</strong> &mdash; read-only access to Knowledge articles embedded in the portal</li>
+            <li><strong>Case Management</strong> &mdash; partners create and track support cases with automatic routing</li>
+            <li><strong>Live Chat</strong> &mdash; connect partners with service agents in real time</li>
+            <li><strong>Customer Identity Access Management</strong> &mdash; SSO and identity management for partner users</li>
+        </ul>
+    </div>
+
+
+    <!-- ==================== SECTION 3: ARCHITECTURE ==================== -->
+    <div class="section" id="architecture">
+        <h2>3. Architecture &amp; Technical Components</h2>
+
+        <h3>Platform Architecture</h3>
+        <p>Partner Cloud is not a standalone product &mdash; it's a layer built on top of existing Salesforce infrastructure. Understanding this architecture is key to implementing it correctly.</p>
+
+        <div class="flow-diagram" style="flex-direction: column; gap: 0.3rem;">
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+                <div class="flow-box purple" style="min-width:200px;">Partner Cloud (PRM/PEM)<br><small>Deal Reg, Channel Programs, MDF, Scorecards</small></div>
+            </div>
+            <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+                <div class="flow-box blue" style="min-width:180px;">Experience Cloud<br><small>Portal, Templates, Builder</small></div>
+                <div class="flow-box dark" style="min-width:180px;">Sales Cloud<br><small>Leads, Opps, Accounts</small></div>
+            </div>
+            <div class="flow-arrow" style="transform:rotate(90deg);">&#8595;</div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+                <div class="flow-box light" style="min-width:250px;">Salesforce Platform<br><small>Objects, Security, Automation, APIs</small></div>
+            </div>
+        </div>
+
+        <h3>License Types</h3>
+        <table>
+            <tr>
+                <th>License</th>
+                <th>Access Level</th>
+                <th>Best For</th>
+            </tr>
+            <tr>
+                <td><strong>Partner Community</strong></td>
+                <td>Basic portal access &mdash; CRM objects, custom objects (limited), cases</td>
+                <td>Standard partner users who register deals and manage leads</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Community Plus</strong></td>
+                <td>Enhanced access &mdash; reports, dashboards, more custom objects</td>
+                <td>Partner managers and power users who need analytics</td>
+            </tr>
+            <tr>
+                <td><strong>External Apps</strong></td>
+                <td>Custom application access beyond standard CRM</td>
+                <td>Partners using custom-built Lightning apps</td>
+            </tr>
+        </table>
+
+        <h3>Partner User Setup Model</h3>
+        <p>Partner users in Salesforce follow a specific hierarchy: a company is a <strong>Partner Account</strong>, people at that company are <strong>Contacts</strong> on that Account, and those Contacts are <strong>enabled as Partner Users</strong> to give them portal login access.</p>
+
+        <div class="flow-diagram">
+            <div class="flow-box dark">Account<br><small>(marked as Partner)</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box blue">Contact<br><small>(person at partner)</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box teal">Partner User<br><small>(portal login enabled)</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box green">Role Hierarchy<br><small>(Exec &gt; Mgr &gt; User)</small></div>
+        </div>
+
+        <div class="callout callout-orange">
+            <strong>Key Concept: Role Hierarchy per Partner</strong>
+            Each Partner Account gets its own branch in the role hierarchy: Partner Executive &gt; Partner Manager &gt; Partner User. This means partners can only see their own organization's data by default &mdash; not data from other partner companies.
+        </div>
+
+        <h3>Sharing &amp; Visibility Model</h3>
+        <ul>
+            <li>Partners see <strong>only their own Account's data</strong> by default</li>
+            <li>Role hierarchy controls visibility <strong>within</strong> a partner organization</li>
+            <li>Sharing rules can be configured for cross-partner visibility (rare)</li>
+            <li>Vendors control data access through profiles and permission sets</li>
+            <li>Partners can access restricted reports &mdash; charts are visible but underlying data is restricted</li>
+            <li><strong>Delegated Administration</strong> &mdash; partner managers can manage their own users (add/deactivate/reassign) without contacting the vendor</li>
+        </ul>
+    </div>
+
+
+    <!-- ==================== SECTION 4: DATA MODEL ==================== -->
+    <div class="section" id="data-model">
+        <h2>4. PRM Data Model</h2>
+
+        <p>Partner Cloud extends standard Sales Cloud objects and adds PRM-specific objects for channel management.</p>
+
+        <h3>PRM-Specific Objects</h3>
+        <table>
+            <tr>
+                <th>Object</th>
+                <th>API Name</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><strong>Channel Program</strong></td>
+                <td><code>ChannelProgram</code></td>
+                <td>Defines partner programs (e.g., "Gold Partner Program")</td>
+            </tr>
+            <tr>
+                <td><strong>Channel Program Level</strong></td>
+                <td><code>ChannelProgramLevel</code></td>
+                <td>Defines tiers within programs (Bronze, Silver, Gold, Platinum)</td>
+            </tr>
+            <tr>
+                <td><strong>Channel Program Member</strong></td>
+                <td><code>ChannelProgramMember</code></td>
+                <td>Tracks which partners belong to which programs/tiers</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Fund Allocation</strong></td>
+                <td><code>PartnerFundAllocation</code></td>
+                <td>MDF budget allocations to partners</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Fund Claim</strong></td>
+                <td><code>PartnerFundClaim</code></td>
+                <td>Claims submitted against allocated funds</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Fund Request</strong></td>
+                <td><code>PartnerFundRequest</code></td>
+                <td>Partner requests for marketing funds</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Marketing Budget</strong></td>
+                <td><code>PartnerMarketingBudget</code></td>
+                <td>Overall marketing budget tracking</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Scorecard</strong></td>
+                <td>Custom object</td>
+                <td>KPI tracking and partner performance evaluation</td>
+            </tr>
+        </table>
+
+        <h3>Extended Standard Objects</h3>
+        <table>
+            <tr>
+                <th>Object</th>
+                <th>PRM-Specific Fields</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><strong>Account</strong></td>
+                <td><code>IsPartner</code>, <code>PartnerLevel__c</code></td>
+                <td>Marks Account as a partner organization</td>
+            </tr>
+            <tr>
+                <td><strong>Contact</strong></td>
+                <td>Portal user association</td>
+                <td>Represents people at partner companies</td>
+            </tr>
+            <tr>
+                <td><strong>Lead</strong></td>
+                <td><code>PartnerAccount</code>, <code>ReferredBy</code></td>
+                <td>Leads distributed to or sourced by partners</td>
+            </tr>
+            <tr>
+                <td><strong>Opportunity</strong></td>
+                <td><code>PartnerAccount</code>, <code>IsPartnerDeal</code></td>
+                <td>Deals registered or managed by partners</td>
+            </tr>
+            <tr>
+                <td><strong>Partner</strong></td>
+                <td>Junction object</td>
+                <td>Links Account-to-Account partner relationships</td>
+            </tr>
+        </table>
+
+        <div class="callout callout-blue">
+            <strong>Deal Registration Flexibility</strong>
+            Deal registration can use a custom Opportunity record type (most common) or a custom object. Using a record type on Opportunity keeps reporting unified. Using a custom object gives more isolation but requires junction objects for reporting.
+        </div>
+    </div>
+
+
+    <!-- ==================== SECTION 5: SETUP ==================== -->
+    <div class="section" id="setup">
+        <h2>5. Setup &amp; Configuration Guide</h2>
+
+        <h3>Step 1: Enable Digital Experiences</h3>
+        <p>Go to <strong>Setup &gt; Digital Experiences &gt; Settings</strong> and enable Digital Experiences. This is the foundation for the partner portal. Choose a domain name for your Experience Cloud sites.</p>
+
+        <h3>Step 2: Enable PRM Features</h3>
+        <p>Go to <strong>Setup &gt; Partner Relationship Management</strong> and enable the PRM features. This activates PRM-specific objects and components.</p>
+
+        <h3>Step 3: Create Partner Accounts</h3>
+        <ol>
+            <li>Create (or convert existing) Account records for your partner companies</li>
+            <li>Click <strong>"Enable as Partner"</strong> button on the Account page</li>
+            <li>This flags the Account as a partner and creates the partner role hierarchy branch</li>
+        </ol>
+
+        <h3>Step 4: Create Partner Users</h3>
+        <ol>
+            <li>Create Contact records under the Partner Account</li>
+            <li>Click <strong>"Enable Partner User"</strong> on the Contact</li>
+            <li>Assign a Partner Community license</li>
+            <li>The user automatically gets placed in the partner role hierarchy</li>
+        </ol>
+
+        <h3>Step 5: Configure Profiles &amp; Permissions</h3>
+        <ul>
+            <li>Start with the standard <strong>Partner Community User</strong> profile</li>
+            <li>Create custom permission sets for deal registration, MDF access, scorecards, etc.</li>
+            <li>Enable "Manage Scorecards" permission if using partner scorecards</li>
+            <li>Configure field-level security on partner-visible objects</li>
+        </ul>
+
+        <h3>Step 6: Build the Partner Portal</h3>
+        <ol>
+            <li>Go to <strong>Setup &gt; Digital Experiences &gt; All Sites</strong></li>
+            <li>Click <strong>New</strong> and select the <strong>Partner Central</strong> template</li>
+            <li>Use Experience Builder to customize branding, colors, and logo</li>
+            <li>Add components: Lead Inbox, Deal Registration, Knowledge, Cases, Training</li>
+            <li>Configure Audience Targeting for different partner segments</li>
+            <li>Set your custom URL and activate the site</li>
+        </ol>
+
+        <div class="callout callout-green">
+            <strong>Pro Tip: Guided Setup</strong>
+            Salesforce provides a Guided Setup wizard within the Experience Builder that walks you through configuration step-by-step. This accelerates implementation significantly and ensures you don't miss critical settings.
+        </div>
+    </div>
+
+
+    <!-- ==================== SECTION 6: LICENSING ==================== -->
+    <div class="section" id="licensing">
+        <h2>6. Editions &amp; Licensing</h2>
+
+        <h3>Partner Cloud Pricing (2025&ndash;2026)</h3>
+
+        <div class="vs-grid">
+            <div class="vs-card prm">
+                <div class="card-head">PRM &mdash; $25/member/month</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Partner portal (Experience Cloud)</li>
+                        <li>Deal management &amp; registration</li>
+                        <li>Lead distribution &amp; routing</li>
+                        <li>Marketing Development Funds (MDF)</li>
+                        <li>Partner analytics &amp; scorecards</li>
+                        <li>Knowledge base (read-only)</li>
+                        <li>Case management</li>
+                        <li>10 custom objects</li>
+                        <li>200 API calls/member/day</li>
+                        <li>5MB data storage/member</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card pem">
+                <div class="card-head">PEM &mdash; $50/member/month</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Everything in PRM, plus:</li>
+                        <li>Partner enablement &amp; training</li>
+                        <li>Incentive compensation (Spiff)</li>
+                        <li>Loyalty programs</li>
+                        <li>B2B referral management</li>
+                        <li>Channel Account Plans</li>
+                        <li>Revenue Cloud (CPQ/CLM) access</li>
+                        <li>100 custom objects</li>
+                        <li>1,000 API calls/member/day</li>
+                        <li>45MB data storage/member</li>
+                        <li>1.5GB file storage/member</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>Storage &amp; API Limits</h3>
+        <table>
+            <tr>
+                <th>Resource</th>
+                <th>PRM (Member)</th>
+                <th>PRM (Login)</th>
+                <th>PEM (Member)</th>
+                <th>PEM (Login)</th>
+            </tr>
+            <tr>
+                <td><strong>Data Storage</strong></td>
+                <td>5 MB</td>
+                <td>1 MB</td>
+                <td>45 MB</td>
+                <td>20 MB</td>
+            </tr>
+            <tr>
+                <td><strong>File Storage</strong></td>
+                <td>&mdash;</td>
+                <td>&mdash;</td>
+                <td>1.5 GB</td>
+                <td>600 MB</td>
+            </tr>
+            <tr>
+                <td><strong>Custom Objects</strong></td>
+                <td>10</td>
+                <td>10</td>
+                <td>100</td>
+                <td>100</td>
+            </tr>
+            <tr>
+                <td><strong>API Calls/Day</strong></td>
+                <td>200</td>
+                <td>10</td>
+                <td>1,000</td>
+                <td>400</td>
+            </tr>
+        </table>
+
+        <h3>Prerequisites</h3>
+        <div class="callout callout-red">
+            <strong>Required Licenses</strong>
+            Partner Cloud requires a <strong>Sales Cloud</strong> or <strong>CRM license</strong> as a prerequisite &mdash; it is an add-on, not standalone. Enterprise Edition or higher is recommended (some features require it). Slack integration requires Slack Enterprise Grid. Agentforce features require Flex Credits.
+        </div>
+
+        <h3>Available Add-Ons</h3>
+        <table>
+            <tr>
+                <th>Add-On</th>
+                <th>Description</th>
+                <th>Included In</th>
+            </tr>
+            <tr>
+                <td><strong>Channel Revenue Management</strong></td>
+                <td>Rebate management, inventory tracking for physical goods</td>
+                <td>Separate purchase</td>
+            </tr>
+            <tr>
+                <td><strong>Sales Programs</strong></td>
+                <td>Data-driven enablement with guided selling</td>
+                <td>Separate purchase</td>
+            </tr>
+            <tr>
+                <td><strong>Account Plans for Partners</strong></td>
+                <td>Goal setting and tracking with partner accounts</td>
+                <td>PEM (purchase for PRM)</td>
+            </tr>
+            <tr>
+                <td><strong>Revenue Cloud (CPQ/CLM)</strong></td>
+                <td>Automated quoting and contract management for partners</td>
+                <td>PEM (purchase for PRM)</td>
+            </tr>
+        </table>
+
+        <h3>Member vs. Login-Based Pricing</h3>
+        <p><strong>Member-based</strong> means each named partner user has a dedicated license &mdash; they can log in anytime. <strong>Login-based</strong> means you buy a pool of logins and users share them &mdash; cheaper if partners don't access the portal daily. Choose login-based when you have many partners who only log in occasionally (e.g., to register a deal once a month).</p>
+    </div>
+
+
+    <!-- ==================== SECTION 7: DEAL REGISTRATION ==================== -->
+    <div class="section" id="deal-registration">
+        <h2>7. Deal Registration</h2>
+
+        <p>Deal registration is the core workflow in PRM &mdash; it's how partners formally claim an opportunity so the vendor knows about it, protects the partner from channel conflict, and tracks the pipeline.</p>
+
+        <h3>How It Works</h3>
+        <div class="flow-diagram">
+            <div class="flow-box teal">Partner Submits<br><small>Deal registration form</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box blue">Duplicate Check<br><small>Conflict detection</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box orange">Approval Process<br><small>Auto or manual</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box green">Approved<br><small>Protected deal</small></div>
+        </div>
+
+        <h3>Configuration Steps</h3>
+        <ol>
+            <li><strong>Create a Deal Registration record type</strong> on the Opportunity object (or create a custom object for isolation)</li>
+            <li><strong>Build the page layout</strong> with required fields: customer name, estimated value, expected close date, product interest</li>
+            <li><strong>Configure approval process</strong> &mdash; auto-approve qualifying deals (e.g., under $50K), route larger deals for review</li>
+            <li><strong>Set up duplicate detection</strong> rules to catch overlapping deals across partners or with your direct sales team</li>
+            <li><strong>Add the Deal Registration component</strong> to the partner portal via Experience Builder</li>
+            <li><strong>Configure notifications</strong> &mdash; alert partners on status changes (submitted, approved, rejected, expired)</li>
+        </ol>
+
+        <h3>Best Practices</h3>
+        <ul>
+            <li><strong>Automate the process</strong> &mdash; no email-based registration. Everything goes through the portal.</li>
+            <li><strong>Set clear expiration periods</strong> &mdash; registered deals should expire after 90&ndash;180 days if no activity</li>
+            <li><strong>Timestamp everything</strong> &mdash; priority is established by submission time, not approval time</li>
+            <li><strong>Real-time status visibility</strong> &mdash; partners should always know where their deal stands</li>
+            <li><strong>Use deal scoring</strong> (Enterprise Edition+) to prioritize high-potential registrations</li>
+            <li><strong>Clear rules of engagement</strong> &mdash; document when direct sales vs. partners get priority</li>
+        </ul>
+
+        <div class="callout callout-orange">
+            <strong>Channel Conflict Prevention</strong>
+            The #1 reason partners disengage is channel conflict &mdash; when they invest effort in a deal, only to find out the vendor's direct sales team is working the same account. Deal registration with timestamp logging and automated conflict detection prevents this. Make your rules transparent and enforce them consistently.
+        </div>
+    </div>
+
+
+    <!-- ==================== SECTION 8: CHANNEL PROGRAMS ==================== -->
+    <div class="section" id="channel-programs">
+        <h2>8. Channel Programs &amp; Tiers</h2>
+
+        <h3>Program Structure</h3>
+        <p>Channel programs organize partners into structured tiers with defined benefits, requirements, and progression criteria. This motivates partner investment and allows you to allocate resources to your highest-performing partners.</p>
+
+        <div class="tier-row">
+            <div class="tier-badge tier-bronze">Bronze<small>Entry level &bull; Basic access</small></div>
+            <div class="tier-badge tier-silver">Silver<small>Growing partners &bull; Enhanced benefits</small></div>
+            <div class="tier-badge tier-gold">Gold<small>Top performers &bull; Premium support</small></div>
+            <div class="tier-badge tier-platinum">Platinum<small>Strategic partners &bull; Full access</small></div>
+        </div>
+
+        <h3>Configuration</h3>
+        <ol>
+            <li><strong>Create Channel Programs</strong> &mdash; use the <code>ChannelProgram</code> object to define your programs (e.g., "Reseller Program", "Referral Program")</li>
+            <li><strong>Define Levels/Tiers</strong> &mdash; use <code>ChannelProgramLevel</code> to create tiers with qualification criteria</li>
+            <li><strong>Set Criteria</strong> &mdash; revenue thresholds, certification counts, customer satisfaction scores</li>
+            <li><strong>Link Benefits</strong> &mdash; tie each tier to specific benefits: MDF amounts, discount levels, lead priority, training access</li>
+            <li><strong>Enroll Partners</strong> &mdash; use <code>ChannelProgramMember</code> to track enrollment and current tier</li>
+            <li><strong>Automate Progression</strong> &mdash; flows or automation to promote/demote partners based on criteria</li>
+        </ol>
+
+        <h3>Typical Tier Benefits</h3>
+        <table>
+            <tr>
+                <th>Benefit</th>
+                <th>Bronze</th>
+                <th>Silver</th>
+                <th>Gold</th>
+                <th>Platinum</th>
+            </tr>
+            <tr>
+                <td><strong>Base Discount</strong></td>
+                <td>10%</td>
+                <td>15%</td>
+                <td>20%</td>
+                <td>25%</td>
+            </tr>
+            <tr>
+                <td><strong>MDF Allocation</strong></td>
+                <td>$2K/yr</td>
+                <td>$10K/yr</td>
+                <td>$25K/yr</td>
+                <td>$50K+/yr</td>
+            </tr>
+            <tr>
+                <td><strong>Lead Priority</strong></td>
+                <td>Low</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>First access</td>
+            </tr>
+            <tr>
+                <td><strong>Support Level</strong></td>
+                <td>Self-service</td>
+                <td>Email support</td>
+                <td>Dedicated CAM</td>
+                <td>Executive sponsor</td>
+            </tr>
+            <tr>
+                <td><strong>Portal Features</strong></td>
+                <td>Basic</td>
+                <td>Reports + dashboards</td>
+                <td>API access</td>
+                <td>Full access</td>
+            </tr>
+            <tr>
+                <td><strong>Co-Marketing</strong></td>
+                <td>Logo use only</td>
+                <td>Campaign templates</td>
+                <td>Joint campaigns</td>
+                <td>Joint GTM strategy</td>
+            </tr>
+        </table>
+
+        <h3>Channel Account Plans</h3>
+        <p>For Gold/Platinum partners, use <strong>Channel Account Plans</strong> (included in PEM, purchasable for PRM) to set joint business goals, track milestones, and hold quarterly business reviews. These are structured documents within Salesforce that both the channel manager and partner executive collaborate on.</p>
+    </div>
+
+
+    <!-- ==================== SECTION 9: MDF ==================== -->
+    <div class="section" id="mdf">
+        <h2>9. Marketing Development Funds (MDF) &amp; Co-Op</h2>
+
+        <h3>MDF vs. Co-Op Funds</h3>
+        <div class="vs-grid">
+            <div class="vs-card prm">
+                <div class="card-head">Marketing Development Funds (MDF)</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Provided <strong>before</strong> sales activity</li>
+                        <li>Amounts determined by partner tier/status</li>
+                        <li>Used for marketing activities to generate pipeline</li>
+                        <li>Partners submit fund requests for approval</li>
+                        <li>Requires proof of performance (receipts, event photos, campaign results)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card pem">
+                <div class="card-head">Co-Op Funds</div>
+                <div class="card-body">
+                    <ul>
+                        <li>Awarded <strong>after</strong> sales activity</li>
+                        <li>Rewards high-volume partners</li>
+                        <li>Typically a percentage of revenue generated</li>
+                        <li>Accrued over time as the partner sells</li>
+                        <li>More predictable and performance-based</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3>MDF Workflow</h3>
+        <div class="flow-diagram">
+            <div class="flow-box dark">Budget Set<br><small>PartnerMarketingBudget</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box blue">Funds Allocated<br><small>PartnerFundAllocation</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box teal">Partner Requests<br><small>PartnerFundRequest</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box orange">Approval<br><small>Approval Process</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box green">Claim Filed<br><small>PartnerFundClaim</small></div>
+        </div>
+
+        <h3>Channel Marketing Automation</h3>
+        <p>Beyond MDF, Partner Cloud supports two types of partner marketing:</p>
+        <ul>
+            <li><strong>To-Partner Marketing</strong> &mdash; targeting partners themselves (recruitment, program updates, training announcements)</li>
+            <li><strong>Through-Partner Marketing</strong> &mdash; leveraging partners to reach end customers (co-branded campaigns, distributed content)</li>
+        </ul>
+        <table>
+            <tr>
+                <th>Capability</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><strong>Campaign Marketplace</strong></td>
+                <td>Centralized portal where partners browse and deploy vendor-created campaigns</td>
+            </tr>
+            <tr>
+                <td><strong>Distributed Marketing</strong></td>
+                <td>Prepackaged campaigns partners can customize with their branding and send to their customers</td>
+            </tr>
+            <tr>
+                <td><strong>Email Co-Branding</strong></td>
+                <td>Vendor templates with partner logo/contact auto-inserted</td>
+            </tr>
+            <tr>
+                <td><strong>1:1 Journeys</strong></td>
+                <td>Nurture sequences for recruiting and engaging potential new partners</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- ==================== SECTION 10: INTEGRATIONS ==================== -->
+    <div class="section" id="integrations">
+        <h2>10. Integration Points</h2>
+
+        <h3>Native Salesforce Integrations</h3>
+        <table>
+            <tr>
+                <th>Integration</th>
+                <th>What It Does</th>
+                <th>Available In</th>
+            </tr>
+            <tr>
+                <td><strong>Sales Cloud</strong></td>
+                <td>Native &mdash; PRM extends Accounts, Leads, Opportunities. Unified reporting across direct and partner channels. Shared discount/approval workflows.</td>
+                <td>PRM + PEM</td>
+            </tr>
+            <tr>
+                <td><strong>Partner Connect</strong></td>
+                <td>Cross-CRM co-selling. Real-time data sharing between vendor and partner CRM systems. Eliminates duplicate data entry.</td>
+                <td>PRM + PEM</td>
+            </tr>
+            <tr>
+                <td><strong>PRM for Slack</strong></td>
+                <td>Cross-workspace collaboration via Slack Connect. Auto-setup partner channels. Lead allocation and deal registration from Slack. Requires Slack Enterprise Grid.</td>
+                <td>PRM + PEM</td>
+            </tr>
+            <tr>
+                <td><strong>Revenue Cloud</strong></td>
+                <td>Automated quoting, guided selling, product configuration for partners. Tier-specific price books. CPQ/CLM exposed to partners.</td>
+                <td>PEM</td>
+            </tr>
+            <tr>
+                <td><strong>Marketing Cloud</strong></td>
+                <td>Distributed Marketing, Campaign Marketplace, email co-branding, 1:1 Journeys for partner nurturing.</td>
+                <td>PRM + PEM</td>
+            </tr>
+            <tr>
+                <td><strong>Spiff</strong></td>
+                <td>Incentive compensation transparency. Partners review activity and commissions at a glance.</td>
+                <td>PEM</td>
+            </tr>
+            <tr>
+                <td><strong>CMS Connect</strong></td>
+                <td>Render content from Adobe Experience Manager, WordPress, Sitecore, Drupal, SDL Tridion.</td>
+                <td>PRM + PEM</td>
+            </tr>
+            <tr>
+                <td><strong>Files Connect</strong></td>
+                <td>Access Google Drive, SharePoint, Quip, OneDrive, Box from within the portal.</td>
+                <td>PRM + PEM</td>
+            </tr>
+        </table>
+
+        <h3>APIs</h3>
+        <ul>
+            <li><strong>REST and SOAP APIs</strong> available for partner data</li>
+            <li>API limits vary by edition: 200/member/day (PRM) vs. 1,000/member/day (PEM)</li>
+            <li>Login-based: 10/login/day (PRM) vs. 400/login/day (PEM)</li>
+            <li>Use APIs for partner onboarding automation, data synchronization with partner systems, and custom integrations</li>
+        </ul>
+
+        <h3>AppExchange Ecosystem</h3>
+        <ul>
+            <li><strong>Partner Recruitment App</strong> &mdash; structured partner recruitment workflows</li>
+            <li><strong>Learning Management</strong> &mdash; Appinium, NetExam for embedded training</li>
+            <li><strong>50+ Lightning Bolt Templates</strong> &mdash; industry-specific portal configurations</li>
+            <li>Additional PRM enhancement apps for analytics, gamification, and engagement</li>
+        </ul>
+    </div>
+
+
+    <!-- ==================== SECTION 11: AI & AGENTFORCE ==================== -->
+    <div class="section" id="ai-features">
+        <h2>11. AI &amp; Agentforce for Partners</h2>
+
+        <p>Salesforce is bringing AI capabilities to the partner channel through Einstein and Agentforce. These features are part of the 2025&ndash;2026 roadmap and represent a significant evolution in how channel managers and partners interact with the platform.</p>
+
+        <h3>AI for Channel Managers (Internal)</h3>
+        <ul>
+            <li><strong>Partner Data Summarization</strong> &mdash; Agentforce agents summarize partner performance, pipeline health, and engagement metrics</li>
+            <li><strong>Recommendation Generation</strong> &mdash; AI suggests next-best actions for partner engagement (e.g., "Partner X hasn't registered a deal in 45 days &mdash; schedule a check-in")</li>
+            <li><strong>Einstein Opportunity Scoring</strong> &mdash; AI scores partner-managed opportunities for likelihood of close</li>
+            <li><strong>Einstein Lead Scoring</strong> &mdash; prioritize which leads to distribute to which partners</li>
+            <li><strong>Generated Communications</strong> &mdash; draft partner emails and outreach using generative AI</li>
+        </ul>
+
+        <h3>AI for Partners (External-Facing)</h3>
+        <ul>
+            <li><strong>AI Chatbots</strong> &mdash; 24/7 partner support answering product questions, pricing queries, and process guidance</li>
+            <li><strong>Draft Emails</strong> &mdash; partners use Agentforce to compose customer-facing emails</li>
+            <li><strong>Lead Qualification</strong> &mdash; AI helps partners qualify leads they receive</li>
+            <li><strong>Product Promotion</strong> &mdash; AI recommends which products to promote based on partner's customer base</li>
+            <li><strong>AI Search</strong> &mdash; powered by Knowledge base, partners find answers faster</li>
+            <li><strong>Generated Sales Emails</strong> &mdash; requires Agentforce Enterprise Edition</li>
+        </ul>
+
+        <div class="callout callout-purple">
+            <strong>Agentforce Pricing</strong>
+            Agentforce for Partners requires <strong>Flex Credits</strong>, not included in the base PRM or PEM license. Generated Sales Emails specifically require the <strong>Agentforce Enterprise Edition</strong>. Plan your AI budget separately from your PRM licensing costs.
+        </div>
+
+        <h3>Roadmap (Announced)</h3>
+        <ul>
+            <li>Reimagined partner UI experience</li>
+            <li>Advanced partner agents for increased efficiency</li>
+            <li>Manufacturing-focused features: inventory visibility, pricing management, rebate tracking</li>
+        </ul>
+    </div>
+
+
+    <!-- ==================== SECTION 12: BEST PRACTICES ==================== -->
+    <div class="section" id="best-practices">
+        <h2>12. Best Practices</h2>
+
+        <h3>Partner Lifecycle Management</h3>
+        <div class="flow-diagram">
+            <div class="flow-box dark">Recruit<br><small>Persona dev &amp; outreach</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box blue">Onboard<br><small>Guided setup paths</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box teal">Enable<br><small>Training &amp; certs</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box green">Grow<br><small>Tier advancement</small></div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box purple">Optimize<br><small>QBRs &amp; plans</small></div>
+        </div>
+
+        <h3>Implementation Strategy</h3>
+        <div class="two-col">
+            <div class="feature-card">
+                <h4>Do</h4>
+                <ul>
+                    <li>Start with essential features, iterate based on partner feedback</li>
+                    <li>Use Partner Central template for rapid deployment</li>
+                    <li>Leverage Guided Setup to lower implementation cost</li>
+                    <li>Define clear KPIs before deployment</li>
+                    <li>Engage partners actively for input on portal needs</li>
+                    <li>Use audience personalization to avoid information overload</li>
+                    <li>Embed training directly in the portal workflow</li>
+                    <li>Set competitive commission structures (10&ndash;40% industry range)</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>Don't</h4>
+                <ul>
+                    <li>Don't try to launch every feature at once</li>
+                    <li>Don't ignore partner feedback on usability</li>
+                    <li>Don't use email for deal registration</li>
+                    <li>Don't skip duplicate detection rules</li>
+                    <li>Don't give all partners the same experience (use tiering)</li>
+                    <li>Don't neglect mobile responsiveness</li>
+                    <li>Don't let deal registrations sit without action</li>
+                    <li>Don't overcomplicate the approval process</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Channel Conflict Resolution</h3>
+        <ul>
+            <li><strong>Timestamp-based priority</strong> &mdash; first to register gets protection</li>
+            <li><strong>Automated conflict identification</strong> before it escalates to people</li>
+            <li><strong>Clear rules of engagement</strong> documenting when direct sales vs. partners get priority</li>
+            <li><strong>Transparency</strong> &mdash; partners should see the rules and understand how conflicts are resolved</li>
+            <li><strong>Escalation path</strong> &mdash; when automated rules can't resolve it, have a clear human escalation path</li>
+        </ul>
+
+        <h3>Partner Engagement Metrics to Track</h3>
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>What It Tells You</th>
+                <th>Healthy Range</th>
+            </tr>
+            <tr>
+                <td><strong>Portal Login Frequency</strong></td>
+                <td>Partner engagement and portal adoption</td>
+                <td>Weekly or more</td>
+            </tr>
+            <tr>
+                <td><strong>Deal Registration Rate</strong></td>
+                <td>Partner pipeline contribution</td>
+                <td>Growing QoQ</td>
+            </tr>
+            <tr>
+                <td><strong>Deal Win Rate</strong></td>
+                <td>Partner effectiveness</td>
+                <td>20&ndash;40% (varies by industry)</td>
+            </tr>
+            <tr>
+                <td><strong>Lead Acceptance Rate</strong></td>
+                <td>Quality of leads distributed</td>
+                <td>&gt;70%</td>
+            </tr>
+            <tr>
+                <td><strong>Training Completion</strong></td>
+                <td>Partner enablement engagement</td>
+                <td>&gt;60%</td>
+            </tr>
+            <tr>
+                <td><strong>MDF Utilization</strong></td>
+                <td>Marketing investment effectiveness</td>
+                <td>&gt;80% of allocated funds</td>
+            </tr>
+            <tr>
+                <td><strong>Time to First Deal</strong></td>
+                <td>Onboarding effectiveness</td>
+                <td>&lt;90 days</td>
+            </tr>
+            <tr>
+                <td><strong>Partner-Sourced Revenue %</strong></td>
+                <td>Channel program ROI</td>
+                <td>Growing toward target</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- ==================== SECTION 13: USE CASES ==================== -->
+    <div class="section" id="use-cases">
+        <h2>13. Common Use Cases</h2>
+
+        <div class="two-col">
+            <div class="feature-card">
+                <h4>Technology &mdash; Reseller Networks</h4>
+                <p>ISVs distributing through VARs and resellers. Co-selling with implementation partners. Joint deal registration and pipeline management.</p>
+                <ul>
+                    <li>Deal registration to prevent channel conflict</li>
+                    <li>Tiered pricing and discount workflows</li>
+                    <li>Partner Connect for cross-CRM co-selling</li>
+                    <li>Technical training and certification tracking</li>
+                </ul>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Example: Stripe uses Salesforce PRM for partner program management</p>
+            </div>
+            <div class="feature-card">
+                <h4>Manufacturing &mdash; Distributor Channels</h4>
+                <p>Complex distribution networks with multiple tiers. Physical goods inventory and rebate management.</p>
+                <ul>
+                    <li>Channel Revenue Management add-on for rebates</li>
+                    <li>Tier-specific pricing with automated discounts</li>
+                    <li>Inventory visibility (roadmap feature)</li>
+                    <li>Multi-tier distributor &gt; reseller hierarchies</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>Financial Services &mdash; Broker/Agent Networks</h4>
+                <p>Managing broker and agent relationships with compliance requirements.</p>
+                <ul>
+                    <li>Compliance-driven partner onboarding</li>
+                    <li>Tiered commission structures</li>
+                    <li>Performance tracking against regulatory requirements</li>
+                    <li>Referral management and attribution</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <h4>Healthcare &mdash; Provider Networks</h4>
+                <p>Managing provider partnerships with training and compliance documentation.</p>
+                <ul>
+                    <li>Training and certification tracking</li>
+                    <li>Compliance documentation management</li>
+                    <li>Referral management</li>
+                    <li>Provider performance analytics</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="callout callout-teal">
+            <strong>When to Consider PRM</strong>
+            If your company generates 30% or more of revenue through indirect channels, or if you manage more than 50 active partner relationships, PRM delivers significant ROI over manual channel management. The breakeven typically occurs within the first year as deal registration alone reduces channel conflict and improves pipeline visibility.
+        </div>
+    </div>
+
+
+    <!-- ==================== SECTION 14: COMPETITOR COMPARISON ==================== -->
+    <div class="section" id="competitors">
+        <h2>14. Competitor Comparison</h2>
+
+        <h3>Salesforce PRM vs. Impartner</h3>
+        <p>Impartner is the most frequently cited alternative to Salesforce PRM &mdash; a purpose-built platform for partner ecosystem management used by companies like Honeywell, Xerox, T-Mobile, Samsung, Okta, and Palo Alto Networks.</p>
+
+        <div class="vs-grid">
+            <div class="vs-card sf">
+                <div class="card-head">Salesforce PRM Strengths</div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>Native CRM integration</strong> &mdash; no sync/mapping issues</li>
+                        <li>Single platform for internal and partner users</li>
+                        <li>Leverages existing Salesforce investment</li>
+                        <li>Einstein AI and Agentforce capabilities</li>
+                        <li>Massive AppExchange ecosystem (5,000+ apps)</li>
+                        <li>Partner Connect for cross-CRM co-selling</li>
+                        <li>Slack integration for real-time collaboration</li>
+                        <li>Faster time-to-value if already on Salesforce</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="vs-card comp">
+                <div class="card-head">Impartner Strengths</div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>Purpose-built</strong> exclusively for partner management</li>
+                        <li>296% ROI reported (Forrester)</li>
+                        <li>Up to 50% increase in partner-sourced deals</li>
+                        <li>SCORM-enabled training built-in natively</li>
+                        <li>Orchestration Studio for integrations</li>
+                        <li>Aimi Intelligence Layer (AI-powered)</li>
+                        <li>HyperscalerGTM for cloud marketplace automation</li>
+                        <li>Business planning and goal tracking out of the box</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-orange">
+            <strong>Impartner's Criticism of Salesforce PRM</strong>
+            Impartner frequently positions against Salesforce by arguing that PRM/Communities was not originally designed as a dedicated partnership platform, that there are hidden costs beyond licensing (implementation, ongoing ops, per-user charges), and that it lacks built-in capabilities that purpose-built PRM solutions provide out of the box.
+        </div>
+
+        <h3>Other Competitors</h3>
+        <table>
+            <tr>
+                <th>Platform</th>
+                <th>Focus</th>
+                <th>Best For</th>
+            </tr>
+            <tr>
+                <td><strong>Zift Solutions (Unifyr)</strong></td>
+                <td>Through-channel marketing automation</td>
+                <td>Companies prioritizing marketing content distribution to partners</td>
+            </tr>
+            <tr>
+                <td><strong>PartnerStack</strong></td>
+                <td>SaaS-focused partner management</td>
+                <td>B2B SaaS companies with affiliate and referral programs</td>
+            </tr>
+            <tr>
+                <td><strong>Channeltivity</strong></td>
+                <td>Mid-market PRM</td>
+                <td>Smaller companies wanting simpler setup and lower cost</td>
+            </tr>
+            <tr>
+                <td><strong>Allbound</strong></td>
+                <td>Content management and partner enablement</td>
+                <td>Companies prioritizing partner learning and content</td>
+            </tr>
+        </table>
+
+        <h3>Decision Matrix</h3>
+        <table>
+            <tr>
+                <th>Consideration</th>
+                <th>Salesforce PRM</th>
+                <th>Purpose-Built PRM (e.g., Impartner)</th>
+            </tr>
+            <tr>
+                <td><strong>Best For</strong></td>
+                <td>Companies already on Salesforce wanting to extend to partners</td>
+                <td>Companies needing dedicated partner management regardless of CRM</td>
+            </tr>
+            <tr>
+                <td><strong>CRM Integration</strong></td>
+                <td>Native (it IS the CRM)</td>
+                <td>Requires integration/sync</td>
+            </tr>
+            <tr>
+                <td><strong>Customization</strong></td>
+                <td>High but requires Salesforce expertise</td>
+                <td>Purpose-built for partner workflows</td>
+            </tr>
+            <tr>
+                <td><strong>Cost</strong></td>
+                <td>$25&ndash;50/member/month + Sales Cloud license</td>
+                <td>Varies; typically enterprise pricing</td>
+            </tr>
+            <tr>
+                <td><strong>Time to Value</strong></td>
+                <td>Faster if already on Salesforce</td>
+                <td>Faster for non-Salesforce shops</td>
+            </tr>
+            <tr>
+                <td><strong>AI Capabilities</strong></td>
+                <td>Strong (Einstein, Agentforce)</td>
+                <td>Growing (Impartner Aimi)</td>
+            </tr>
+            <tr>
+                <td><strong>Ecosystem</strong></td>
+                <td>AppExchange with 5,000+ apps</td>
+                <td>Smaller but specialized</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- ==================== SECTION 15: RESOURCES ==================== -->
+    <div class="section" id="resources">
+        <h2>15. Resources &amp; Further Reading</h2>
+
+        <h3>Official Salesforce Documentation</h3>
+        <ul>
+            <li><a href="https://www.salesforce.com/sales/partner-relationship-management/" target="_blank">Salesforce Partner Cloud Product Page</a></li>
+            <li><a href="https://help.salesforce.com/s/articleView?id=sf.prm_overview.htm" target="_blank">PRM Setup &amp; Administration Guide</a></li>
+            <li><a href="https://help.salesforce.com/s/articleView?id=sf.networks_overview.htm" target="_blank">Experience Cloud Documentation</a></li>
+            <li><a href="https://help.salesforce.com/s/articleView?id=sf.partner_portal_managing.htm" target="_blank">Managing Partner Users</a></li>
+        </ul>
+
+        <h3>Trailhead Learning</h3>
+        <ul>
+            <li><a href="https://trailhead.salesforce.com/en/content/learn/modules/partner-relationship-management" target="_blank">PRM Basics Trailhead Module</a></li>
+            <li><a href="https://trailhead.salesforce.com/en/content/learn/modules/community_builder_basics" target="_blank">Experience Builder Basics</a></li>
+            <li><a href="https://trailhead.salesforce.com/en/content/learn/modules/channel-sales" target="_blank">Channel Sales Management</a></li>
+        </ul>
+
+        <h3>Key Terminology</h3>
+        <table>
+            <tr>
+                <th>Term</th>
+                <th>Definition</th>
+            </tr>
+            <tr>
+                <td><strong>PRM</strong></td>
+                <td>Partner Relationship Management &mdash; the practice and technology of managing channel partner relationships</td>
+            </tr>
+            <tr>
+                <td><strong>PEM</strong></td>
+                <td>Partner Ecosystem Management &mdash; Salesforce's premium tier adding enablement, incentives, and loyalty</td>
+            </tr>
+            <tr>
+                <td><strong>CAM</strong></td>
+                <td>Channel Account Manager &mdash; the internal person managing a set of partner relationships</td>
+            </tr>
+            <tr>
+                <td><strong>MDF</strong></td>
+                <td>Marketing Development Funds &mdash; money given to partners for marketing activities</td>
+            </tr>
+            <tr>
+                <td><strong>Co-Op</strong></td>
+                <td>Cooperative marketing funds earned by partners based on sales performance</td>
+            </tr>
+            <tr>
+                <td><strong>VAR</strong></td>
+                <td>Value-Added Reseller &mdash; a partner that sells your product with additional services</td>
+            </tr>
+            <tr>
+                <td><strong>Deal Registration</strong></td>
+                <td>Formal process where a partner claims an opportunity to prevent channel conflict</td>
+            </tr>
+            <tr>
+                <td><strong>Channel Conflict</strong></td>
+                <td>When multiple partners (or direct sales) compete for the same customer deal</td>
+            </tr>
+            <tr>
+                <td><strong>Through-Partner Marketing</strong></td>
+                <td>Marketing campaigns that partners deliver to their end customers on the vendor's behalf</td>
+            </tr>
+            <tr>
+                <td><strong>QBR</strong></td>
+                <td>Quarterly Business Review &mdash; structured partner performance review meetings</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- PRINT BUTTON (BOTTOM) -->
+    <div class="print-bar-bottom">
+        <button class="print-btn" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Print to PDF
+        </button>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>Salesforce Partner Cloud (PRM) &mdash; Complete Knowledge Guide</p>
+    <p>Prepared by Eddie Zaragoza &mdash; <a href="mailto:ezaragoza@crosscountry-consulting.com" style="color:var(--sf-blue);">ezaragoza@crosscountry-consulting.com</a></p>
+    <p>Generated March 2026</p>
+    <p>Sources include official Salesforce documentation, Trailhead, SalesforceBen, partner ecosystem research, and implementation experience.</p>
+</div>
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<script>
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Collapsible sticky nav
+    (function() {
+        const nav = document.getElementById('navBar');
+        const toggle = document.getElementById('navToggle');
+        const SCROLL_THRESHOLD = 120;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > SCROLL_THRESHOLD) {
+                if (!nav.classList.contains('collapsed')) {
+                    nav.classList.add('collapsed');
+                    nav.classList.remove('expanded');
+                    toggle.innerHTML = '&#9776; Show Links';
+                }
+            } else {
+                nav.classList.remove('collapsed', 'expanded');
+            }
+        }, { passive: true });
+
+        toggle.addEventListener('click', () => {
+            const isExpanded = nav.classList.toggle('expanded');
+            toggle.innerHTML = isExpanded ? '&#10005; Hide Links' : '&#9776; Show Links';
+        });
+
+        nav.querySelector('.nav-links').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && nav.classList.contains('collapsed')) {
+                nav.classList.remove('expanded');
+                toggle.innerHTML = '&#9776; Show Links';
+            }
+        });
+    })();
+</script>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+<script>
+(function(){
+    const konamiSequence = [
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+        'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+        'KeyB','KeyA','Enter'
+    ];
+    let konamiIndex = 0;
+    let matrixActive = false;
+    let matrixRainId = null;
+
+    document.addEventListener('keydown', function(e) {
+        const expected = konamiSequence[konamiIndex];
+        if (e.code === expected || e.key === expected) {
+            konamiIndex++;
+            if (konamiIndex === konamiSequence.length) {
+                konamiIndex = 0;
+                matrixActive ? stopMatrixRain() : startMatrixRain();
+                matrixActive = !matrixActive;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    });
+
+    function startMatrixRain() {
+        const canvas = document.getElementById('matrixCanvas');
+        if (!canvas || matrixRainId) return;
+        document.body.classList.add('matrix-active');
+        canvas.style.display = 'block';
+        canvas.style.pointerEvents = 'none';
+        const ctx = canvas.getContext('2d');
+
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:・."=*+-<>¦|';
+        const charArr = Array.from(chars);
+        const fontSize = 14;
+        let columns, drops;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            const oldDrops = drops || [];
+            drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = oldDrops[i] !== undefined ? oldDrops[i] : Math.random() * -100;
+            }
+        }
+        resize();
+        window._matrixResize = resize;
+        window.addEventListener('resize', window._matrixResize);
+
+        let frameCount = 0;
+        function draw() {
+            frameCount++;
+            if (frameCount % 2 !== 0) {
+                matrixRainId = requestAnimationFrame(draw);
+                return;
+            }
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px Courier New';
+
+            for (let i = 0; i < columns; i++) {
+                const ch = charArr[Math.floor(Math.random() * charArr.length)];
+                const y = drops[i] * fontSize;
+
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = 'rgba(0,255,65,0.6)';
+                ctx.fillStyle = '#aaffaa';
+                ctx.fillText(ch, i * fontSize, y);
+
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                const ch2 = charArr[Math.floor(Math.random() * charArr.length)];
+                if (y - fontSize > 0) ctx.fillText(ch2, i * fontSize, y - fontSize);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+        matrixRainId = requestAnimationFrame(draw);
+    }
+
+    function stopMatrixRain() {
+        if (matrixRainId) {
+            cancelAnimationFrame(matrixRainId);
+            matrixRainId = null;
+        }
+        document.body.classList.remove('matrix-active');
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'none';
+        }
+        if (window._matrixResize) {
+            window.removeEventListener('resize', window._matrixResize);
+            delete window._matrixResize;
+        }
+    }
+})();
+</script>
+
+</body>
+</html>
