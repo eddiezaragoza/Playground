@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPQ to RCA Product Data Model Mapping - Calabrio/Verint</title>
+<style>
+    :root {
+        --sf-blue: #0176d3;
+        --sf-dark: #032d60;
+        --sf-light: #e8f4fd;
+        --bg: #fafafa;
+        --card-bg: #fff;
+        --text: #334155;
+        --heading: #1e293b;
+        --border: #e2e8f0;
+        --green: #06d6a0;
+        --orange: #e65100;
+        --purple: #7209b7;
+        --teal: #118ab2;
+        --red: #ef476f;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; background: var(--bg); }
+
+    /* Header */
+    .header { background: linear-gradient(135deg, var(--sf-dark) 0%, var(--sf-blue) 100%); color: white; padding: 3rem 2rem; text-align: center; }
+    .header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+    .header .meta { margin-top: 1rem; font-size: 0.9rem; opacity: 0.75; }
+
+    /* Nav */
+    .nav { background: white; border-bottom: 2px solid var(--sf-blue); padding: 0.8rem 2rem; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; }
+    .nav a { color: var(--sf-blue); text-decoration: none; font-size: 0.85rem; font-weight: 500; white-space: nowrap; }
+    .nav a:hover { text-decoration: underline; }
+
+    /* Sections */
+    h2 { color: var(--sf-dark); font-size: 1.5rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--sf-blue); }
+    h3 { color: var(--heading); font-size: 1.15rem; margin: 1.8rem 0 0.8rem; }
+    h4 { color: var(--sf-blue); font-size: 1rem; margin: 1.2rem 0 0.5rem; }
+    p, li { font-size: 0.95rem; margin-bottom: 0.5rem; }
+    ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.88rem; }
+    th { background: var(--sf-dark); color: white; padding: 0.7rem 0.8rem; text-align: left; font-weight: 600; }
+    td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:nth-child(even) { background: #f8fafc; }
+    tr:hover { background: var(--sf-light); }
+
+    /* Mapping table special styles */
+    .mapping-table th { font-size: 0.8rem; }
+    .mapping-table .cpq-col { background: #fff3e0; }
+    .mapping-table .rca-col { background: #e8f5e9; }
+    .mapping-table .arrow-col { text-align: center; font-size: 1.2rem; background: #f5f5f5; width: 40px; }
+    .mapping-table th.cpq-col { background: var(--orange); }
+    .mapping-table th.rca-col { background: #2e7d32; }
+    .mapping-table th.arrow-col { background: #616161; }
+
+    /* Badges */
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .badge-blue { background: var(--sf-light); color: var(--sf-blue); }
+    .badge-green { background: #e8f5e9; color: #2e7d32; }
+    .badge-orange { background: #fff3e0; color: var(--orange); }
+    .badge-red { background: #fce4ec; color: #c62828; }
+    .badge-purple { background: #f3e5f5; color: var(--purple); }
+    .badge-gray { background: #f5f5f5; color: #616161; }
+
+    /* Stats cards */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .stat-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; text-align: center; border-top: 3px solid var(--sf-blue); }
+    .stat-card.orange { border-top-color: var(--orange); }
+    .stat-card.green { border-top-color: #2e7d32; }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--heading); }
+    .stat-card .stat-label { font-size: 0.8rem; color: #64748b; margin-top: 0.3rem; }
+    .stat-card .stat-sub { font-size: 0.75rem; color: #94a3b8; }
+
+    /* Callout boxes */
+    .callout { padding: 1rem 1.2rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid; }
+    .callout-info { background: #e8f4fd; border-color: var(--sf-blue); }
+    .callout-warn { background: #fff8e1; border-color: #f9a825; }
+    .callout-success { background: #e8f5e9; border-color: #2e7d32; }
+    .callout-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
+
+    /* Diagram containers */
+    .diagram-container { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; overflow-x: auto; }
+    .diagram-title { font-weight: 600; font-size: 0.95rem; color: var(--heading); margin-bottom: 1rem; text-align: center; }
+
+    /* Flexbox diagrams */
+    .flow-row { display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+    .flow-box { padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-align: center; min-width: 140px; color: white; }
+    .flow-box.cpq { background: var(--orange); }
+    .flow-box.rca { background: #2e7d32; }
+    .flow-box.shared { background: var(--sf-blue); }
+    .flow-box.none { background: #9e9e9e; }
+    .flow-arrow { font-size: 1.3rem; color: #64748b; font-weight: bold; }
+    .flow-sub { font-size: 0.7rem; font-weight: 400; opacity: 0.9; display: block; }
+
+    /* Side-by-side comparison */
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+    .comparison-panel { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; }
+    .comparison-panel.cpq { border-top: 3px solid var(--orange); }
+    .comparison-panel.rca { border-top: 3px solid #2e7d32; }
+    .comparison-panel h4 { margin-top: 0; }
+    @media (max-width: 768px) { .comparison { grid-template-columns: 1fr; } }
+
+    /* Print */
+    @media print {
+        .nav, .back-to-top, #matrixCanvas { display: none !important; }
+        .header { padding: 1.5rem; }
+        body { font-size: 11pt; }
+        .container { max-width: 100%; }
+        .comparison { grid-template-columns: 1fr 1fr; }
+        table { font-size: 9pt; }
+        h2 { break-before: page; }
+    }
+
+    /* Back to top */
+    .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; border-radius: 50%; background: var(--sf-blue); color: white; border: none; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateY(20px); transition: opacity 0.3s, transform 0.3s; z-index: 200; }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); }
+    .back-to-top:hover { background: var(--sf-dark); }
+
+    /* Matrix Easter Egg */
+    body.matrix-active { background: #000; }
+    body.matrix-active .container { position: relative; z-index: 1; background: var(--bg); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+    body.matrix-active .header, body.matrix-active .nav { position: relative; z-index: 1; }
+    body.matrix-active .back-to-top { z-index: 1000; }
+    @media print { #matrixCanvas { display: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>CPQ to RCA Product Data Model Mapping</h1>
+    <div class="subtitle">CalabrioSITSandbox (CPQ) &rarr; VerintDevSandbox (Revenue Cloud Advanced)</div>
+    <div class="meta">Prepared March 14, 2026 | CrossCountry Consulting</div>
+</div>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#overview">Overview</a>
+        <a href="#at-a-glance">At a Glance</a>
+        <a href="#core-mapping">Core Object Mapping</a>
+        <a href="#catalog">Catalog & Categories</a>
+        <a href="#bundles">Bundles & Hierarchy</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#rules">Rules & Logic</a>
+        <a href="#config">Configuration & Attributes</a>
+        <a href="#subscriptions">Subscriptions & Selling Models</a>
+        <a href="#policies">Policies</a>
+        <a href="#custom">Custom Objects</a>
+        <a href="#gaps">Gap Analysis</a>
+        <a href="#migration-status">Migration Status</a>
+    </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="overview">Overview</h2>
+
+<p>This document maps every product-related object in Calabrio's CPQ implementation (CalabrioSITSandbox) to its corresponding object in the Revenue Cloud Advanced (RCA) implementation (VerintDevSandbox). It covers the full product data model -- catalog structure, bundle hierarchy, pricing, rules, configuration, and policies.</p>
+
+<div class="callout callout-info">
+    <div class="callout-title">What are CPQ and RCA?</div>
+    <p><strong>Salesforce CPQ</strong> (Configure, Price, Quote) is the legacy managed package (SBQQ__) for product configuration and quoting. <strong>Revenue Cloud Advanced</strong> (RCA) is the newer, platform-native replacement that uses standard Salesforce objects instead of managed package objects. The migration replaces CPQ's custom architecture with RCA's built-in product catalog, pricing engine, and lifecycle management.</p>
+</div>
+
+<div class="callout callout-warn">
+    <div class="callout-title">Scope</div>
+    <p>This document covers <strong>product-related objects only</strong> -- the catalog, pricing, bundles, rules, and configuration that define what can be sold and how it's priced. It does not cover quote/order transaction objects (SBQQ__Quote__c, SBQQ__QuoteLine__c, etc.) or downstream billing/revenue recognition.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="at-a-glance">At a Glance</h2>
+
+<div class="stats-row">
+    <div class="stat-card orange">
+        <div class="stat-value">1,095</div>
+        <div class="stat-label">CPQ Products (SIT)</div>
+        <div class="stat-sub">905 active / 190 inactive</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-value">21,415</div>
+        <div class="stat-label">RCA Products (Verint)</div>
+        <div class="stat-sub">14,108 active / includes legacy Avaya SKUs</div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-value">16</div>
+        <div class="stat-label">CPQ Bundles</div>
+        <div class="stat-sub">6 active package bundles + 10 others</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-value">60</div>
+        <div class="stat-label">RCA Bundle Products</div>
+        <div class="stat-sub">Type=Bundle (PK-WFM hierarchy)</div>
+    </div>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card orange">
+        <div class="stat-value">1,069</div>
+        <div class="stat-label">CPQ Product Options</div>
+        <div class="stat-sub">Parent-child bundle relationships</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-value">68</div>
+        <div class="stat-label">RCA Related Components</div>
+        <div class="stat-sub">PK-WFM L1 + L2 relationships</div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-value">5,726</div>
+        <div class="stat-label">CPQ Block Prices</div>
+        <div class="stat-sub">Tiered/quantity-based pricing</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-value">0</div>
+        <div class="stat-label">RCA Price Adjustment Tiers</div>
+        <div class="stat-sub">Schema exists, not yet configured</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="core-mapping">Core Object Mapping</h2>
+
+<p>The table below shows every CPQ object with product data and its RCA equivalent. Objects are color-coded by migration complexity.</p>
+
+<table class="mapping-table">
+    <thead>
+        <tr>
+            <th class="cpq-col">CPQ Object (SIT)</th>
+            <th class="cpq-col">Records</th>
+            <th class="arrow-col">&rarr;</th>
+            <th class="rca-col">RCA Object (Verint)</th>
+            <th class="rca-col">Records</th>
+            <th>Complexity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Product Catalog & Structure</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">Product2</td>
+            <td class="cpq-col">1,095</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">Product2</td>
+            <td class="rca-col">21,415</td>
+            <td><span class="badge badge-green">Low</span> Same object</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">Pricebook2</td>
+            <td class="cpq-col">8</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">Pricebook2</td>
+            <td class="rca-col">1</td>
+            <td><span class="badge badge-green">Low</span> Same object</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">PricebookEntry</td>
+            <td class="cpq-col">9,395</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PricebookEntry</td>
+            <td class="rca-col">259,311</td>
+            <td><span class="badge badge-green">Low</span> Same object</td>
+        </tr>
+        <tr>
+            <td class="cpq-col"><em>(no CPQ equivalent)</em></td>
+            <td class="cpq-col">--</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductCatalog</td>
+            <td class="rca-col">1</td>
+            <td><span class="badge badge-blue">New</span> RCA-only concept</td>
+        </tr>
+        <tr>
+            <td class="cpq-col"><em>(no CPQ equivalent)</em></td>
+            <td class="cpq-col">--</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductCategory</td>
+            <td class="rca-col">6</td>
+            <td><span class="badge badge-blue">New</span> RCA-only concept</td>
+        </tr>
+        <tr>
+            <td class="cpq-col"><em>(no CPQ equivalent)</em></td>
+            <td class="cpq-col">--</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductCategoryProduct</td>
+            <td class="rca-col">43</td>
+            <td><span class="badge badge-blue">New</span> Category junction</td>
+        </tr>
+
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Bundle Hierarchy</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ProductOption__c</td>
+            <td class="cpq-col">1,069</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductRelatedComponent</td>
+            <td class="rca-col">68</td>
+            <td><span class="badge badge-orange">Medium</span> Field mapping required</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ProductFeature__c</td>
+            <td class="cpq-col">23</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductComponentGroup</td>
+            <td class="rca-col">21</td>
+            <td><span class="badge badge-orange">Medium</span> Concept maps directly</td>
+        </tr>
+        <tr>
+            <td class="cpq-col"><em>(Product2.SBQQ__ConfigurationType__c)</em></td>
+            <td class="cpq-col">16 bundles</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductRelationshipType</td>
+            <td class="rca-col">4</td>
+            <td><span class="badge badge-blue">New</span> Explicit relationship types</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__OptionConstraint__c</td>
+            <td class="cpq-col">11</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductQualification / ProductDisqualification</td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-red">High</span> Logic redesign needed</td>
+        </tr>
+
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Pricing</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__BlockPrice__c</td>
+            <td class="cpq-col">5,726</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PriceAdjustmentSchedule + PriceAdjustmentTier</td>
+            <td class="rca-col">3 + 0</td>
+            <td><span class="badge badge-red">High</span> Largest data migration</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__DiscountSchedule__c</td>
+            <td class="cpq-col">7</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PriceAdjustmentSchedule (Range type)</td>
+            <td class="rca-col">(shared)</td>
+            <td><span class="badge badge-orange">Medium</span> Map to adjustment tiers</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__DiscountTier__c</td>
+            <td class="cpq-col">49</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PriceAdjustmentTier</td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-orange">Medium</span> Tier-for-tier mapping</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__PriceRule__c</td>
+            <td class="cpq-col">80</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PricingRecipe + Expression Sets</td>
+            <td class="rca-col">1</td>
+            <td><span class="badge badge-red">High</span> Complete redesign</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__PriceCondition__c</td>
+            <td class="cpq-col">200</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>(embedded in Expression Sets)</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> Absorbed into recipes</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__PriceAction__c</td>
+            <td class="cpq-col">137</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>(embedded in Expression Sets)</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> Absorbed into recipes</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__LookupQuery__c</td>
+            <td class="cpq-col">27</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">PricingRecipeTableMapping</td>
+            <td class="rca-col">10</td>
+            <td><span class="badge badge-orange">Medium</span> Lookup table migration</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__CustomScript__c (QCP)</td>
+            <td class="cpq-col">12</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>Pricing Procedures / Expression Sets</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> JS &rarr; declarative</td>
+        </tr>
+
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Rules & Logic</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ProductRule__c</td>
+            <td class="cpq-col">38</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductQualification / Disqualification</td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-red">High</span> Rule-by-rule redesign</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ErrorCondition__c</td>
+            <td class="cpq-col">82</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>(embedded in qualifications)</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> Absorbed into rules</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ProductAction__c</td>
+            <td class="cpq-col">56</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>(embedded in qualifications)</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> Absorbed into rules</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ConfigurationRule__c</td>
+            <td class="cpq-col">74</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductConfigurationFlow</td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-red">High</span> Flow-based config</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__SummaryVariable__c</td>
+            <td class="cpq-col">31</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>Expression Sets / Pricing Procedures</em></td>
+            <td class="rca-col">--</td>
+            <td><span class="badge badge-red">High</span> Declarative rebuild</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__SearchFilter__c</td>
+            <td class="cpq-col">1</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>ProductCategoryQualification</em></td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-green">Low</span> Single filter</td>
+        </tr>
+
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Configuration & Attributes</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__ConfigurationAttribute__c</td>
+            <td class="cpq-col">12</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">AttributeDefinition + ProductAttributeDefinition</td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-orange">Medium</span> Schema exists</td>
+        </tr>
+
+        <tr>
+            <td colspan="6" style="background:#e3f2fd;font-weight:600;color:var(--sf-dark);">Subscriptions & Selling Models</td>
+        </tr>
+        <tr>
+            <td class="cpq-col"><em>(Product2.SBQQ__SubscriptionType__c)</em></td>
+            <td class="cpq-col">698 Renewable</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col">ProductSellingModel</td>
+            <td class="rca-col">3</td>
+            <td><span class="badge badge-orange">Medium</span> Map sub types to models</td>
+        </tr>
+        <tr>
+            <td class="cpq-col">SBQQ__Subscription__c</td>
+            <td class="cpq-col">37,405</td>
+            <td class="arrow-col">&rarr;</td>
+            <td class="rca-col"><em>Assets / Order lifecycle</em></td>
+            <td class="rca-col">0</td>
+            <td><span class="badge badge-red">High</span> Lifecycle redesign</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="catalog">Catalog & Categories</h2>
+
+<p>RCA introduces a formal product catalog structure that CPQ does not have. In CPQ, products are organized implicitly through bundle features. In RCA, products live in a catalog with navigational categories.</p>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ (SIT) -- No Catalog</h4>
+        <p>CPQ has no catalog concept. Products are organized by:</p>
+        <ul>
+            <li><strong>Product Family</strong> -- picklist field on Product2 (WFM, CAS, AQM, ONE, BCR, BA)</li>
+            <li><strong>Bundle Features</strong> -- SBQQ__ProductFeature__c groups options into tabs within a bundle configurator</li>
+        </ul>
+        <p>There is no browsable catalog or category hierarchy. Products are found via search or bundle configuration.</p>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">Product Features (23 records)</h4>
+        <table>
+            <tr><th>Feature Name</th><th>Used On</th></tr>
+            <tr><td>Software</td><td>Multiple bundles</td></tr>
+            <tr><td>Services</td><td>Multiple bundles</td></tr>
+            <tr><td>Custom Services</td><td>PK-WFM, PK-CQM</td></tr>
+            <tr><td>Storage</td><td>PK-WFM (empty)</td></tr>
+        </table>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA (Verint) -- Product Catalog</h4>
+        <p>RCA uses a formal catalog with navigational categories:</p>
+        <ul>
+            <li><strong>ProductCatalog</strong> -- "Default Catalog" (single catalog for all products)</li>
+            <li><strong>ProductCategory</strong> -- Navigational categories within the catalog</li>
+            <li><strong>ProductCategoryProduct</strong> -- Junction linking products to categories</li>
+        </ul>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Categories (6 total)</h4>
+        <table>
+            <tr><th>Category</th><th>ID</th><th>Products</th></tr>
+            <tr><td>Software</td><td>0ZGRR000000Glsc4AC</td><td>23</td></tr>
+            <tr><td>Services</td><td>0ZGRR000000Glsd4AC</td><td>15</td></tr>
+            <tr><td>Custom Services</td><td>0ZGRR000000GmS54AK</td><td>4</td></tr>
+            <tr><td>Hardware</td><td>0ZGRR000000Glsb4AC</td><td>0</td></tr>
+            <tr><td>Subscriptions</td><td>0ZGRR000000Glse4AC</td><td>0</td></tr>
+            <tr><td>Test Category</td><td>0ZGRR000000GlxR4AS</td><td>1</td></tr>
+        </table>
+    </div>
+</div>
+
+<div class="callout callout-info">
+    <div class="callout-title">Migration Pattern</div>
+    <p>CPQ Product Features map conceptually to RCA ProductCategories. The feature name (Software, Services, Custom Services) becomes the category name. However, categories are org-wide and navigational, while features are bundle-specific. In RCA, a product belongs to a category regardless of which bundle it's in.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="bundles">Bundles & Hierarchy</h2>
+
+<p>Both CPQ and RCA support product bundles (a parent product with configurable child options). The mechanics differ significantly.</p>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ Bundle Architecture</h4>
+        <ul>
+            <li><strong>Bundle indicator:</strong> Product2.SBQQ__ConfigurationType__c = "Allowed" or "Required"</li>
+            <li><strong>Parent-child link:</strong> SBQQ__ProductOption__c (junction with quantities, pricing flags, feature assignment)</li>
+            <li><strong>Grouping:</strong> SBQQ__ProductFeature__c (tabs in the configurator UI)</li>
+            <li><strong>Constraints:</strong> SBQQ__OptionConstraint__c (dependency/exclusion rules between options)</li>
+        </ul>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">Active Bundles (6 main)</h4>
+        <table>
+            <tr><th>Bundle</th><th>Code</th><th>Options</th></tr>
+            <tr><td>Legacy SKU Wrapper</td><td>LEGACY-WR</td><td>745</td></tr>
+            <tr><td>Quality Management</td><td>PK-CQM</td><td>62</td></tr>
+            <tr><td>Calabrio ONE</td><td>PK-ONE</td><td>48</td></tr>
+            <tr><td>Workforce Management</td><td>PK-WFM</td><td>41</td></tr>
+            <tr><td>Call Recording</td><td>PK-CR</td><td>10</td></tr>
+            <tr><td>Bot Analytics</td><td>PK-BA</td><td>7</td></tr>
+        </table>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">Key ProductOption Fields</h4>
+        <ul>
+            <li>SBQQ__OptionalSKU__c (child Product2)</li>
+            <li>SBQQ__ConfiguredSKU__c (parent bundle)</li>
+            <li>SBQQ__Feature__c (which tab/group)</li>
+            <li>SBQQ__Quantity__c, SBQQ__Required__c</li>
+            <li>SBQQ__Bundled__c (price included?)</li>
+            <li>SBQQ__Type__c (always "Related Product")</li>
+        </ul>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA Bundle Architecture</h4>
+        <ul>
+            <li><strong>Bundle indicator:</strong> Product2.Type = "Bundle" (immutable after creation)</li>
+            <li><strong>Parent-child link:</strong> ProductRelatedComponent (with relationship type, quantities, pricing flags)</li>
+            <li><strong>Grouping:</strong> ProductComponentGroup (analogous to features)</li>
+            <li><strong>Relationship type:</strong> ProductRelationshipType (defines the nature of the parent-child link)</li>
+        </ul>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Current State (PK-WFM only)</h4>
+        <table>
+            <tr><th>Metric</th><th>Count</th></tr>
+            <tr><td>Bundle products (Type=Bundle)</td><td>60</td></tr>
+            <tr><td>L1 relationships (PK-WFM &rarr; children)</td><td>41</td></tr>
+            <tr><td>L2 relationships (sub-bundles &rarr; burst/billing)</td><td>27</td></tr>
+            <tr><td>Component groups</td><td>21</td></tr>
+            <tr><td>Relationship types</td><td>4</td></tr>
+        </table>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Key ProductRelatedComponent Fields</h4>
+        <ul>
+            <li>ChildProductId, ParentProductId</li>
+            <li>ProductComponentGroupId</li>
+            <li>ProductRelationshipTypeId</li>
+            <li>Quantity, IsComponentRequired</li>
+            <li>DoesBundlePriceIncludeChild</li>
+            <li>IsDefaultComponent, IsQuantityEditable</li>
+        </ul>
+    </div>
+</div>
+
+<h3>Field-Level Mapping: ProductOption &rarr; ProductRelatedComponent</h3>
+<table>
+    <thead>
+        <tr>
+            <th>CPQ Field (SBQQ__ProductOption__c)</th>
+            <th>RCA Field (ProductRelatedComponent)</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>SBQQ__OptionalSKU__c</td><td>ChildProductId</td><td>Direct mapping</td></tr>
+        <tr><td>SBQQ__ConfiguredSKU__c</td><td>ParentProductId</td><td>Direct mapping</td></tr>
+        <tr><td>SBQQ__Feature__c</td><td>ProductComponentGroupId</td><td>Feature &rarr; Component Group</td></tr>
+        <tr><td>SBQQ__Quantity__c</td><td>Quantity</td><td>Default quantity</td></tr>
+        <tr><td>SBQQ__Required__c</td><td>IsComponentRequired</td><td>Direct mapping</td></tr>
+        <tr><td>SBQQ__Bundled__c</td><td>DoesBundlePriceIncludeChild</td><td>Inverted logic (Bundled=true &harr; IncludeChild=true)</td></tr>
+        <tr><td>SBQQ__Selected__c</td><td>IsDefaultComponent</td><td>Pre-selected by default</td></tr>
+        <tr><td>SBQQ__QuantityEditable__c</td><td>IsQuantityEditable</td><td>Direct mapping</td></tr>
+        <tr><td>SBQQ__Number__c (sort order)</td><td>Sequence</td><td>Display ordering</td></tr>
+        <tr><td>SBQQ__Type__c</td><td>ProductRelationshipTypeId</td><td>"Related Product" &rarr; "Bundle to Bundle Component"</td></tr>
+        <tr><td>SBQQ__MinQuantity__c</td><td>MinQuantity</td><td>Direct mapping</td></tr>
+        <tr><td>SBQQ__MaxQuantity__c</td><td>MaxQuantity</td><td>Direct mapping</td></tr>
+        <tr><td><em>(no equivalent)</em></td><td>QuantityScaleMethod</td><td>RCA-only: how child qty scales with parent</td></tr>
+        <tr><td><em>(no equivalent)</em></td><td>QuoteVisibility</td><td>RCA-only: visibility on quotes</td></tr>
+    </tbody>
+</table>
+
+<h3>Feature &rarr; Component Group Mapping</h3>
+<table>
+    <thead>
+        <tr>
+            <th>CPQ Feature (SBQQ__ProductFeature__c)</th>
+            <th>RCA Component Group (ProductComponentGroup)</th>
+            <th>Products</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Software (Feature #10)</td><td>Software</td><td>22 SW-* products</td></tr>
+        <tr><td>Services (Feature #20)</td><td>Services</td><td>15 PS-*/MS-*/SP-*/TR-* products</td></tr>
+        <tr><td>Custom Services (Feature #30)</td><td>Custom Services</td><td>4 PS-CUSTSVCS/PS-TMCUSTSVCS products</td></tr>
+        <tr><td>Storage (Feature #10)</td><td><em>(not migrated -- empty)</em></td><td>0 products</td></tr>
+        <tr><td><em>(L2 sub-bundle features)</em></td><td>Burst Fees / Billing / Options</td><td>18 L2 groups on sub-bundle parents</td></tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="pricing">Pricing</h2>
+
+<p>Pricing is the most complex area of the CPQ-to-RCA migration. CPQ uses a layered system of block prices, price rules, discount schedules, and a JavaScript QCP. RCA replaces all of this with PriceAdjustmentSchedules, PricingRecipes, and Expression Sets.</p>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ Pricing Stack</h4>
+        <table>
+            <tr><th>Object</th><th>Records</th><th>Purpose</th></tr>
+            <tr><td>PricebookEntry</td><td>9,395</td><td>Base list prices</td></tr>
+            <tr><td>SBQQ__BlockPrice__c</td><td>5,726</td><td>Tiered/quantity pricing</td></tr>
+            <tr><td>SBQQ__DiscountSchedule__c</td><td>7</td><td>Volume discount definitions</td></tr>
+            <tr><td>SBQQ__DiscountTier__c</td><td>49</td><td>Discount tier ranges</td></tr>
+            <tr><td>SBQQ__PriceRule__c</td><td>80</td><td>Dynamic pricing logic</td></tr>
+            <tr><td>SBQQ__PriceCondition__c</td><td>200</td><td>When rules fire</td></tr>
+            <tr><td>SBQQ__PriceAction__c</td><td>137</td><td>What rules do</td></tr>
+            <tr><td>SBQQ__LookupQuery__c</td><td>27</td><td>External value lookups</td></tr>
+            <tr><td>SBQQ__CustomScript__c</td><td>12</td><td>JavaScript calculator (QCP)</td></tr>
+            <tr><td>SBQQ__SummaryVariable__c</td><td>31</td><td>Aggregate calculations</td></tr>
+        </table>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">Block Pricing Pattern</h4>
+        <p>5,726 block price records define quantity-based tiers. Example: 1-100 agents = $8,800, 101-500 = $7,500, etc. This is the dominant pricing mechanism for PS SKUs.</p>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">Discount Schedules</h4>
+        <p>7 schedules (CAS, ONE, QM, WFM, CR, BA, Analytics Enterprise), all "Slab" type with percent-based tiers by agent count (0-250 = 0%, 251-500 = 7-8%, up to 10000+ = 42-60%).</p>
+
+        <h4 style="color:var(--orange);margin-top:1rem;">QCP (JavaScript)</h4>
+        <p>12 versions of the Quote Calculator Plugin. Handles overage pricing, currency exchange, product type summarization, quantity multipliers, and custom field calculations. All logic in JavaScript.</p>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA Pricing Stack</h4>
+        <table>
+            <tr><th>Object</th><th>Records</th><th>Purpose</th></tr>
+            <tr><td>PricebookEntry</td><td>259,311</td><td>Base list prices</td></tr>
+            <tr><td>PriceAdjustmentSchedule</td><td>3</td><td>Adjustment definitions</td></tr>
+            <tr><td>PriceAdjustmentTier</td><td>0</td><td>Adjustment tier ranges</td></tr>
+            <tr><td>PricingRecipe</td><td>1</td><td>Pricing calculation orchestrator</td></tr>
+            <tr><td>PricingRecipeTableMapping</td><td>10</td><td>Lookup table connections</td></tr>
+            <tr><td>AttributeBasedAdjustment</td><td>0</td><td>Attribute-driven adjustments</td></tr>
+            <tr><td>BundleBasedAdjustment</td><td>0</td><td>Bundle-context adjustments</td></tr>
+        </table>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Price Adjustment Schedules</h4>
+        <p>3 schedules exist (Standard, Attribute Based, Bundle Based) but with 0 tiers configured. These will hold the migrated block prices and discount tiers.</p>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Pricing Recipe</h4>
+        <p>1 recipe with 10 table mappings configured. Recipes orchestrate the pricing calculation flow, replacing the QCP's JavaScript with declarative Expression Sets.</p>
+
+        <h4 style="color:#2e7d32;margin-top:1rem;">Expression Sets (replaces QCP)</h4>
+        <p>RCA uses Expression Sets (ExpressionSetDefinition) instead of JavaScript. All QCP logic (overage pricing, currency exchange, aggregations) must be rebuilt declaratively.</p>
+    </div>
+</div>
+
+<h3>Pricing Migration Complexity Summary</h3>
+<table>
+    <thead>
+        <tr><th>CPQ Mechanism</th><th>Records</th><th>RCA Replacement</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Block Prices (tiered pricing)</td>
+            <td>5,726</td>
+            <td>PriceAdjustmentTier records</td>
+            <td><span class="badge badge-red">High</span> -- Largest volume, needs tier-by-tier mapping</td>
+        </tr>
+        <tr>
+            <td>Discount Schedules + Tiers</td>
+            <td>7 + 49</td>
+            <td>PriceAdjustmentSchedule (Range) + Tiers</td>
+            <td><span class="badge badge-orange">Medium</span> -- Straightforward tier mapping</td>
+        </tr>
+        <tr>
+            <td>Price Rules + Conditions + Actions</td>
+            <td>80 + 200 + 137</td>
+            <td>Expression Sets within PricingRecipe</td>
+            <td><span class="badge badge-red">High</span> -- Each rule must be rebuilt declaratively</td>
+        </tr>
+        <tr>
+            <td>QCP (JavaScript)</td>
+            <td>12 versions</td>
+            <td>Pricing Procedures / Expression Sets</td>
+            <td><span class="badge badge-red">High</span> -- Complete logic rewrite from JS to declarative</td>
+        </tr>
+        <tr>
+            <td>Summary Variables</td>
+            <td>31</td>
+            <td>Expression Set aggregation steps</td>
+            <td><span class="badge badge-orange">Medium</span> -- Map to expression set calculations</td>
+        </tr>
+        <tr>
+            <td>Lookup Queries</td>
+            <td>27</td>
+            <td>PricingRecipeTableMapping + Decision Tables</td>
+            <td><span class="badge badge-orange">Medium</span> -- Already 10 mappings configured</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="rules">Rules & Logic</h2>
+
+<p>CPQ product rules control what can be selected together, what's automatically added, and validation. RCA replaces this with qualifications, disqualifications, and configuration flows.</p>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ Rules (SIT)</h4>
+        <table>
+            <tr><th>Object</th><th>Records</th><th>Purpose</th></tr>
+            <tr><td>SBQQ__ProductRule__c</td><td>38</td><td>31 Selection, 5 Validation, 2 Alert</td></tr>
+            <tr><td>SBQQ__ErrorCondition__c</td><td>82</td><td>Conditions that trigger rules</td></tr>
+            <tr><td>SBQQ__ProductAction__c</td><td>56</td><td>Actions (all Type="Add")</td></tr>
+            <tr><td>SBQQ__ConfigurationRule__c</td><td>74</td><td>Links rules to specific bundles</td></tr>
+            <tr><td>SBQQ__OptionConstraint__c</td><td>11</td><td>Dependency/exclusion constraints</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;"><strong>Selection rules (31)</strong> auto-add/remove products based on conditions. Example: "Add SP-CASANA support SKU when analytics software is selected and distribution channel is On-Prem Perpetual."</p>
+        <p><strong>Key condition fields tested:</strong> Distribution_Channel__c, Perpetual__c, SBQQ__ProductCode__c, Product_Type__c</p>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA Rules (Verint)</h4>
+        <table>
+            <tr><th>Object</th><th>Records</th><th>Purpose</th></tr>
+            <tr><td>ProductQualification</td><td>0</td><td>When a product CAN be added</td></tr>
+            <tr><td>ProductDisqualification</td><td>0</td><td>When a product CANNOT be added</td></tr>
+            <tr><td>ProductCategoryQualification</td><td>0</td><td>Category-level rules</td></tr>
+            <tr><td>ProductConfigurationFlow</td><td>0</td><td>Flow-based configuration logic</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;">All rule objects exist in the schema but have zero records. The entire rule engine needs to be rebuilt.</p>
+        <p><strong>Key difference:</strong> CPQ rules are condition-action pairs evaluated by the QLE engine. RCA uses qualifications (eligibility criteria) and Salesforce Flows for configuration logic.</p>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="config">Configuration & Attributes</h2>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ Configuration Attributes (SIT)</h4>
+        <p><strong>12 SBQQ__ConfigurationAttribute__c records</strong> -- custom fields shown during bundle configuration:</p>
+        <table>
+            <tr><th>Attribute</th><th>Required</th><th>Target Field</th></tr>
+            <tr><td>Distribution Channel</td><td>Yes</td><td>Distribution_Channel__c</td></tr>
+            <tr><td>Concurrent User</td><td>No</td><td>Concurrent_User__c</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;">These attributes appear in the CPQ configurator and their values are stamped on quote lines, driving price rules and product selection rules.</p>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA Attributes (Verint)</h4>
+        <p>RCA has a richer attribute framework, but none are configured yet:</p>
+        <table>
+            <tr><th>Object</th><th>Records</th><th>Purpose</th></tr>
+            <tr><td>AttributeDefinition</td><td>0</td><td>Define attribute (name, type, picklist)</td></tr>
+            <tr><td>AttributeCategory</td><td>0</td><td>Group attributes</td></tr>
+            <tr><td>AttributePicklist</td><td>0</td><td>Picklist values for attributes</td></tr>
+            <tr><td>ProductAttributeDefinition</td><td>0</td><td>Link attributes to products</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;">RCA attributes are more powerful -- they can drive pricing (AttributeBasedAdjustment), control qualification, and flow through to order items. But they require more setup than CPQ config attributes.</p>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="subscriptions">Subscriptions & Selling Models</h2>
+
+<div class="comparison">
+    <div class="comparison-panel cpq">
+        <h4 style="color:var(--orange);">CPQ Subscription Model (SIT)</h4>
+        <p>CPQ tracks subscriptions via fields on Product2 and dedicated objects:</p>
+        <table>
+            <tr><th>Field / Object</th><th>Value</th><th>Count</th></tr>
+            <tr><td>Product2.SBQQ__SubscriptionType__c = "Renewable"</td><td>Renewable subscriptions</td><td>698</td></tr>
+            <tr><td>Product2.SBQQ__SubscriptionType__c = "One-time"</td><td>One-time charges</td><td>8</td></tr>
+            <tr><td>Product2.SBQQ__SubscriptionType__c = null</td><td>Non-subscription products</td><td>199</td></tr>
+            <tr><td>SBQQ__Subscription__c</td><td>Active subscriptions</td><td>37,405</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;">CPQ uses SBQQ__SubscriptionPricing__c and SBQQ__SubscriptionTerm__c on Product2 to control renewal behavior. Subscription records are created when quotes are contracted.</p>
+    </div>
+    <div class="comparison-panel rca">
+        <h4 style="color:#2e7d32;">RCA Selling Models (Verint)</h4>
+        <p>RCA replaces subscription fields with explicit ProductSellingModel records:</p>
+        <table>
+            <tr><th>Model</th><th>Type</th><th>Pricing Term</th></tr>
+            <tr><td>One-Time</td><td>OneTime</td><td>--</td></tr>
+            <tr><td>Evergreen</td><td>Evergreen</td><td>1 Month</td></tr>
+            <tr><td>Term-Defined Annual</td><td>TermDefined</td><td>1 Year</td></tr>
+        </table>
+        <p style="margin-top:0.8rem;">Products are linked to selling models via ProductSellingModelOption (currently 0 records). Each product can support multiple selling models. RCA manages the subscription lifecycle through Assets and Orders rather than a dedicated Subscription object.</p>
+    </div>
+</div>
+
+<h3>Subscription Type Mapping</h3>
+<table>
+    <thead>
+        <tr><th>CPQ Subscription Type</th><th>Count</th><th>RCA Selling Model</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Renewable</td><td>698</td><td>Evergreen or Term-Defined Annual</td><td>Depends on whether the product has a fixed term or auto-renews indefinitely</td></tr>
+        <tr><td>One-time</td><td>8</td><td>One-Time</td><td>Direct mapping</td></tr>
+        <tr><td>null (non-subscription)</td><td>199</td><td>One-Time (likely)</td><td>PS/Training SKUs without subscription behavior</td></tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="policies">Policies</h2>
+
+<p>RCA introduces policy objects that CPQ handles through package settings and custom logic.</p>
+
+<table>
+    <thead>
+        <tr><th>Policy Type</th><th>CPQ Equivalent</th><th>RCA Object</th><th>Verint Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Proration</td><td>SBQQ package settings + QCP logic</td><td>ProrationPolicy</td><td><span class="badge badge-green">1 configured</span> "Default Proration Policy"</td></tr>
+        <tr><td>Tax</td><td>External tax engine or custom fields</td><td>TaxPolicy / TaxTreatment / TaxRate</td><td><span class="badge badge-gray">0 configured</span></td></tr>
+        <tr><td>Billing</td><td>SBQQ__BillingType__c on Product2</td><td>BillingPolicy</td><td><span class="badge badge-gray">Not available</span> in this org</td></tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="custom">Custom & Legacy Objects</h2>
+
+<h3>CalabrioSITSandbox -- Custom Product Objects</h3>
+<table>
+    <thead>
+        <tr><th>Object</th><th>Records</th><th>Purpose</th><th>RCA Equivalent</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Account_Products__c</td><td>31,825</td><td>What products each account owns</td><td>Assets (standard)</td></tr>
+        <tr><td>Account_Product_Transactions__c</td><td>37,019</td><td>Product transaction history</td><td>Asset lifecycle events</td></tr>
+        <tr><td>Partner_Discount__c</td><td>2,200</td><td>Partner-specific discounts</td><td>PriceAdjustmentSchedule or custom</td></tr>
+        <tr><td>Product_Master__c</td><td>209</td><td>Master product reference</td><td>Product2 (consolidated)</td></tr>
+    </tbody>
+</table>
+
+<h3>VerintDevSandbox -- Legacy Custom Objects</h3>
+<table>
+    <thead>
+        <tr><th>Object</th><th>Records</th><th>Purpose</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Product_Bundle__c</td><td>5</td><td>Pre-RCA custom bundling</td><td>Superseded by ProductRelatedComponent</td></tr>
+        <tr><td>Product_Bundle_Option__c</td><td>20</td><td>Pre-RCA bundle options</td><td>Superseded by ProductRelatedComponent</td></tr>
+        <tr><td>Product_Bundle_Junction__c</td><td>121</td><td>Pre-RCA bundle-product junction</td><td>Superseded by ProductRelatedComponent</td></tr>
+        <tr><td>Starter_Packages_Price_book__c</td><td>1,891</td><td>Starter/package pricing</td><td>May need migration to PriceAdjustmentSchedule</td></tr>
+        <tr><td>CHANNEL_ORDERS__* (managed pkg)</td><td>varies</td><td>Channel Orders partner catalog</td><td>Managed package -- separate from RCA</td></tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="gaps">Gap Analysis</h2>
+
+<h3>CPQ Features with No Direct RCA Equivalent</h3>
+<table>
+    <thead>
+        <tr><th>CPQ Feature</th><th>Records</th><th>Gap Description</th><th>Recommended Approach</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Selection Rules (auto-add products)</td>
+            <td>31 rules</td>
+            <td>RCA has no auto-selection engine. ProductQualification controls eligibility, not auto-selection.</td>
+            <td>Rebuild as Salesforce Flows triggered during configuration, or use ProductConfigurationFlow</td>
+        </tr>
+        <tr>
+            <td>QCP JavaScript (custom calculations)</td>
+            <td>12 versions</td>
+            <td>RCA has no JavaScript runtime. All pricing logic must be declarative.</td>
+            <td>Decompose QCP into Expression Sets within PricingRecipe. May need Apex for complex logic.</td>
+        </tr>
+        <tr>
+            <td>Partner-specific Pricebooks</td>
+            <td>7 pricebooks</td>
+            <td>RCA typically uses a single pricebook with adjustments rather than partner pricebooks</td>
+            <td>Use PriceAdjustmentSchedule with partner context, or maintain separate pricebooks</td>
+        </tr>
+        <tr>
+            <td>Option Constraints (dependency/exclusion)</td>
+            <td>11 constraints</td>
+            <td>RCA uses Qualification/Disqualification for eligibility but not mutual dependency</td>
+            <td>Implement via ProductConfigurationFlow (Salesforce Flows)</td>
+        </tr>
+        <tr>
+            <td>Block Pricing (quantity tiers)</td>
+            <td>5,726 tiers</td>
+            <td>RCA uses PriceAdjustmentTier -- similar concept but different schema</td>
+            <td>Migrate tier-by-tier to PriceAdjustmentTier records. Largest data volume.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>RCA Features Not Used in CPQ</h3>
+<table>
+    <thead>
+        <tr><th>RCA Feature</th><th>Object</th><th>Benefit</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Product Catalog with Categories</td>
+            <td>ProductCatalog, ProductCategory</td>
+            <td>Browsable, navigational product catalog -- better product discovery for sales reps</td>
+        </tr>
+        <tr>
+            <td>Selling Model flexibility</td>
+            <td>ProductSellingModel</td>
+            <td>Same product can be sold as one-time, subscription, or usage-based without duplication</td>
+        </tr>
+        <tr>
+            <td>Attribute-based pricing</td>
+            <td>AttributeBasedAdjustment</td>
+            <td>Price adjustments driven by product attributes (e.g., region, tier) without custom rules</td>
+        </tr>
+        <tr>
+            <td>Bundle-based pricing</td>
+            <td>BundleBasedAdjustment</td>
+            <td>Automatic discounts based on bundle composition</td>
+        </tr>
+        <tr>
+            <td>Proration policies</td>
+            <td>ProrationPolicy</td>
+            <td>Declarative mid-term change proration -- no custom code needed</td>
+        </tr>
+        <tr>
+            <td>Pricing Recipes</td>
+            <td>PricingRecipe</td>
+            <td>Orchestrated, testable pricing calculation pipeline -- replaces opaque QCP</td>
+        </tr>
+        <tr>
+            <td>Usage/Consumption grants</td>
+            <td>ProductUsageGrant, ProductUsageResource</td>
+            <td>Built-in usage-based pricing and entitlement tracking</td>
+        </tr>
+        <tr>
+            <td>Product ramp segments</td>
+            <td>ProductRampSegment</td>
+            <td>Ramped pricing over time without custom code</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 id="migration-status">Migration Status</h2>
+
+<h3>Bundle Migration Progress</h3>
+<table>
+    <thead>
+        <tr><th>Bundle</th><th>Code</th><th>CPQ Options</th><th>Migrated to RCADev</th><th>Migrated to VerintDev</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Workforce Management</td><td>PK-WFM</td><td>41</td>
+            <td><span class="badge badge-green">Done</span></td>
+            <td><span class="badge badge-green">Done</span> (2026-03-14)</td>
+        </tr>
+        <tr>
+            <td>Quality Management</td><td>PK-CQM</td><td>62</td>
+            <td><span class="badge badge-green">Done</span></td>
+            <td><span class="badge badge-gray">Pending</span></td>
+        </tr>
+        <tr>
+            <td>Bot Analytics</td><td>PK-BA</td><td>7</td>
+            <td><span class="badge badge-gray">Pending</span></td>
+            <td><span class="badge badge-gray">Pending</span></td>
+        </tr>
+        <tr>
+            <td>Call Recording</td><td>PK-CR</td><td>10</td>
+            <td><span class="badge badge-gray">Pending</span></td>
+            <td><span class="badge badge-gray">Pending</span></td>
+        </tr>
+        <tr>
+            <td>Calabrio ONE</td><td>PK-ONE</td><td>48</td>
+            <td><span class="badge badge-gray">Pending</span></td>
+            <td><span class="badge badge-gray">Pending</span></td>
+        </tr>
+        <tr>
+            <td>Legacy SKU Wrapper</td><td>LEGACY-WR</td><td>745</td>
+            <td><span class="badge badge-gray">Pending</span></td>
+            <td><span class="badge badge-gray">Pending</span> (may not migrate)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>What Has Been Migrated (VerintDevSandbox)</h3>
+<div class="callout callout-success">
+    <div class="callout-title">PK-WFM Migration Complete (March 14, 2026)</div>
+    <ul>
+        <li>60 Product2 records (all products in the WFM hierarchy)</li>
+        <li>58 PricebookEntry records with actual SIT prices</li>
+        <li>3 component groups on PK-WFM (Software, Services, Custom Services)</li>
+        <li>18 component groups on L2 sub-bundle parents</li>
+        <li>41 L1 ProductRelatedComponent relationships</li>
+        <li>27 L2 ProductRelatedComponent relationships</li>
+        <li>42 ProductCategoryProduct links</li>
+        <li>1 ProductRelationshipType ("Bundle to Bundle Component Relationship")</li>
+        <li>1 ProductCategory created ("Custom Services")</li>
+    </ul>
+</div>
+
+<h3>What Still Needs Migration</h3>
+<table>
+    <thead>
+        <tr><th>Area</th><th>CPQ Records</th><th>RCA Records</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Remaining bundle hierarchies (PK-CQM, PK-BA, PK-CR, PK-ONE)</td><td>~127 options</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Block prices &rarr; Price Adjustment Tiers</td><td>5,726</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Discount schedules &rarr; Adjustment tiers</td><td>7 + 49</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Price rules &rarr; Expression Sets</td><td>80 + 200 + 137</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Product rules &rarr; Qualifications</td><td>38 + 82 + 56</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Configuration attributes &rarr; Attribute definitions</td><td>12</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>QCP logic &rarr; Pricing Procedures</td><td>12 versions</td><td>0</td><td><span class="badge badge-gray">Not started</span></td></tr>
+        <tr><td>Selling model assignments</td><td>698 Renewable</td><td>0 linked</td><td><span class="badge badge-gray">Not started</span></td></tr>
+    </tbody>
+</table>
+
+</div><!-- /container -->
+
+<button class="back-to-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- Konami Code Easter Egg: Matrix Rain -->
+<canvas id="matrixCanvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+<script>
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    (function(){
+        const konamiSequence = [
+            'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+            'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+            'KeyB','KeyA','Enter'
+        ];
+        let konamiIndex = 0, matrixActive = false, matrixRainId = null;
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.code || e.key) === konamiSequence[konamiIndex]) {
+                if (++konamiIndex === konamiSequence.length) {
+                    konamiIndex = 0;
+                    matrixActive ? stopMatrixRain() : startMatrixRain();
+                    matrixActive = !matrixActive;
+                }
+            } else { konamiIndex = 0; }
+        });
+
+        function startMatrixRain() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas || matrixRainId) return;
+            document.body.classList.add('matrix-active');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            const chars = Array.from('アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            const fontSize = 14;
+            let columns, drops;
+            function resize() {
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                columns = Math.floor(canvas.width / fontSize);
+                const old = drops || [];
+                drops = Array.from({length: columns}, (_, i) => old[i] !== undefined ? old[i] : Math.random() * -100);
+            }
+            resize();
+            window._matrixResize = resize;
+            window.addEventListener('resize', resize);
+            let fc = 0;
+            function draw() {
+                if (++fc % 2 !== 0) { matrixRainId = requestAnimationFrame(draw); return; }
+                ctx.fillStyle = 'rgba(0,0,0,0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = fontSize + 'px Courier New';
+                for (let i = 0; i < columns; i++) {
+                    const y = drops[i] * fontSize;
+                    ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(0,255,65,0.6)'; ctx.fillStyle = '#aaffaa';
+                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y);
+                    ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(0,255,65,0.8)';
+                    if (y - fontSize > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fontSize, y - fontSize);
+                    if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+                matrixRainId = requestAnimationFrame(draw);
+            }
+            matrixRainId = requestAnimationFrame(draw);
+        }
+
+        function stopMatrixRain() {
+            if (matrixRainId) { cancelAnimationFrame(matrixRainId); matrixRainId = null; }
+            document.body.classList.remove('matrix-active');
+            const canvas = document.getElementById('matrixCanvas');
+            if (canvas) { canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+            if (window._matrixResize) { window.removeEventListener('resize', window._matrixResize); delete window._matrixResize; }
+        }
+    })();
+</script>
+
+</body>
+</html>
