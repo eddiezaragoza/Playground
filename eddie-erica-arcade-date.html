@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power-Up Arcade Heroes! - Eddie & Erica's Epic Date</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Permanent+Marker&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    font-family: 'Comic Neue', cursive;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* HALFTONE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle, transparent 20%, #1a1a2e 20%, #1a1a2e 80%, transparent 80%, transparent) 0 0,
+                radial-gradient(circle, transparent 20%, #1a1a2e 20%, #1a1a2e 80%, transparent 80%, transparent) 4px 4px;
+    background-size: 8px 8px;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* COVER PAGE */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    overflow: hidden;
+    padding: 20px;
+  }
+
+  .cover-bg-burst {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: conic-gradient(from 0deg, #ff006622, #ffbe0022, #00ff8822, #00b4d822, #845ec222, #ff006622);
+    animation: rotateBurst 20s linear infinite;
+  }
+
+  @keyframes rotateBurst {
+    to { transform: rotate(360deg); }
+  }
+
+  .cover-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 8vw, 7rem);
+    color: #fff;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    text-shadow:
+      4px 4px 0 #ff0066,
+      8px 8px 0 #00b4d8,
+      -2px -2px 0 #000,
+      2px -2px 0 #000,
+      -2px 2px 0 #000;
+    letter-spacing: 4px;
+    line-height: 1.1;
+    animation: titlePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  .cover-subtitle {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: #ffbe00;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .cover-date {
+    font-family: 'Comic Neue', cursive;
+    font-size: 1.1rem;
+    color: #aaa;
+    position: relative;
+    z-index: 2;
+    margin-top: 10px;
+  }
+
+  .cover-cta {
+    position: relative;
+    z-index: 2;
+    margin-top: 40px;
+    padding: 18px 50px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ff0066, #ff4488);
+    color: white;
+    border: 4px solid #000;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #000;
+    transition: all 0.15s;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  }
+
+  .cover-cta:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0 #000;
+  }
+
+  .cover-cta:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #000;
+  }
+
+  /* STARS on cover */
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    z-index: 1;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  /* COMIC BOOK CONTAINER */
+  .comic-book {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .comic-book.active {
+    display: block;
+  }
+
+  /* ISSUE HEADER */
+  .issue-header {
+    text-align: center;
+    padding: 30px 20px;
+    border-bottom: 4px solid #ffbe00;
+    margin-bottom: 30px;
+  }
+
+  .issue-header h1 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    color: #ff0066;
+    text-shadow: 3px 3px 0 #000;
+  }
+
+  .issue-header p {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+
+  /* PANELS */
+  .panel {
+    position: relative;
+    background: #fff;
+    border: 5px solid #111;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+    transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+  }
+
+  .panel.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .panel-scene {
+    position: relative;
+    min-height: 280px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .panel-scene .scene-art {
+    font-size: 5rem;
+    position: absolute;
+    opacity: 0.15;
+  }
+
+  .panel-narration {
+    position: relative;
+    z-index: 2;
+    background: rgba(255,255,240,0.95);
+    border: 3px solid #333;
+    border-radius: 6px;
+    padding: 20px 25px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #222;
+    max-width: 90%;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  }
+
+  .panel-narration .highlight {
+    color: #ff0066;
+    font-weight: 700;
+  }
+
+  .panel-narration .name-eddie {
+    color: #00b4d8;
+    font-weight: 700;
+    font-family: 'Bangers', cursive;
+    letter-spacing: 1px;
+  }
+
+  .panel-narration .name-erica {
+    color: #ff0066;
+    font-weight: 700;
+    font-family: 'Bangers', cursive;
+    letter-spacing: 1px;
+  }
+
+  /* CAPTION BOXES */
+  .caption-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ffbe00;
+    border: 3px solid #000;
+    padding: 8px 16px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: #111;
+    z-index: 5;
+    transform: rotate(-2deg);
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  }
+
+  /* SOUND EFFECTS */
+  .sfx {
+    font-family: 'Bangers', cursive;
+    position: absolute;
+    z-index: 4;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 0 #000;
+    animation: sfxPop 0.6s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes sfxPop {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    60% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* SPEECH BUBBLES */
+  .speech-bubble {
+    position: relative;
+    background: #fff;
+    border: 3px solid #222;
+    border-radius: 20px;
+    padding: 15px 20px;
+    margin: 10px 0;
+    font-size: 1rem;
+    max-width: 70%;
+    z-index: 3;
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #222;
+  }
+
+  .speech-bubble.right {
+    margin-left: auto;
+  }
+
+  .speech-bubble.right::after {
+    left: auto;
+    right: 30px;
+  }
+
+  .speech-bubble .speaker {
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+
+  .speech-bubble .speaker.eddie { color: #00b4d8; }
+  .speech-bubble .speaker.erica { color: #ff0066; }
+
+  /* PANEL THEMES */
+  .panel-minivan .panel-scene {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  }
+
+  .panel-outlets .panel-scene {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  }
+
+  .panel-starbucks .panel-scene {
+    background: linear-gradient(135deg, #1b4332, #2d6a4f, #40916c);
+  }
+
+  .panel-chill .panel-scene {
+    background: linear-gradient(135deg, #ffd6a5 0%, #ffadad 50%, #fdffb6 100%);
+  }
+
+  .panel-storm .panel-scene {
+    background: linear-gradient(135deg, #2c3e50 0%, #4a5568 50%, #1a202c 100%);
+  }
+
+  .panel-arcade .panel-scene {
+    background: linear-gradient(135deg, #0f0028 0%, #1a0044 30%, #2d006b 60%, #0f0028 100%);
+  }
+
+  .panel-games .panel-scene {
+    background: linear-gradient(135deg, #ff006620, #00b4d820, #ffbe0020);
+    background-color: #1a1a2e;
+  }
+
+  .panel-plunger .panel-scene {
+    background: linear-gradient(135deg, #ff0066, #ff4488, #cc0052);
+  }
+
+  .panel-makeout .panel-scene {
+    background: linear-gradient(135deg, #2d1b69, #1a0044, #0d0022);
+  }
+
+  .panel-finale .panel-scene {
+    background: linear-gradient(135deg, #ff006640, #ffbe0040, #00b4d840);
+    background-color: #1a1a2e;
+    min-height: 350px;
+  }
+
+  /* EMOJI SCENE ICONS */
+  .scene-icons {
+    display: flex;
+    gap: 15px;
+    font-size: 3rem;
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  /* GRID PANELS */
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .panel-grid .panel {
+    margin-bottom: 0;
+  }
+
+  /* PHOTO PANEL */
+  .photo-panel {
+    position: relative;
+    text-align: center;
+    padding: 20px;
+    background: #111;
+    border: 5px solid #ffbe00;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 8px 8px 0 rgba(255, 190, 0, 0.3);
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .photo-panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .photo-panel img {
+    max-width: 100%;
+    border: 4px solid #333;
+    border-radius: 4px;
+  }
+
+  .photo-panel .photo-caption {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    color: #ffbe00;
+    margin-top: 15px;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  /* HEART RAIN */
+  .heart-rain {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 100;
+    display: none;
+  }
+
+  .heart-rain.active {
+    display: block;
+  }
+
+  .falling-heart {
+    position: absolute;
+    top: -30px;
+    font-size: 1.5rem;
+    animation: fallDown 3s ease-in forwards;
+    opacity: 0.8;
+  }
+
+  @keyframes fallDown {
+    to { top: 110vh; opacity: 0; transform: rotate(360deg); }
+  }
+
+  /* NEON TEXT */
+  .neon-text {
+    font-family: 'Bangers', cursive;
+    color: #fff;
+    text-shadow:
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      0 0 42px #ff0066,
+      0 0 82px #ff0066,
+      0 0 92px #ff0066;
+    animation: neonFlicker 3s infinite alternate;
+  }
+
+  @keyframes neonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #ff0066, 0 0 82px #ff0066; }
+    20%, 24%, 55% { text-shadow: none; }
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff0066, #ffbe00, #00b4d8);
+    z-index: 10000;
+    transition: width 0.3s;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .panel-grid {
+      grid-template-columns: 1fr;
+    }
+    .panel-narration {
+      font-size: 0.95rem;
+      padding: 15px;
+    }
+    .speech-bubble {
+      max-width: 85%;
+    }
+    .cover-title {
+      font-size: 3rem;
+    }
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: #ff006690;
+    border: 3px solid #ff0066;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 999;
+    animation: bounce 2s ease-in-out infinite;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* TRANSITION DIVIDERS */
+  .divider {
+    text-align: center;
+    padding: 30px 0;
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: #ffbe00;
+    text-shadow: 2px 2px 0 #000;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .divider.visible { opacity: 1; }
+
+  .divider .dots {
+    letter-spacing: 10px;
+    color: #ff0066;
+  }
+
+  /* FLOATING PARTICLES */
+  .particles-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: floatParticle 15s infinite linear;
+  }
+
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-100px) rotate(720deg); }
+  }
+
+  /* FINALE */
+  .finale-text {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .power-meter {
+    width: 100%;
+    max-width: 400px;
+    height: 30px;
+    background: #333;
+    border: 3px solid #000;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 15px auto;
+  }
+
+  .power-meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0066, #ffbe00, #00ff88);
+    border-radius: 12px;
+    width: 0%;
+    transition: width 2s ease-out;
+  }
+
+  .power-meter-fill.filled {
+    width: 100%;
+  }
+
+  .power-label {
+    font-family: 'Bangers', cursive;
+    color: #aaa;
+    font-size: 0.9rem;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  /* Lightning effect for storm panel */
+  .lightning {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: white;
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    animation: lightning 4s infinite;
+  }
+
+  @keyframes lightning {
+    0%, 94%, 96%, 98%, 100% { opacity: 0; }
+    95% { opacity: 0.3; }
+    97% { opacity: 0.1; }
+  }
+
+  /* Arcade glow lines */
+  .arcade-glow {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, #ff0066, transparent);
+    animation: glowMove 3s ease-in-out infinite;
+    opacity: 0.4;
+  }
+
+  @keyframes glowMove {
+    0%, 100% { height: 0; opacity: 0; }
+    50% { height: 100px; opacity: 0.6; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- FLOATING PARTICLES -->
+<div class="particles-container" id="particles"></div>
+
+<!-- HEART RAIN (activated at end) -->
+<div class="heart-rain" id="heartRain"></div>
+
+<!-- ====== COVER PAGE ====== -->
+<div class="cover" id="coverPage">
+  <div class="cover-bg-burst"></div>
+  <div class="cover-title">
+    POWER-UP<br>ARCADE HEROES!
+  </div>
+  <div class="cover-subtitle">The Epic Date Adventures of Eddie & Erica</div>
+  <div class="cover-date">Issue #1 &bull; March 16, 2026 &bull; Tampa Bay, FL</div>
+  <button class="cover-cta" onclick="startComic()">
+    &#9889; OPEN COMIC &#9889;
+  </button>
+</div>
+
+<!-- ====== COMIC BOOK ====== -->
+<div class="comic-book" id="comicBook">
+
+  <!-- ISSUE HEADER -->
+  <div class="issue-header">
+    <h1>&#9889; POWER-UP ARCADE HEROES! &#9889;</h1>
+    <p>Issue #1 &mdash; "The One With the Plunger Guns" &mdash; March 16, 2026</p>
+  </div>
+
+  <!-- PANEL 1: THE PICKUP -->
+  <div class="panel panel-minivan" data-panel="1">
+    <div class="caption-box">Chapter 1: The Chariot Arrives</div>
+    <div class="panel-scene">
+      <div class="scene-art" style="top:10px;right:20px;">&#128656;</div>
+      <div class="scene-art" style="bottom:10px;left:10px;font-size:3rem;">&#127796;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration" style="color:#eee;background:rgba(15,15,40,0.9);border-color:#555;">
+          The evening begins in <span class="highlight">Land O' Lakes</span>, where our hero <span class="name-eddie">Eddie</span> rolls up to <span class="name-erica">Erica</span>'s condo in none other than... <span class="highlight" style="color:#ffbe00;">Sexy Lexi</span> &mdash; his legendary 2017 maroon Kia Sedona. Yes, a minivan. Yes, <em>sexy</em>. The sliding doors open with the smoothness of a superhero's cape unfurling.
+        </div>
+        <div style="display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;">
+          <div class="speech-bubble" style="background:#111;border-color:#00b4d8;color:#fff;">
+            <div class="speaker eddie">Eddie:</div>
+            Your chariot awaits, m'lady. &#128526;
+          </div>
+          <div class="speech-bubble right" style="background:#111;border-color:#ff0066;color:#fff;">
+            <div class="speaker erica">Erica:</div>
+            Did you just call your minivan a chariot? &#128514;
+          </div>
+        </div>
+      </div>
+      <div class="sfx" style="top:15px;right:40px;font-size:2rem;color:#ffbe00;">VROOOOM!</div>
+    </div>
+    <div class="scene-icons">&#128663;&#128168;&#10024;</div>
+  </div>
+
+  <div class="divider"><span class="dots">&#9679; &#9679; &#9679;</span><br>MEANWHILE, AT THE OUTLETS...</div>
+
+  <!-- PANEL 2: NIKE STORE -->
+  <div class="panel panel-outlets" data-panel="2">
+    <div class="caption-box">Chapter 2: The Quest for Jordans</div>
+    <div class="panel-scene">
+      <div class="scene-art" style="top:10px;left:20px;">&#128095;</div>
+      <div class="scene-art" style="bottom:5px;right:10px;font-size:3.5rem;">&#128094;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration">
+          Our heroes arrive at the <span class="highlight">Tampa Premium Outlets</span> on a sacred mission: to find the legendary <span class="highlight" style="color:#2d6a4f;">Green Toe Jordans</span> at the Nike Store. They search high. They search low. They check every shelf, every display...
+        </div>
+        <div style="display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;">
+          <div class="speech-bubble">
+            <div class="speaker eddie">Eddie:</div>
+            Any greens? &#128064;
+          </div>
+          <div class="speech-bubble right">
+            <div class="speaker erica">Erica:</div>
+            Nothing. The quest continues another day... &#128557;
+          </div>
+        </div>
+      </div>
+      <div class="sfx" style="bottom:20px;left:30px;font-size:2.5rem;color:#cc0000;transform:rotate(-8deg);">MISSION FAILED!</div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: STARBUCKS -->
+  <div class="panel panel-starbucks" data-panel="3">
+    <div class="caption-box" style="background:#00704A;color:#fff;">Chapter 3: The Potions</div>
+    <div class="panel-scene">
+      <div class="scene-art" style="top:10px;right:20px;">&#9749;</div>
+      <div class="scene-art" style="bottom:10px;left:15px;font-size:3rem;">&#127861;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration" style="color:#eee;background:rgba(10,40,25,0.9);border-color:#2d6a4f;">
+          But no quest is truly lost when there's <span class="highlight" style="color:#00ff88;">Starbucks</span> nearby! <span class="name-erica">Erica</span> introduces <span class="name-eddie">Eddie</span> to the legendary <span class="highlight" style="color:#ffbe00;">Caramel Protein Latte</span> &mdash; a game-changing power-up. <em>Delicious.</em> But she's not done... she also gets him to try her <span class="highlight" style="color:#88ff88;">Matcha drink</span>. Two new flavor unlocks in one day!
+        </div>
+        <div style="display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;">
+          <div class="speech-bubble" style="background:#1b4332;border-color:#40916c;color:#fff;">
+            <div class="speaker eddie">Eddie:</div>
+            Okay wait... this caramel protein latte is AMAZING. Where has this been all my life?! &#129316;
+          </div>
+          <div class="speech-bubble right" style="background:#1b4332;border-color:#ff0066;color:#fff;">
+            <div class="speaker erica">Erica:</div>
+            Now try my matcha... &#127861;&#128154;
+          </div>
+        </div>
+      </div>
+      <div class="sfx" style="top:20px;right:50px;font-size:2rem;color:#00ff88;">+50 HP!</div>
+      <div class="sfx" style="bottom:30px;right:30px;font-size:1.5rem;color:#ffbe00;">POWER UP!</div>
+    </div>
+  </div>
+
+  <div class="divider"><span class="dots">&#9679; &#9679; &#9679;</span><br>A QUIET INTERLUDE...</div>
+
+  <!-- PANEL 4: PEOPLE WATCHING -->
+  <div class="panel panel-chill" data-panel="4">
+    <div class="caption-box" style="background:#ff8fab;color:#111;">Chapter 4: The Calm Before the Storm</div>
+    <div class="panel-scene">
+      <div class="scene-art" style="top:5px;left:15px;font-size:4rem;">&#128149;</div>
+      <div class="scene-art" style="bottom:5px;right:15px;font-size:3rem;">&#128587;&#128587;&#8205;&#9792;&#65039;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration">
+          With potions in hand, <span class="name-eddie">Eddie</span> and <span class="name-erica">Erica</span> find a spot to sit and do what all great heroes do between missions &mdash; <span class="highlight">people watch</span>. For <em>hours</em>. The conversation flows effortlessly, from deep topics to belly laughs. The world around them becomes background noise. And between the stories and the laughing? <span class="highlight" style="color:#ff0066;">Kisses.</span> &#128536; Sweet, soft, scattered between sentences like secret power-ups.
+        </div>
+      </div>
+      <div class="sfx" style="top:15px;right:30px;font-size:2rem;color:#ff0066;transform:rotate(10deg);">SMOOCH!</div>
+      <div class="sfx" style="bottom:20px;left:20px;font-size:1.5rem;color:#ff69b4;">&#128147;</div>
+    </div>
+  </div>
+
+  <!-- PANEL 5: STORM ROLLS IN -->
+  <div class="panel panel-storm" data-panel="5">
+    <div class="caption-box" style="background:#2c3e50;color:#e2e8f0;">Chapter 5: Storm Warning</div>
+    <div class="panel-scene">
+      <div class="lightning"></div>
+      <div class="scene-art" style="top:10px;left:20px;font-size:4rem;">&#9928;&#65039;</div>
+      <div class="scene-art" style="bottom:10px;right:20px;">&#127786;&#65039;</div>
+      <div style="position:relative;z-index:4;width:100%;">
+        <div class="panel-narration" style="color:#e2e8f0;background:rgba(30,30,50,0.9);border-color:#4a5568;">
+          The sky darkens. Thunder rumbles in the distance. A classic Florida storm rolls across the Tampa sky like a villain's entrance. But our heroes aren't worried &mdash; they have <span class="highlight" style="color:#ffbe00;">Sexy Lexi</span> and a plan. Time for <span class="highlight">Phase 2</span> of the date...
+        </div>
+        <div style="display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;">
+          <div class="speech-bubble" style="background:#1a202c;border-color:#4a5568;color:#fff;">
+            <div class="speaker eddie">Eddie:</div>
+            To the arcade? &#127918;
+          </div>
+          <div class="speech-bubble right" style="background:#1a202c;border-color:#ff0066;color:#fff;">
+            <div class="speaker erica">Erica:</div>
+            LET'S GO! &#9889;
+          </div>
+        </div>
+      </div>
+      <div class="sfx" style="top:10px;right:20px;font-size:3rem;color:#7eb8da;">KRACKOOM!</div>
+    </div>
+  </div>
+
+  <div class="divider"><span class="dots">&#9889; &#9889; &#9889;</span><br>ENTERING THE ARENA...</div>
+
+  <!-- PANEL 6: MAIN EVENT ARRIVAL -->
+  <div class="panel panel-arcade" data-panel="6">
+    <div class="caption-box" style="background:#9b59b6;color:#fff;">Chapter 6: Main Event</div>
+    <div class="panel-scene">
+      <div class="scene-art" style="top:5px;right:10px;font-size:4rem;">&#127919;</div>
+      <div class="scene-art" style="bottom:5px;left:10px;font-size:3rem;">&#127922;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration" style="color:#e2e8f0;background:rgba(15,0,40,0.9);border-color:#6b21a8;">
+          They arrive at <span class="highlight" style="color:#bf00ff;">Main Event</span> &mdash; a neon-lit paradise of arcade madness. The lights flash. The machines beep and boop. The competitive energy between these two? <span class="highlight">OFF THE CHARTS.</span> Game cards loaded. Let the battle begin!
+        </div>
+      </div>
+      <div class="sfx" style="top:20px;right:30px;font-size:2.5rem;color:#bf00ff;">PLAYER 1<br>PLAYER 2<br>READY!</div>
+    </div>
+  </div>
+
+  <!-- PANEL GRID: THE GAMES -->
+  <div class="panel-grid">
+    <div class="panel panel-games" data-panel="7">
+      <div class="caption-box" style="font-size:1rem;background:#00b4d8;">Skee-Ball!</div>
+      <div class="panel-scene" style="min-height:200px;">
+        <div style="text-align:center;position:relative;z-index:2;">
+          <div style="font-size:4rem;">&#127923;</div>
+          <div class="panel-narration" style="margin-top:10px;color:#eee;background:rgba(15,15,40,0.9);border-color:#00b4d8;font-size:0.95rem;">
+            Rolling those balls up the lane with precision! Tickets flying everywhere!
+          </div>
+        </div>
+        <div class="sfx" style="top:5px;right:10px;font-size:1.5rem;color:#00b4d8;">ROLL!</div>
+      </div>
+    </div>
+
+    <div class="panel panel-games" data-panel="8">
+      <div class="caption-box" style="font-size:1rem;background:#ff6b00;">Hoops!</div>
+      <div class="panel-scene" style="min-height:200px;">
+        <div style="text-align:center;position:relative;z-index:2;">
+          <div style="font-size:4rem;">&#127936;</div>
+          <div class="panel-narration" style="margin-top:10px;color:#eee;background:rgba(15,15,40,0.9);border-color:#ff6b00;font-size:0.95rem;">
+            Basketball hoops! Nothing but net... well, <em>mostly</em>. The competitive trash talk was top tier.
+          </div>
+        </div>
+        <div class="sfx" style="top:5px;right:10px;font-size:1.5rem;color:#ff6b00;">SWISH!</div>
+      </div>
+    </div>
+
+    <div class="panel panel-games" data-panel="9">
+      <div class="caption-box" style="font-size:1rem;background:#00ff88;color:#000;">Air Hockey!</div>
+      <div class="panel-scene" style="min-height:200px;">
+        <div style="text-align:center;position:relative;z-index:2;">
+          <div style="font-size:4rem;">&#129609;</div>
+          <div class="panel-narration" style="margin-top:10px;color:#eee;background:rgba(15,15,40,0.9);border-color:#00ff88;font-size:0.95rem;">
+            The air hockey table becomes a battlefield! Pucks flying at supersonic speeds. Smack talk at maximum volume!
+          </div>
+        </div>
+        <div class="sfx" style="top:5px;right:10px;font-size:1.5rem;color:#00ff88;">CLACK!</div>
+      </div>
+    </div>
+
+    <div class="panel panel-games" data-panel="10">
+      <div class="caption-box" style="font-size:1rem;background:#ff0066;">THE PHOTO!</div>
+      <div class="panel-scene" style="min-height:200px;">
+        <div style="text-align:center;position:relative;z-index:2;">
+          <div style="font-size:4rem;">&#128248;</div>
+          <div class="panel-narration" style="margin-top:10px;color:#eee;background:rgba(15,15,40,0.9);border-color:#ff0066;font-size:0.95rem;">
+            Evidence captured! Two arcade warriors in their element, plunger guns blazing!
+          </div>
+        </div>
+        <div class="sfx" style="top:5px;right:10px;font-size:1.5rem;color:#ff0066;">SNAP!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 7: PLUNGER SHOOTER -->
+  <div class="panel panel-plunger" data-panel="11">
+    <div class="caption-box" style="background:#000;color:#ff0066;">BOSS LEVEL: Rabid Plunger Shooters!</div>
+    <div class="panel-scene" style="min-height:320px;">
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration" style="color:#fff;background:rgba(100,0,30,0.9);border-color:#ff4488;">
+          And then... <em>THE</em> game. The <span class="highlight" style="color:#ffbe00;">Rabid Plunger Shooter</span>. Imagine: two warriors, back to back, plunger guns locked and loaded, blasting targets like the heroes they were born to be. This wasn't just a game &mdash; this was <span class="highlight">DESTINY</span>. The teamwork. The laughter. The absolute chaos.
+          <br><br>
+          <strong style="color:#ffbe00;">HIGH SCORE: 10M+ &bull; AMMO: INFINITE &bull; FUN: UNLIMITED</strong>
+        </div>
+        <div style="display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;">
+          <div class="speech-bubble" style="background:rgba(100,0,30,0.9);border-color:#ffbe00;color:#fff;">
+            <div class="speaker eddie">Eddie:</div>
+            ZAP! Got another one! Cover me! &#128171;
+          </div>
+          <div class="speech-bubble right" style="background:rgba(100,0,30,0.9);border-color:#ffbe00;color:#fff;">
+            <div class="speaker erica">Erica:</div>
+            KRAKOOM! We're UNSTOPPABLE! &#128293;
+          </div>
+        </div>
+      </div>
+      <div class="sfx" style="top:10px;left:20px;font-size:3.5rem;color:#ffbe00;transform:rotate(-12deg);">ZAP!</div>
+      <div class="sfx" style="bottom:15px;right:20px;font-size:3rem;color:#fff;transform:rotate(8deg);">KRAKOOM!</div>
+      <div class="sfx" style="top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;color:#ff0;opacity:0.3;">POW! POW! POW!</div>
+    </div>
+  </div>
+
+  <div class="divider"><span class="dots" style="color:#ff0066;">&#128147; &#128147; &#128147;</span><br>BACK IN SEXY LEXI...</div>
+
+  <!-- PANEL 8: THE MAKEOUT -->
+  <div class="panel panel-makeout" data-panel="12" id="makeoutPanel">
+    <div class="caption-box" style="background:#ff0066;color:#fff;transform:rotate(-3deg);">Chapter 7: The After Credits Scene &#128293;</div>
+    <div class="panel-scene" style="min-height:300px;">
+      <div class="scene-art" style="top:10px;right:20px;font-size:4rem;">&#128293;</div>
+      <div class="scene-art" style="bottom:10px;left:15px;font-size:3.5rem;">&#128149;</div>
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="panel-narration" style="color:#e8d0ff;background:rgba(30,0,50,0.95);border-color:#6b21a8;">
+          Back in <span class="highlight" style="color:#ffbe00;">Sexy Lexi</span>, the rain tapping against the windows. The arcade lights fading in the rearview mirror. And then... the real boss fight. Not against monsters or machines &mdash; but against the urge to ever stop kissing.
+          <br><br>
+          For nearly <span class="highlight" style="color:#ff0066;">an hour</span>, it was nothing but <span class="highlight">incredibly passionate</span>, absolutely <span class="highlight" style="color:#ff4488;">amazing</span> chemistry. No rush. No pressure. Just two people completely lost in each other. The kind of kiss that makes you forget what planet you're on. The kind that rewrites your entire high score board.
+          <br><br>
+          <em style="color:#ff69b4;">Steamy. Intense. Electric. Unforgettable.</em> &#9889;&#128293;
+        </div>
+      </div>
+      <div class="sfx" style="top:20px;right:20px;font-size:2.5rem;color:#ff69b4;transform:rotate(5deg);">&#128147;&#128147;&#128147;</div>
+      <div class="sfx" style="bottom:20px;left:20px;font-size:2rem;color:#ff0066;">ELECTRIC!</div>
+    </div>
+  </div>
+
+  <!-- FINALE PANEL -->
+  <div class="panel panel-finale" data-panel="13" id="finalePanel">
+    <div class="panel-scene" style="flex-direction:column;text-align:center;">
+      <div style="position:relative;z-index:2;width:100%;">
+        <div class="finale-text neon-text" style="color:#ff0066;margin-bottom:20px;">
+          TO BE CONTINUED...? &#128064;
+        </div>
+        <div class="power-label">CHEMISTRY LEVEL</div>
+        <div class="power-meter">
+          <div class="power-meter-fill" id="chemistryMeter"></div>
+        </div>
+        <div style="font-family:'Bangers',cursive;font-size:1.5rem;color:#ffbe00;margin-top:10px;text-shadow:2px 2px 0 #000;">
+          &#128293; OVER 9000 &#128293;
+        </div>
+        <div style="margin-top:30px;color:#aaa;font-size:0.95rem;line-height:1.8;">
+          <em>No capes were harmed in the making of this date.</em><br>
+          <em>Sexy Lexi got premium parking both times.</em><br>
+          <em>The caramel protein latte has been added to the permanent menu.</em><br>
+          <em>Green Toe Jordans are still out there... the quest continues.</em>
+        </div>
+        <div style="margin-top:30px;font-family:'Bangers',cursive;font-size:2rem;color:#ff0066;text-shadow:2px 2px 0 #000;">
+          Eddie &#10084;&#65039; Erica
+        </div>
+        <div style="color:#555;font-size:0.8rem;margin-top:10px;">
+          March 16, 2026 &bull; Tampa, FL &bull; Issue #1
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SCROLL DOWN INDICATOR -->
+<div class="scroll-indicator" id="scrollIndicator" style="display:none;" onclick="window.scrollBy({top:400,behavior:'smooth'})">
+  &#9660;
+</div>
+
+<script>
+  // Generate stars on cover
+  const cover = document.getElementById('coverPage');
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    cover.appendChild(star);
+  }
+
+  // Generate floating particles
+  const particlesContainer = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.width = p.style.height = Math.random() * 6 + 2 + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.background = ['#ff0066', '#00b4d8', '#ffbe00', '#00ff88'][Math.floor(Math.random() * 4)];
+    p.style.animationDuration = Math.random() * 10 + 10 + 's';
+    p.style.animationDelay = Math.random() * 10 + 's';
+    particlesContainer.appendChild(p);
+  }
+
+  // Start comic
+  function startComic() {
+    document.getElementById('coverPage').style.display = 'none';
+    document.getElementById('comicBook').classList.add('active');
+    document.getElementById('scrollIndicator').style.display = 'flex';
+    window.scrollTo(0, 0);
+    observePanels();
+  }
+
+  // Intersection Observer for panel animations
+  function observePanels() {
+    const panels = document.querySelectorAll('.panel, .photo-panel, .divider');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Trigger chemistry meter on finale
+          if (entry.target.id === 'finalePanel') {
+            setTimeout(() => {
+              document.getElementById('chemistryMeter').classList.add('filled');
+              triggerHeartRain();
+            }, 500);
+          }
+
+          // Trigger heart rain on makeout panel too
+          if (entry.target.id === 'makeoutPanel') {
+            triggerHeartRain();
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    panels.forEach(panel => observer.observe(panel));
+  }
+
+  // Heart rain effect
+  function triggerHeartRain() {
+    const container = document.getElementById('heartRain');
+    container.classList.add('active');
+    const hearts = ['❤️', '💕', '💖', '💗', '💘', '🔥', '✨', '💋'];
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const heart = document.createElement('div');
+        heart.className = 'falling-heart';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = Math.random() * 2 + 2 + 's';
+        heart.style.fontSize = Math.random() * 1.5 + 1 + 'rem';
+        container.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+      }, i * 100);
+    }
+    setTimeout(() => container.classList.remove('active'), 5000);
+  }
+
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    // Hide scroll indicator near bottom
+    const indicator = document.getElementById('scrollIndicator');
+    if (progress > 90) {
+      indicator.style.display = 'none';
+    } else if (document.getElementById('comicBook').classList.contains('active')) {
+      indicator.style.display = 'flex';
+    }
+  });
+</script>
+</body>
+</html>
