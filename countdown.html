@@ -77,25 +77,56 @@
   .subtitle {
     font-size: 1.1rem;
     color: #c9a0dc;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     font-weight: 300;
     letter-spacing: 1px;
   }
 
   .countdown-label {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 4px;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
     color: #e0b0ff;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 2.5rem;
   }
+
+  .countdown-label .static-text {
+    white-space: nowrap;
+  }
+
+  .countdown-label .rotating-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 200px;
+    height: 2rem;
+    text-align: left;
+  }
+
+  .countdown-label .rotating-text {
+    position: absolute;
+    left: 0;
+    white-space: nowrap;
+    font-style: italic;
+    color: #ffa3c4;
+    opacity: 0;
+    animation: fadeTagline 12s ease-in-out infinite;
+  }
+
+  .countdown-label .rotating-text:nth-child(1) { animation-delay: 0s; }
+  .countdown-label .rotating-text:nth-child(2) { animation-delay: 3s; }
+  .countdown-label .rotating-text:nth-child(3) { animation-delay: 6s; }
+  .countdown-label .rotating-text:nth-child(4) { animation-delay: 9s; }
 
   .countdown {
     display: flex;
     justify-content: center;
     gap: 1.2rem;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    flex-wrap: nowrap;
   }
 
   .time-block {
@@ -132,28 +163,6 @@
     margin-top: 0.4rem;
   }
 
-  .tagline-wrapper {
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2.5rem;
-    overflow: hidden;
-  }
-
-  .tagline {
-    font-size: 1.2rem;
-    font-style: italic;
-    color: #ffa3c4;
-    opacity: 0;
-    animation: fadeTagline 12s ease-in-out infinite;
-    position: absolute;
-  }
-
-  .tagline:nth-child(1) { animation-delay: 0s; }
-  .tagline:nth-child(2) { animation-delay: 3s; }
-  .tagline:nth-child(3) { animation-delay: 6s; }
-  .tagline:nth-child(4) { animation-delay: 9s; }
 
   @keyframes fadeTagline {
     0%, 5%   { opacity: 0; transform: translateY(10px); }
@@ -264,7 +273,15 @@
   <div class="names">Eddie & Erika</div>
   <div class="subtitle">Countdown to Date Night</div>
 
-  <div class="countdown-label">Time Until the Fun Begins</div>
+  <div class="countdown-label">
+    <span class="static-text">Time until...</span>
+    <span class="rotating-wrapper">
+      <span class="rotating-text">Kisses & Cuddles 💋</span>
+      <span class="rotating-text">Pub Subs & Back Rubs 🥖✨</span>
+      <span class="rotating-text">Dinner & "a movie" 🎬</span>
+      <span class="rotating-text">the good stuff 🥰</span>
+    </span>
+  </div>
 
   <div class="countdown" id="countdown">
     <div class="time-block">
@@ -279,13 +296,6 @@
       <div class="time-value" id="seconds">--</div>
       <div class="time-unit">Seconds</div>
     </div>
-  </div>
-
-  <div class="tagline-wrapper">
-    <span class="tagline">Kisses & Cuddles incoming... 💋</span>
-    <span class="tagline">Pub Subs & Back Rubs loading... 🥖✨</span>
-    <span class="tagline">Dinner & "a movie" awaits... 🎬</span>
-    <span class="tagline">Almost time for the good stuff... 🥰</span>
   </div>
 
   <div class="event-details">
