@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>She Said Fax Only. He Said Bet.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f1eb;
+            color: #1a1a1a;
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.7;
+        }
+
+        /* Breaking banner */
+        .breaking-banner {
+            background: #c0392b;
+            color: white;
+            text-align: center;
+            padding: 8px 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .breaking-banner span {
+            margin-left: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            font-size: 0.75rem;
+        }
+
+        /* Header */
+        .masthead {
+            text-align: center;
+            padding: 30px 20px 15px;
+            border-bottom: 3px double #1a1a1a;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .masthead-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #1a1a1a;
+        }
+
+        .masthead-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .masthead-date {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Article container */
+        .article-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Headline */
+        .headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.15;
+            margin: 40px 0 12px;
+            color: #1a1a1a;
+        }
+
+        .subheadline {
+            font-size: 1.25rem;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Byline */
+        .byline {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: #888;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+
+        .byline strong {
+            color: #1a1a1a;
+        }
+
+        /* Hero image */
+        .hero-image {
+            width: 100%;
+            margin: 0 0 8px;
+            border-radius: 4px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .image-caption {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: #888;
+            font-style: italic;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .image-caption strong {
+            font-style: normal;
+            color: #666;
+        }
+
+        /* Body text */
+        .article-body p {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+        }
+
+        .article-body .lead {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid #c0392b;
+            padding: 12px 24px;
+            margin: 28px 0;
+            background: #faf6f0;
+            font-style: italic;
+            font-size: 1.15rem;
+        }
+
+        .article-body blockquote cite {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-style: normal;
+            color: #888;
+        }
+
+        /* Update section */
+        .updates-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 3px double #1a1a1a;
+        }
+
+        .updates-header {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #c0392b;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .updates-header::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #c0392b;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .update-entry {
+            padding: 20px 0;
+            border-bottom: 1px solid #e0dcd5;
+        }
+
+        .update-entry:last-child {
+            border-bottom: none;
+        }
+
+        .update-timestamp {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #c0392b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .update-entry h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .update-entry p {
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .update-pending {
+            background: #faf6f0;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-top: 16px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .update-pending strong {
+            display: block;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        /* Tags */
+        .tags {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            background: #e8e4dd;
+            color: #555;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .article-footer {
+            max-width: 720px;
+            margin: 50px auto 40px;
+            padding: 20px 24px 0;
+            border-top: 3px double #1a1a1a;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .headline {
+                font-size: 2rem;
+            }
+
+            .subheadline {
+                font-size: 1.05rem;
+            }
+
+            .article-body p {
+                font-size: 1.05rem;
+            }
+
+            .masthead-title {
+                font-size: 1rem;
+                letter-spacing: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="breaking-banner">
+        DEVELOPING STORY <span>Last updated: April 6, 2026 &mdash; 3:47 PM ET</span>
+    </div>
+
+    <header class="masthead">
+        <div class="masthead-title">The Thermal Times</div>
+        <div class="masthead-subtitle">All the news that's fit to fax</div>
+        <div class="masthead-date">Sunday, April 6, 2026</div>
+    </header>
+
+    <article class="article-container">
+
+        <h1 class="headline">She Said Fax Only. He Said Bet.</h1>
+
+        <p class="subheadline">A Florida man purchases a $15 Panasonic fax machine off Facebook Marketplace after his girlfriend issues an analog ultimatum. MagicJack has been ordered. Thermal paper is standing by.</p>
+
+        <div class="byline">
+            By <strong>Staff Reporters</strong> &bull; Published April 6, 2026 &bull; Updated continuously
+        </div>
+
+        <figure class="hero-image">
+            <img src="images/fax-machine-eddie.jpg" alt="Eddie holding a Panasonic fax machine, grinning, outside on a sunny day">
+        </figure>
+        <figcaption class="image-caption">
+            <strong>EXHIBIT A:</strong> Eddie, 2026, holding a Panasonic KX-FP101 plain paper fax machine and copier purchased for $15 at a Facebook Marketplace meetup. The price sticker is still on. He is smiling. &mdash; <em>Photo: Self-portrait</em>
+        </figcaption>
+
+        <div class="article-body">
+            <p class="lead"><strong>FLORIDA</strong> &mdash; When Eddie's girlfriend Nicole offered to send him a picture of her butt, most men in 2026 would have expected an iMessage, a Snapchat, perhaps even an artful AirDrop. Nicole had other plans.</p>
+
+            <p>"Fax only," she told him.</p>
+
+            <p>She was not joking. Or maybe she was. It didn't matter. Eddie was already on Facebook Marketplace.</p>
+
+            <p>Within hours, he had located a Panasonic KX-FP101 &mdash; a plain paper fax machine and copier, vintage beige, fully functional &mdash; listed by a local seller for $15. The price sticker, a small yellow circle with "$15" written in marker, is still affixed to the machine. He has no intention of removing it.</p>
+
+            <blockquote>
+                "She matched my energy with the offer. I matched hers with the purchase."
+                <cite>&mdash; Eddie, fax machine owner</cite>
+            </blockquote>
+
+            <p>The machine, however, presents a modern logistical challenge: it requires a phone line. Eddie does not have a landline. He does not know anyone under 40 who has a landline. So he did what any resourceful man in his position would do &mdash; he ordered a MagicJack.</p>
+
+            <p>For readers under 30: MagicJack is a device that provides a phone line through your internet connection. For readers under 20: a phone line is how people used to talk to each other before texting. For readers under 15: talking is when you use your mouth to communicate instead of your thumbs.</p>
+
+            <p>The MagicJack is currently in transit. The fax machine sits on Eddie's desk, plugged in but unconnected. Waiting. Like all of us.</p>
+
+            <p>Nicole, reached for comment, reportedly responded: "I can't believe he actually bought one."</p>
+
+            <p>She has not yet retracted the offer.</p>
+        </div>
+
+        <!-- LIVE UPDATES -->
+        <section class="updates-section">
+            <div class="updates-header">Live Updates</div>
+
+            <div class="update-entry">
+                <div class="update-timestamp">April 6, 2026 &mdash; 3:47 PM ET</div>
+                <h3>The Machine Has Been Acquired</h3>
+                <p>Eddie has confirmed the purchase of a Panasonic KX-FP101 from a Facebook Marketplace seller. Price paid: $15. Condition: used but operational. Color: the kind of beige that only the '90s could produce. He posted a selfie with the machine. He is grinning. The fax machine is not.</p>
+            </div>
+
+            <div class="update-entry">
+                <div class="update-timestamp">April 6, 2026 &mdash; 2:15 PM ET</div>
+                <h3>MagicJack Order Placed</h3>
+                <p>Eddie has ordered a MagicJack device to establish a phone line for the fax machine. Estimated delivery: 3-5 business days. He described the wait as "the longest shipping window of my life." He has already begun checking the tracking page.</p>
+            </div>
+
+            <div class="update-entry">
+                <div class="update-timestamp">April 6, 2026 &mdash; 11:30 AM ET</div>
+                <h3>"Fax Only" — The Ultimatum That Started It All</h3>
+                <p>Sources close to the couple confirm that Nicole issued the "fax only" stipulation during what was described as "a normal conversation that escalated." When asked why fax specifically, Nicole reportedly said: "I thought he'd just laugh it off." She underestimated him.</p>
+            </div>
+
+            <div class="update-pending">
+                <strong>More updates to follow.</strong>
+                The MagicJack is in transit. The fax machine is plugged in. Nicole has not backed down. We will continue to monitor this situation as it develops.
+            </div>
+        </section>
+
+        <div class="tags">
+            <span class="tag">Relationships</span>
+            <span class="tag">Fax Machines</span>
+            <span class="tag">Florida Man</span>
+            <span class="tag">Facebook Marketplace</span>
+            <span class="tag">MagicJack</span>
+            <span class="tag">Thermal Paper</span>
+            <span class="tag">Commitment</span>
+            <span class="tag">Analog Romance</span>
+        </div>
+
+    </article>
+
+    <footer class="article-footer">
+        <p>&copy; 2026 The Thermal Times &bull; "All the news that's fit to fax" &bull; Printed on thermal paper, obviously</p>
+    </footer>
+
+</body>
+</html>
