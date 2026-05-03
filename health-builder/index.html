@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Builder — A Day with Sunny</title>
+<style>
+  :root {
+    --protein: #ff6b6b;
+    --veggies: #51cf66;
+    --fruit:   #ff922b;
+    --grains:  #fcc419;
+    --dairy:   #74c0fc;
+    --water:   #339af0;
+    --sometimes:#adb5bd;
+    --bg1: #fdf6e3;
+    --bg2: #ffe9c7;
+    --ink: #2b2b3a;
+    --card: #ffffff;
+    --shadow: 0 6px 20px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Comic Sans MS", "Comic Sans", system-ui, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 16px;
+  }
+  .top h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.3px;
+  }
+  .top .day {
+    font-size: 14px;
+    color: #6c6c7a;
+  }
+  .phase {
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .phase h2 {
+    margin: 0 0 4px;
+    font-size: 26px;
+  }
+  .phase .sub {
+    color: #6c6c7a;
+    margin: 0 0 18px;
+    font-size: 15px;
+  }
+  .row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .col {
+    flex: 1;
+    min-width: 280px;
+  }
+  /* CHARACTER */
+  .sunny {
+    text-align: center;
+    font-size: 80px;
+    line-height: 1;
+    margin: 8px 0;
+    transition: transform 0.3s;
+  }
+  .sunny.foggy {
+    filter: blur(2px) brightness(0.85);
+  }
+  .sunny.sleeping {
+    animation: zzz 2s infinite;
+  }
+  @keyframes zzz {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .mood {
+    text-align: center;
+    color: #6c6c7a;
+    font-size: 14px;
+    margin-bottom: 14px;
+    min-height: 20px;
+  }
+  /* BUTTONS */
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: none;
+    background: #2b2b3a;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,0,0,0.15); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.primary { background: #2f9e44; }
+  .btn.warm { background: #ff922b; }
+  .actions {
+    text-align: center;
+    margin-top: 20px;
+  }
+  /* FOOD GRID */
+  .foods {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  .food {
+    background: #fff8e7;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+  .food:hover { transform: translateY(-2px); border-color: #ffc078; }
+  .food.disabled { opacity: 0.4; cursor: not-allowed; }
+  .food .e { font-size: 32px; line-height: 1.2; }
+  .food .n { font-size: 13px; font-weight: 600; }
+  .food .tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  /* BUCKETS */
+  .buckets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .bucket {
+    background: #fff;
+    border: 2px solid #eaeaea;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .bucket .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+  .bucket .name { flex: 1; font-weight: 600; }
+  .bucket .count { font-weight: 700; font-size: 16px; }
+  .bucket.selected { border-color: #2b2b3a; box-shadow: 0 0 0 3px rgba(43,43,58,0.1); }
+  .bucket.empty { opacity: 0.45; }
+  /* METERS */
+  .meter {
+    margin-top: 12px;
+  }
+  .meter .label {
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .meter .bar {
+    background: #eee;
+    border-radius: 999px;
+    height: 12px;
+    overflow: hidden;
+  }
+  .meter .fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.3s;
+  }
+  .meter .fill.fullness { background: linear-gradient(90deg, #51cf66, #fcc419); }
+  .meter .fill.fog { background: linear-gradient(90deg, #adb5bd, #495057); }
+  .meter .fill.clarity { background: linear-gradient(90deg, #74c0fc, #339af0); }
+  /* ACTIVITY */
+  .play-area {
+    position: relative;
+    height: 320px;
+    background: linear-gradient(180deg, #c5f6fa, #d3f9d8);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .target {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: pop 0.25s ease;
+    cursor: pointer;
+  }
+  @keyframes pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+  .countdown {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  /* SLEEP */
+  .sleep-control {
+    text-align: center;
+    padding: 20px;
+  }
+  .sleep-hours {
+    font-size: 64px;
+    font-weight: 800;
+    color: #5c4ab8;
+    line-height: 1;
+  }
+  .sleep-hours small { font-size: 22px; color: #6c6c7a; font-weight: 600; }
+  .sleep-status {
+    margin: 8px 0 16px;
+    font-size: 16px;
+    min-height: 24px;
+  }
+  .sleep-slider {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    background: linear-gradient(90deg, #ffd8a8 0%, #b2f2bb 30%, #b2f2bb 80%, #ffd8a8 100%);
+    border-radius: 999px;
+    outline: none;
+  }
+  .sleep-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px;
+    height: 28px;
+    background: #5c4ab8;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .sleep-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+    background: #5c4ab8;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+  }
+  /* BUILD */
+  .build-stage {
+    background: #1a1830;
+    background-image: radial-gradient(white 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: 14px;
+    padding: 16px;
+    color: white;
+  }
+  .build-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    max-width: 360px;
+    margin: 0 auto;
+    aspect-ratio: 1;
+  }
+  .cell {
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+  }
+  .cell.empty { background: transparent; border: none; cursor: default; }
+  .cell.target { border: 2px solid rgba(255,255,255,0.5); }
+  .cell.placed-correct { border-color: transparent; }
+  .cell.placed-wrong {
+    border-color: rgba(255,107,107,0.6);
+    animation: wobble 0.4s;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+  }
+  .build-buckets {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .build-buckets .bucket {
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border-color: transparent;
+    cursor: pointer;
+  }
+  .build-buckets .bucket.selected {
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  }
+  .build-buckets .bucket.empty { opacity: 0.3; cursor: not-allowed; }
+  .build-timer {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.85;
+  }
+  /* SCORECARD */
+  .score-big {
+    font-size: 56px;
+    font-weight: 800;
+    text-align: center;
+    color: #2f9e44;
+    margin: 4px 0;
+  }
+  .score-big.low { color: #ff922b; }
+  .score-big.bad { color: #ff6b6b; }
+  .score-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: #fff8e7;
+    font-size: 14px;
+  }
+  .score-line .v { font-weight: 700; }
+  .score-line.bad { background: #ffe3e3; }
+  .takeaway {
+    background: #e3fafc;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  /* INTRO */
+  .intro {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .intro h2 { font-size: 36px; margin: 0 0 8px; }
+  .intro p { font-size: 16px; max-width: 540px; margin: 0 auto 18px; line-height: 1.5; }
+  .intro .big-emoji { font-size: 96px; margin-bottom: 12px; }
+
+  @media (max-width: 600px) {
+    .col { min-width: 100%; }
+    .build-grid { max-width: 280px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <h1>Health Builder</h1>
+    <span class="day" id="dayLabel">Day 1</span>
+  </div>
+  <div id="phase" class="phase"></div>
+</div>
+
+<script>
+// ============== DATA ==============
+const FOODS = [
+  { id:'chicken',  name:'Chicken',     emoji:'🍗', bucket:'protein', amount:3, fullness:2 },
+  { id:'eggs',     name:'Eggs',        emoji:'🥚', bucket:'protein', amount:2, fullness:1 },
+  { id:'broccoli', name:'Broccoli',    emoji:'🥦', bucket:'veggies', amount:2, fullness:1 },
+  { id:'carrots',  name:'Carrots',     emoji:'🥕', bucket:'veggies', amount:2, fullness:1 },
+  { id:'apple',    name:'Apple',       emoji:'🍎', bucket:'fruit',   amount:2, fullness:1 },
+  { id:'berries',  name:'Berries',     emoji:'🫐', bucket:'fruit',   amount:2, fullness:1 },
+  { id:'oats',     name:'Oatmeal',     emoji:'🥣', bucket:'grains',  amount:3, fullness:2 },
+  { id:'bread',    name:'Whole Bread', emoji:'🍞', bucket:'grains',  amount:2, fullness:1 },
+  { id:'milk',     name:'Milk',        emoji:'🥛', bucket:'dairy',   amount:2, fullness:1 },
+  { id:'yogurt',   name:'Yogurt',      emoji:'🍶', bucket:'dairy',   amount:2, fullness:1 },
+  { id:'water',    name:'Water',       emoji:'💧', bucket:'water',   amount:2, fullness:0 },
+  { id:'soda',     name:'Soda',        emoji:'🥤', bucket:'sometimes', fog:3, fullness:2 },
+  { id:'candy',    name:'Candy',       emoji:'🍬', bucket:'sometimes', fog:2, fullness:1 },
+  { id:'chips',    name:'Chips',       emoji:'🍟', bucket:'sometimes', fog:3, fullness:2 },
+];
+
+const BUCKET_META = {
+  protein:   { label:'Protein',  color:'var(--protein)' },
+  veggies:   { label:'Veggies',  color:'var(--veggies)' },
+  fruit:     { label:'Fruit',    color:'var(--fruit)' },
+  grains:    { label:'Grains',   color:'var(--grains)' },
+  dairy:     { label:'Dairy',    color:'var(--dairy)' },
+  water:     { label:'Water',    color:'var(--water)' },
+  sometimes: { label:'Sometimes',color:'var(--sometimes)' },
+};
+
+// Blueprint: 6x6 little house with garden.
+// Codes: '.'=empty, P=protein door frame, V=veggie walls, G=grain roof, D=dairy door, F=fruit garden
+const BLUEPRINT = [
+  ['.','.','G','G','.','.'],
+  ['.','G','G','G','G','.'],
+  ['V','V','P','P','V','V'],
+  ['V','V','D','P','V','V'],
+  ['V','V','P','P','V','V'],
+  ['F','F','F','F','F','F'],
+];
+const CODE_TO_BUCKET = { P:'protein', V:'veggies', F:'fruit', G:'grains', D:'dairy' };
+
+const FULLNESS_MAX = 8;
+const RECOMMENDED_SLEEP_MIN = 9;
+const RECOMMENDED_SLEEP_MAX = 11;
+
+// ============== STATE ==============
+const state = {
+  phase: 'intro',
+  ate: [],                // food ids consumed
+  buckets: { protein:0, veggies:0, fruit:0, grains:0, dairy:0, water:0 },
+  fullness: 0,
+  fog: 0,
+  clarity: 0,             // from movement
+  sleepHours: 10,
+  placements: [],         // {row,col,bucket,correct}
+  selectedBucket: null,
+  buildBuckets: {},       // copy of buckets at build start (consumed during build)
+};
+
+// ============== ROOT RENDER ==============
+const root = document.getElementById('phase');
+const dayLabel = document.getElementById('dayLabel');
+
+function setPhase(name) {
+  state.phase = name;
+  render();
+}
+
+function render() {
+  switch(state.phase) {
+    case 'intro':    return renderIntro();
+    case 'feed':     return renderFeed();
+    case 'activity': return renderActivity();
+    case 'sleep':    return renderSleep();
+    case 'build':    return renderBuild();
+    case 'score':    return renderScore();
+  }
+}
+
+// ============== INTRO ==============
+function renderIntro() {
+  dayLabel.textContent = 'Day 1';
+  root.innerHTML = `
+    <div class="intro">
+      <div class="big-emoji">🌞</div>
+      <h2>Meet Sunny</h2>
+      <p>
+        Sunny needs your help today. Pick what Sunny eats, get them moving,
+        send them to bed — and at night, Sunny's body will <b>build</b>
+        with the foods you gave them. Different foods make different blocks.
+        Variety wins!
+      </p>
+      <button class="btn primary" onclick="setPhase('feed')">Let's Start →</button>
+    </div>
+  `;
+}
+
+// ============== FEED ==============
+function renderFeed() {
+  const remaining = FULLNESS_MAX - state.fullness;
+  const foggy = state.fog > 0;
+
+  root.innerHTML = `
+    <h2>What will Sunny eat today?</h2>
+    <p class="sub">Pick foods until Sunny is full. A mix of food groups makes the strongest blocks.</p>
+
+    <div class="row">
+      <div class="col" style="flex:1.4">
+        <div class="sunny ${foggy ? 'foggy' : ''}">🌞</div>
+        <div class="mood" id="moodLine">${moodLine()}</div>
+        ${meterHtml('Tummy', 'fullness', state.fullness, FULLNESS_MAX)}
+        ${state.fog > 0 ? meterHtml('Fog', 'fog', state.fog, 8) : ''}
+        <div style="margin-top:14px">
+          <h3 style="margin:0 0 6px;font-size:15px">Today's Buckets</h3>
+          ${bucketsHtml()}
+        </div>
+      </div>
+
+      <div class="col" style="flex:2">
+        <div class="foods">
+          ${FOODS.map(foodCardHtml).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="setPhase('activity')" ${state.fullness === 0 ? 'disabled' : ''}>
+        ${state.fullness === 0 ? 'Pick at least one food' : 'Done eating →'}
+      </button>
+    </div>
+  `;
+}
+
+function foodCardHtml(f) {
+  const remaining = FULLNESS_MAX - state.fullness;
+  const tooFull = f.fullness > remaining;
+  const meta = BUCKET_META[f.bucket];
+  return `
+    <div class="food ${tooFull ? 'disabled' : ''}" onclick="${tooFull ? '' : `eatFood('${f.id}')`}">
+      <div class="e">${f.emoji}</div>
+      <div class="n">${f.name}</div>
+      <span class="tag" style="background:${meta.color}">${meta.label}</span>
+    </div>
+  `;
+}
+
+function bucketsHtml() {
+  const order = ['protein','veggies','fruit','grains','dairy','water'];
+  return `<div class="buckets">${
+    order.map(k => `
+      <div class="bucket ${state.buckets[k] === 0 ? 'empty' : ''}">
+        <div class="swatch" style="background:${BUCKET_META[k].color}"></div>
+        <div class="name">${BUCKET_META[k].label}</div>
+        <div class="count">${state.buckets[k]}</div>
+      </div>
+    `).join('')
+  }</div>`;
+}
+
+function meterHtml(label, kind, val, max) {
+  const pct = Math.min(100, (val/max)*100);
+  return `
+    <div class="meter">
+      <div class="label"><span>${label}</span><span>${val}/${max}</span></div>
+      <div class="bar"><div class="fill ${kind}" style="width:${pct}%"></div></div>
+    </div>
+  `;
+}
+
+function moodLine() {
+  if (state.fog >= 6) return "Sunny feels really sluggish… 😵";
+  if (state.fog >= 3) return "Sunny feels a little fuzzy.";
+  if (state.fullness === 0) return "Sunny is hungry.";
+  if (state.fullness >= FULLNESS_MAX) return "Sunny is happily full!";
+  const groups = Object.entries(state.buckets).filter(([k,v]) => v > 0 && k !== 'water').length;
+  if (groups >= 4) return "Sunny is loving the variety! 🌈";
+  if (groups >= 2) return "Sunny is feeling pretty good.";
+  return "Sunny is eating!";
+}
+
+function eatFood(id) {
+  const f = FOODS.find(x => x.id === id);
+  if (!f) return;
+  if (state.fullness + f.fullness > FULLNESS_MAX) return;
+  state.ate.push(id);
+  state.fullness += f.fullness;
+  if (f.bucket === 'sometimes') {
+    state.fog += f.fog;
+  } else {
+    state.buckets[f.bucket] = (state.buckets[f.bucket] || 0) + f.amount;
+  }
+  // small visual pop on the character
+  const sun = document.querySelector('.sunny');
+  if (sun) {
+    sun.style.transform = 'scale(1.15)';
+    setTimeout(() => { if (sun) sun.style.transform = ''; }, 150);
+  }
+  render();
+}
+
+// ============== ACTIVITY ==============
+let activityTimer = null;
+let targetTimer = null;
+function renderActivity() {
+  state.clarity = 0;
+  root.innerHTML = `
+    <h2>Time to play!</h2>
+    <p class="sub">Tap the bubbles as they pop up. Moving your body makes Sunny's mind sharper. (10 seconds)</p>
+    <div class="play-area" id="playArea">
+      <div class="countdown" id="countdown">10s</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="skipBtn" onclick="finishActivity()">Skip activity</button>
+    </div>
+  `;
+  const area = document.getElementById('playArea');
+  const cd = document.getElementById('countdown');
+  let remaining = 10;
+  cd.textContent = remaining + 's';
+  activityTimer = setInterval(() => {
+    remaining--;
+    cd.textContent = remaining + 's';
+    if (remaining <= 0) finishActivity();
+  }, 1000);
+  spawnTarget(area);
+  targetTimer = setInterval(() => spawnTarget(area), 700);
+}
+
+function spawnTarget(area) {
+  if (!area.isConnected) return;
+  const t = document.createElement('div');
+  t.className = 'target';
+  const colors = ['#ff6b6b','#ff922b','#fcc419','#51cf66','#74c0fc','#5c4ab8'];
+  t.style.background = colors[Math.floor(Math.random()*colors.length)];
+  t.textContent = ['⭐','🎈','🎯','🌟','✨'][Math.floor(Math.random()*5)];
+  const w = area.clientWidth - 56;
+  const h = area.clientHeight - 56;
+  t.style.left = Math.random()*w + 'px';
+  t.style.top = Math.random()*h + 'px';
+  let removed = false;
+  const remove = () => {
+    if (removed) return;
+    removed = true;
+    if (t.parentNode) t.parentNode.removeChild(t);
+  };
+  t.onclick = (e) => {
+    e.stopPropagation();
+    state.clarity += 1;
+    remove();
+  };
+  area.appendChild(t);
+  setTimeout(remove, 1500);
+}
+
+function finishActivity() {
+  if (activityTimer) clearInterval(activityTimer);
+  if (targetTimer) clearInterval(targetTimer);
+  activityTimer = null; targetTimer = null;
+  setPhase('sleep');
+}
+
+// ============== SLEEP ==============
+function renderSleep() {
+  root.innerHTML = `
+    <h2>Time for bed!</h2>
+    <p class="sub">Kids ages 7–12 need <b>9–11 hours</b> of sleep. Sleep is when Sunny's body actually builds — too little, and the blocks come out wobbly.</p>
+    <div class="sleep-control">
+      <div class="sunny sleeping">😴</div>
+      <div class="sleep-hours" id="hrs">${state.sleepHours}<small>h</small></div>
+      <div class="sleep-status" id="sleepStatus">${sleepStatus(state.sleepHours)}</div>
+      <input type="range" min="6" max="12" value="${state.sleepHours}" class="sleep-slider" id="sleepSlider"
+             oninput="onSleepChange(this.value)" />
+      <div style="display:flex;justify-content:space-between;max-width:420px;margin:8px auto 0;font-size:12px;color:#6c6c7a">
+        <span>6h</span><span>9h</span><span>11h</span><span>12h</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" onclick="setPhase('build')">Goodnight, Sunny →</button>
+    </div>
+  `;
+}
+function onSleepChange(v) {
+  state.sleepHours = parseInt(v, 10);
+  document.getElementById('hrs').innerHTML = state.sleepHours + '<small>h</small>';
+  document.getElementById('sleepStatus').textContent = sleepStatus(state.sleepHours);
+}
+function sleepStatus(h) {
+  if (h < 7)  return "Way too short — Sunny will be cranky and slow tomorrow.";
+  if (h < 9)  return "A bit short for a kid Sunny's age.";
+  if (h <= 11) return "Just right! 🌙";
+  return "A little long — Sunny might feel groggy.";
+}
+
+// ============== BUILD ==============
+let buildTimer = null;
+function renderBuild() {
+  // Snapshot buckets to consume during build
+  state.buildBuckets = { ...state.buckets };
+  state.placements = [];
+  state.selectedBucket = firstNonEmptyBucket();
+
+  const totalSeconds = sleepToSeconds(state.sleepHours);
+  let remaining = totalSeconds;
+
+  root.innerHTML = `
+    <h2>Sunny is sleeping… and building!</h2>
+    <p class="sub">Pick a bucket, then click a glowing cell to place a block. Try to match each cell's color for the strongest house.</p>
+    <div class="build-stage">
+      <div class="build-timer">⏱ <span id="buildTimer">${remaining}s</span> &nbsp;·&nbsp; ${state.fog > 0 ? 'Foggy night — some placements may slip 😶‍🌫️' : 'Clear night ✨'}</div>
+      <div class="build-grid" id="buildGrid">${blueprintHtml()}</div>
+      <div class="build-buckets" id="buildBucketRow">${buildBucketsHtml()}</div>
+    </div>
+    <div class="actions">
+      <button class="btn warm" onclick="finishBuild()">Wake up early →</button>
+    </div>
+  `;
+  attachCellHandlers();
+
+  buildTimer = setInterval(() => {
+    remaining--;
+    const el = document.getElementById('buildTimer');
+    if (el) el.textContent = remaining + 's';
+    if (remaining <= 0) finishBuild();
+  }, 1000);
+}
+
+function sleepToSeconds(h) {
+  // 6h -> 22s, 10h -> 50s, 12h -> 60s. Fog cuts time.
+  let secs = Math.round(8 + (h - 6) * 7);
+  secs = Math.max(15, secs - state.fog * 2);
+  return secs;
+}
+
+function blueprintHtml() {
+  let html = '';
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 6; c++) {
+      const code = BLUEPRINT[r][c];
+      if (code === '.') {
+        html += `<div class="cell empty"></div>`;
+      } else {
+        const bucket = CODE_TO_BUCKET[code];
+        const placement = state.placements.find(p => p.row === r && p.col === c);
+        if (placement) {
+          const cls = placement.correct ? 'placed-correct' : 'placed-wrong';
+          html += `<div class="cell ${cls}" data-r="${r}" data-c="${c}" style="background:${BUCKET_META[placement.bucket].color};"></div>`;
+        } else {
+          html += `<div class="cell target" data-r="${r}" data-c="${c}" data-need="${bucket}" style="background:${hexWithAlpha(BUCKET_META[bucket].color)}"></div>`;
+        }
+      }
+    }
+  }
+  return html;
+}
+
+function hexWithAlpha(cssVar) {
+  // Build phase wants a semi-transparent target color hint
+  const map = {
+    'var(--protein)':'rgba(255,107,107,0.18)',
+    'var(--veggies)':'rgba(81,207,102,0.18)',
+    'var(--fruit)':  'rgba(255,146,43,0.18)',
+    'var(--grains)': 'rgba(252,196,25,0.20)',
+    'var(--dairy)':  'rgba(116,192,252,0.20)',
+    'var(--water)':  'rgba(51,154,240,0.20)',
+    'var(--sometimes)':'rgba(173,181,189,0.18)',
+  };
+  return map[cssVar] || 'rgba(255,255,255,0.1)';
+}
+
+function buildBucketsHtml() {
+  const order = ['protein','veggies','fruit','grains','dairy'];
+  return order.map(k => {
+    const empty = (state.buildBuckets[k] || 0) === 0;
+    const sel = state.selectedBucket === k;
+    return `
+      <div class="bucket ${empty ? 'empty' : ''} ${sel ? 'selected' : ''}" data-bucket="${k}">
+        <div class="swatch" style="background:${BUCKET_META[k].color}"></div>
+        <div class="name">${BUCKET_META[k].label}</div>
+        <div class="count">${state.buildBuckets[k] || 0}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function firstNonEmptyBucket() {
+  for (const k of ['protein','veggies','fruit','grains','dairy']) {
+    if ((state.buildBuckets[k] || 0) > 0) return k;
+  }
+  return null;
+}
+
+function attachCellHandlers() {
+  document.getElementById('buildGrid').addEventListener('click', e => {
+    const cell = e.target.closest('.cell.target');
+    if (!cell) return;
+    placeBlock(parseInt(cell.dataset.r,10), parseInt(cell.dataset.c,10));
+  });
+  document.getElementById('buildBucketRow').addEventListener('click', e => {
+    const b = e.target.closest('.bucket');
+    if (!b) return;
+    const k = b.dataset.bucket;
+    if ((state.buildBuckets[k] || 0) > 0) {
+      state.selectedBucket = k;
+      refreshBuildBuckets();
+    }
+  });
+}
+
+function placeBlock(r, c) {
+  if (!state.selectedBucket) return;
+  if ((state.buildBuckets[state.selectedBucket] || 0) <= 0) return;
+  const need = CODE_TO_BUCKET[BLUEPRINT[r][c]];
+  let bucketUsed = state.selectedBucket;
+  // Fog: chance the placement slips to a different cell? Simpler: chance the wrong bucket gets used.
+  const fogChance = Math.min(0.5, state.fog * 0.06);
+  let correct = (bucketUsed === need);
+  if (Math.random() < fogChance) {
+    // a "slip" — placement counts as wrong even if matched
+    correct = false;
+  }
+  state.buildBuckets[bucketUsed] -= 1;
+  state.placements.push({ row:r, col:c, bucket:bucketUsed, correct });
+  if ((state.buildBuckets[state.selectedBucket] || 0) === 0) {
+    state.selectedBucket = firstNonEmptyBucket();
+  }
+  refreshBuildGrid();
+  refreshBuildBuckets();
+  if (allCellsFilled()) finishBuild();
+}
+
+function allCellsFilled() {
+  let total = 0;
+  for (let r = 0; r < 6; r++)
+    for (let c = 0; c < 6; c++)
+      if (BLUEPRINT[r][c] !== '.') total++;
+  return state.placements.length >= total;
+}
+
+function refreshBuildGrid() {
+  const g = document.getElementById('buildGrid');
+  if (g) g.innerHTML = blueprintHtml();
+}
+function refreshBuildBuckets() {
+  const r = document.getElementById('buildBucketRow');
+  if (r) r.innerHTML = buildBucketsHtml();
+}
+
+function finishBuild() {
+  if (buildTimer) clearInterval(buildTimer);
+  buildTimer = null;
+  setPhase('score');
+}
+
+// ============== SCORE ==============
+function renderScore() {
+  const totalCells = countTargetCells();
+  const correct = state.placements.filter(p => p.correct).length;
+  const filled = state.placements.length;
+
+  // 0-60 placement match: how many cells are correctly built
+  const matchPct = totalCells === 0 ? 0 : (correct / totalCells);
+  const matchPts = Math.round(matchPct * 60);
+
+  // 0-20 variety: number of distinct food groups eaten (excluding sometimes/water)
+  const groupsEaten = ['protein','veggies','fruit','grains','dairy']
+    .filter(k => (state.buckets[k] || 0) > 0).length;
+  const varietyPts = groupsEaten * 4; // 5 groups * 4 = 20
+
+  // 0-15 sleep: in recommended window
+  let sleepPts = 0;
+  if (state.sleepHours >= RECOMMENDED_SLEEP_MIN && state.sleepHours <= RECOMMENDED_SLEEP_MAX) sleepPts = 15;
+  else if (state.sleepHours >= 8 && state.sleepHours <= 12) sleepPts = 8;
+  else sleepPts = 2;
+
+  // 0-5 activity bonus from clarity
+  const activityPts = Math.min(5, Math.round(state.clarity / 3));
+
+  // Penalty for fog
+  const fogPenalty = Math.min(20, state.fog * 2);
+
+  const total = Math.max(0, matchPts + varietyPts + sleepPts + activityPts - fogPenalty);
+  const totalClass = total >= 75 ? '' : (total >= 50 ? 'low' : 'bad');
+
+  root.innerHTML = `
+    <h2>Morning! Let's see what Sunny built.</h2>
+    <div class="row">
+      <div class="col">
+        <div class="build-stage" style="padding:10px">
+          <div class="build-grid">${frozenBlueprintHtml()}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="score-big ${totalClass}">${total} / 100</div>
+        ${scoreLine('Building match', `${correct}/${totalCells} cells`, matchPts, false)}
+        ${scoreLine('Variety bonus', `${groupsEaten}/5 food groups`, varietyPts, false)}
+        ${scoreLine('Sleep', `${state.sleepHours} hours`, sleepPts, false)}
+        ${scoreLine('Activity', `${state.clarity} taps`, activityPts, false)}
+        ${state.fog > 0 ? scoreLine('Fog penalty', `${state.fog} fog`, -fogPenalty, true) : ''}
+        <div class="takeaway">${takeaway(groupsEaten, state.sleepHours, state.fog, total)}</div>
+        <div class="actions">
+          <button class="btn primary" onclick="resetDay()">Try Again →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function scoreLine(label, detail, pts, bad) {
+  return `
+    <div class="score-line ${bad ? 'bad' : ''}">
+      <span><b>${label}</b> · <span style="color:#6c6c7a">${detail}</span></span>
+      <span class="v">${pts > 0 ? '+' : ''}${pts}</span>
+    </div>
+  `;
+}
+
+function takeaway(groups, sleep, fog, total) {
+  const parts = [];
+  if (groups >= 4) parts.push("Eating from lots of food groups gave Sunny strong, colorful blocks. Variety wins!");
+  else if (groups <= 2) parts.push("Try mixing in more food groups tomorrow — different foods make different kinds of blocks.");
+  if (sleep >= RECOMMENDED_SLEEP_MIN && sleep <= RECOMMENDED_SLEEP_MAX) parts.push("Sunny got the right amount of sleep, so they had plenty of build time.");
+  else if (sleep < RECOMMENDED_SLEEP_MIN) parts.push("Sunny didn't get enough sleep, so building time was short.");
+  if (fog >= 3) parts.push("Sometimes-foods are okay once in a while, but a lot of them made tonight a little foggy.");
+  if (parts.length === 0) parts.push("Nice day!");
+  return parts.join(' ');
+}
+
+function frozenBlueprintHtml() {
+  let html = '';
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 6; c++) {
+      const code = BLUEPRINT[r][c];
+      if (code === '.') { html += `<div class="cell empty"></div>`; continue; }
+      const placement = state.placements.find(p => p.row === r && p.col === c);
+      if (placement) {
+        const cls = placement.correct ? 'placed-correct' : 'placed-wrong';
+        html += `<div class="cell ${cls}" style="background:${BUCKET_META[placement.bucket].color}"></div>`;
+      } else {
+        html += `<div class="cell target" style="background:rgba(255,255,255,0.04)"></div>`;
+      }
+    }
+  }
+  return html;
+}
+
+function countTargetCells() {
+  let n = 0;
+  for (let r = 0; r < 6; r++)
+    for (let c = 0; c < 6; c++)
+      if (BLUEPRINT[r][c] !== '.') n++;
+  return n;
+}
+
+// ============== RESET ==============
+function resetDay() {
+  state.ate = [];
+  state.buckets = { protein:0, veggies:0, fruit:0, grains:0, dairy:0, water:0 };
+  state.fullness = 0;
+  state.fog = 0;
+  state.clarity = 0;
+  state.sleepHours = 10;
+  state.placements = [];
+  state.selectedBucket = null;
+  state.buildBuckets = {};
+  setPhase('intro');
+}
+
+// expose for inline handlers
+window.setPhase = setPhase;
+window.eatFood = eatFood;
+window.onSleepChange = onSleepChange;
+window.finishActivity = finishActivity;
+window.finishBuild = finishBuild;
+window.resetDay = resetDay;
+
+// ============== START ==============
+render();
+</script>
+</body>
+</html>
