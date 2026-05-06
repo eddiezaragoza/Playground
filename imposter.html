@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Imposter — a pass-and-play party word game">
+  <title>Imposter — Party Word Game</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d0d14;
+      color: #e8e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    .app {
+      flex: 1;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    h1 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 4px; }
+    h2 { font-size: 22px; margin-bottom: 12px; }
+    h3 { font-size: 16px; margin-bottom: 8px; color: #a8a8c0; font-weight: 600; }
+    p { line-height: 1.5; color: #c8c8d8; }
+    .subtitle { color: #8888a0; font-size: 14px; margin-bottom: 24px; }
+    .screen { display: none; animation: fadeIn 0.25s ease-out; }
+    .screen.active { display: flex; flex-direction: column; gap: 20px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card {
+      background: #181826;
+      border: 1px solid #2a2a3e;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      font-family: inherit;
+      width: 100%;
+      touch-action: manipulation;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: #6c5ce7; color: white; }
+    .btn-secondary { background: #2a2a3e; color: #e8e8f0; }
+    .btn-danger { background: #d63031; color: white; }
+    .btn-ghost { background: transparent; color: #a8a8c0; border: 1px solid #2a2a3e; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row .btn { flex: 1; }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 14px 16px;
+      background: #0d0d14;
+      border: 1px solid #2a2a3e;
+      border-radius: 12px;
+      color: #e8e8f0;
+      font-size: 16px;
+      font-family: inherit;
+    }
+    input[type="text"]:focus, select:focus { outline: none; border-color: #6c5ce7; }
+
+    .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .player-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #0d0d14;
+      border-radius: 10px;
+      border: 1px solid #2a2a3e;
+    }
+    .player-row .name { font-weight: 500; }
+    .player-row .remove {
+      background: none;
+      border: none;
+      color: #8888a0;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    .add-row { display: flex; gap: 8px; }
+    .add-row input { flex: 1; }
+    .add-row .btn { width: auto; padding: 14px 18px; }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field-row { display: flex; gap: 10px; align-items: stretch; }
+    .field-row .field { flex: 1; }
+
+    .stepper { display: flex; align-items: center; gap: 10px; }
+    .stepper button {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid #2a2a3e;
+      background: #0d0d14;
+      color: #e8e8f0;
+      font-size: 20px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .stepper .value {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .reveal-card {
+      background: linear-gradient(135deg, #1e1e2e, #1a1a28);
+      border: 1px solid #2a2a3e;
+      border-radius: 18px;
+      padding: 36px 24px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+    .reveal-card .player-name { font-size: 14px; color: #8888a0; text-transform: uppercase; letter-spacing: 1px; }
+    .reveal-card .word {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      word-break: break-word;
+    }
+    .reveal-card .word.imposter { color: #ff6b81; }
+    .reveal-card .hint {
+      font-size: 14px;
+      color: #8888a0;
+      max-width: 300px;
+    }
+    .tap-prompt {
+      text-align: center;
+      padding: 60px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tap-prompt .big { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .tap-prompt .small { color: #8888a0; }
+
+    .clue-info {
+      text-align: center;
+      padding: 24px;
+    }
+    .clue-info .first { color: #8888a0; font-size: 14px; margin-bottom: 8px; }
+    .clue-info .first-name { font-size: 32px; font-weight: 700; color: #6c5ce7; }
+    .clue-info .order {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .clue-info .order .pill {
+      background: #0d0d14;
+      border: 1px solid #2a2a3e;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .clue-info .order .pill .num { color: #6c5ce7; font-weight: 700; margin-right: 6px; }
+
+    .vote-list { display: flex; flex-direction: column; gap: 10px; }
+    .vote-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      background: #181826;
+      border: 1px solid #2a2a3e;
+      border-radius: 12px;
+      color: #e8e8f0;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+    }
+    .vote-btn:active { transform: scale(0.99); }
+    .vote-btn .count {
+      background: #6c5ce7;
+      color: white;
+      border-radius: 999px;
+      min-width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 0 8px;
+    }
+    .vote-btn .count.zero { background: #2a2a3e; color: #8888a0; }
+
+    .result {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .result .verdict {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .result .verdict.win { color: #00b894; }
+    .result .verdict.lose { color: #ff6b81; }
+    .result .detail { color: #c8c8d8; margin-bottom: 6px; }
+    .result .word-reveal { font-size: 24px; font-weight: 700; color: #6c5ce7; margin: 8px 0; }
+
+    .nav-back {
+      background: none;
+      border: none;
+      color: #8888a0;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 4px;
+      align-self: flex-start;
+      font-family: inherit;
+    }
+    .nav-back:hover { color: #e8e8f0; }
+
+    .footer-note {
+      text-align: center;
+      color: #555568;
+      font-size: 12px;
+      margin-top: auto;
+      padding-top: 32px;
+    }
+
+    @media (max-width: 360px) {
+      .reveal-card .word { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- ================= SETUP ================= -->
+    <section class="screen active" id="screen-setup">
+      <header>
+        <h1>Imposter</h1>
+        <p class="subtitle">Pass-and-play party word game</p>
+      </header>
+
+      <div class="card">
+        <h3>Players</h3>
+        <div class="player-list" id="player-list"></div>
+        <div class="add-row">
+          <input type="text" id="player-name" placeholder="Add a player" maxlength="20" autocomplete="off">
+          <button class="btn btn-secondary" id="add-player">Add</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <h3>Category</h3>
+          <select id="category-select"></select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <h3>Number of imposters</h3>
+          <div class="stepper">
+            <button id="imp-minus">−</button>
+            <div class="value" id="imp-value">1</div>
+            <button id="imp-plus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="start-game">Start Game</button>
+    </section>
+
+    <!-- ================= ROLE REVEAL ================= -->
+    <section class="screen" id="screen-reveal">
+      <button class="nav-back" id="reveal-back">← Back to setup</button>
+      <h2 id="reveal-heading">Pass to <span id="reveal-player-name"></span></h2>
+      <p class="subtitle" id="reveal-subtitle">Hide the screen from others. Tap to see your role.</p>
+
+      <div id="reveal-tap" class="card tap-prompt">
+        <div class="big">Tap to reveal</div>
+        <div class="small">Make sure no one's looking</div>
+      </div>
+
+      <div id="reveal-shown" class="reveal-card" style="display:none;">
+        <div class="player-name" id="reveal-shown-name"></div>
+        <div class="word" id="reveal-word"></div>
+        <div class="hint" id="reveal-hint"></div>
+      </div>
+
+      <button class="btn btn-primary" id="reveal-next" style="display:none;">Got it — pass to next</button>
+    </section>
+
+    <!-- ================= CLUE PHASE ================= -->
+    <section class="screen" id="screen-clue">
+      <h2>Clue Phase</h2>
+      <p class="subtitle">Each player says one word that relates to the secret word. Imposters: try to blend in.</p>
+
+      <div class="card clue-info">
+        <div class="first">Starting with</div>
+        <div class="first-name" id="first-player"></div>
+        <div class="order" id="clue-order"></div>
+      </div>
+
+      <button class="btn btn-primary" id="to-vote">Done — Go to Vote</button>
+      <button class="btn btn-ghost" id="another-round">Play another clue round</button>
+    </section>
+
+    <!-- ================= VOTING ================= -->
+    <section class="screen" id="screen-vote">
+      <h2>Vote</h2>
+      <p class="subtitle">Tap each player to record their vote. The most-voted player is eliminated.</p>
+
+      <div class="card">
+        <div class="field">
+          <h3 id="vote-current-prompt">Voting as: <span id="vote-current-name"></span></h3>
+        </div>
+        <div class="vote-list" id="vote-list" style="margin-top: 12px;"></div>
+      </div>
+
+      <button class="btn btn-ghost" id="vote-back">Back to clues</button>
+    </section>
+
+    <!-- ================= IMPOSTER GUESS ================= -->
+    <section class="screen" id="screen-guess">
+      <h2>Imposter caught!</h2>
+      <p class="subtitle"><span id="guess-imposter-name"></span> was an imposter. They get one chance to guess the secret word and steal the win.</p>
+
+      <div class="card">
+        <div class="field">
+          <h3>Imposter's guess</h3>
+          <input type="text" id="guess-input" placeholder="Type your guess" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="guess-skip">Skip / Give up</button>
+        <button class="btn btn-primary" id="guess-submit">Submit guess</button>
+      </div>
+    </section>
+
+    <!-- ================= RESULT ================= -->
+    <section class="screen" id="screen-result">
+      <div class="result">
+        <div class="verdict" id="result-verdict"></div>
+        <p class="detail" id="result-detail"></p>
+        <div class="word-reveal" id="result-word"></div>
+        <p class="detail" id="result-imposters"></p>
+      </div>
+
+      <button class="btn btn-primary" id="play-again">Play again (same players)</button>
+      <button class="btn btn-ghost" id="back-to-setup">Back to setup</button>
+    </section>
+
+    <div class="footer-note">Pass the device. Don't peek.</div>
+  </div>
+
+  <script>
+    // ============== WORD CATEGORIES ==============
+    const CATEGORIES = {
+      "Food & Drinks": ["Pizza","Sushi","Tacos","Burger","Pancakes","Spaghetti","Ice Cream","Coffee","Lemonade","Burrito","Salad","Pasta","Steak","Donut","Bagel","Soup","Curry","Cheesecake","Ramen","Smoothie","Waffle","Cereal","Pretzel","Popcorn","Nachos","Dumplings","Lasagna","Brownie","Cupcake","Sandwich"],
+      "Animals": ["Elephant","Penguin","Kangaroo","Octopus","Giraffe","Dolphin","Tiger","Panda","Cheetah","Koala","Owl","Hedgehog","Squirrel","Otter","Walrus","Sloth","Flamingo","Raccoon","Llama","Platypus","Hippo","Rhino","Lemur","Gorilla","Cobra","Eagle","Shark","Crocodile","Beaver","Falcon"],
+      "Movies & TV": ["Titanic","Avatar","Inception","Frozen","Shrek","Jaws","Friends","Seinfeld","Breaking Bad","The Office","Stranger Things","Star Wars","Harry Potter","Toy Story","Lion King","Matrix","Avengers","Batman","Spider-Man","Game of Thrones","Westworld","Lost","Squid Game","Black Mirror","Mad Men","Succession","Ted Lasso","Pulp Fiction","Goodfellas","Forrest Gump"],
+      "Sports": ["Soccer","Basketball","Tennis","Baseball","Golf","Boxing","Surfing","Skiing","Hockey","Football","Bowling","Cycling","Swimming","Wrestling","Cricket","Rugby","Volleyball","Skateboarding","Karate","Archery","Fencing","Rowing","Sailing","Climbing","Curling","Badminton","Snowboarding","Diving","Gymnastics","Marathon"],
+      "Places": ["Paris","Tokyo","New York","London","Rome","Sydney","Cairo","Mumbai","Rio","Amsterdam","Bangkok","Dubai","Iceland","Hawaii","Antarctica","Grand Canyon","Eiffel Tower","Times Square","Great Wall","Machu Picchu","Venice","Mount Everest","Sahara","Niagara Falls","Vatican","Hollywood","Las Vegas","Brooklyn","Alaska","Amazon"],
+      "Household Items": ["Toaster","Couch","Pillow","Microwave","Vacuum","Lamp","Mirror","Blender","Toothbrush","Toilet","Refrigerator","Hairdryer","Television","Doorbell","Dishwasher","Curtains","Coffee Maker","Iron","Rug","Bookshelf","Candle","Clock","Kettle","Mop","Broom","Stove","Sink","Drawer","Closet","Plunger"],
+      "Jobs": ["Doctor","Teacher","Chef","Pilot","Firefighter","Nurse","Lawyer","Plumber","Dentist","Farmer","Astronaut","Police Officer","Engineer","Accountant","Photographer","Architect","Janitor","Mechanic","Barista","Lifeguard","Journalist","Scientist","Carpenter","Electrician","Programmer","Magician","Translator","Veterinarian","Tour Guide","DJ"],
+      "Random": ["Karaoke","Tattoo","Wedding","Birthday","Halloween","Beach","Camping","Concert","Road Trip","Sleepover","Gym","Library","Casino","Festival","Picnic","Yoga","Rollercoaster","Fireworks","Snowball","Bonfire","Treasure","Volcano","Earthquake","Lightning","Rainbow","Ghost","Dragon","Unicorn","Robot","Time Machine"]
+    };
+
+    // ============== STATE ==============
+    const state = {
+      players: [],
+      category: "Food & Drinks",
+      numImposters: 1,
+      secretWord: "",
+      roles: [],          // index-aligned with players: "civilian" | "imposter"
+      revealIndex: 0,
+      firstPlayerIndex: 0,
+      voteOrder: [],      // queue of player indices voting
+      voteCurrent: 0,
+      voteCounts: [],     // counts per player index
+    };
+
+    // ============== UTILITIES ==============
+    const $ = id => document.getElementById(id);
+    const showScreen = id => {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      $(id).classList.add("active");
+      window.scrollTo(0, 0);
+    };
+    const shuffle = arr => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    const randomFrom = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    // ============== SETUP SCREEN ==============
+    function loadSavedPlayers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("imposter:players") || "null");
+        if (Array.isArray(saved) && saved.length) state.players = saved;
+      } catch (_) {}
+      if (!state.players.length) state.players = ["Player 1", "Player 2", "Player 3"];
+    }
+    function savePlayers() {
+      try { localStorage.setItem("imposter:players", JSON.stringify(state.players)); } catch (_) {}
+    }
+    function renderPlayers() {
+      const list = $("player-list");
+      list.innerHTML = "";
+      state.players.forEach((name, i) => {
+        const row = document.createElement("div");
+        row.className = "player-row";
+        row.innerHTML = `<span class="name"></span><button class="remove" aria-label="Remove">×</button>`;
+        row.querySelector(".name").textContent = name;
+        row.querySelector(".remove").addEventListener("click", () => {
+          state.players.splice(i, 1);
+          savePlayers();
+          renderPlayers();
+          updateImposterStepper();
+        });
+        list.appendChild(row);
+      });
+    }
+    function renderCategories() {
+      const sel = $("category-select");
+      sel.innerHTML = "";
+      Object.keys(CATEGORIES).forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+      sel.value = state.category;
+    }
+    function maxImposters() {
+      return Math.max(1, Math.floor((state.players.length - 1) / 2)) || 1;
+    }
+    function updateImposterStepper() {
+      if (state.numImposters > maxImposters()) state.numImposters = maxImposters();
+      if (state.numImposters < 1) state.numImposters = 1;
+      $("imp-value").textContent = state.numImposters;
+      $("imp-minus").disabled = state.numImposters <= 1;
+      $("imp-plus").disabled = state.numImposters >= maxImposters();
+      $("start-game").disabled = state.players.length < 3;
+    }
+
+    $("add-player").addEventListener("click", () => {
+      const input = $("player-name");
+      const name = input.value.trim();
+      if (!name) return;
+      if (state.players.length >= 12) return;
+      state.players.push(name);
+      input.value = "";
+      input.focus();
+      savePlayers();
+      renderPlayers();
+      updateImposterStepper();
+    });
+    $("player-name").addEventListener("keydown", e => {
+      if (e.key === "Enter") { e.preventDefault(); $("add-player").click(); }
+    });
+    $("category-select").addEventListener("change", e => state.category = e.target.value);
+    $("imp-minus").addEventListener("click", () => { state.numImposters--; updateImposterStepper(); });
+    $("imp-plus").addEventListener("click", () => { state.numImposters++; updateImposterStepper(); });
+
+    $("start-game").addEventListener("click", () => {
+      if (state.players.length < 3) return;
+      startGame();
+    });
+
+    // ============== GAME START ==============
+    function startGame() {
+      const words = CATEGORIES[state.category];
+      state.secretWord = randomFrom(words);
+
+      const indices = state.players.map((_, i) => i);
+      const imposterIndices = new Set(shuffle(indices).slice(0, state.numImposters));
+      state.roles = state.players.map((_, i) => imposterIndices.has(i) ? "imposter" : "civilian");
+
+      state.revealIndex = 0;
+      state.firstPlayerIndex = Math.floor(Math.random() * state.players.length);
+
+      showRevealStep();
+      showScreen("screen-reveal");
+    }
+
+    // ============== ROLE REVEAL ==============
+    function showRevealStep() {
+      const i = state.revealIndex;
+      $("reveal-player-name").textContent = state.players[i];
+      $("reveal-tap").style.display = "block";
+      $("reveal-shown").style.display = "none";
+      $("reveal-next").style.display = "none";
+    }
+    $("reveal-tap").addEventListener("click", () => {
+      const i = state.revealIndex;
+      const role = state.roles[i];
+      $("reveal-shown-name").textContent = state.players[i];
+      if (role === "imposter") {
+        $("reveal-word").textContent = "IMPOSTER";
+        $("reveal-word").classList.add("imposter");
+        $("reveal-hint").textContent = "Don't get caught. Try to figure out the word from clues.";
+      } else {
+        $("reveal-word").textContent = state.secretWord;
+        $("reveal-word").classList.remove("imposter");
+        $("reveal-hint").textContent = "Give a one-word clue when it's your turn.";
+      }
+      $("reveal-tap").style.display = "none";
+      $("reveal-shown").style.display = "flex";
+      $("reveal-next").style.display = "block";
+    });
+    $("reveal-next").addEventListener("click", () => {
+      state.revealIndex++;
+      if (state.revealIndex >= state.players.length) {
+        beginCluePhase();
+      } else {
+        showRevealStep();
+      }
+    });
+    $("reveal-back").addEventListener("click", () => {
+      if (confirm("Cancel game and return to setup?")) showScreen("screen-setup");
+    });
+
+    // ============== CLUE PHASE ==============
+    function beginCluePhase() {
+      $("first-player").textContent = state.players[state.firstPlayerIndex];
+      const order = $("clue-order");
+      order.innerHTML = "";
+      for (let k = 0; k < state.players.length; k++) {
+        const idx = (state.firstPlayerIndex + k) % state.players.length;
+        const pill = document.createElement("div");
+        pill.className = "pill";
+        pill.innerHTML = `<span class="num">${k + 1}.</span><span></span>`;
+        pill.querySelector("span:last-child").textContent = state.players[idx];
+        order.appendChild(pill);
+      }
+      showScreen("screen-clue");
+    }
+    $("another-round").addEventListener("click", () => {
+      state.firstPlayerIndex = (state.firstPlayerIndex + 1) % state.players.length;
+      beginCluePhase();
+    });
+    $("to-vote").addEventListener("click", beginVote);
+
+    // ============== VOTING ==============
+    function beginVote() {
+      state.voteOrder = state.players.map((_, i) => i);
+      state.voteCurrent = 0;
+      state.voteCounts = state.players.map(() => 0);
+      renderVoteStep();
+      showScreen("screen-vote");
+    }
+    function renderVoteStep() {
+      const voterIdx = state.voteOrder[state.voteCurrent];
+      $("vote-current-name").textContent = state.players[voterIdx];
+      const list = $("vote-list");
+      list.innerHTML = "";
+      state.players.forEach((name, i) => {
+        if (i === voterIdx) return; // can't vote for self
+        const btn = document.createElement("button");
+        btn.className = "vote-btn";
+        const c = state.voteCounts[i];
+        btn.innerHTML = `<span></span><span class="count ${c === 0 ? "zero" : ""}">${c}</span>`;
+        btn.querySelector("span:first-child").textContent = name;
+        btn.addEventListener("click", () => {
+          state.voteCounts[i]++;
+          state.voteCurrent++;
+          if (state.voteCurrent >= state.voteOrder.length) {
+            resolveVote();
+          } else {
+            renderVoteStep();
+          }
+        });
+        list.appendChild(btn);
+      });
+    }
+    $("vote-back").addEventListener("click", () => showScreen("screen-clue"));
+
+    function resolveVote() {
+      let max = -1, winners = [];
+      state.voteCounts.forEach((c, i) => {
+        if (c > max) { max = c; winners = [i]; }
+        else if (c === max) winners.push(i);
+      });
+
+      if (winners.length > 1 || max === 0) {
+        // Tie — civilians lose this vote, imposters win
+        showResult({
+          civilianWin: false,
+          tieEliminated: winners,
+          imposterGuessed: false,
+          eliminatedIndex: null,
+        });
+        return;
+      }
+
+      const eliminatedIdx = winners[0];
+      const eliminatedRole = state.roles[eliminatedIdx];
+
+      if (eliminatedRole === "imposter") {
+        // Caught! Give the imposter a chance to guess the word.
+        $("guess-imposter-name").textContent = state.players[eliminatedIdx];
+        $("guess-input").value = "";
+        state._caughtImposterIdx = eliminatedIdx;
+        showScreen("screen-guess");
+      } else {
+        // Wrong vote — civilians lose
+        showResult({
+          civilianWin: false,
+          eliminatedIndex: eliminatedIdx,
+          imposterGuessed: false,
+        });
+      }
+    }
+
+    // ============== IMPOSTER GUESS ==============
+    $("guess-submit").addEventListener("click", () => {
+      const guess = $("guess-input").value.trim().toLowerCase();
+      const correct = state.secretWord.toLowerCase();
+      const isMatch = guess && (guess === correct || correct.includes(guess) && guess.length >= 3);
+      showResult({
+        civilianWin: !isMatch,
+        eliminatedIndex: state._caughtImposterIdx,
+        imposterGuessed: !!isMatch,
+        guessText: $("guess-input").value.trim(),
+      });
+    });
+    $("guess-skip").addEventListener("click", () => {
+      showResult({
+        civilianWin: true,
+        eliminatedIndex: state._caughtImposterIdx,
+        imposterGuessed: false,
+      });
+    });
+
+    // ============== RESULT ==============
+    function showResult(r) {
+      const v = $("result-verdict");
+      const detail = $("result-detail");
+      const wordEl = $("result-word");
+      const impEl = $("result-imposters");
+
+      const imposterNames = state.players
+        .filter((_, i) => state.roles[i] === "imposter")
+        .join(", ");
+
+      if (r.civilianWin) {
+        v.textContent = "Civilians win!";
+        v.className = "verdict win";
+        if (r.imposterGuessed === false && r.eliminatedIndex != null) {
+          detail.textContent = `${state.players[r.eliminatedIndex]} was caught and couldn't guess the word.`;
+        } else {
+          detail.textContent = "The imposter has been unmasked.";
+        }
+      } else {
+        v.textContent = "Imposters win!";
+        v.className = "verdict lose";
+        if (r.tieEliminated) {
+          detail.textContent = "The vote was a tie — no one was eliminated.";
+        } else if (r.imposterGuessed) {
+          detail.textContent = `${state.players[r.eliminatedIndex]} was caught but guessed "${r.guessText}" — close enough!`;
+        } else if (r.eliminatedIndex != null) {
+          detail.textContent = `${state.players[r.eliminatedIndex]} was innocent! The imposters got away.`;
+        } else {
+          detail.textContent = "The imposters slipped through.";
+        }
+      }
+
+      wordEl.textContent = `Secret word: ${state.secretWord}`;
+      impEl.textContent = `Imposter${state.roles.filter(r => r === "imposter").length > 1 ? "s" : ""}: ${imposterNames}`;
+
+      showScreen("screen-result");
+    }
+    $("play-again").addEventListener("click", () => startGame());
+    $("back-to-setup").addEventListener("click", () => showScreen("screen-setup"));
+
+    // ============== INIT ==============
+    loadSavedPlayers();
+    renderPlayers();
+    renderCategories();
+    updateImposterStepper();
+  </script>
+</body>
+</html>
