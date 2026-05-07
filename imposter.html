@@ -10,8 +10,9 @@
     html, body { height: 100%; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0d0d14;
-      color: #e8e8f0;
+      background: linear-gradient(160deg, #fff5e6 0%, #ffe6f2 50%, #e9e4ff 100%);
+      background-attachment: fixed;
+      color: #2d2b4a;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -26,20 +27,21 @@
       display: flex;
       flex-direction: column;
     }
-    h1 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 4px; }
-    h2 { font-size: 22px; margin-bottom: 12px; }
-    h3 { font-size: 16px; margin-bottom: 8px; color: #a8a8c0; font-weight: 600; }
-    p { line-height: 1.5; color: #c8c8d8; }
-    .subtitle { color: #8888a0; font-size: 14px; margin-bottom: 24px; }
+    h1 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 4px; color: #2d2b4a; }
+    h2 { font-size: 22px; margin-bottom: 12px; color: #2d2b4a; }
+    h3 { font-size: 16px; margin-bottom: 8px; color: #6b5fb8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    p { line-height: 1.5; color: #4a4866; }
+    .subtitle { color: #6f6c91; font-size: 14px; margin-bottom: 24px; }
     .screen { display: none; animation: fadeIn 0.25s ease-out; }
     .screen.active { display: flex; flex-direction: column; gap: 20px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .card {
-      background: #181826;
-      border: 1px solid #2a2a3e;
-      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid #ece8ff;
+      border-radius: 16px;
       padding: 20px;
+      box-shadow: 0 4px 18px rgba(108, 92, 231, 0.08);
     }
 
     .btn {
@@ -48,33 +50,38 @@
       border: none;
       border-radius: 12px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: transform 0.1s, opacity 0.2s;
+      transition: transform 0.1s, opacity 0.2s, box-shadow 0.2s;
       font-family: inherit;
       width: 100%;
       touch-action: manipulation;
     }
     .btn:active { transform: scale(0.97); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-primary { background: #6c5ce7; color: white; }
-    .btn-secondary { background: #2a2a3e; color: #e8e8f0; }
-    .btn-danger { background: #d63031; color: white; }
-    .btn-ghost { background: transparent; color: #a8a8c0; border: 1px solid #2a2a3e; }
+    .btn-primary {
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8);
+      color: white;
+      box-shadow: 0 6px 16px rgba(124, 108, 255, 0.35);
+    }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 22px rgba(124, 108, 255, 0.45); }
+    .btn-secondary { background: #ece8ff; color: #4a3fb8; }
+    .btn-danger { background: #ff5d6f; color: white; }
+    .btn-ghost { background: transparent; color: #6b5fb8; border: 1px solid #d8d2ff; }
     .btn-row { display: flex; gap: 10px; }
     .btn-row .btn { flex: 1; }
 
     input[type="text"], select {
       width: 100%;
       padding: 14px 16px;
-      background: #0d0d14;
-      border: 1px solid #2a2a3e;
+      background: #fbfaff;
+      border: 1px solid #d8d2ff;
       border-radius: 12px;
-      color: #e8e8f0;
+      color: #2d2b4a;
       font-size: 16px;
       font-family: inherit;
     }
-    input[type="text"]:focus, select:focus { outline: none; border-color: #6c5ce7; }
+    input[type="text"]:focus, select:focus { outline: none; border-color: #7c6cff; box-shadow: 0 0 0 3px rgba(124, 108, 255, 0.15); }
 
     .player-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
     .player-row {
@@ -82,19 +89,20 @@
       align-items: center;
       justify-content: space-between;
       padding: 12px 16px;
-      background: #0d0d14;
+      background: #fbfaff;
       border-radius: 10px;
-      border: 1px solid #2a2a3e;
+      border: 1px solid #ece8ff;
     }
-    .player-row .name { font-weight: 500; }
+    .player-row .name { font-weight: 500; color: #2d2b4a; }
     .player-row .remove {
       background: none;
       border: none;
-      color: #8888a0;
+      color: #b3aed4;
       font-size: 22px;
       cursor: pointer;
       padding: 0 4px;
     }
+    .player-row .remove:hover { color: #ff5d6f; }
     .add-row { display: flex; gap: 8px; }
     .add-row input { flex: 1; }
     .add-row .btn { width: auto; padding: 14px 18px; }
@@ -108,10 +116,11 @@
       width: 44px;
       height: 44px;
       border-radius: 10px;
-      border: 1px solid #2a2a3e;
-      background: #0d0d14;
-      color: #e8e8f0;
+      border: 1px solid #d8d2ff;
+      background: #fbfaff;
+      color: #4a3fb8;
       font-size: 20px;
+      font-weight: 700;
       cursor: pointer;
       font-family: inherit;
     }
@@ -119,12 +128,13 @@
       flex: 1;
       text-align: center;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
+      color: #2d2b4a;
     }
 
     .reveal-card {
-      background: linear-gradient(135deg, #1e1e2e, #1a1a28);
-      border: 1px solid #2a2a3e;
+      background: linear-gradient(135deg, #fff5e6, #ffe6f2);
+      border: 1px solid #ffd8e6;
       border-radius: 18px;
       padding: 36px 24px;
       min-height: 280px;
@@ -134,18 +144,25 @@
       align-items: center;
       text-align: center;
       gap: 16px;
+      box-shadow: 0 8px 24px rgba(255, 111, 168, 0.18);
     }
-    .reveal-card .player-name { font-size: 14px; color: #8888a0; text-transform: uppercase; letter-spacing: 1px; }
+    .reveal-card .player-name { font-size: 14px; color: #8e7eb8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
     .reveal-card .word {
       font-size: 42px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -1px;
       word-break: break-word;
+      color: #2d2b4a;
     }
-    .reveal-card .word.imposter { color: #ff6b81; }
+    .reveal-card .word.imposter {
+      background: linear-gradient(135deg, #ff5d6f, #ff9a3c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     .reveal-card .hint {
       font-size: 14px;
-      color: #8888a0;
+      color: #6f6c91;
       max-width: 300px;
     }
     .tap-prompt {
@@ -154,15 +171,22 @@
       cursor: pointer;
       user-select: none;
     }
-    .tap-prompt .big { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .tap-prompt .small { color: #8888a0; }
+    .tap-prompt .big { font-size: 28px; font-weight: 800; margin-bottom: 8px; color: #4a3fb8; }
+    .tap-prompt .small { color: #8e7eb8; }
 
     .clue-info {
       text-align: center;
       padding: 24px;
     }
-    .clue-info .first { color: #8888a0; font-size: 14px; margin-bottom: 8px; }
-    .clue-info .first-name { font-size: 32px; font-weight: 700; color: #6c5ce7; }
+    .clue-info .first { color: #8e7eb8; font-size: 14px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .clue-info .first-name {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     .clue-info .order {
       margin-top: 24px;
       display: flex;
@@ -171,13 +195,14 @@
       gap: 8px;
     }
     .clue-info .order .pill {
-      background: #0d0d14;
-      border: 1px solid #2a2a3e;
+      background: #fbfaff;
+      border: 1px solid #ece8ff;
       padding: 8px 14px;
       border-radius: 20px;
       font-size: 14px;
+      color: #2d2b4a;
     }
-    .clue-info .order .pill .num { color: #6c5ce7; font-weight: 700; margin-right: 6px; }
+    .clue-info .order .pill .num { color: #7c6cff; font-weight: 800; margin-right: 6px; }
 
     .vote-list { display: flex; flex-direction: column; gap: 10px; }
     .vote-btn {
@@ -185,19 +210,20 @@
       justify-content: space-between;
       align-items: center;
       padding: 16px 18px;
-      background: #181826;
-      border: 1px solid #2a2a3e;
+      background: #fbfaff;
+      border: 1px solid #ece8ff;
       border-radius: 12px;
-      color: #e8e8f0;
+      color: #2d2b4a;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       font-family: inherit;
       text-align: left;
     }
     .vote-btn:active { transform: scale(0.99); }
+    .vote-btn:hover { border-color: #7c6cff; }
     .vote-btn .count {
-      background: #6c5ce7;
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8);
       color: white;
       border-radius: 999px;
       min-width: 28px;
@@ -209,7 +235,7 @@
       font-size: 14px;
       padding: 0 8px;
     }
-    .vote-btn .count.zero { background: #2a2a3e; color: #8888a0; }
+    .vote-btn .count.zero { background: #ece8ff; color: #8e7eb8; }
 
     .result {
       text-align: center;
@@ -217,45 +243,156 @@
     }
     .result .verdict {
       font-size: 32px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 12px;
     }
     .result .verdict.win { color: #00b894; }
-    .result .verdict.lose { color: #ff6b81; }
-    .result .detail { color: #c8c8d8; margin-bottom: 6px; }
-    .result .word-reveal { font-size: 24px; font-weight: 700; color: #6c5ce7; margin: 8px 0; }
+    .result .verdict.lose { color: #ff5d6f; }
+    .result .detail { color: #4a4866; margin-bottom: 6px; }
+    .result .word-reveal {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 8px 0;
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
     .nav-back {
       background: none;
       border: none;
-      color: #8888a0;
+      color: #8e7eb8;
       font-size: 14px;
       cursor: pointer;
       padding: 8px 0;
       margin-bottom: 4px;
       align-self: flex-start;
       font-family: inherit;
+      font-weight: 600;
     }
-    .nav-back:hover { color: #e8e8f0; }
+    .nav-back:hover { color: #4a3fb8; }
 
     .footer-note {
       text-align: center;
-      color: #555568;
+      color: #a39fc7;
       font-size: 12px;
       margin-top: auto;
       padding-top: 32px;
     }
 
+    /* ============== SPLASH ============== */
+    .splash-hero {
+      text-align: center;
+      padding: 32px 8px 16px;
+    }
+    .splash-emoji {
+      font-size: 72px;
+      line-height: 1;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 6px 14px rgba(124, 108, 255, 0.35));
+    }
+    .splash-title {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8 60%, #ff9a3c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .splash-tagline {
+      color: #4a4866;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .how-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+    .how-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .how-step .num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #7c6cff, #ff6fa8);
+      color: white;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 3px 8px rgba(124, 108, 255, 0.3);
+    }
+    .how-step .text { flex: 1; padding-top: 4px; }
+    .how-step .text b { color: #2d2b4a; }
+    .how-step .text p { color: #4a4866; font-size: 14px; }
+
     @media (max-width: 360px) {
       .reveal-card .word { font-size: 36px; }
+      .splash-title { font-size: 38px; }
     }
   </style>
 </head>
 <body>
   <div class="app">
 
+    <!-- ================= SPLASH ================= -->
+    <section class="screen active" id="screen-splash">
+      <div class="splash-hero">
+        <div class="splash-emoji">🕵️</div>
+        <div class="splash-title">Imposter</div>
+        <div class="splash-tagline">A pass-and-play party word game</div>
+      </div>
+
+      <div class="card">
+        <h3>How to play</h3>
+        <div class="how-list">
+          <div class="how-step">
+            <div class="num">1</div>
+            <div class="text">
+              <b>Pass the device around.</b>
+              <p>Everyone sees their secret role privately. Most players get the same secret word — but one or more are the imposter and only see "IMPOSTER".</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="num">2</div>
+            <div class="text">
+              <b>Drop one-word clues.</b>
+              <p>Take turns saying a single word that hints at the secret word. Imposters bluff — give a clue vague enough to fit in but specific enough to not get caught.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="num">3</div>
+            <div class="text">
+              <b>Vote out the imposter.</b>
+              <p>When you're ready, everyone votes for who they think is faking it. The most-voted player is eliminated.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="num">4</div>
+            <div class="text">
+              <b>Win or get caught.</b>
+              <p>If the imposter is caught, they get one chance to guess the secret word and steal the win. Otherwise — civilians take the round.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="splash-start">Get Started</button>
+    </section>
+
     <!-- ================= SETUP ================= -->
-    <section class="screen active" id="screen-setup">
+    <section class="screen" id="screen-setup">
+      <button class="nav-back" id="setup-back">← How to play</button>
       <header>
         <h1>Imposter</h1>
         <p class="subtitle">Pass-and-play party word game</p>
@@ -699,6 +836,10 @@
     }
     $("play-again").addEventListener("click", () => startGame());
     $("back-to-setup").addEventListener("click", () => showScreen("screen-setup"));
+
+    // ============== SPLASH ==============
+    $("splash-start").addEventListener("click", () => showScreen("screen-setup"));
+    $("setup-back").addEventListener("click", () => showScreen("screen-splash"));
 
     // ============== INIT ==============
     loadSavedPlayers();
