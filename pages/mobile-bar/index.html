@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rolling Pour -- Mobile Bar</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Lobster&family=Pacifico&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==================== THEME SYSTEM ==================== */
+:root {
+  --transition-speed: 0.5s;
+}
+
+/* THEME 1: Classy/Elegant */
+[data-theme="classy"] {
+  --bg-primary: #0D0D0D;
+  --bg-secondary: #1A1A1A;
+  --bg-card: #222222;
+  --bg-hero-overlay: rgba(0,0,0,0.55);
+  --accent: #C9A84C;
+  --accent-light: #E8D48B;
+  --accent-dark: #9A7B2E;
+  --text-primary: #F5F0E8;
+  --text-secondary: #BFB8A8;
+  --text-muted: #8A8478;
+  --border: #3A3630;
+  --hero-font: 'Playfair Display', serif;
+  --body-font: 'DM Sans', sans-serif;
+  --hero-gradient: linear-gradient(135deg, #0D0D0D 0%, #1A1511 50%, #0D0D0D 100%);
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --btn-gradient: linear-gradient(135deg, #C9A84C, #E8D48B);
+  --btn-text: #0D0D0D;
+  --nav-bg: rgba(13,13,13,0.95);
+  --section-alt-bg: #151515;
+  --hero-img: url('https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=1600&q=80');
+}
+
+/* THEME 2: Fun/Tropical */
+[data-theme="tropical"] {
+  --bg-primary: #FFF8F0;
+  --bg-secondary: #FFF0E0;
+  --bg-card: #FFFFFF;
+  --bg-hero-overlay: rgba(0,0,0,0.35);
+  --accent: #FF6B35;
+  --accent-light: #FF9A6C;
+  --accent-dark: #E04E1A;
+  --text-primary: #2D1810;
+  --text-secondary: #5C3D2E;
+  --text-muted: #9A7B6A;
+  --border: #FFD4B8;
+  --hero-font: 'Pacifico', cursive;
+  --body-font: 'DM Sans', sans-serif;
+  --hero-gradient: linear-gradient(135deg, #FF6B35 0%, #FFB347 50%, #FF6B35 100%);
+  --card-shadow: 0 4px 24px rgba(255,107,53,0.12);
+  --btn-gradient: linear-gradient(135deg, #FF6B35, #FFB347);
+  --btn-text: #FFFFFF;
+  --nav-bg: rgba(255,248,240,0.95);
+  --section-alt-bg: #FFF0E0;
+  --hero-img: url('https://images.unsplash.com/photo-1536935338788-846bb9981813?w=1600&q=80');
+}
+
+/* THEME 3: Rustic/Vintage */
+[data-theme="rustic"] {
+  --bg-primary: #FAF5EE;
+  --bg-secondary: #F0E8DB;
+  --bg-card: #FFFFFF;
+  --bg-hero-overlay: rgba(40,30,20,0.5);
+  --accent: #8B5E3C;
+  --accent-light: #B8916E;
+  --accent-dark: #6B4226;
+  --text-primary: #2C1810;
+  --text-secondary: #5A4030;
+  --text-muted: #8A7560;
+  --border: #D4C4B0;
+  --hero-font: 'Playfair Display', serif;
+  --body-font: 'DM Sans', sans-serif;
+  --hero-gradient: linear-gradient(135deg, #8B5E3C 0%, #D4A574 50%, #8B5E3C 100%);
+  --card-shadow: 0 4px 24px rgba(139,94,60,0.1);
+  --btn-gradient: linear-gradient(135deg, #8B5E3C, #B8916E);
+  --btn-text: #FFFFFF;
+  --nav-bg: rgba(250,245,238,0.95);
+  --section-alt-bg: #F0E8DB;
+  --hero-img: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1600&q=80');
+}
+
+/* THEME 4: Modern/Minimal */
+[data-theme="modern"] {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F0F0F0;
+  --bg-card: #FFFFFF;
+  --bg-hero-overlay: rgba(0,0,0,0.45);
+  --accent: #2D2D2D;
+  --accent-light: #555555;
+  --accent-dark: #111111;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #8A8A8A;
+  --border: #E0E0E0;
+  --hero-font: 'Space Grotesk', sans-serif;
+  --body-font: 'Space Grotesk', sans-serif;
+  --hero-gradient: linear-gradient(135deg, #2D2D2D 0%, #555555 50%, #2D2D2D 100%);
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --btn-gradient: linear-gradient(135deg, #2D2D2D, #555555);
+  --btn-text: #FFFFFF;
+  --nav-bg: rgba(250,250,250,0.95);
+  --section-alt-bg: #F0F0F0;
+  --hero-img: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1600&q=80');
+}
+
+/* ==================== GLOBAL RESET ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body-font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background var(--transition-speed), color var(--transition-speed);
+  line-height: 1.6;
+}
+
+/* ==================== THEME TOGGLE ==================== */
+.theme-toggle {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  transition: all var(--transition-speed);
+}
+
+.theme-toggle .toggle-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.theme-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.theme-btn:hover { transform: scale(1.15); }
+.theme-btn.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(201,168,76,0.4); }
+
+.theme-btn[data-set="classy"] { background: linear-gradient(135deg, #0D0D0D, #C9A84C); }
+.theme-btn[data-set="tropical"] { background: linear-gradient(135deg, #FF6B35, #FFB347); }
+.theme-btn[data-set="rustic"] { background: linear-gradient(135deg, #8B5E3C, #D4A574); }
+.theme-btn[data-set="modern"] { background: linear-gradient(135deg, #2D2D2D, #FAFAFA); }
+
+/* ==================== NAVIGATION ==================== */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: all var(--transition-speed);
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: var(--hero-font);
+  font-size: 1.4rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+  letter-spacing: 0.3px;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  transition: all 0.3s;
+}
+
+/* ==================== HERO ==================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: var(--hero-img);
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.8s;
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-hero-overlay);
+  transition: background var(--transition-speed);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 24px;
+}
+
+.hero-content h1 {
+  font-family: var(--hero-font);
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  color: #FFFFFF;
+  margin-bottom: 16px;
+  line-height: 1.1;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.hero-content .tagline {
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 36px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.hero-cta {
+  display: inline-block;
+  padding: 16px 40px;
+  background: var(--btn-gradient);
+  color: var(--btn-text);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 50px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+.hero-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+/* ==================== SECTIONS ==================== */
+section {
+  padding: 100px 24px;
+  transition: background var(--transition-speed);
+}
+
+section:nth-child(even) {
+  background: var(--section-alt-bg);
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-header h2 {
+  font-family: var(--hero-font);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  transition: color var(--transition-speed);
+}
+
+.section-header p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  transition: color var(--transition-speed);
+}
+
+.accent-line {
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  margin: 16px auto 0;
+  border-radius: 2px;
+  transition: background var(--transition-speed);
+}
+
+/* ==================== SERVICES ==================== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.service-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 28px;
+  text-align: center;
+  transition: all 0.3s;
+  box-shadow: var(--card-shadow);
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.service-icon {
+  font-size: 2.4rem;
+  margin-bottom: 18px;
+}
+
+.service-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  transition: color var(--transition-speed);
+}
+
+.service-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  transition: color var(--transition-speed);
+}
+
+/* ==================== MENU ==================== */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.menu-category {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all var(--transition-speed);
+  box-shadow: var(--card-shadow);
+}
+
+.menu-category h3 {
+  font-family: var(--hero-font);
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  transition: all var(--transition-speed);
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.menu-item:last-child { border-bottom: none; }
+
+.menu-item-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color var(--transition-speed);
+}
+
+.menu-item-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  transition: color var(--transition-speed);
+}
+
+/* ==================== PACKAGES / PRICING ==================== */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.package-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.3s;
+  box-shadow: var(--card-shadow);
+  position: relative;
+}
+
+.package-card.featured {
+  border-color: var(--accent);
+  transform: scale(1.03);
+}
+
+.package-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--btn-gradient);
+  color: var(--btn-text);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 20px;
+  border-radius: 20px;
+}
+
+.package-card h3 {
+  font-family: var(--hero-font);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  transition: color var(--transition-speed);
+}
+
+.package-price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+  transition: color var(--transition-speed);
+}
+
+.package-unit {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.package-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 28px;
+}
+
+.package-features li {
+  padding: 8px 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: color var(--transition-speed);
+}
+
+.package-features li::before {
+  content: '\2713';
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.package-btn {
+  display: inline-block;
+  padding: 14px 36px;
+  background: var(--btn-gradient);
+  color: var(--btn-text);
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.package-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* ==================== ABOUT ==================== */
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-image {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-text h3 {
+  font-family: var(--hero-font);
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  transition: color var(--transition-speed);
+}
+
+.about-text p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  transition: color var(--transition-speed);
+}
+
+.about-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 28px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-family: var(--hero-font);
+  font-size: 2rem;
+  color: var(--accent);
+  font-weight: 700;
+  transition: color var(--transition-speed);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  transition: color var(--transition-speed);
+}
+
+/* ==================== HOW IT WORKS ==================== */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+  position: relative;
+}
+
+.step {
+  text-align: center;
+  position: relative;
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--btn-gradient);
+  color: var(--btn-text);
+  font-weight: 700;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  transition: all var(--transition-speed);
+}
+
+.step h3 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  transition: color var(--transition-speed);
+}
+
+.step p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  transition: color var(--transition-speed);
+}
+
+/* ==================== TESTIMONIALS ==================== */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  transition: all var(--transition-speed);
+}
+
+.testimonial-stars {
+  color: var(--accent);
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+.testimonial-text {
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  transition: color var(--transition-speed);
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--btn-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--btn-text);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.testimonial-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: color var(--transition-speed);
+}
+
+.testimonial-event {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: color var(--transition-speed);
+}
+
+/* ==================== FAQ ==================== */
+.faq-list {
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  transition: all var(--transition-speed);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 24px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--body-font);
+  transition: color var(--transition-speed);
+}
+
+.faq-question::after {
+  content: '+';
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: transform 0.3s, color var(--transition-speed);
+}
+
+.faq-item.open .faq-question::after {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.faq-answer p {
+  padding: 0 0 24px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  transition: color var(--transition-speed);
+}
+
+/* ==================== CONTACT / CTA ==================== */
+.cta-section {
+  text-align: center;
+  background: var(--hero-gradient) !important;
+  color: #FFFFFF;
+}
+
+[data-theme="tropical"] .cta-section,
+[data-theme="rustic"] .cta-section,
+[data-theme="modern"] .cta-section {
+  color: #FFFFFF;
+}
+
+.cta-section h2 {
+  font-family: var(--hero-font);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  margin-bottom: 16px;
+  color: #FFFFFF !important;
+}
+
+.cta-section p {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  max-width: 500px;
+  margin: 0 auto 32px;
+  color: #FFFFFF !important;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-btn-primary {
+  padding: 16px 40px;
+  background: #FFFFFF;
+  color: var(--accent-dark);
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 50px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.cta-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+.cta-btn-secondary {
+  padding: 16px 40px;
+  background: transparent;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 50px;
+  font-size: 1rem;
+  border: 2px solid rgba(255,255,255,0.4);
+  transition: all 0.3s;
+}
+
+.cta-btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: #FFFFFF; }
+
+/* ==================== FOOTER ==================== */
+footer {
+  background: var(--bg-secondary);
+  padding: 48px 24px 24px;
+  transition: background var(--transition-speed);
+  border-top: 1px solid var(--border);
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 36px;
+}
+
+.footer-brand {
+  font-family: var(--hero-font);
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+  transition: color var(--transition-speed);
+}
+
+.footer-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  transition: color var(--transition-speed);
+}
+
+.footer-col h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  transition: color var(--transition-speed);
+}
+
+.footer-col a {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  transition: color 0.3s;
+}
+
+.footer-col a:hover { color: var(--accent); }
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: all var(--transition-speed);
+}
+
+/* ==================== MOBILE ==================== */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: var(--nav-bg);
+    padding: 20px 24px;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .about-content { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+  .theme-toggle {
+    top: auto;
+    bottom: 20px;
+    right: 20px;
+    flex-direction: row;
+    padding: 8px;
+  }
+  .theme-toggle .toggle-label { display: none; }
+  .theme-btn { width: 30px; height: 30px; }
+  .packages-grid { grid-template-columns: 1fr; }
+  .package-card.featured { transform: none; }
+}
+
+/* ==================== SCROLL ANIMATIONS ==================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==================== BACK TO TOP ==================== */
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--btn-gradient);
+  color: var(--btn-text);
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: all 0.3s;
+}
+
+.back-to-top:hover { transform: translateY(-3px); }
+.back-to-top.visible { display: flex; }
+</style>
+</head>
+<body data-theme="classy">
+
+<!-- THEME TOGGLE -->
+<div class="theme-toggle">
+  <span class="toggle-label">VIBE</span>
+  <button class="theme-btn active" data-set="classy" title="Classy & Elegant"></button>
+  <button class="theme-btn" data-set="tropical" title="Fun & Tropical"></button>
+  <button class="theme-btn" data-set="rustic" title="Rustic & Vintage"></button>
+  <button class="theme-btn" data-set="modern" title="Modern & Minimal"></button>
+</div>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">The Rolling Pour</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#packages">Packages</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Book Now</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>The Rolling Pour</h1>
+    <p class="tagline">Premium Mobile Bar Experiences -- Tampa Bay & Beyond</p>
+    <a href="#contact" class="hero-cta">Book Your Event</a>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>What We Do</h2>
+      <p>We bring the bar to you -- craft cocktails, cold beer, and good vibes, wherever the party is.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">&#127864;</div>
+        <h3>Weddings</h3>
+        <p>Make your big day unforgettable with a custom cocktail menu, signature drinks named after the couple, and full-service bar staff.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127878;</div>
+        <h3>Private Parties</h3>
+        <p>Birthdays, anniversaries, graduations -- we roll up with everything you need for an epic celebration.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#128188;</div>
+        <h3>Corporate Events</h3>
+        <p>Happy hours, team celebrations, product launches, and holiday parties with a professional touch.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127925;</div>
+        <h3>Festivals & Pop-Ups</h3>
+        <p>High-volume bar service for outdoor festivals, food truck rallies, and community events.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127860;</div>
+        <h3>Brunch & Bridal</h3>
+        <p>Mimosa bars, Bloody Mary stations, and bubbly bars for bridal showers and brunch events.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#127793;</div>
+        <h3>Non-Alcoholic Options</h3>
+        <p>Craft mocktails, fresh juices, and specialty drinks for guests who prefer to skip the spirits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>Sample Menu</h2>
+      <p>Every event gets a custom menu. Here's a taste of what we can create.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-category reveal">
+        <h3>Signature Cocktails</h3>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Sunset Smash</div>
+            <div class="menu-item-desc">Bourbon, peach, lemon, smoked rosemary</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Lavender Collins</div>
+            <div class="menu-item-desc">Gin, lavender syrup, lemon, soda</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Spicy Mango Marg</div>
+            <div class="menu-item-desc">Tequila, mango, Tajin rim, jalapeno</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Espresso Martini</div>
+            <div class="menu-item-desc">Vodka, cold brew, coffee liqueur</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Rosemary Paloma</div>
+            <div class="menu-item-desc">Tequila, grapefruit, lime, rosemary</div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-category reveal">
+        <h3>Classics</h3>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Old Fashioned</div>
+            <div class="menu-item-desc">Bourbon, bitters, orange, cherry</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Mojito</div>
+            <div class="menu-item-desc">Rum, lime, mint, sugar, soda</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Moscow Mule</div>
+            <div class="menu-item-desc">Vodka, ginger beer, lime</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Aperol Spritz</div>
+            <div class="menu-item-desc">Aperol, prosecco, soda, orange</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Whiskey Sour</div>
+            <div class="menu-item-desc">Bourbon, lemon, simple, egg white</div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-category reveal">
+        <h3>Beer, Wine & More</h3>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Local Craft Drafts</div>
+            <div class="menu-item-desc">Rotating selection from local breweries</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Wine Selection</div>
+            <div class="menu-item-desc">Red, white, rose, and sparkling</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Hard Seltzers</div>
+            <div class="menu-item-desc">Assorted flavors, always cold</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Fresh Mocktails</div>
+            <div class="menu-item-desc">All the craft, none of the booze</div>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div>
+            <div class="menu-item-name">Custom Creations</div>
+            <div class="menu-item-desc">Tell us your vision, we'll make it pour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>How It Works</h2>
+      <p>From first sip to last call, we handle everything.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-number">1</div>
+        <h3>Reach Out</h3>
+        <p>Tell us about your event -- date, location, guest count, and vibe. We'll get back to you within 24 hours.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">2</div>
+        <h3>Design Your Bar</h3>
+        <p>We'll craft a custom drink menu, plan the setup, and handle all the details so you don't have to.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">3</div>
+        <h3>We Roll Up</h3>
+        <p>Our team arrives early, sets up the bar, and makes sure everything looks amazing before your first guest arrives.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">4</div>
+        <h3>Enjoy the Party</h3>
+        <p>We pour the drinks, keep the bar stocked, and clean up when the night is over. You just enjoy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>Packages</h2>
+      <p>Flexible pricing for events of every size. All packages include setup, teardown, and professional bartending.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="packages-grid">
+      <div class="package-card reveal">
+        <h3>The Starter</h3>
+        <div class="package-price">$500</div>
+        <div class="package-unit">Up to 50 guests / 3 hours</div>
+        <ul class="package-features">
+          <li>Mobile bar setup & teardown</li>
+          <li>1 professional bartender</li>
+          <li>3 signature cocktails</li>
+          <li>All mixers, garnishes & ice</li>
+          <li>Glassware & napkins</li>
+        </ul>
+        <button class="package-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
+      </div>
+      <div class="package-card featured reveal">
+        <h3>The Main Pour</h3>
+        <div class="package-price">$1,200</div>
+        <div class="package-unit">Up to 100 guests / 4 hours</div>
+        <ul class="package-features">
+          <li>Full mobile bar with branding</li>
+          <li>2 professional bartenders</li>
+          <li>5 signature cocktails + classics</li>
+          <li>Beer & wine included</li>
+          <li>Custom menu signage</li>
+          <li>All supplies & cleanup</li>
+        </ul>
+        <button class="package-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
+      </div>
+      <div class="package-card reveal">
+        <h3>The Full Send</h3>
+        <div class="package-price">$2,500+</div>
+        <div class="package-unit">150+ guests / 5+ hours</div>
+        <ul class="package-features">
+          <li>Premium mobile bar experience</li>
+          <li>3+ bartenders & barback</li>
+          <li>Unlimited custom cocktail menu</li>
+          <li>Full beer, wine & spirits bar</li>
+          <li>Branded signage & lighting</li>
+          <li>Dedicated event coordinator</li>
+          <li>Mocktail station included</li>
+        </ul>
+        <button class="package-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-content">
+      <div class="about-image reveal">
+        <img src="https://images.unsplash.com/photo-1574096079513-d8259312b785?w=800&q=80" alt="Bartender crafting cocktails" loading="lazy">
+      </div>
+      <div class="about-text reveal">
+        <h3>Two Friends. One Bar. Unlimited Good Times.</h3>
+        <p>We started The Rolling Pour because we believe great drinks shouldn't be limited to a building with four walls. Whether it's a backyard wedding, a company celebration, or a Saturday night house party -- we bring the craft cocktail experience directly to you.</p>
+        <p>With years of bartending experience and a passion for hospitality, we pour every drink with care and make every event feel special.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <div class="stat-number">200+</div>
+            <div class="stat-label">Events Served</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Custom Menus</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">5&#9733;</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>What People Are Saying</h2>
+      <p>Don't take our word for it -- hear from our happy clients.</p>
+      <div class="accent-line"></div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"They showed up, set up this gorgeous bar, and our guests were obsessed. The signature cocktails were incredible and they even made custom drinks on the fly. Absolutely booking again!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JM</div>
+          <div>
+            <div class="testimonial-name">Jessica M.</div>
+            <div class="testimonial-event">Wedding Reception</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"We hired them for our company holiday party and wow. Professional, fun, and the drinks were next level. Our team is still talking about the espresso martinis."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">DK</div>
+          <div>
+            <div class="testimonial-name">David K.</div>
+            <div class="testimonial-event">Corporate Holiday Party</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"Best birthday surprise ever! The bar looked amazing and the bartenders were so friendly. They even made mocktails for my pregnant sister. Thought of everything!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SR</div>
+          <div>
+            <div class="testimonial-name">Sarah R.</div>
+            <div class="testimonial-event">30th Birthday Party</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <h2>Frequently Asked Questions</h2>
+      <div class="accent-line"></div>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-question">Do you provide the alcohol?</button>
+        <div class="faq-answer"><p>This depends on your state's licensing requirements and your preference. We can provide all beverages as part of a full-service package, or you can purchase the alcohol and we supply everything else (mixers, garnishes, ice, glassware, and expert bartending). We'll walk you through the best option for your event.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">How far in advance should I book?</button>
+        <div class="faq-answer"><p>We recommend booking at least 4-6 weeks in advance for most events, and 3-6 months for weddings and large events. Peak season (May-October) fills up fast, so the earlier the better!</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What areas do you serve?</button>
+        <div class="faq-answer"><p>We're based in the Riverview area and serve Tampa, St. Pete, Brandon, Lakeland, Sarasota, and everywhere in between. For events outside the greater Tampa Bay area, a small travel fee may apply. Reach out and we'll let you know!</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Do you offer non-alcoholic options?</button>
+        <div class="faq-answer"><p>Absolutely! Every event includes at least 2 craft mocktail options. We also offer dedicated mocktail bars, fresh juice stations, and specialty non-alcoholic menus. Everyone deserves a great drink.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What about setup and cleanup?</button>
+        <div class="faq-answer"><p>We handle everything. We arrive 1-2 hours early to set up, and we stay after the event to break down and clean up. You won't lift a finger.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Can you accommodate dietary restrictions?</button>
+        <div class="faq-answer"><p>Yes! We can create gluten-free, sugar-free, vegan, and allergen-friendly drinks. Just let us know your guests' needs when booking.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Do you carry liability insurance?</button>
+        <div class="faq-answer"><p>Yes, we carry full general liability and liquor liability insurance. We can also provide a certificate of insurance for your venue if needed.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section id="contact" class="cta-section">
+  <div class="section-inner">
+    <div class="reveal">
+      <h2>Ready to Pour?</h2>
+      <p>Let's make your next event unforgettable. Tell us about your event and we'll send you a custom quote within 24 hours.</p>
+      <div class="cta-buttons">
+        <a href="mailto:hello@therollingpour.com" class="cta-btn-primary">Get a Quote</a>
+        <a href="tel:+15551234567" class="cta-btn-secondary">Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">The Rolling Pour</div>
+      <p class="footer-desc">Premium mobile bar experiences serving Tampa Bay, Riverview, St. Pete, and beyond. We bring the bar -- you bring the good times.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#services">Services</a>
+      <a href="#menu">Menu</a>
+      <a href="#packages">Packages</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h4>Get in Touch</h4>
+      <a href="mailto:hello@therollingpour.com">hello@therollingpour.com</a>
+      <a href="tel:+15551234567">(555) 123-4567</a>
+      <a href="#">@therollingpour</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 The Rolling Pour. All rights reserved.
+  </div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+
+<script>
+// Theme Toggle
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.setAttribute('data-theme', btn.dataset.set);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    localStorage.setItem('mobile-bar-theme', btn.dataset.set);
+  });
+});
+
+// Restore saved theme
+const saved = localStorage.getItem('mobile-bar-theme');
+if (saved) {
+  document.body.setAttribute('data-theme', saved);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.set === saved);
+  });
+}
+
+// Mobile nav toggle
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// Close mobile nav on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+  });
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
+
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-answer').style.maxHeight = null;
+    });
+
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+});
+
+// Scroll reveal animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Back to top button
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backBtn.classList.toggle('visible', window.scrollY > 400);
+});
+backBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Konami Code Easter Egg
+let konamiProgress = 0;
+const konamiCode = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  if (e.keyCode === konamiCode[konamiProgress]) {
+    konamiProgress++;
+    if (konamiProgress === konamiCode.length) {
+      konamiProgress = 0;
+      startMatrixRain();
+    }
+  } else {
+    konamiProgress = 0;
+  }
+});
+
+function startMatrixRain() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:none;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const cols = Math.floor(canvas.width / 16);
+  const drops = Array(cols).fill(1);
+  const chars = 'THEROLLINGPOUR0123456789@#$%&CHEERS';
+  let frames = 0;
+  function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = '14px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const t = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(t, i * 16, drops[i] * 16);
+      if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    frames++;
+    if (frames < 300) requestAnimationFrame(draw);
+    else { canvas.remove(); }
+  }
+  draw();
+}
+</script>
+</body>
+</html>

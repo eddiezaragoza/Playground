@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Bar Business Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAFA;
+  --card: #FFFFFF;
+  --accent: #2D2D2D;
+  --accent-light: #555555;
+  --accent-warm: #8B5E3C;
+  --text: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-muted: #8A8A8A;
+  --border: #E0E0E0;
+  --green: #2E7D32;
+  --green-bg: #E8F5E9;
+  --amber: #F57F17;
+  --amber-bg: #FFF8E1;
+  --red: #C62828;
+  --red-bg: #FFEBEE;
+  --blue: #1565C0;
+  --blue-bg: #E3F2FD;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* Navigation */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 260px;
+  background: #1A1A1A;
+  padding: 24px 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  font-family: 'Playfair Display', serif;
+  color: #FFF;
+  font-size: 1.3rem;
+  padding: 0 24px 24px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 16px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px 24px;
+  color: #999;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar a:hover, .sidebar a.active {
+  color: #FFF;
+  background: rgba(255,255,255,0.05);
+  border-left-color: var(--accent-warm);
+}
+
+.sidebar .section-label {
+  padding: 16px 24px 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #555;
+}
+
+.main {
+  margin-left: 260px;
+  padding: 40px;
+  max-width: 1000px;
+}
+
+/* Mobile nav toggle */
+.mobile-nav-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  background: var(--accent);
+  color: #FFF;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* Cover */
+.cover {
+  text-align: center;
+  padding: 60px 0 40px;
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--border);
+}
+
+.cover h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  margin-bottom: 8px;
+}
+
+.cover .subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.cover .meta-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 48px;
+  scroll-margin-top: 24px;
+}
+
+.section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--text);
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.section h3 {
+  font-size: 1.2rem;
+  color: var(--text);
+  margin: 24px 0 12px;
+  font-weight: 700;
+}
+
+.section p {
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+/* Callout boxes */
+.callout {
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  border-left: 4px solid;
+}
+
+.callout.green { background: var(--green-bg); border-color: var(--green); }
+.callout.amber { background: var(--amber-bg); border-color: var(--amber); }
+.callout.red { background: var(--red-bg); border-color: var(--red); }
+.callout.blue { background: var(--blue-bg); border-color: var(--blue); }
+
+.callout strong { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+.callout p { margin-bottom: 0; font-size: 0.93rem; }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.93rem;
+}
+
+thead th {
+  background: #F5F5F5;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+tr:hover td { background: #FAFAFA; }
+
+.amount { font-weight: 600; color: var(--text); }
+.total-row td { font-weight: 700; color: var(--text); border-top: 2px solid var(--accent); background: #F5F5F5; }
+
+/* Lists */
+ul {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+
+li strong { color: var(--text); }
+
+/* Metric cards */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.metric-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.metric-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+  margin: 24px 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -27px;
+  top: 22px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-warm);
+  border: 2px solid var(--bg);
+}
+
+.timeline-item h4 {
+  font-size: 0.95rem;
+  color: var(--accent-warm);
+  margin-bottom: 4px;
+}
+
+.timeline-item p {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Chart placeholder */
+.chart-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.chart-label {
+  width: 120px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.chart-fill {
+  height: 28px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--accent-warm), #D4A574);
+  transition: width 0.8s ease;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  font-size: 0.8rem;
+  color: #FFF;
+  font-weight: 600;
+  min-width: 40px;
+}
+
+/* Footer */
+.plan-footer {
+  text-align: center;
+  padding: 40px 0 20px;
+  border-top: 2px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.plan-footer a {
+  color: var(--accent-warm);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+  .sidebar.open { transform: translateX(0); }
+  .mobile-nav-toggle { display: block; }
+  .main { margin-left: 0; padding: 20px; padding-top: 60px; }
+  .cover h1 { font-size: 1.8rem; }
+  .cover .meta-row { flex-direction: column; gap: 8px; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  table { font-size: 0.82rem; }
+  td, th { padding: 8px 10px; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .mobile-nav-toggle, .back-to-top { display: none !important; }
+  .main { margin-left: 0; padding: 20px; }
+  .section { page-break-inside: avoid; }
+}
+
+/* Back to top */
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFF;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.back-to-top.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- Mobile nav toggle -->
+<button class="mobile-nav-toggle" id="mobileToggle">&#9776;</button>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">Business Plan</div>
+  <a href="#executive-summary" class="active">Executive Summary</a>
+  <a href="#business-model">Business Model</a>
+  <a href="#startup-costs">Startup Costs</a>
+  <a href="#revenue-projections">Revenue Projections</a>
+  <div class="section-label">Operations</div>
+  <a href="#services">Services & Menu</a>
+  <a href="#trailer">The Trailer</a>
+  <a href="#equipment">Equipment List</a>
+  <a href="#legal">Legal & Licensing</a>
+  <a href="#insurance">Insurance</a>
+  <div class="section-label">Growth</div>
+  <a href="#marketing">Marketing Strategy</a>
+  <a href="#pricing">Pricing Strategy</a>
+  <a href="#risks">Risks & Pitfalls</a>
+  <a href="#timeline">Launch Timeline</a>
+</nav>
+
+<div class="main">
+
+  <!-- Cover -->
+  <div class="cover" id="top">
+    <h1>Mobile Bar Business Plan</h1>
+    <div class="subtitle">A Starter Plan for Two Friends with Big Dreams</div>
+    <div class="meta-row">
+      <span>Prepared: May 2026</span>
+      <span>Status: Planning Phase</span>
+      <span>Version: 1.0</span>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="section" id="executive-summary">
+    <h2>Executive Summary</h2>
+    <p>A mobile bar business brings craft cocktails, cold beer, and professional bartending directly to events -- weddings, corporate parties, festivals, birthdays, and more. With a converted trailer (or portable setup), two passionate founders, and a strong local brand, this business can generate <strong>$80,000 - $200,000 in annual revenue</strong> within the first full year of operation.</p>
+
+    <div class="callout green">
+      <strong>Why This Works</strong>
+      <p>The mobile bar industry is growing rapidly. Couples want unique wedding experiences. Companies want memorable team events. And everyone loves a beautiful bar that shows up at their door. The barrier to entry is moderate, the margins are strong (20-40% full-service, 70-88% dry hire), and the market is far from saturated in most cities.</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">$30K-$55K</div>
+        <div class="metric-label">Startup Investment</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">$2,500</div>
+        <div class="metric-label">Avg Revenue/Event</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">6-18 mo</div>
+        <div class="metric-label">Break Even</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">20-40%</div>
+        <div class="metric-label">Profit Margin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS MODEL -->
+  <div class="section" id="business-model">
+    <h2>Business Model</h2>
+    <p>There are three core ways a mobile bar makes money. Most successful operations use a combination, evolving from simpler models to full-service as they grow.</p>
+
+    <h3>Model 1: Dry Hire (Recommended to Start)</h3>
+    <p>You provide the bar, equipment, setup, and professional bartending. The client purchases the alcohol. <strong>No liquor license required in most states.</strong> This is the fastest and lowest-risk path to launching.</p>
+    <ul>
+      <li>Revenue per event: $800 - $2,500</li>
+      <li>Profit margin: 70 - 88% (minimal cost of goods)</li>
+      <li>Best for: Getting started, building a portfolio, learning the business</li>
+    </ul>
+
+    <h3>Model 2: Full-Service Open Bar</h3>
+    <p>You provide everything -- bar, staff, AND all alcohol. Clients pay one all-inclusive price. Requires a liquor license.</p>
+    <ul>
+      <li>Revenue per event: $2,500 - $6,000+</li>
+      <li>Profit margin: 20 - 40%</li>
+      <li>Best for: Weddings and premium events where clients want one vendor</li>
+    </ul>
+
+    <h3>Model 3: Consumption/Cash Bar</h3>
+    <p>Guests pay per drink. Revenue scales with the crowd size and enthusiasm.</p>
+    <ul>
+      <li>Revenue per event: $500 - $3,000+ (highly variable)</li>
+      <li>Profit margin: 75 - 80% per drink</li>
+      <li>Best for: Festivals, public events, pop-ups</li>
+    </ul>
+
+    <div class="callout blue">
+      <strong>Recommended Strategy</strong>
+      <p>Start with dry hire to launch fast and learn the business. After 6-12 months and 20+ events under your belt, pursue a liquor license and transition to full-service packages for weddings and corporate events (where the real money is). Keep dry hire as an option for budget-conscious clients.</p>
+    </div>
+
+    <h3>Revenue by Event Type</h3>
+    <table>
+      <thead>
+        <tr><th>Event Type</th><th>Avg Revenue</th><th>Volume</th><th>Margin</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Weddings</strong></td><td class="amount">$2,500 - $6,000</td><td>Lower (weekends)</td><td>High</td><td>Best per-event revenue. Books 6-18 months out.</td></tr>
+        <tr><td><strong>Corporate Events</strong></td><td class="amount">$1,500 - $4,000</td><td>Medium</td><td>High</td><td>Repeat clients. Weekday fill.</td></tr>
+        <tr><td><strong>Private Parties</strong></td><td class="amount">$800 - $2,500</td><td>High</td><td>Medium</td><td>Easiest to book. Lower price point.</td></tr>
+        <tr><td><strong>Festivals</strong></td><td class="amount">$500 - $2,500/day</td><td>High volume</td><td>Medium</td><td>Cash bar model. Vendor fee required.</td></tr>
+        <tr><td><strong>Holiday Parties</strong></td><td class="amount">$1,200 - $3,500</td><td>Seasonal (Oct-Dec)</td><td>High</td><td>Critical Q4 cash flow.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- STARTUP COSTS -->
+  <div class="section" id="startup-costs">
+    <h2>Startup Costs</h2>
+    <p>The total investment depends on your approach. Here's an itemized breakdown for a mid-range launch with a used trailer conversion.</p>
+
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Low End</th><th>High End</th></tr>
+      </thead>
+      <tbody>
+        <tr><td rowspan="3"><strong>The Trailer</strong></td><td>Used horse trailer (raw)</td><td class="amount">$3,000</td><td class="amount">$12,000</td></tr>
+        <tr><td>Conversion labor (fabricator)</td><td class="amount">$8,000</td><td class="amount">$20,000</td></tr>
+        <tr><td>Vinyl wrap / branding</td><td class="amount">$1,500</td><td class="amount">$4,000</td></tr>
+        <tr><td rowspan="4"><strong>Bar Build-Out</strong></td><td>Bar top / counters</td><td class="amount">$500</td><td class="amount">$3,000</td></tr>
+        <tr><td>Tap system (kegerator, CO2)</td><td class="amount">$800</td><td class="amount">$2,500</td></tr>
+        <tr><td>Plumbing (sink, water/waste tanks)</td><td class="amount">$500</td><td class="amount">$2,000</td></tr>
+        <tr><td>Electrical + lighting</td><td class="amount">$800</td><td class="amount">$2,700</td></tr>
+        <tr><td rowspan="4"><strong>Equipment</strong></td><td>Refrigeration (fridge + coolers)</td><td class="amount">$700</td><td class="amount">$2,000</td></tr>
+        <tr><td>Generator (Honda EU2200i)</td><td class="amount">$1,000</td><td class="amount">$2,000</td></tr>
+        <tr><td>Bar tools (2 full sets)</td><td class="amount">$300</td><td class="amount">$800</td></tr>
+        <tr><td>Glassware starter set (200+ pieces)</td><td class="amount">$400</td><td class="amount">$1,000</td></tr>
+        <tr><td rowspan="3"><strong>Legal & Insurance</strong></td><td>LLC + operating agreement</td><td class="amount">$300</td><td class="amount">$2,000</td></tr>
+        <tr><td>Liquor/catering license</td><td class="amount">$200</td><td class="amount">$5,000</td></tr>
+        <tr><td>Insurance (year 1)</td><td class="amount">$2,500</td><td class="amount">$4,000</td></tr>
+        <tr><td rowspan="3"><strong>Marketing</strong></td><td>Logo design</td><td class="amount">$300</td><td class="amount">$1,500</td></tr>
+        <tr><td>Website</td><td class="amount">$200</td><td class="amount">$3,000</td></tr>
+        <tr><td>Photography (styled shoot)</td><td class="amount">$300</td><td class="amount">$800</td></tr>
+        <tr><td rowspan="2"><strong>Working Capital</strong></td><td>Initial inventory (spirits, mixers)</td><td class="amount">$1,500</td><td class="amount">$4,000</td></tr>
+        <tr><td>Cash reserve (2 months)</td><td class="amount">$3,000</td><td class="amount">$6,000</td></tr>
+        <tr class="total-row"><td colspan="2"><strong>TOTAL</strong></td><td class="amount"><strong>$25,800</strong></td><td class="amount"><strong>$78,300</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout amber">
+      <strong>Want to Start Leaner?</strong>
+      <p>Skip the trailer entirely and start with a portable bar setup ($1,000-$3,000). Test the market with 10-15 events, build reviews and a client base, then invest in a trailer once you've proven demand. Many successful mobile bars started this way. Total lean launch: $5,000 - $15,000.</p>
+    </div>
+  </div>
+
+  <!-- REVENUE PROJECTIONS -->
+  <div class="section" id="revenue-projections">
+    <h2>Revenue Projections</h2>
+    <p>Three scenarios based on how aggressively you pursue events.</p>
+
+    <h3>Year 1 Scenarios</h3>
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>Events/Month (Peak)</th><th>Events/Month (Off-Peak)</th><th>Avg Revenue</th><th>Annual Revenue</th><th>Net Profit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Conservative (side hustle)</strong></td><td>4-6</td><td>1-2</td><td class="amount">$1,800</td><td class="amount">$45K - $65K</td><td class="amount">$15K - $30K</td></tr>
+        <tr><td><strong>Moderate (full-time)</strong></td><td>8-10</td><td>3-4</td><td class="amount">$2,500</td><td class="amount">$80K - $120K</td><td class="amount">$40K - $65K</td></tr>
+        <tr><td><strong>Aggressive (booked out)</strong></td><td>12-15</td><td>4-6</td><td class="amount">$3,500</td><td class="amount">$150K - $250K</td><td class="amount">$40K - $100K</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Seasonal Revenue Distribution</h3>
+    <p>Mobile bars are heavily seasonal. Plan for this.</p>
+    <div style="margin: 24px 0;">
+      <div class="chart-bar"><div class="chart-label">May - Oct</div><div class="chart-fill" style="width: 75%;">70-80%</div></div>
+      <div class="chart-bar"><div class="chart-label">Nov - Dec</div><div class="chart-fill" style="width: 18%;">15%</div></div>
+      <div class="chart-bar"><div class="chart-label">Jan - Apr</div><div class="chart-fill" style="width: 10%;">5-10%</div></div>
+    </div>
+
+    <div class="callout red">
+      <strong>Cash Flow Warning</strong>
+      <p>The #1 financial mistake new mobile bar owners make is spending summer revenue and getting blindsided when January-March is dead. <strong>Save 30% of peak-season revenue</strong> as a slow-season reserve. This is non-negotiable.</p>
+    </div>
+
+    <h3>Break-Even Analysis</h3>
+    <table>
+      <thead>
+        <tr><th>Startup Investment</th><th>Avg Net per Event</th><th>Events to Break Even</th><th>Timeline</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="amount">$15,000 (lean)</td><td class="amount">$600</td><td>25 events</td><td>4 - 6 months</td></tr>
+        <tr><td class="amount">$35,000 (mid)</td><td class="amount">$800</td><td>44 events</td><td>8 - 12 months</td></tr>
+        <tr><td class="amount">$55,000 (premium)</td><td class="amount">$1,000</td><td>55 events</td><td>12 - 18 months</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SERVICES & MENU -->
+  <div class="section" id="services">
+    <h2>Services & Menu</h2>
+
+    <h3>Event Types to Target</h3>
+    <ul>
+      <li><strong>Weddings</strong> -- Highest revenue per event. Custom cocktails named after the couple. Book 6-18 months out.</li>
+      <li><strong>Corporate events</strong> -- Happy hours, team celebrations, holiday parties. Repeat business potential.</li>
+      <li><strong>Private parties</strong> -- Birthdays, anniversaries, graduations. Easiest to book, builds word-of-mouth.</li>
+      <li><strong>Festivals & pop-ups</strong> -- High volume, cash bar model. Great for brand visibility.</li>
+      <li><strong>Brunch events</strong> -- Mimosa bars, Bloody Mary stations. Lower-effort, good margins.</li>
+    </ul>
+
+    <h3>Signature Cocktail Menu (Starter)</h3>
+    <table>
+      <thead>
+        <tr><th>Cocktail</th><th>Ingredients</th><th>Category</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Sunset Smash</strong></td><td>Bourbon, peach, lemon, smoked rosemary</td><td>Signature</td></tr>
+        <tr><td><strong>Lavender Collins</strong></td><td>Gin, lavender syrup, lemon, soda</td><td>Signature</td></tr>
+        <tr><td><strong>Spicy Mango Marg</strong></td><td>Tequila, mango, Tajin rim, jalapeno</td><td>Signature</td></tr>
+        <tr><td><strong>Espresso Martini</strong></td><td>Vodka, cold brew, coffee liqueur</td><td>Trending</td></tr>
+        <tr><td><strong>Rosemary Paloma</strong></td><td>Tequila, grapefruit, lime, rosemary</td><td>Signature</td></tr>
+        <tr><td><strong>Classic Old Fashioned</strong></td><td>Bourbon, bitters, orange, cherry</td><td>Classic</td></tr>
+        <tr><td><strong>Cucumber Mint Cooler</strong></td><td>Cucumber, mint, lime, sparkling water</td><td>Mocktail</td></tr>
+        <tr><td><strong>Sparkling Lavender Lemonade</strong></td><td>Lavender syrup, lemon, sparkling water</td><td>Mocktail</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout green">
+      <strong>Pro Tip: Batch Your Signatures</strong>
+      <p>Pre-batch signature cocktails in large containers before events. A batched cocktail pours in 10 seconds vs. 90 seconds to build individually. This is how two bartenders serve 150 guests without a line.</p>
+    </div>
+  </div>
+
+  <!-- TRAILER -->
+  <div class="section" id="trailer">
+    <h2>The Trailer</h2>
+    <p>The trailer IS your brand. It's the first thing clients see and photograph. The right trailer makes your business Instagram-worthy and justify premium pricing.</p>
+
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Cost Range</th><th>Pros</th><th>Cons</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Converted Horse Trailer</strong></td><td class="amount">$11K - $32K</td><td>Most popular aesthetic, Instagram-worthy, rustic charm</td><td>Can be structurally unsound, conversion is labor-intensive</td></tr>
+        <tr><td><strong>Vintage Airstream</strong></td><td class="amount">$13K - $40K</td><td>Iconic look, sturdy aluminum, large interior</td><td>Expensive, hard to find in good condition</td></tr>
+        <tr><td><strong>Purpose-Built</strong></td><td class="amount">$25K - $55K</td><td>Built to code, ready to go, commercial-grade</td><td>Expensive, less character</td></tr>
+        <tr><td><strong>Portable Setup</strong></td><td class="amount">$1K - $5K</td><td>Lowest cost, no towing needed, works indoors</td><td>Less visual impact, weather dependent</td></tr>
+        <tr><td><strong>Converted Van/Bus</strong></td><td class="amount">$15K - $45K</td><td>Self-propelled, parks in urban areas</td><td>Higher maintenance, possible CDL requirement</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout blue">
+      <strong>Sweet Spot: 16-ft Converted Horse Trailer</strong>
+      <p>The ideal size for a two-person operation is a 16-foot trailer. It gives enough bar-top length for efficient service, storage underneath, and room for two bartenders -- while still being towable by a standard half-ton pickup. Look for aluminum-frame models (they resist rust better than steel). Check Facebook Marketplace and Craigslist first.</p>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section" id="equipment">
+    <h2>Equipment Checklist</h2>
+
+    <h3>Bar Infrastructure</h3>
+    <ul>
+      <li>Speed rails x2 ($60-$150)</li>
+      <li>Hand wash sink with water/waste tanks ($500-$2,000)</li>
+      <li>Under-counter refrigerator x1-2 ($400-$1,200)</li>
+      <li>Ice maker or insulated ice bins ($300-$1,500)</li>
+      <li>Generator - Honda EU2200i ($1,000-$1,200)</li>
+    </ul>
+
+    <h3>Bartending Tools (Buy 2 Sets)</h3>
+    <ul>
+      <li>Boston shaker sets x4 ($15-$40 each)</li>
+      <li>Jiggers x6, Hawthorne strainers x4, Fine mesh strainers x2</li>
+      <li>Bar spoons x4, Muddlers x2, Bottle openers x4</li>
+      <li>Channel knives, Y-peelers, cutting boards</li>
+      <li>Pour spouts (24-pack), squeeze bottles (12-pack)</li>
+    </ul>
+
+    <h3>Glassware (100-Person Event Set)</h3>
+    <ul>
+      <li>Rocks glasses x50, Highball glasses x50</li>
+      <li>Wine glasses (stemless) x50, Champagne flutes x50</li>
+      <li>Coupe/martini x25, Pint glasses x25</li>
+      <li>Glass transport racks x6-8</li>
+      <li>Acrylic backup set for outdoor events</li>
+    </ul>
+
+    <h3>Technology & Presentation</h3>
+    <ul>
+      <li>Square POS terminal + iPad ($329-$800)</li>
+      <li>Bluetooth speaker ($80-$200)</li>
+      <li>String lights / Edison bulbs ($50-$150)</li>
+      <li>Chalkboard menu signs x2 ($30-$80 each)</li>
+      <li>Branded bar runner and towels ($50-$200)</li>
+    </ul>
+  </div>
+
+  <!-- LEGAL -->
+  <div class="section" id="legal">
+    <h2>Legal & Licensing</h2>
+
+    <h3>Business Formation</h3>
+    <ul>
+      <li><strong>Form an LLC</strong> -- Two owners = multi-member LLC. Creates liability separation. Filing fee: $50-$500 depending on state.</li>
+      <li><strong>Operating agreement</strong> -- Defines ownership split, roles, profit distribution, decision-making, and exit terms. Attorney fee: $500-$1,500.</li>
+      <li><strong>EIN (Employer ID Number)</strong> -- Free from the IRS. Takes 5 minutes online. Required for business bank account.</li>
+      <li><strong>Business bank account</strong> -- Keep business and personal finances separate from day one.</li>
+    </ul>
+
+    <h3>Liquor Licensing: Two Paths</h3>
+    <table>
+      <thead>
+        <tr><th>Path</th><th>What It Means</th><th>License Cost</th><th>Speed to Launch</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Dry Hire</strong></td><td>Client buys alcohol, you provide everything else</td><td class="amount">$0</td><td>Weeks</td></tr>
+        <tr><td><strong>Full Service</strong></td><td>You buy and serve the alcohol</td><td class="amount">$200 - $14,000</td><td>1-6 months</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Other Required Permits</h3>
+    <ul>
+      <li><strong>Business license:</strong> $50-$400 (almost universally required)</li>
+      <li><strong>Health permit / food handler:</strong> $100-$400 (if serving garnishes)</li>
+      <li><strong>Alcohol service certification:</strong> TABC/RAMP/ServSafe -- $15-$50 per person</li>
+      <li><strong>Trailer registration:</strong> Title, plates, possibly commercial inspection</li>
+      <li><strong>Sales tax ID / seller's permit:</strong> Free, required for collecting sales tax</li>
+    </ul>
+
+    <div class="callout green">
+      <strong>Florida-Specific Licensing (Riverview / Tampa Bay)</strong>
+      <p>Good news: Florida is one of the more mobile-bar-friendly states. Key details:</p>
+    </div>
+    <ul>
+      <li><strong>FL Division of Alcoholic Beverages and Tobacco (DABT)</strong> -- the state licensing authority. Phone: (850) 487-1395. Website: myfloridalicense.com</li>
+      <li><strong>Special Catering License</strong> -- this is the most common path for Florida mobile bars. Allows you to serve at events with advance notice.</li>
+      <li><strong>2COP license (beer & wine only):</strong> ~$1,820. Available in all counties.</li>
+      <li><strong>4COP license (full liquor):</strong> Much more expensive and limited by county quota. A catering license is the workaround most mobile bars use.</li>
+      <li><strong>Hillsborough County</strong> (Riverview/Tampa) -- requires a Local Business Tax Receipt ($25-$100) in addition to state licenses.</li>
+      <li><strong>Pinellas County</strong> (St. Pete) -- separate local business tax receipt if operating there.</li>
+      <li><strong>Florida Responsible Vendor Training</strong> -- required for all alcohol servers. Free or low-cost, ~3 hours online.</li>
+      <li><strong>No state income tax</strong> in Florida -- one less thing to worry about for business profits!</li>
+    </ul>
+    <div class="callout amber">
+      <strong>First Step</strong>
+      <p>Call the FL DABT at (850) 487-1395 and ask specifically about the "Special Catering License" for a mobile bar operating in Hillsborough/Pinellas counties. They're helpful and can walk you through exactly what you need.</p>
+    </div>
+  </div>
+
+  <!-- INSURANCE -->
+  <div class="section" id="insurance">
+    <h2>Insurance</h2>
+    <p>Serving alcohol creates real liability. One incident can wipe out everything you've built. Insurance is non-negotiable.</p>
+
+    <table>
+      <thead>
+        <tr><th>Coverage Type</th><th>What It Covers</th><th>Annual Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>General Liability</strong></td><td>Bodily injury, property damage to third parties</td><td class="amount">$500 - $1,200</td></tr>
+        <tr><td><strong>Liquor Liability</strong></td><td>Alcohol-related incidents (general liability EXCLUDES these)</td><td class="amount">$300 - $900</td></tr>
+        <tr><td><strong>Commercial Auto + Trailer</strong></td><td>Business use of tow vehicle + trailer</td><td class="amount">$800 - $2,000</td></tr>
+        <tr><td><strong>Inland Marine / Equipment</strong></td><td>Your bar equipment in transit and at events</td><td class="amount">$200 - $600</td></tr>
+        <tr class="total-row"><td colspan="2"><strong>TOTAL (no employees)</strong></td><td class="amount"><strong>$1,800 - $4,700</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Best providers:</strong> FLIP (fliprogram.com), Insurance Canopy, NEXT Insurance, The Hartford</p>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="section" id="marketing">
+    <h2>Marketing Strategy</h2>
+
+    <h3>Top 5 Marketing Channels (in Priority Order)</h3>
+
+    <p><strong>1. Wedding Venue Partnerships (highest ROI)</strong></p>
+    <p>Visit local wedding venues and introduce yourself. Offer to be their "preferred vendor." A single venue that refers 20 weddings/year = $50,000+ in revenue. This is the #1 growth channel for mobile bars.</p>
+    <div class="callout blue">
+      <strong>Tampa Bay Venue Targets</strong>
+      <p>The Tampa Bay area is packed with wedding venues that need bar vendors: waterfront venues in St. Pete, rustic barn venues in Riverview/Plant City, rooftop venues in downtown Tampa, beach venues on the Gulf coast. The year-round warm weather means outdoor events run 12 months -- a huge advantage over markets with harsh winters.</p>
+    </div>
+
+    <p><strong>2. Instagram (your visual portfolio)</strong></p>
+    <ul>
+      <li>Post 3-5x per week: 40% event photos, 30% cocktail close-ups, 20% behind-the-scenes, 10% testimonials</li>
+      <li>Tag the venue, photographer, florist, and DJ at every event -- they'll reshare</li>
+      <li>Use location tags and hashtags: #mobilebar #[yourcity]mobilebar #weddingbar</li>
+    </ul>
+
+    <p><strong>3. The Knot + WeddingWire</strong></p>
+    <p>Create profiles on both platforms immediately. Reviews accumulate and drive bookings. Paid listings: $0-$1,200/year.</p>
+
+    <p><strong>4. Wedding Planner Relationships</strong></p>
+    <p>Build relationships with 5-10 local wedding planners. Send a gift basket and your menu when you launch. One good planner = 10-20+ bookings per year.</p>
+
+    <p><strong>5. Google My Business</strong></p>
+    <p>Set up and maintain your Google listing. Brides frequently search "mobile bar [city]" -- this drives direct inquiries for free.</p>
+
+    <div class="callout green">
+      <strong>Speed-to-Response Matters</strong>
+      <p>Research shows that responding to a lead within 5 minutes increases your close rate by 70x compared to waiting 24 hours. When an inquiry comes in, respond immediately with a professional quote.</p>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="section" id="pricing">
+    <h2>Pricing Strategy</h2>
+
+    <h3>Recommended: Tiered Package Pricing</h3>
+    <table>
+      <thead>
+        <tr><th>Package</th><th>What's Included</th><th>Price Range</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>The Starter</strong></td><td>3 hrs, beer + wine + 1 signature, up to 50 guests, 1 bartender</td><td class="amount">$500 - $1,200</td></tr>
+        <tr><td><strong>The Classic</strong></td><td>4 hrs, full bar + 2 signatures, up to 100 guests, 2 bartenders, signage</td><td class="amount">$1,200 - $3,200</td></tr>
+        <tr><td><strong>The Premium</strong></td><td>5 hrs, premium spirits, up to 150 guests, 2 bartenders, custom menu</td><td class="amount">$2,500 - $5,500</td></tr>
+        <tr><td><strong>The Full Send</strong></td><td>Custom hours, unlimited guests, 3+ bartenders, specialty spirits, coordinator</td><td class="amount">$4,500 - $10,000+</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Add-On Revenue Streams</h3>
+    <ul>
+      <li>Travel fee beyond 30 miles: $2-$3/mile</li>
+      <li>Extra bartender: $150-$300/event</li>
+      <li>Custom cocktail menu development: $100-$300</li>
+      <li>Champagne tower: $200-$500</li>
+      <li>Specialty glassware upgrade: $1-$2/glass</li>
+      <li>Mocktail station add-on: $200-$500</li>
+    </ul>
+
+    <div class="callout red">
+      <strong>Never Compete on Price</strong>
+      <p>Low prices attract difficult clients who don't tip, don't leave reviews, and tell everyone how "cheap" they got a bar for. Compete on aesthetics, responsiveness, reviews, and customization. The clients who pay premium are the ones who are the easiest to work with.</p>
+    </div>
+  </div>
+
+  <!-- RISKS -->
+  <div class="section" id="risks">
+    <h2>Risks & Common Pitfalls</h2>
+
+    <table>
+      <thead>
+        <tr><th>Risk</th><th>Why It Matters</th><th>How to Avoid It</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>No operating agreement</strong></td><td>#1 partnership killer. Disagreements are inevitable.</td><td>Write one before spending any money. Get an attorney.</td></tr>
+        <tr><td><strong>Overinvesting before proving demand</strong></td><td>$50K on a trailer with zero bookings is terrifying.</td><td>Start portable. Prove demand. Then invest.</td></tr>
+        <tr><td><strong>Underpricing</strong></td><td>Attracts price-sensitive, difficult clients. Destroys margins.</td><td>Price at market rate or above. Compete on quality.</td></tr>
+        <tr><td><strong>Skipping liquor liability insurance</strong></td><td>One DUI by a guest you served = lawsuit that wipes you out.</td><td>Get liquor liability from day one. $300-$900/year.</td></tr>
+        <tr><td><strong>Ignoring seasonality</strong></td><td>Jan-Mar revenue is nearly zero. Summer revenue feels infinite.</td><td>Save 30% of peak revenue as slow-season reserve.</td></tr>
+        <tr><td><strong>Slow response to leads</strong></td><td>Brides book whoever responds first.</td><td>Respond within 5 minutes. Set up auto-replies.</td></tr>
+        <tr><td><strong>No written contracts</strong></td><td>Client cancels 2 weeks before a 200-person wedding.</td><td>Every event gets a contract: deposit, cancellation terms, alcohol policy.</td></tr>
+        <tr><td><strong>Tow vehicle can't handle the trailer</strong></td><td>A loaded bar trailer can weigh 8,000-12,000 lbs.</td><td>Verify tow rating before buying a trailer.</td></tr>
+        <tr><td><strong>Not doing the math on pricing</strong></td><td>Picking a price based on competitors without knowing your costs.</td><td>Calculate cost per event, then add margin.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section" id="timeline">
+    <h2>Launch Timeline</h2>
+    <p>A realistic 6-month path from "let's do this" to first event.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>Weeks 1-2: Foundation</h4>
+        <p>Form LLC, draft operating agreement, open business bank account, get ServSafe certified, call state ABC board about licensing.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Weeks 2-4: Legal & Insurance</h4>
+        <p>Apply for business license, get insurance quotes (GL + liquor liability + auto), begin liquor license application if going full-service, start trailer shopping.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 2-3: The Build</h4>
+        <p>Acquire trailer (or assemble portable setup), begin conversion if needed, order equipment and bar tools, develop signature cocktail menu.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 3-4: Brand Launch</h4>
+        <p>Finalize name and logo, build website, set up Instagram/TikTok/Google My Business, schedule a styled photo shoot with the finished bar.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 4-5: Market Entry</h4>
+        <p>Create profiles on The Knot and WeddingWire, visit local wedding venues to introduce yourself, connect with wedding planners, join local event vendor groups.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 5-6: First Events</h4>
+        <p>Book 2-3 events for friends/family at a discount to build reviews and photos. Refine your setup, timing, and workflow. Then start booking at full price.</p>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <strong>Target: First Paid Event by Month 6</strong>
+      <p>This is aggressive but achievable. Many mobile bar owners report booking their first event within 4-8 weeks of launching their social media, especially if they start by offering discounted events to friends and family for portfolio photos.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="plan-footer">
+    <p>See the <a href="friday-agenda.html">Friday meeting agenda</a> for discussion guide and action items.</p>
+    <p style="margin-top: 8px;">Check out the <a href="index.html">mockup website</a> to see what the business could look like online.</p>
+    <p style="margin-top: 16px; color: #CCC;">Prepared May 2026</p>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop">&#8593;</button>
+
+<script>
+// Sidebar active state
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.sidebar a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// Mobile sidebar toggle
+document.getElementById('mobileToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Close sidebar on link click (mobile)
+navLinks.forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+// Back to top
+const btn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 400));
+btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// Konami
+let kp = 0;
+const kc = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  if (e.keyCode === kc[kp]) { kp++; if (kp === kc.length) { kp = 0; matrixRain(); } } else { kp = 0; }
+});
+function matrixRain() {
+  const c = document.createElement('canvas');
+  c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:none;';
+  document.body.appendChild(c);
+  const x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+  const cols = Math.floor(c.width/16), d = Array(cols).fill(1);
+  let f = 0;
+  (function draw() {
+    x.fillStyle = 'rgba(0,0,0,0.05)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle = '#0f0'; x.font = '14px monospace';
+    for (let i=0;i<d.length;i++) {
+      x.fillText('MOBILEBAR0123456'[Math.floor(Math.random()*16)], i*16, d[i]*16);
+      if (d[i]*16 > c.height && Math.random()>.975) d[i]=0; d[i]++;
+    }
+    if (++f < 300) requestAnimationFrame(draw); else c.remove();
+  })();
+}
+</script>
+</body>
+</html>

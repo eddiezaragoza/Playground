@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Bar -- Friday Meeting Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAF5EE;
+  --card: #FFFFFF;
+  --accent: #8B5E3C;
+  --accent-light: #B8916E;
+  --text: #2C1810;
+  --text-muted: #8A7560;
+  --border: #D4C4B0;
+  --green: #4CAF50;
+  --amber: #FF9800;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 48px 24px;
+  margin-bottom: 32px;
+}
+
+.header-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.header .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.header .meeting-meta {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.meta-icon {
+  font-size: 1.2rem;
+}
+
+/* Agenda Items */
+.agenda-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.agenda-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.agenda-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.agenda-title-block {
+  flex: 1;
+}
+
+.agenda-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.agenda-time {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.agenda-toggle {
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: transform 0.3s;
+}
+
+.agenda-item.open .agenda-toggle { transform: rotate(45deg); }
+
+.agenda-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.agenda-content {
+  padding: 0 24px 24px;
+  padding-left: 84px;
+}
+
+.agenda-content p {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.agenda-content ul {
+  list-style: none;
+  margin-bottom: 12px;
+}
+
+.agenda-content li {
+  padding: 6px 0;
+  padding-left: 20px;
+  position: relative;
+  color: var(--text);
+  font-size: 0.93rem;
+}
+
+.agenda-content li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-light);
+}
+
+.discussion-prompt {
+  background: #FFF8F0;
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-style: italic;
+}
+
+.action-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #F0FAF0;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.action-item::before {
+  content: '\2610';
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Quick Reference Card */
+.reference-card {
+  background: var(--card);
+  border: 2px solid var(--accent);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.reference-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ref-item {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.ref-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.ref-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Footer */
+.page-footer {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.page-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.page-footer a:hover { text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .agenda-content { padding-left: 24px; }
+  .ref-grid { grid-template-columns: 1fr; }
+  .header .meeting-meta { flex-direction: column; gap: 8px; align-items: center; }
+}
+
+/* Print */
+@media print {
+  .agenda-body { max-height: none !important; }
+  .agenda-toggle { display: none; }
+  body { padding: 0; }
+}
+
+/* Back to top */
+.back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #FFF;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+.back-to-top.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <div class="header-icon">&#127867;</div>
+    <h1>Mobile Bar Business</h1>
+    <div class="subtitle">Friday Planning Meeting Agenda</div>
+    <div class="meeting-meta">
+      <div class="meta-item"><span class="meta-icon">&#128197;</span> Friday, May 16, 2026</div>
+      <div class="meta-item"><span class="meta-icon">&#9201;</span> ~2 hours</div>
+      <div class="meta-item"><span class="meta-icon">&#128101;</span> Toby + Partner</div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 1 -->
+  <div class="agenda-item open">
+    <div class="agenda-header">
+      <div class="agenda-number">1</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Vision -- What Are We Building?</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>Before diving into logistics, get aligned on the big picture. This sets the tone for every decision that follows.</p>
+        <ul>
+          <li>What kind of events do we want to serve? (weddings, parties, corporate, festivals, all of the above?)</li>
+          <li>What's our vibe? Classy and elegant? Fun and tropical? Rustic charm? Modern and sleek?</li>
+          <li>Who's our ideal customer? (brides? corporate planners? backyard party hosts?)</li>
+          <li>Are we doing this as a side hustle or going full-time eventually?</li>
+          <li>What's our geographic range? How far are we willing to travel for an event?</li>
+        </ul>
+        <div class="discussion-prompt">Key question: If we could only do ONE type of event, what would it be?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 2 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">2</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Partnership -- How We Work Together</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>The #1 reason small businesses fail is partnership disagreements. Having this conversation NOW -- when everything is exciting and positive -- is 100x easier than having it during a conflict later.</p>
+        <ul>
+          <li>Ownership split: 50/50? Or different based on investment/roles?</li>
+          <li>Who handles what? (Toby: business/marketing? Partner: bartending/events? Or both do everything?)</li>
+          <li>How do we make decisions? Unanimous, or does one person own certain domains?</li>
+          <li>How much is each person investing upfront (money AND time)?</li>
+          <li>What happens if one person wants out someday? (Buy-out terms)</li>
+          <li>How do we split profits? Equal? Based on hours worked? Reinvest first?</li>
+        </ul>
+        <div class="discussion-prompt">Must-do: Write down whatever you agree on. This becomes your operating agreement. Get it on paper even if it's informal.</div>
+        <div class="action-item">Research LLC formation in your state ($50-$500 filing fee)</div>
+        <div class="action-item">Draft a simple operating agreement (or hire an attorney: $500-$1,500)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 3 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">3</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Money -- Startup Budget & Funding</div>
+        <div class="agenda-time">20 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>Get real about how much this costs and how you'll fund it. The good news: you can start lean and scale up.</p>
+
+        <p><strong>Three paths to launch:</strong></p>
+        <ul>
+          <li><strong>Lean start (no trailer): $5,000 - $15,000</strong> -- Portable bar setup, basic equipment, business formation. Test the market first.</li>
+          <li><strong>Mid-range (used trailer conversion): $20,000 - $40,000</strong> -- DIY conversion of a horse trailer or vintage trailer. Most popular path.</li>
+          <li><strong>Premium (turnkey trailer): $55,000 - $90,000+</strong> -- New purpose-built bar trailer, professional branding, everything dialed in.</li>
+        </ul>
+
+        <p><strong>The big costs:</strong></p>
+        <ul>
+          <li>The trailer: $3,000 - $55,000 (biggest variable)</li>
+          <li>Conversion/buildout: $8,000 - $20,000 (if DIY or hiring a fabricator)</li>
+          <li>Equipment & tools: $2,000 - $5,000</li>
+          <li>Licensing & legal: $500 - $5,000 (state dependent)</li>
+          <li>Insurance (year 1): $2,500 - $4,000</li>
+          <li>Initial inventory: $1,500 - $4,000</li>
+          <li>Branding & marketing: $500 - $3,000</li>
+          <li>Working capital reserve: $3,000 - $6,000</li>
+        </ul>
+
+        <div class="discussion-prompt">The question: How much can each of us invest? What's our total budget? Do we need a small business loan?</div>
+        <div class="action-item">Each person: write down your max comfortable investment amount</div>
+        <div class="action-item">Research SBA microloans and local small business grants</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 4 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">4</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Rig -- What Kind of Trailer?</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>The trailer IS your brand. It's the first thing clients see and the reason they book you over a standard bartending service.</p>
+        <ul>
+          <li><strong>Converted horse trailer</strong> -- Most popular right now. Rustic, Instagram-worthy. $3,000-$12,000 for the trailer + $8,000-$20,000 conversion. Look for 16 ft aluminum-frame models.</li>
+          <li><strong>Vintage Airstream/camper</strong> -- Iconic retro look. $8,000-$25,000 + conversion. Photographs beautifully but harder to find in good condition.</li>
+          <li><strong>Purpose-built bar trailer</strong> -- New from companies like Cedar Trailer Co. $25,000-$55,000 turnkey. Built to code, ready to go, but less character.</li>
+          <li><strong>Portable setup (no trailer)</strong> -- Start here to test the market. $1,000-$5,000. Foldable bar, bins, tools. Load into an SUV.</li>
+          <li><strong>Converted van or bus</strong> -- Self-propelled, no tow vehicle needed. $15,000-$45,000.</li>
+        </ul>
+        <div class="discussion-prompt">Do either of you have a truck that can tow? Towing capacity matters -- a loaded bar trailer can weigh 8,000-12,000 lbs.</div>
+        <div class="action-item">Browse Facebook Marketplace and Craigslist for horse trailers this week</div>
+        <div class="action-item">Check your tow vehicle's max tow rating</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 5 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">5</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Legal Stuff -- Licenses & Insurance</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>This is the least exciting part but the most important. Serving alcohol without proper licensing and insurance can result in personal liability lawsuits that wipe you out.</p>
+
+        <p><strong>Two ways to operate:</strong></p>
+        <ul>
+          <li><strong>Full-service</strong> -- You buy and serve the alcohol. Requires a liquor license ($200-$14,000 depending on state). Higher revenue per event.</li>
+          <li><strong>Dry hire</strong> -- Client buys the alcohol, you provide the bar, equipment, and bartending. No liquor license needed in most states. Faster to launch, lower risk.</li>
+        </ul>
+
+        <p><strong>Insurance you MUST have:</strong></p>
+        <ul>
+          <li>General liability: $500-$1,200/year</li>
+          <li>Liquor liability: $300-$900/year (even for dry hire -- protects you if a guest you served gets into trouble)</li>
+          <li>Commercial auto/trailer: $800-$2,000/year</li>
+          <li>Total: ~$2,500-$4,000/year</li>
+        </ul>
+
+        <p><strong>Florida-specific notes (Riverview / Tampa Bay):</strong></p>
+        <ul>
+          <li><strong>Florida is mobile-bar friendly!</strong> The state offers a Special Catering License through the Florida Division of Alcoholic Beverages and Tobacco (FL DABT).</li>
+          <li>A 2COP license (beer & wine) is ~$1,820. A 4COP license (full liquor) is harder to get and much more expensive -- but a catering license is a viable alternative.</li>
+          <li>Hillsborough County (Riverview/Tampa) and Pinellas County (St. Pete) each have their own local business tax receipt requirements on top of state licenses.</li>
+          <li>Florida requires all alcohol servers to complete a Responsible Vendor Training Program (free or low-cost, about 3 hours online).</li>
+          <li>Tampa Bay is a HOT wedding market -- waterfront venues, brewery scene, year-round outdoor events. Perfect for mobile bars.</li>
+        </ul>
+
+        <div class="discussion-prompt">First question to answer: Do we want to start as dry hire (faster, cheaper) and upgrade to full-service later? Most successful mobile bars start this way.</div>
+        <div class="action-item">Call FL DABT at (850) 487-1395 or visit myfloridalicense.com -- ask about Special Catering License</div>
+        <div class="action-item">Apply for Hillsborough County Local Business Tax Receipt ($25-$100)</div>
+        <div class="action-item">Get insurance quotes from FLIP, Insurance Canopy, or NEXT Insurance</div>
+        <div class="action-item">Both partners: complete Florida Responsible Vendor Training (free online)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 6 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">6</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Brand -- Name, Look & Feel</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>The fun part! Your brand is what makes people remember you and book you over the competition.</p>
+
+        <p><strong>Name brainstorm -- some ideas to riff on:</strong></p>
+        <ul>
+          <li>The Rolling Pour</li>
+          <li>Sip & Roam</li>
+          <li>Cheers on Wheels</li>
+          <li>Barrel & Bloom</li>
+          <li>The Copper Shaker</li>
+          <li>Golden Hour Bar Co.</li>
+          <li>Nomadic Spirits</li>
+          <li>Sage & Sip</li>
+          <li>The Wandering Pour</li>
+          <li>Craft + Cart</li>
+        </ul>
+
+        <p><strong>Before committing to a name:</strong></p>
+        <ul>
+          <li>Check if the .com domain is available</li>
+          <li>Check if the Instagram handle is available</li>
+          <li>Search the USPTO trademark database</li>
+          <li>Google it to make sure no one local is using it</li>
+        </ul>
+
+        <div class="discussion-prompt">Bring 5 names each to the meeting. Compare lists and see what overlaps or sparks something new.</div>
+        <div class="action-item">Check domain availability on Namecheap or GoDaddy</div>
+        <div class="action-item">Search Instagram for your top 3 name choices</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 7 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">7</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Menu -- What Are We Serving?</div>
+        <div class="agenda-time">10 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>Your signature cocktails are your differentiator. This is where your bartender friend's expertise really shines.</p>
+
+        <p><strong>Trending cocktails right now:</strong></p>
+        <ul>
+          <li>Espresso Martini (#1 trending cocktail nationally)</li>
+          <li>Spicy Mango Margarita</li>
+          <li>Aperol Spritz</li>
+          <li>Lavender Collins</li>
+          <li>Smoked Old Fashioned</li>
+          <li>Paloma variations</li>
+        </ul>
+
+        <p><strong>Menu strategy:</strong></p>
+        <ul>
+          <li>Develop 5-8 signature cocktails that are YOUR brand</li>
+          <li>Include 2-3 craft mocktail options (15-20% of guests don't drink)</li>
+          <li>Offer seasonal specials (pumpkin spice mule in fall, watermelon cooler in summer)</li>
+          <li>Batch your signatures for speed -- pre-batched cocktails pour in 10 seconds vs. 90 seconds to build</li>
+        </ul>
+
+        <div class="discussion-prompt">Homework: Partner creates 3 signature cocktails to taste-test at the next meeting. Name them something fun.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENDA ITEM 8 -->
+  <div class="agenda-item">
+    <div class="agenda-header">
+      <div class="agenda-number">8</div>
+      <div class="agenda-title-block">
+        <div class="agenda-title">The Timeline -- What Happens Next?</div>
+        <div class="agenda-time">15 minutes</div>
+      </div>
+      <div class="agenda-toggle">+</div>
+    </div>
+    <div class="agenda-body">
+      <div class="agenda-content">
+        <p>End the meeting with clear next steps and deadlines. Nothing kills momentum like leaving without a plan.</p>
+
+        <p><strong>Suggested launch timeline:</strong></p>
+        <ul>
+          <li><strong>Week 1-2:</strong> Form LLC, open business bank account, get ServSafe certified</li>
+          <li><strong>Week 2-4:</strong> Call ABC board, get insurance quotes, start trailer shopping</li>
+          <li><strong>Month 2-3:</strong> Acquire and convert trailer (or start with portable setup)</li>
+          <li><strong>Month 3-4:</strong> Build website, set up social media, do a styled shoot for photos</li>
+          <li><strong>Month 4-5:</strong> List on The Knot/WeddingWire, connect with local venues and planners</li>
+          <li><strong>Month 5-6:</strong> Book first events! Start with friends/family events at a discount to build reviews</li>
+        </ul>
+
+        <div class="discussion-prompt">Set a target launch date. Having a deadline makes everything real.</div>
+        <div class="action-item">Set the next meeting date (1 week from now)</div>
+        <div class="action-item">Assign ownership on action items from this meeting</div>
+        <div class="action-item">Create a shared Google Doc to track progress</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Reference Card -->
+  <div class="reference-card">
+    <h2>Quick Reference Numbers</h2>
+    <div class="ref-grid">
+      <div class="ref-item">
+        <div class="ref-label">Lean Startup</div>
+        <div class="ref-value">$5,000 - $15,000</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Mid-Range Startup</div>
+        <div class="ref-value">$20,000 - $40,000</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Avg Event Revenue</div>
+        <div class="ref-value">$1,500 - $4,500</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Year 1 Revenue (Full-Time)</div>
+        <div class="ref-value">$80K - $200K</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Break Even</div>
+        <div class="ref-value">6 - 18 months</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Insurance/Year</div>
+        <div class="ref-value">$2,500 - $4,000</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Profit Margin (Full Svc)</div>
+        <div class="ref-value">20 - 40%</div>
+      </div>
+      <div class="ref-item">
+        <div class="ref-label">Peak Season</div>
+        <div class="ref-value">May - October</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <p>See the <a href="business-plan.html">full business plan</a> for detailed numbers and strategy.</p>
+    <p style="margin-top: 8px;">Check out the <a href="index.html">mockup website</a> to see what the business could look like online.</p>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop">&#8593;</button>
+
+<script>
+// Accordion
+document.querySelectorAll('.agenda-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.parentElement;
+    const body = item.querySelector('.agenda-body');
+    const isOpen = item.classList.contains('open');
+
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    } else {
+      item.classList.remove('open');
+      body.style.maxHeight = null;
+    }
+  });
+});
+
+// Open first item by default
+const firstBody = document.querySelector('.agenda-item.open .agenda-body');
+if (firstBody) firstBody.style.maxHeight = firstBody.scrollHeight + 'px';
+
+// Back to top
+const btn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 400));
+btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// Konami
+let kp = 0;
+const kc = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  if (e.keyCode === kc[kp]) { kp++; if (kp === kc.length) { kp = 0; matrixRain(); } } else { kp = 0; }
+});
+function matrixRain() {
+  const c = document.createElement('canvas');
+  c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:none;';
+  document.body.appendChild(c);
+  const x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+  const cols = Math.floor(c.width/16), d = Array(cols).fill(1);
+  let f = 0;
+  (function draw() {
+    x.fillStyle = 'rgba(0,0,0,0.05)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle = '#0f0'; x.font = '14px monospace';
+    for (let i=0;i<d.length;i++) {
+      x.fillText('CHEERS0123456789'[Math.floor(Math.random()*16)], i*16, d[i]*16);
+      if (d[i]*16 > c.height && Math.random()>.975) d[i]=0; d[i]++;
+    }
+    if (++f < 300) requestAnimationFrame(draw); else c.remove();
+  })();
+}
+</script>
+</body>
+</html>
