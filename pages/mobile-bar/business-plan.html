@@ -329,6 +329,162 @@ li strong { color: var(--text); }
   min-width: 40px;
 }
 
+/* Competitor cards */
+.competitor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.competitor-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.competitor-card .cc-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.competitor-card .cc-location {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.competitor-card .cc-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.competitor-card .cc-links {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.competitor-card .cc-links a {
+  font-size: 0.78rem;
+  color: var(--accent-warm);
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 1px solid var(--accent-warm);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.competitor-card .cc-links a:hover {
+  background: var(--accent-warm);
+  color: #FFF;
+}
+
+.cc-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cc-price {
+  font-weight: 700;
+  color: var(--accent-warm);
+  font-size: 0.95rem;
+}
+
+.cc-reviews {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.cc-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.cc-tag.established { background: #E8F5E9; color: #2E7D32; }
+.cc-tag.niche { background: #E3F2FD; color: #1565C0; }
+.cc-tag.local { background: #FFF8E1; color: #F57F17; }
+.cc-tag.franchise { background: #F3E5F5; color: #7B1FA2; }
+
+/* Gap cards */
+.gap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.gap-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green);
+  border-radius: 0 12px 12px 0;
+  padding: 20px;
+}
+
+.gap-card h4 {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.gap-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* Citation list */
+.citations {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: #F5F5F5;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.8;
+}
+
+.citations h4 {
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.citations ol {
+  padding-left: 20px;
+  color: var(--text-muted);
+}
+
+.citations a {
+  color: var(--accent-warm);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.citations a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .competitor-card { grid-template-columns: 1fr; }
+  .cc-meta { text-align: left; }
+}
+
 /* Footer */
 .plan-footer {
   text-align: center;
@@ -396,6 +552,7 @@ li strong { color: var(--text); }
   <div class="sidebar-logo">Business Plan</div>
   <a href="#executive-summary" class="active">Executive Summary</a>
   <a href="#business-model">Business Model</a>
+  <a href="#competitors">Competitor Analysis</a>
   <a href="#startup-costs">Startup Costs</a>
   <a href="#revenue-projections">Revenue Projections</a>
   <div class="section-label">Operations</div>
@@ -501,6 +658,412 @@ li strong { color: var(--text); }
         <tr><td><strong>Holiday Parties</strong></td><td class="amount">$1,200 - $3,500</td><td>Seasonal (Oct-Dec)</td><td>High</td><td>Critical Q4 cash flow.</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- COMPETITOR ANALYSIS -->
+  <div class="section" id="competitors">
+    <h2>Competitor Analysis -- Tampa Bay Market</h2>
+    <p>The Tampa Bay mobile bar market is active but not saturated. We identified <strong>30-50+ vendors</strong> listed across The Knot, WeddingWire, Thumbtack, and Yelp -- but only a handful have strong brand recognition, consistent reviews, and a distinct visual identity. Here's who you're up against and where the openings are.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">20,671</div>
+        <div class="metric-label">Tampa Bay Weddings/Year<sup><a href="#cite-1">[1]</a></sup></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">$684M</div>
+        <div class="metric-label">Wedding Market Value<sup><a href="#cite-1">[1]</a></sup></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">30-50+</div>
+        <div class="metric-label">Listed Competitors<sup><a href="#cite-2">[2]</a></sup></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">~2</div>
+        <div class="metric-label">Riverview-Based Operators</div>
+      </div>
+    </div>
+
+    <h3>Key Competitors -- Established Players</h3>
+    <p>These are the businesses that show up first in search results and have the strongest review profiles. They set the bar (pun intended) for pricing and service expectations.</p>
+
+    <div class="competitor-grid">
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">The Tipsy Trotter Mobile Bar Co.</div>
+          <div class="cc-location">Based in Seminole, FL -- serves all of Tampa Bay</div>
+          <div class="cc-desc">Self-described "Tampa Bay's #1 fleet of vintage mobile bars." Multiple bars in their fleet (not a single unit), which means they can book multiple events on the same day. All-inclusive dry bar model -- they handle supplies, tools, setup, craft cocktails, shopping list, and signature drinks. 50% non-refundable deposit, balance due 30 days out. First 10 miles free, $2.50/mile beyond.</div>
+          <div class="cc-links">
+            <a href="https://www.thetipsytrotter.com/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/thetipsytrotter" target="_blank">Instagram</a>
+            <a href="https://www.weddingwire.com/biz/the-tipsy-trotter/c6e2f5e4139cebf3.html" target="_blank">WeddingWire</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From ~$1,700</div>
+          <div class="cc-reviews">22 reviews, 5/5 (WW)</div>
+          <div class="cc-tag established">Established</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Hook Line & Drinker</div>
+          <div class="cc-location">Tampa Bay + Central FL</div>
+          <div class="cc-desc">Premium mobile bartending for weddings, corporate, and special occasions. Owners Chris and Stacy opened in 2018 with 25 combined years of bartending experience. Full menu creation, custom and non-alcoholic beverages, complete bar setup. Carries $1M liquor liability / $2M aggregate -- they lead with insurance credentials, which signals a professional operation. Add-ons: Ice $1.50/person, Garnish $1.00/person, extra bartender $150/4 hrs.</div>
+          <div class="cc-links">
+            <a href="https://hldrinker.com/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/hldrinker" target="_blank">Instagram</a>
+            <a href="https://hldrinker.com/packages" target="_blank">Packages</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Quote-based</div>
+          <div class="cc-reviews">$3M insurance</div>
+          <div class="cc-tag established">Est. 2018</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Belles of the Bar</div>
+          <div class="cc-location">Tampa, FL</div>
+          <div class="cc-desc">Founded by Jessi, an experienced mixologist. Custom-built bar (not a trailer conversion -- a purpose-built unit). Strong wedding focus with personalized bar design and custom signature cocktails. Consistently 5-star reviews across The Knot, Zola, and GigSalad. Reviewers highlight fast-moving lines and theme-matching ability.</div>
+          <div class="cc-links">
+            <a href="https://www.thebellesofthebar.com/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/bellesofthebar_" target="_blank">Instagram</a>
+            <a href="https://www.theknot.com/marketplace/belles-of-the-bar-tampa-fl-2050874" target="_blank">The Knot</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Quote only</div>
+          <div class="cc-reviews">5/5 across platforms</div>
+          <div class="cc-tag established">Established</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">MGM Bartending</div>
+          <div class="cc-location">Tampa (multi-state: FL, WI, MI, IL, IA, IN)</div>
+          <div class="cc-desc">High-volume operation with 20+ years experience. Claims "#1 Google-rated wedding bartending service in Tampa." Starts at $100 with per-person pricing for 4-hour service. Includes setup/breakdown, insurance, portable bar, plasticware, ice, equipment, sodas, mixers, and garnishes. 75-guest minimum for complimentary bartending staff. Some reviews note inconsistency when staffing varies.</div>
+          <div class="cc-links">
+            <a href="https://mgmbartending.com/" target="_blank">Website</a>
+            <a href="https://reviews.birdeye.com/mgm-bartending-170051280060480" target="_blank">Reviews</a>
+            <a href="https://mgmbartending.com/bartending-service-packages-new" target="_blank">Pricing</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From $100</div>
+          <div class="cc-reviews">106 reviews, 4.7/5</div>
+          <div class="cc-tag established">Multi-State</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Divina Mobile Bartending</div>
+          <div class="cc-location">Tampa Bay -- travels within 90 miles</div>
+          <div class="cc-desc">Owner Kevin Joshi runs both a mobile bar AND a mobile coffee bar -- a dual offering that spans morning events through evening parties. 6+ years experience. Three service models: client supplies everything, all-inclusive (they shop), or hybrid. Reviewers highlight Kevin's creativity and willingness to work with budgets. The coffee bar angle is a genuine differentiator in this market.</div>
+          <div class="cc-links">
+            <a href="https://www.divinabartending.com/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/divina_bartending" target="_blank">Instagram</a>
+            <a href="https://www.theknot.com/marketplace/divina-mobile-bartending-llc-tampa-fl-2051559" target="_blank">The Knot</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From $1/person</div>
+          <div class="cc-reviews">5/5, multiple platforms</div>
+          <div class="cc-tag niche">Bar + Coffee</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Tipsy Tampa Bartender & Events</div>
+          <div class="cc-location">Tampa Bay + South Florida</div>
+          <div class="cc-desc">Women-owned by Chelsea Lopez (15 years bartending, started 2017). Unusual combo: event coordination, mobile bar, rentals, AND officiant services. Multiple mobile bar options. Most active social media presence in the Tampa market (2,688 followers, 3,390+ posts on Instagram). Works with any budget and setup.</div>
+          <div class="cc-links">
+            <a href="https://tipsytampa.co/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/tipsy.tampa" target="_blank">Instagram (2.7K)</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Quote-based</div>
+          <div class="cc-reviews">51 reviews (Yelp)</div>
+          <div class="cc-tag established">Est. 2017</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">All Mixed Up Bartending</div>
+          <div class="cc-location">Tampa Bay (15+ years)</div>
+          <div class="cc-desc">Veteran-owned husband-and-wife team (Anthony and Hillary). The budget-friendly option in the market -- positioned as "you buy the booze, we handle the rest." Starts at $2.50/person for their Mixer's Package (includes bartender for 4 hours + 1 mobile bar). $150 holiday surcharge. Registered LLC, licensed and insured.</div>
+          <div class="cc-links">
+            <a href="https://allmixedupbar.com/" target="_blank">Website</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From $2.50/person</div>
+          <div class="cc-reviews">Veteran-owned</div>
+          <div class="cc-tag established">Budget Leader</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Key Competitors -- Distinctive / Niche Concepts</h3>
+    <p>These businesses compete on a unique visual or service concept rather than pure bartending quality.</p>
+
+    <div class="competitor-grid">
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Kombi Keg St. Pete</div>
+          <div class="cc-location">St. Petersburg + Sarasota (franchise)</div>
+          <div class="cc-desc">A vintage VW Kombi van with 6 drink taps -- arguably the most visually distinctive mobile bar in the Tampa Bay market. Owners Aaron and Peter are St. Pete natives. Franchise model (part of Kombi Keg's national network). Dry hire only. Must be on private property. The VW van is an instant conversation starter and photographs beautifully.</div>
+          <div class="cc-links">
+            <a href="https://www.kombikeg.com/united-states/st-pete/" target="_blank">Website (St. Pete)</a>
+            <a href="https://www.kombikeg.com/united-states/sarasota/" target="_blank">Website (Sarasota)</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Quote-based</div>
+          <div class="cc-reviews">VW van, 6 taps</div>
+          <div class="cc-tag franchise">Franchise</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Wine on Wheels</div>
+          <div class="cc-location">St. Pete area</div>
+          <div class="cc-desc">A 1962 Airstream trailer converted into a mobile wine bar. Operated by Melody Maria. Featured in the Tampa Bay Times (2021). The Airstream silhouette is iconic and immediately recognizable. Low search visibility despite the great concept -- limited online marketing presence.</div>
+          <div class="cc-links">
+            <a href="https://wine-onwheels.com/" target="_blank">Website</a>
+            <a href="https://www.tampabay.com/life-culture/food/bar-breweries/2021/06/06/st-petersburg-woman-turned-1962-airstream-into-a-wine-party-business/" target="_blank">Tampa Bay Times Feature</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Not listed</div>
+          <div class="cc-reviews">1962 Airstream</div>
+          <div class="cc-tag niche">Vintage Trailer</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Sip Social Co. (Tampa)</div>
+          <div class="cc-location">Tampa (franchise of North America's largest mobile bar company)</div>
+          <div class="cc-desc">Portable beverage cart format (not a trailer). National franchise backing with corporate marketing. Birthday parties, mitzvahs, bridal showers, festivals. The highest per-person price point in the market at $25/person -- leveraging the franchise brand premium.</div>
+          <div class="cc-links">
+            <a href="https://www.sipsocialco.com/tampa/" target="_blank">Website</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From $25/person</div>
+          <div class="cc-reviews">National brand</div>
+          <div class="cc-tag franchise">Franchise</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Tipsy Daisy Mobile Bar</div>
+          <div class="cc-location">St. Petersburg, FL</div>
+          <div class="cc-desc">Custom-built mobile bar with an unusual offering: rig rental without staff. Photographers, planners, and DIY clients can rent the bar as a prop. Also offers full bartending service and a photo booth option. Owner: Colleen Kelly. Located at 330 3rd St S, St. Pete.</div>
+          <div class="cc-links">
+            <a href="https://www.tipsydaisymobilebar.com/" target="_blank">Website</a>
+            <a href="https://www.tipsydaisymobilebar.com/pricing" target="_blank">Pricing</a>
+            <a href="https://www.instagram.com/tipsy_daisymobilebar" target="_blank">Instagram</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">From $2/person</div>
+          <div class="cc-reviews">5/5 (The Bash)</div>
+          <div class="cc-tag niche">Rig Rental Option</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Bar Artistry ("Party Arty")</div>
+          <div class="cc-location">Tampa (zip 33558) -- national reach</div>
+          <div class="cc-desc">Owner Arthur Plowden built a personal brand around "Party Arty." Competition-level bartending talent with an extensive hospitality career. First 60 miles free, $0.50/mile beyond. Standard package includes $2M liquor liability. Won "Best Mobile & Pop-up" award. Listed as a trusted vendor on Marry Me Tampa Bay.</div>
+          <div class="cc-links">
+            <a href="https://www.barartistry.com/" target="_blank">Website</a>
+            <a href="https://www.instagram.com/bar_artistry" target="_blank">Instagram</a>
+            <a href="https://marrymetampabay.com/tampa-wedding-vendor/bar-artistry/" target="_blank">Marry Me Tampa Bay</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">$25-$100 shop fee</div>
+          <div class="cc-reviews">Award winner</div>
+          <div class="cc-tag niche">Personal Brand</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Your Backyard -- Riverview / South Hillsborough</h3>
+    <p>This is where the opportunity gets interesting. Despite Riverview being one of the fastest-growing residential corridors in Tampa Bay, we found only <strong>two operators based in the area</strong> -- and neither has strong online visibility.</p>
+
+    <div class="competitor-grid">
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Pretty Pour 813</div>
+          <div class="cc-location">Riverview, FL</div>
+          <div class="cc-desc">"Professional mobile bartending service based in the Tampa Bay area, bringing elegance, efficiency, and creativity to your celebration." Listed on The Knot but minimal online presence beyond the listing. No confirmed website, Instagram, or reviews found in search.</div>
+          <div class="cc-links">
+            <a href="https://www.theknot.com/marketplace/bar-services-tampa-fl" target="_blank">The Knot (Tampa listings)</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Not listed</div>
+          <div class="cc-reviews">Low visibility</div>
+          <div class="cc-tag local">Riverview</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div>
+          <div class="cc-name">Dria's Elite Bartending & Event Planning</div>
+          <div class="cc-location">Riverview, FL</div>
+          <div class="cc-desc">Certified bartenders with an event planning component. Found on Thumbtack with 5-star reviews. Reviewers praise professionalism and fun energy. Not found on The Knot, WeddingWire, or other major wedding directories.</div>
+          <div class="cc-links">
+            <a href="https://www.thumbtack.com/fl/tampa/mobile-bartending-services" target="_blank">Thumbtack (Tampa)</a>
+          </div>
+        </div>
+        <div class="cc-meta">
+          <div class="cc-price">Not listed</div>
+          <div class="cc-reviews">5-star (Thumbtack)</div>
+          <div class="cc-tag local">Riverview</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <strong>Riverview is Wide Open</strong>
+      <p>With 180+ wedding venues listed in the Riverview area on Eventective<sup><a href="#cite-3">[3]</a></sup> and active new venue development (The Garden Riverview, The Eden in Riverview), there is significant local demand with almost no local supply. Every established competitor is headquartered 20-40 minutes north in Tampa, St. Pete, or Clearwater. A locally-rooted operator with a strong brand and fast response times would have a real home-field advantage.</p>
+    </div>
+
+    <h3>Pricing Landscape</h3>
+    <p>Here's what the Tampa Bay market actually charges, based on confirmed pricing from competitor websites and listings.</p>
+
+    <table>
+      <thead>
+        <tr><th>Service Model</th><th>Price Range</th><th>Who Does This</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Budget / labor-only</strong></td><td class="amount">$1.00 - $2.50/person</td><td>All Mixed Up, Divina, Tipsy Daisy</td></tr>
+        <tr><td><strong>Mid-range dry bar</strong></td><td class="amount">$750 - $1,500 flat</td><td>Most small operators, portable setups</td></tr>
+        <tr><td><strong>Premium event package</strong></td><td class="amount">$1,700 - $4,000+</td><td>Tipsy Trotter, Hook Line & Drinker, Belles of the Bar</td></tr>
+        <tr><td><strong>National franchise (cart)</strong></td><td class="amount">$25/person</td><td>Sip Social Co.</td></tr>
+        <tr><td><strong>100-guest wedding (typical)</strong></td><td class="amount">$2,500 - $4,000</td><td>Full vintage trailer + labor + mixers (alcohol excluded)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout blue">
+      <strong>Florida = Dry Hire Market</strong>
+      <p>Almost every competitor operates as a dry bar -- the client purchases the alcohol, and the bar provides everything else (staff, setup, mixers, ice, garnishes, glassware). This is because mobile bars in Florida <strong>cannot legally sell or resell alcohol</strong><sup><a href="#cite-4">[4]</a></sup>. You can charge for bar rental, hourly labor, and supplies -- but the alcohol itself must be owned by the client/host. Some operators offer to "shop on behalf of" the client, but this exists in a legal gray area. Starting as dry hire is both the safest legal path and the market norm.</p>
+    </div>
+
+    <h3>Market Gaps -- Where the Opportunities Are</h3>
+    <p>After reviewing the full competitive landscape, these are the openings where a new entrant can differentiate without going head-to-head with established players.</p>
+
+    <div class="gap-grid">
+      <div class="gap-card">
+        <h4>1. Riverview / South Hillsborough Home Base</h4>
+        <p>Only 2 operators are based locally, and neither has meaningful online presence. Every established competitor travels from the north. Being THE local mobile bar for the south suburbs -- Apollo Beach, Riverview, Brandon, Lithia, Valrico, FishHawk -- is an unclaimed position. You'd show up faster, know the venues, and build word-of-mouth in your own community.</p>
+      </div>
+      <div class="gap-card">
+        <h4>2. Lakeland is Underserved</h4>
+        <p>The Knot has a dedicated Lakeland bar services page, but no Lakeland-based mobile bar was found in any search. All coverage comes from Tampa operators traveling 40+ minutes east. If you're willing to drive, that's a market with demand and zero local competition.</p>
+      </div>
+      <div class="gap-card">
+        <h4>3. Brunch / Morning Events</h4>
+        <p>Divina and La Dolce Vita offer coffee bars, but nobody in the Tampa market leads with brunch events -- mimosa bars, Bloody Mary stations, bridal brunch, baby shower cocktails. This is high-margin, lower-effort work (pre-batched drinks, smaller setups) with growing demand, especially in the south suburbs.</p>
+      </div>
+      <div class="gap-card">
+        <h4>4. Corporate / Brand Activations</h4>
+        <p>Nearly every competitor leads with weddings. Corporate events, office parties, real estate open houses, and brand activations are mentioned but rarely marketed aggressively. A targeted LinkedIn and local Chamber of Commerce strategy could capture corporate business that wedding-focused competitors aren't chasing.</p>
+      </div>
+      <div class="gap-card">
+        <h4>5. The Sober-Curious / Non-Alcoholic Niche</h4>
+        <p>Every competitor mentions mocktails as a bullet point, but nobody leads with it. The sober-curious movement is growing fast -- "dry weddings" and craft mocktail-only events are a real trend. Being the first Tampa Bay mobile bar to market a standalone non-alcoholic craft cocktail experience would capture a completely uncontested niche.</p>
+      </div>
+      <div class="gap-card">
+        <h4>6. Vintage Trailer in South Hillsborough</h4>
+        <p>Wine on Wheels (Airstream, St. Pete) has low visibility. Kombi Keg is a franchise. La Dolce Vita is multi-market. A locally-owned, beautifully-branded vintage trailer based in Riverview would be the only one of its kind south of the Hillsborough River -- with 180+ venues nearby and zero vintage trailer competition.</p>
+      </div>
+    </div>
+
+    <h3>Additional Vendors Found</h3>
+    <p>Beyond the profiled competitors above, these businesses were identified in directory listings with limited public information. Worth monitoring as you enter the market.</p>
+
+    <table>
+      <thead>
+        <tr><th>Business</th><th>Location</th><th>Platform Found</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Booze & Bubbles</td><td>Tampa</td><td>Website</td><td>All-inclusive tap cocktails, beer, wine, champagne, coffee</td></tr>
+        <tr><td>Mobile Mixology</td><td>Tampa</td><td>WeddingWire</td><td>Disabled veteran-owned, 14 reviews, 5/5</td></tr>
+        <tr><td>Halloway Mobile Bar</td><td>St. Pete</td><td>Website + Yelp</td><td>Transparent pricing, 1 bartender per 75 guests<sup><a href="#cite-5">[5]</a></sup></td></tr>
+        <tr><td>Oak & Iris Mobile Bar</td><td>Clearwater</td><td>Website + Yelp</td><td>"Affordable luxury" tagline, dry bar only<sup><a href="#cite-6">[6]</a></sup></td></tr>
+        <tr><td>The Tap Nomad</td><td>Tampa Bay</td><td>Website</td><td>Veteran-owned, buys alcohol for client (gray area)<sup><a href="#cite-7">[7]</a></sup></td></tr>
+        <tr><td>La Dolce Vita Mobile Bar</td><td>Tampa</td><td>Website + Facebook</td><td>Horse trailer, coffee + bar<sup><a href="#cite-8">[8]</a></sup></td></tr>
+        <tr><td>Wild Bloom Mobile Bar</td><td>St. Pete</td><td>The Knot + Instagram</td><td>Floral/bubbles aesthetic<sup><a href="#cite-9">[9]</a></sup></td></tr>
+        <tr><td>Tipsy Tangie's</td><td>Riverview</td><td>The Knot</td><td>Licensed, insured, wedding focus</td></tr>
+        <tr><td>Velvet Pour Bar</td><td>Tampa</td><td>The Knot</td><td>All-inclusive mobile bar experience</td></tr>
+        <tr><td>Sip With Lyss</td><td>Tampa</td><td>The Knot</td><td>Craft cocktails, wedding focus</td></tr>
+        <tr><td>Florence & Co.</td><td>Tampa</td><td>The Knot</td><td>Listed</td></tr>
+        <tr><td>Pour It Pretty</td><td>Tampa</td><td>The Knot</td><td>Listed</td></tr>
+        <tr><td>Sunshine Cocktails</td><td>Tampa</td><td>The Knot</td><td>Dry hire focus</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Strategic Positioning Recommendation</h3>
+
+    <div class="callout green">
+      <strong>Your Competitive Edge</strong>
+      <p>Based on this analysis, here's where a new Riverview-based mobile bar can win without going head-to-head with established players:</p>
+    </div>
+    <ul>
+      <li><strong>Own the south suburbs.</strong> Be the go-to mobile bar for Riverview, Brandon, Apollo Beach, Lithia, Valrico, FishHawk, and Plant City. Nobody else claims this territory.</li>
+      <li><strong>Visual identity matters.</strong> A vintage trailer (horse trailer or Airstream) with strong branding and an active Instagram will differentiate you from the 20+ operators who show up with a folding table and a cooler.</li>
+      <li><strong>Lead with speed.</strong> Research shows responding to leads within 5 minutes increases close rate by 70x. Most competitors take 24-48 hours. Being the fastest to respond with a professional quote is a competitive weapon.</li>
+      <li><strong>Venue relationships are everything.</strong> Tampa Bay has 20,000+ weddings per year. Getting on the preferred vendor list of 5-10 south Hillsborough venues could fill your calendar within a year.</li>
+      <li><strong>Price at market rate.</strong> The $1,700-$4,000 range for a premium vintage trailer experience is well-established. Don't undercut -- invest in aesthetic quality and let the reviews do the selling.</li>
+      <li><strong>Add brunch/mocktail positioning.</strong> Nobody else is marketing these aggressively. They're low-effort additions that capture weekday and morning events your competitors ignore.</li>
+    </ul>
+
+    <!-- Citations -->
+    <div class="citations">
+      <h4>Sources & Citations</h4>
+      <ol>
+        <li id="cite-1"><a href="https://wedding.report/index.cfm/action/wedding_statistics/view/market/id/45300/idtype/m/location/Tampa_St__Petersburg_Clearwater__FL/" target="_blank">Wedding Report -- Tampa-St. Petersburg-Clearwater Wedding Market Statistics (2025)</a></li>
+        <li id="cite-2"><a href="https://www.theknot.com/marketplace/bar-services-tampa-fl" target="_blank">The Knot -- Bar Services in Tampa, FL</a> (30-50+ listed vendors; Thumbtack reports 57 five-star mobile bartending professionals in Tampa)</li>
+        <li id="cite-3"><a href="https://www.eventective.com/riverview-fl/wedding-venues/" target="_blank">Eventective -- Riverview, FL Wedding Venues</a> (180+ listed venues)</li>
+        <li id="cite-4"><a href="https://brewerslaw.com/mobile-alcohol-sales-are-mostly-not-permitted-in-florida/" target="_blank">Brewers Law -- Mobile Alcohol Sales in Florida</a></li>
+        <li id="cite-5"><a href="https://www.hallowaybar.com" target="_blank">Halloway Mobile Bar Services</a></li>
+        <li id="cite-6"><a href="https://oakandirismobile.com/" target="_blank">Oak & Iris Mobile Bar</a></li>
+        <li id="cite-7"><a href="https://thetapnomad.com/" target="_blank">The Tap Nomad</a></li>
+        <li id="cite-8"><a href="https://www.ladolcevitamobilebar.com/tampa" target="_blank">La Dolce Vita Mobile Bar -- Tampa</a></li>
+        <li id="cite-9"><a href="https://www.instagram.com/wildbloom_bar/" target="_blank">Wild Bloom Mobile Bar -- Instagram</a></li>
+        <li id="cite-10"><a href="https://pos.toasttab.com/blog/on-the-line/mobile-bar-business-licenses-and-permits-in-florida" target="_blank">Toast POS -- Mobile Bar Licenses & Permits in Florida</a></li>
+        <li id="cite-11"><a href="https://www.tampabay.com/life-culture/food/bar-breweries/2021/06/06/st-petersburg-woman-turned-1962-airstream-into-a-wine-party-business/" target="_blank">Tampa Bay Times -- Wine on Wheels Airstream Feature (2021)</a></li>
+        <li id="cite-12"><a href="https://gasparillamusic.com/" target="_blank">Gasparilla Music Festival -- Vendor Opportunities</a></li>
+        <li id="cite-13"><a href="https://www.thetipsytrotter.com/" target="_blank">The Tipsy Trotter Mobile Bar Co.</a></li>
+        <li id="cite-14"><a href="https://hldrinker.com/packages" target="_blank">Hook Line & Drinker -- Packages & Pricing</a></li>
+        <li id="cite-15"><a href="https://mgmbartending.com/bartending-service-packages-new" target="_blank">MGM Bartending -- Packages</a></li>
+        <li id="cite-16"><a href="https://www.divinabartending.com/" target="_blank">Divina Mobile Bartending</a></li>
+        <li id="cite-17"><a href="https://www.sipsocialco.com/tampa/" target="_blank">Sip Social Co. -- Tampa</a></li>
+        <li id="cite-18"><a href="https://www.kombikeg.com/united-states/st-pete/" target="_blank">Kombi Keg -- St. Pete</a></li>
+      </ol>
+      <p style="margin-top: 12px; color: #999;">Research conducted May 2026. Prices and business details may change -- verify directly with each business before making strategic decisions.</p>
+    </div>
   </div>
 
   <!-- STARTUP COSTS -->
