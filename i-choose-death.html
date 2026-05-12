@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="I Choose Death — a crass would-you-rather party game with 500+ horrible options.">
+  <title>I Choose Death — Would You Rather?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(ellipse at top, #1a1614 0%, #0a0807 60%, #000 100%);
+      background-attachment: fixed;
+      color: #e8d8a8;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Subtle grain overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0, rgba(255,255,255,0.6) 1px, transparent 2px, transparent 4px);
+      mix-blend-mode: overlay;
+      z-index: 1;
+    }
+
+    .app {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 18px 100px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---------- Header ---------- */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-skull {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      color: #c9a449;
+      filter: drop-shadow(0 0 8px rgba(201,164,73,0.35));
+    }
+    .brand-title {
+      font-family: "Rye", "Cinzel", serif;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      color: #d9c283;
+      text-transform: uppercase;
+    }
+    .counter {
+      font-family: "Cinzel", serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #8a7a4a;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Splash ---------- */
+    .splash {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 24px;
+      padding: 40px 0;
+      animation: fadeIn 0.6s ease;
+    }
+    .splash.hidden { display: none; }
+    .splash-skull {
+      width: 140px; height: 140px;
+      color: #c9a449;
+      filter: drop-shadow(0 0 30px rgba(201,164,73,0.45));
+      animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(201,164,73,0.45)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 50px rgba(201,164,73,0.7)); }
+    }
+    .splash h1 {
+      font-family: "Rye", "Cinzel", serif;
+      font-size: clamp(48px, 11vw, 96px);
+      color: #e8d8a8;
+      letter-spacing: 4px;
+      line-height: 0.95;
+      text-shadow: 0 0 30px rgba(201,164,73,0.3), 0 4px 0 rgba(0,0,0,0.5);
+    }
+    .splash h1 .red {
+      display: block;
+      color: #d9c283;
+    }
+    .splash-tag {
+      font-family: "Cinzel", serif;
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: #8a7a4a;
+      text-transform: uppercase;
+      max-width: 480px;
+    }
+    .splash-rules {
+      max-width: 520px;
+      padding: 22px 24px;
+      background: rgba(20, 16, 14, 0.6);
+      border: 1px solid rgba(201,164,73,0.15);
+      border-radius: 4px;
+      color: #b8a878;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: left;
+    }
+    .splash-rules strong { color: #d9c283; font-weight: 600; }
+    .start-btn {
+      font-family: "Rye", "Cinzel", serif;
+      letter-spacing: 3px;
+      font-size: 18px;
+      padding: 18px 44px;
+      background: linear-gradient(180deg, #2a221a 0%, #15110d 100%);
+      color: #e8d8a8;
+      border: 1px solid #c9a449;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      box-shadow: 0 0 0 0 rgba(201,164,73,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .start-btn:hover {
+      box-shadow: 0 0 30px 4px rgba(201,164,73,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+      transform: translateY(-1px);
+    }
+    .start-btn:active { transform: translateY(0); }
+
+    /* ---------- Game ---------- */
+    .game { display: none; flex-direction: column; gap: 28px; }
+    .game.active { display: flex; animation: fadeIn 0.4s ease; }
+
+    .prompt-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .card {
+      position: relative;
+      aspect-ratio: 2.5 / 3.5;
+      background:
+        radial-gradient(ellipse at center, rgba(201,164,73,0.07) 0%, transparent 70%),
+        repeating-linear-gradient(180deg,
+          rgba(201,164,73,0.04) 0,
+          rgba(201,164,73,0.04) 2px,
+          transparent 2px,
+          transparent 6px),
+        linear-gradient(160deg, #1a1612 0%, #0c0a08 100%);
+      border: 1px solid #2a2218;
+      border-radius: 14px;
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.4, 1), box-shadow 0.25s, border-color 0.25s;
+      box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        inset 0 0 60px rgba(0,0,0,0.4);
+      overflow: hidden;
+      user-select: none;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg,
+          transparent 0,
+          transparent 8px,
+          rgba(201,164,73,0.025) 8px,
+          rgba(201,164,73,0.025) 9px);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201,164,73,0.4);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.7),
+        0 0 30px rgba(201,164,73,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .card.chosen {
+      animation: chosenPulse 0.6s ease;
+      border-color: #c9a449;
+      box-shadow:
+        0 0 0 2px #c9a449,
+        0 0 50px rgba(201,164,73,0.5),
+        0 18px 40px rgba(0,0,0,0.7);
+    }
+    .card.rejected {
+      opacity: 0.3;
+      transform: scale(0.96);
+    }
+    @keyframes chosenPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    .card-corner {
+      font-family: "Cinzel", serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(201,164,73,0.55);
+      text-transform: uppercase;
+    }
+    .card-corner.bottom { text-align: right; transform: rotate(180deg); }
+
+    .card-text {
+      font-family: "Cinzel", "Inter", serif;
+      font-size: clamp(15px, 1.8vw, 22px);
+      line-height: 1.4;
+      color: #e8d8a8;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 6px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+      font-weight: 500;
+    }
+
+    .vs {
+      font-family: "Rye", serif;
+      font-size: 32px;
+      color: #c9a449;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(201,164,73,0.5);
+      padding: 0 4px;
+      animation: flicker 5s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 1; }
+      48% { opacity: 0.6; }
+      50% { opacity: 1; }
+      52% { opacity: 0.7; }
+      55% { opacity: 1; }
+    }
+
+    /* ---------- Death button + footer controls ---------- */
+    .death-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .death-btn {
+      font-family: "Rye", serif;
+      letter-spacing: 4px;
+      font-size: 17px;
+      padding: 16px 36px;
+      background: linear-gradient(180deg, #2a1010 0%, #100404 100%);
+      color: #e8a8a8;
+      border: 1px solid #6a2020;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .death-btn:hover {
+      background: linear-gradient(180deg, #3a1414 0%, #180606 100%);
+      border-color: #a83030;
+      color: #ffc8c8;
+      box-shadow: 0 0 30px rgba(168,48,48,0.3);
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      font-family: "Cinzel", serif;
+      letter-spacing: 2px;
+      font-size: 12px;
+      padding: 10px 18px;
+      background: transparent;
+      color: #8a7a4a;
+      border: 1px solid #3a3020;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover {
+      color: #d9c283;
+      border-color: #c9a449;
+    }
+
+    /* ---------- Score / chosen reveal ---------- */
+    .reveal-toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(40px);
+      background: rgba(20,16,14,0.95);
+      border: 1px solid #c9a449;
+      color: #e8d8a8;
+      font-family: "Cinzel", serif;
+      letter-spacing: 2px;
+      font-size: 12px;
+      text-transform: uppercase;
+      padding: 12px 22px;
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.4, 1);
+      pointer-events: none;
+      z-index: 50;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7), 0 0 30px rgba(201,164,73,0.2);
+    }
+    .reveal-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .reveal-toast.death { border-color: #a83030; color: #ffc8c8; box-shadow: 0 10px 40px rgba(0,0,0,0.7), 0 0 30px rgba(168,48,48,0.4); }
+
+    /* ---------- Tally ---------- */
+    .tally {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 18px;
+      font-family: "Cinzel", serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #6a5a3a;
+      text-transform: uppercase;
+    }
+    .tally span strong { color: #c9a449; font-size: 14px; margin-right: 6px; }
+
+    /* ---------- Back link ---------- */
+    .back-link {
+      font-family: "Cinzel", serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #6a5a3a;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #c9a449; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 720px) {
+      .prompt-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .vs { transform: rotate(0deg); font-size: 24px; padding: 4px 0; }
+      .card { aspect-ratio: auto; min-height: 220px; padding: 24px 20px; }
+      .card-text { font-size: 17px; }
+      .splash-rules { font-size: 13px; padding: 18px 20px; }
+      .death-btn { font-size: 14px; padding: 14px 24px; letter-spacing: 2px; }
+      .start-btn { font-size: 15px; padding: 16px 32px; letter-spacing: 2px; }
+      .topbar { margin-bottom: 20px; }
+      .brand-title { font-size: 14px; }
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      font-family: "Inter", sans-serif;
+      font-size: 11px;
+      color: #5a4a2a;
+      text-align: center;
+      margin-top: 32px;
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-skull" aria-hidden="true">
+        <!-- Skull SVG -->
+        <svg viewBox="0 0 64 64" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="skullGlow" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#e8c878"/>
+              <stop offset="100%" stop-color="#8a6a2a"/>
+            </radialGradient>
+          </defs>
+          <path fill="url(#skullGlow)" d="M32 4c-12 0-22 9-22 22 0 7 3 12 7 16v8c0 3 2 5 5 5h2v-4c0-1 1-2 2-2s2 1 2 2v4h8v-4c0-1 1-2 2-2s2 1 2 2v4h2c3 0 5-2 5-5v-8c4-4 7-9 7-16 0-13-10-22-22-22zm-10 28a5 5 0 110-10 5 5 0 010 10zm20 0a5 5 0 110-10 5 5 0 010 10zm-10 14c-3 0-5-2-5-4 0-1 1-2 2-2h6c1 0 2 1 2 2 0 2-2 4-5 4z"/>
+        </svg>
+      </div>
+      <div class="brand-title">I Choose Death</div>
+    </div>
+    <div class="counter" id="counter">Round 0</div>
+  </div>
+
+  <!-- Splash -->
+  <div class="splash" id="splash">
+    <div class="splash-skull" aria-hidden="true">
+      <svg viewBox="0 0 64 64" width="140" height="140" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="skullGlow2" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#e8c878"/>
+            <stop offset="60%" stop-color="#c9a449"/>
+            <stop offset="100%" stop-color="#6a4a1a"/>
+          </radialGradient>
+        </defs>
+        <path fill="url(#skullGlow2)" d="M32 4c-12 0-22 9-22 22 0 7 3 12 7 16v8c0 3 2 5 5 5h2v-4c0-1 1-2 2-2s2 1 2 2v4h8v-4c0-1 1-2 2-2s2 1 2 2v4h2c3 0 5-2 5-5v-8c4-4 7-9 7-16 0-13-10-22-22-22zm-10 28a5 5 0 110-10 5 5 0 010 10zm20 0a5 5 0 110-10 5 5 0 010 10zm-10 14c-3 0-5-2-5-4 0-1 1-2 2-2h6c1 0 2 1 2 2 0 2-2 4-5 4z"/>
+      </svg>
+    </div>
+    <h1>I Choose<br><span class="red">Death</span></h1>
+    <div class="splash-tag">A would-you-rather game for the depraved</div>
+
+    <div class="splash-rules">
+      <p style="margin-bottom:12px;">Two cards. Two horrible options. <strong>Pick the one you'd rather live with.</strong></p>
+      <p style="margin-bottom:12px;">If both are too cursed to even consider, tap <strong>I CHOOSE DEATH</strong> and pull two fresh ones.</p>
+      <p>500+ prompts. Play with friends, debate your answers, judge each other accordingly.</p>
+    </div>
+
+    <button class="start-btn" id="startBtn">Begin the Suffering</button>
+
+    <div class="disclaimer">Crude humor for adults. 18+. Don't read this with your mother.</div>
+  </div>
+
+  <!-- Game -->
+  <div class="game" id="game">
+    <div class="prompt-row">
+      <div class="card" id="cardA" data-side="A">
+        <div class="card-corner">Option A</div>
+        <div class="card-text" id="textA">—</div>
+        <div class="card-corner bottom">Option A</div>
+      </div>
+      <div class="vs">OR</div>
+      <div class="card" id="cardB" data-side="B">
+        <div class="card-corner">Option B</div>
+        <div class="card-text" id="textB">—</div>
+        <div class="card-corner bottom">Option B</div>
+      </div>
+    </div>
+
+    <div class="death-row">
+      <button class="death-btn" id="deathBtn">I Choose Death</button>
+      <div class="controls">
+        <button class="ctrl-btn" id="skipBtn">Skip</button>
+        <button class="ctrl-btn" id="resetBtn">Reset Deck</button>
+        <a class="back-link" href="index.html">← Back to Site</a>
+      </div>
+    </div>
+
+    <div class="tally">
+      <span><strong id="tallyChose">0</strong>Chose</span>
+      <span><strong id="tallyDeath">0</strong>Chose Death</span>
+      <span><strong id="tallySkip">0</strong>Skipped</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="reveal-toast" id="toast"></div>
+
+<script>
+// ============================================================
+// 530+ would-you-rather prompts. Each is one of two options.
+// Tone matches the source deck: crass, crude, body humor,
+// embarrassing scenarios. Adults only.
+// ============================================================
+const PROMPTS = [
+  // ---- Body horror / transformations (1-60) ----
+  "Have butthole hair that never stops growing at a rate of one foot per month.",
+  "Have titties that sag down to your belly button.",
+  "Pull a muscle every time you exert more than 50 pounds of force.",
+  "Have permanent uncontrollable eyelid spasms in only one eye.",
+  "Grow a single foot-long curly hair from your forehead every morning.",
+  "Have nipples that whistle every time the wind blows.",
+  "Sweat mayonnaise from your armpits forever.",
+  "Have toenails that grow ten times faster than your fingernails.",
+  "Have one ear permanently three sizes larger than the other.",
+  "Have a constantly running nose that drips directly into your mouth.",
+  "Have your tongue swell to twice its size during every conversation.",
+  "Have eyebrows that connect into a single thick caterpillar overnight.",
+  "Have lips that uncontrollably pucker every time you hear music.",
+  "Grow a thick mustache on only one side of your face.",
+  "Have ears that flap involuntarily when you're nervous.",
+  "Have a third nipple that randomly secretes warm milk.",
+  "Sneeze a pint of snot every time you see sunlight.",
+  "Have a chin that grows an inch longer every birthday.",
+  "Have a permanent layer of grease on your forehead no matter how much you wash.",
+  "Shed visibly from your skin every time you laugh.",
+  "Have an Adam's apple the size of a tennis ball.",
+  "Have one eye that constantly waters and the other that's bone dry.",
+  "Have teeth that grow back overnight every time you brush.",
+  "Have a tongue permanently coated in a thick white film.",
+  "Have nose hair that grows two inches a week and sticks straight out.",
+  "Have a belly button that's always damp and smells like wet dog.",
+  "Have feet that hiss steam when you take your shoes off.",
+  "Have one hand that's permanently twice the size of the other.",
+  "Grow a thick patch of fur on the back of your neck.",
+  "Have a forehead vein that bulges out every time you lie.",
+  "Have ears that turn bright red every time you're attracted to someone.",
+  "Have visible varicose veins all over your face by age 30.",
+  "Have arm hair so thick strangers ask where you bought the sweater.",
+  "Have permanent puffy bags under your eyes regardless of sleep.",
+  "Have chest hair that pours out of every shirt collar you wear.",
+  "Have skin that bruises every time anyone hugs you.",
+  "Have a permanent five o'clock shadow on the back of your neck.",
+  "Have toes that curl inward and can never be straightened.",
+  "Have a beard that grows in random patches on your cheeks.",
+  "Have one giant pore on the tip of your nose that visibly opens and closes.",
+  "Have permanent goosebumps over your entire body.",
+  "Have a hairline that recedes an inch every year starting now.",
+  "Have a unibrow that grows back within an hour of plucking.",
+  "Have ten extra teeth in random places in your mouth.",
+  "Have a tongue piercing permanently embedded that you can never remove.",
+  "Have nipples so long they peek out the bottom of every shirt.",
+  "Have leg hair so thick it's visible through your jeans.",
+  "Have permanently chapped lips that bleed every time you smile.",
+  "Have an extra finger on each hand that does absolutely nothing useful.",
+  "Have a permanently inflamed butthole that throbs visibly through your pants.",
+  "Have nostrils so wide people can see your brain.",
+  "Have a permanent zit on your chin that never goes away.",
+  "Have skin tags the size of grapes hanging from your neck.",
+  "Have one foot that's permanently two sizes bigger than the other.",
+  "Have hair that grows out of the palms of your hands.",
+  "Have a permanent rash shaped exactly like Florida on your back.",
+  "Have buck teeth that whistle every time you breathe in.",
+  "Have ear hair so thick it muffles your hearing.",
+  "Have eyelashes so long you can braid them.",
+  "Have a tongue split right down the middle that flops to one side.",
+
+  // ---- Sex / sexual embarrassment (61-130) ----
+  "Give up sex for a year.",
+  "Get pegged by a crackhead.",
+  "Accidentally send nudes to your parents.",
+  "Moan loudly every time you stand up from a chair.",
+  "Orgasm uncontrollably every time you sneeze in public.",
+  "Have your mom narrate every sexual encounter you have for the rest of your life.",
+  "Get caught masturbating by your boss at the company Christmas party.",
+  "Have a permanent erection visible through every pair of pants you own.",
+  "Have a camel toe so severe people gasp when you walk by.",
+  "Have your sexual fantasies broadcast on the local news every Friday at 6pm.",
+  "Accidentally call your partner \"Dad\" during sex every single time.",
+  "Get a Brazilian wax done by your aunt for the rest of your life.",
+  "Queef the national anthem every time you stand up.",
+  "Have sex once with someone who looks exactly like your mother.",
+  "Lose your virginity again on national television.",
+  "Have your entire browser history projected onto your living room wall.",
+  "Get an STD that makes your genitals glow neon green at night.",
+  "Be unable to have sex without crying uncontrollably afterward.",
+  "Have a 90-year-old narrator describe every intimate moment of your life as it happens.",
+  "Have your name come up in every divorce filing in your zip code.",
+  "Have sex with someone who finishes in eight seconds, every single time.",
+  "Accidentally text your group chat what you're doing in the shower.",
+  "Have a porn star with your exact face become world-famous next week.",
+  "Be the subject of a viral one-night stand thread on Reddit.",
+  "Get a tattoo of your ex's face on your inner thigh that never fades.",
+  "Have every sexual partner you've ever had rate you on Yelp.",
+  "Give a detailed sex ed lecture to your grandparents.",
+  "Get a Brazilian wax from someone who openly hates you.",
+  "Have sex on a tile floor with no rugs and no warning.",
+  "Walk in on your parents every single Sunday morning.",
+  "Have your therapist also be your former one-night stand.",
+  "Have your high school crush become your gynecologist or proctologist.",
+  "Have your dirty talk audio leaked to every coworker on Monday.",
+  "Have a wedgie that can only be relieved by your boss.",
+  "Have your dating app profile written by your mother.",
+  "Be the subject of a true crime podcast about your sex life.",
+  "Find out your spouse's nickname for you is \"the disappointment.\"",
+  "Have all your nudes leaked but only your grandmother sees them.",
+  "Get caught sexting in a Zoom meeting with your camera on.",
+  "Have every breakup of yours retold from your ex's perspective at your funeral.",
+  "Be aroused only by the smell of canned tuna.",
+  "Be unable to orgasm without sneezing first.",
+  "Have intercourse with someone who keeps their socks on every single time.",
+  "Get a permanent yeast infection that smells like sourdough bread.",
+  "Have a chronic case of swamp ass on every first date.",
+  "Get the clap from a kiss on the cheek.",
+  "Have sex that's always interrupted by a Comcast customer service call.",
+  "Have a permanent erection during your own wedding ceremony.",
+  "Get an erection every time you hear someone say your name.",
+  "Have to make eye contact with your dad through every orgasm.",
+  "Be unable to have sex unless you're wearing a chicken costume.",
+  "Have every fart you make replaced with a recording of your father's voice.",
+  "Lose your virginity to a mall Santa.",
+  "Have a wet dream every time you sleep within ten feet of your in-laws.",
+  "Have to ask your dad's permission before any sexual encounter.",
+  "Have a one-night stand who shows up at every family dinner uninvited.",
+  "Have your sex tape become a top-rated audiobook on Audible.",
+  "Have your foreplay narrated by Ron Howard.",
+  "Have to schedule sex through your assistant.",
+  "Have a recurring nightmare every time you orgasm.",
+  "Have your spouse rate every sexual encounter on a chalkboard in the kitchen.",
+  "Have every romantic encounter end with a slow clap from a stranger.",
+  "Have a Roomba that follows you around during every intimate moment.",
+  "Camel toe in every wedding photo you'll ever appear in.",
+  "Get caught Googling your ex by your current partner once a month.",
+  "Have your sex education taught by your worst high school bully.",
+  "Have your every romantic text autocomplete to your mom's name.",
+  "Have your bedroom narrated nightly by a HGTV host.",
+  "Have a permanent bedroom soundtrack of saxophone smooth jazz that you can't turn off.",
+  "Get a UTI every time you make eye contact with your boss.",
+
+  // ---- Bathroom / digestion (131-200) ----
+  "Have explosive diarrhea every time you laugh harder than a chuckle.",
+  "Fart audibly with every single step you take, forever.",
+  "Poop your pants every Tuesday at exactly 3pm.",
+  "Have to use the bathroom in front of an audience of strangers.",
+  "Have hiccups that smell like rotten eggs.",
+  "Burp the exact phrase \"I love it here\" every twelve minutes.",
+  "Pee a little every time someone says your name.",
+  "Have permanent dingleberries you can feel but cannot remove.",
+  "Have a uterus that makes audible groaning noises during your period.",
+  "Pass gas that's visible to the human eye as green vapor.",
+  "Have urine that smells like buttered popcorn and attracts pigeons.",
+  "Be unable to digest anything except hot dog water.",
+  "Have constipation so severe you only poop once a month, for two hours.",
+  "Have IBS that flares up exclusively at funerals.",
+  "Have a colostomy bag that everyone can see at all times.",
+  "Sweat through every shirt within the first ten minutes of wearing it.",
+  "Have feet that smell like fermented onions inside any shoe.",
+  "Have breath that can wilt houseplants from across the room.",
+  "Have BO so strong that it sets off smoke detectors.",
+  "Pee glitter at random intervals.",
+  "Drink your own tears just to stay hydrated.",
+  "Have a stomach that growls in full English sentences.",
+  "Pass gas every time you orgasm, no exceptions.",
+  "Have hot flashes that actually set your hair on fire.",
+  "Sweat so much your shoes squelch with every step in any weather.",
+  "Have a digestive system that makes every meal taste like black licorice.",
+  "Vomit blueberry yogurt at random times throughout the day.",
+  "Have hiccups for six consecutive months.",
+  "Have a runny nose that runs only when eating in public.",
+  "Have to poop standing up for the rest of your life.",
+  "Have armpits that produce a steady stream of cottage cheese.",
+  "Have a navel that smells like a wet dishrag and you can't ignore it.",
+  "Crap your pants every time you cough.",
+  "Have a permanent UTI that flares only during long car rides.",
+  "Have menstrual cramps so loud they're audible to others.",
+  "Have a tongue that turns purple every time you tell a lie.",
+  "Have to pee every six minutes for the rest of your life.",
+  "Have feet that produce a quart of cottage cheese between the toes per week.",
+  "Have a constant low-grade fever of 100.5 forever.",
+  "Sneeze so hard you tear a hamstring every time.",
+  "Have a perpetual yeast infection that smells like a brewery.",
+  "Have a constant feeling of needing to fart but never being able to.",
+  "Fart in a glass jar every night and store it under your bed.",
+  "Be only able to defecate in public bathrooms.",
+  "Have a chronic ingrown hair that bleeds visibly through any clothing.",
+  "Have a tampon string that won't tuck in no matter what you do.",
+  "Have permanent jock itch the size of a dinner plate.",
+  "Sneeze every time you orgasm, before and after.",
+  "Have a bladder the size of a thimble that fills every two minutes.",
+  "Chew every bite of food exactly 47 times or you choke.",
+  "Have to use one square of toilet paper for the rest of your life.",
+  "Have nasal hair that grows out of your tear ducts.",
+  "Have flatulence that translates into the sound of a kazoo solo.",
+  "Have eye boogers the size of marbles every morning.",
+  "Have a permanent cough that sounds like a goat.",
+  "Have to sleep with a bib because you drool a quart every night.",
+  "Have permanent dandruff visible from across a room.",
+  "Have hot sweaty palms that leak constantly during handshakes.",
+  "Have ear wax production so high you have to clean them with a melon baller.",
+  "Have toe jam that smells exactly like blue cheese.",
+  "Have a stutter that only kicks in when you're trying to order at a drive-thru.",
+  "Have a recurring nosebleed every Wednesday at noon.",
+  "Have hiccups so loud they wake your entire neighborhood.",
+  "Have a chronic UTI that gives you the urge to pee mid-sentence in every conversation.",
+  "Vomit a small marble every Sunday morning.",
+  "Have a recurring boil on your inner thigh that swells once a month.",
+  "Have to brush your teeth with mayonnaise for the rest of your life.",
+  "Have a constantly clogged ear that won't pop, no matter what you do.",
+  "Have a chronic case of pink eye that lasts six months a year.",
+  "Have a permanent canker sore the size of a quarter on your tongue.",
+
+  // ---- Give up / sacrifice (201-260) ----
+  "Give up showers for a decade.",
+  "Give up concerts.",
+  "Give up music entirely.",
+  "Give up the use of your dominant hand.",
+  "Give up Netflix and every streaming service forever.",
+  "Give up your driver's license permanently.",
+  "Give up sleep — your body still needs it, you just won't get any.",
+  "Give up your favorite food for the rest of your life.",
+  "Give up alcohol and caffeine in the same week, forever.",
+  "Give up the ability to whisper.",
+  "Give up vacations forever.",
+  "Give up your senses of smell and taste together.",
+  "Give up the internet permanently.",
+  "Give up your phone for one full year with no replacement.",
+  "Give up using profanity for life.",
+  "Give up reading anything longer than a tweet.",
+  "Give up wearing pants in public.",
+  "Give up your name and only respond to \"Toad.\"",
+  "Give up sitting down for an entire year.",
+  "Give up your last name and adopt your worst enemy's.",
+  "Give up every TV show you've ever loved.",
+  "Give up eye contact for life.",
+  "Give up your toothbrush forever.",
+  "Give up your favorite hobby permanently.",
+  "Give up clothing that fits and only wear two sizes too small.",
+  "Give up your physical address — be permanently homeless.",
+  "Give up wearing matching socks for life.",
+  "Give up driving above 25 miles per hour.",
+  "Give up watching sports of any kind.",
+  "Give up snacks and only eat three meals a day, ever.",
+  "Give up sitting in chairs — only floor and beds from now on.",
+  "Give up holidays — every single one.",
+  "Give up Christmas presents and Christmas itself.",
+  "Give up dental care entirely.",
+  "Give up swearing aloud — even when you stub your toe.",
+  "Give up your favorite season permanently.",
+  "Give up coffee starting tomorrow, forever.",
+  "Give up your right to vote.",
+  "Give up speaking your native language and only speak Pig Latin.",
+  "Give up using emojis or punctuation in any digital communication.",
+  "Give up dancing at every social event.",
+  "Give up your career and become a Walmart greeter.",
+  "Give up swimming and any contact with water above ankle level.",
+  "Give up reading subtitles and only watch foreign films with no translation.",
+  "Give up showers, only sponge baths from a stranger.",
+  "Give up your favorite pillow and sleep on a rolled-up towel.",
+  "Give up using your thumbs.",
+  "Give up indoor plumbing.",
+  "Give up wearing underwear in public for life.",
+  "Give up your favorite music genre completely.",
+  "Give up arguing — you must agree with everyone you talk to.",
+  "Give up sleep on a bed; you sleep on a kitchen floor forever.",
+  "Give up cold beverages — every drink must be served at exactly 105°F.",
+  "Give up making decisions; your mother decides for you forever.",
+  "Give up reading silently — you must read everything aloud.",
+  "Give up watching anything in color.",
+  "Give up wearing shoes that match.",
+  "Give up combing your hair forever.",
+  "Give up your favorite restaurant permanently.",
+  "Give up the ability to nod or shake your head.",
+
+  // ---- Public humiliation / social (261-320) ----
+  "Trip and fall every time you enter a room.",
+  "Burp the alphabet every time you greet someone.",
+  "Have your every thought projected onto your forehead as subtitles.",
+  "Have a soundtrack of slide whistles follow you everywhere.",
+  "Sing every sentence you speak in public, badly and off-key.",
+  "Cry uncontrollably every time someone compliments you.",
+  "Laugh hysterically at every funeral you attend.",
+  "Have every text message of yours read aloud by Morgan Freeman in public.",
+  "Have your inner monologue audible to everyone within ten feet.",
+  "Have a cartoon thought bubble appear above your head at all times.",
+  "Be permanently followed by a high school marching band.",
+  "Wake up every morning in a public fountain.",
+  "Be unable to lie — including white lies — for life.",
+  "Be unable to tell the truth, ever, even when it matters.",
+  "Have a Yelp review of you appear as a hologram over your head.",
+  "Be roasted by a stand-up comedian at every event you attend.",
+  "Have your most embarrassing childhood photo as your driver's license.",
+  "Have your darkest secret announced over the intercom at every store.",
+  "Introduce yourself at every social event by your weirdest kink.",
+  "Get up on stage at every wedding and read the bride's diary aloud.",
+  "Confess your sins at every checkout line.",
+  "Have your eulogy written by your worst ex.",
+  "Have your wedding officiated by your high school bully.",
+  "Have your eulogy delivered by your ex-mother-in-law.",
+  "Cry at every commercial that comes on TV, regardless of subject.",
+  "Get hiccups every time someone says the word \"actually.\"",
+  "Have a permanent name tag that reads \"Insufferable.\"",
+  "Have your face appear on every milk carton — but you're not missing.",
+  "Sing the chorus of \"Friday\" by Rebecca Black every time someone says \"Friday.\"",
+  "Walk everywhere with one shoe untied that you can't fix.",
+  "Have a stain on your shirt that nobody mentions but everyone sees.",
+  "Wear a \"Kick Me\" sign at all family gatherings.",
+  "Get a custom ringtone of \"Sandstorm\" by Darude that you can't change.",
+  "Wear a clown wig every time you leave the house.",
+  "Have your dating profile photo be your DMV photo, forever.",
+  "Be roasted by a Triumph the Insult Comic Dog look-alike at every job interview.",
+  "Have your dating life narrated by Werner Herzog in real time.",
+  "Be tagged in every \"before\" picture, never an \"after.\"",
+  "Have an embarrassing TikTok of you become the most-viewed video of the year.",
+  "Be the subject of your hometown's annual \"How Did They Turn Out This Way?\" panel.",
+  "Have your face on a billboard advertising the worst restaurant in town.",
+  "Be stopped on the street every day by someone who thinks you're someone else.",
+  "Have your last Google search appear as your screensaver, projected on the wall.",
+  "Have your inner thoughts auto-tweeted from a verified account.",
+  "Have your Spotify Wrapped public and brutally honest.",
+  "Have an inflatable arm-flailing tube man permanently follow you around.",
+  "Have a personal narrator who hates you and announces every move.",
+  "Walk into every door, every time, for life.",
+  "Speak in a permanent loud whisper.",
+  "Be unable to stop honking like a goose during arguments.",
+  "Have your entire life replayed on the local public access channel every Sunday.",
+  "Stand up uncontrollably and shout \"BINGO!\" three times a day.",
+  "Sneeze the lyrics to \"Mambo No. 5\" every time you sneeze.",
+  "Speak in a permanent helium voice.",
+  "Have your every action footnoted in real time by an AP English teacher.",
+  "Have a podcast made about you that you can't legally listen to.",
+  "Have a band of mariachis follow you everywhere you go.",
+  "Be the subject of a YouTube reaction video every time you sneeze.",
+  "Sound exactly like Gilbert Gottfried for the rest of your life.",
+  "Speak only in dad jokes for every conversation.",
+
+  // ---- Family / relationships (321-380) ----
+  "Move in with your in-laws permanently.",
+  "Spend every Thanksgiving sitting between your two most argumentative relatives.",
+  "Have your mom on every business call for the rest of your career.",
+  "Marry someone who only speaks in song lyrics.",
+  "Have an arranged marriage with your worst Tinder date.",
+  "Babysit your sibling's worst-behaved child every weekend.",
+  "Be in a polyamorous relationship where you're the least liked partner.",
+  "Live in a duplex with your ex and their new partner.",
+  "Share custody of a goldfish with your most petty ex.",
+  "Have your grandma move into your bedroom permanently.",
+  "Have your mother-in-law as your roommate forever.",
+  "Have your therapist also be your father.",
+  "Get married at a Cracker Barrel.",
+  "Have your wedding video go viral for all the wrong reasons.",
+  "Hire your ex as your wedding planner.",
+  "Have your dad serve as your relationship counselor.",
+  "Have all your future kids inherit your worst physical feature.",
+  "Have a child who looks exactly like your sworn enemy.",
+  "Have your spouse's name legally changed to your ex's name.",
+  "Get a Christmas card from your ex every year — addressed to your current partner.",
+  "Have your mother give every toast at every event in your life.",
+  "Have your grandfather be your fertility doctor.",
+  "Have a permanent group text with your in-laws who text 200 times a day.",
+  "Live with a roommate who is exactly you, but worse.",
+  "Be related to every person you'll ever date.",
+  "Have your engagement ring made out of one of your baby teeth.",
+  "Have your honeymoon at a Spirit Halloween store.",
+  "Get married in a courthouse with your high school PE teacher as the witness.",
+  "Have your kid's first words be your ex's full name.",
+  "Have all your kids think their other parent is cooler than you.",
+  "Have your dad walk you down the aisle in a thong.",
+  "Have your wedding cake topper be a 3D-printed bust of your boss.",
+  "Be your sibling's only emergency contact while they get arrested weekly.",
+  "Have your mom write your wedding vows for you.",
+  "Marry someone who only laughs at their own jokes.",
+  "Have a spouse whose love language is unsolicited financial advice.",
+  "Get a Mother's Day card from your therapist instead of from your kids.",
+  "Have a partner whose entire personality is CrossFit.",
+  "Share a bed with your snoring uncle every night.",
+  "Have your dad DJ every party you'll ever throw.",
+  "Have your wedding crashed by every ex you've ever had.",
+  "Ask your dad for permission for every decision you make for life.",
+  "Live next door to your most overbearing aunt forever.",
+  "Have all your future birthdays planned by your worst friend.",
+  "Have a baby that screams every time it sees your face.",
+  "Have a baby whose first vocabulary is exclusively cusswords.",
+  "Drive your grandma to bingo every Friday for life.",
+  "Move back in with your parents at age 40 and never leave.",
+  "Have your boyfriend's mother as your hairdresser.",
+  "Have your girlfriend's father as your gynecologist.",
+  "Have a sibling who tries to one-up every story you tell forever.",
+  "Have a partner who narrates every meal as they eat it.",
+  "Have a child who insists on calling you by your full legal name.",
+  "Have an in-law who reorganizes your house every time they visit.",
+  "Have a partner who exclusively texts in voice memos longer than four minutes.",
+  "Have a roommate who steals your underwear and denies it daily.",
+  "Have a partner who proposes to you every single Valentine's Day.",
+  "Get into a relationship with someone who has the exact same name as your mother.",
+  "Have your wedding ring made from a tooth pulled by your dentist friend.",
+  "Be in a long-distance relationship for the rest of your life with someone two miles away.",
+
+  // ---- Career / money (381-430) ----
+  "Get fired every Friday and rehired every Monday for life.",
+  "Be the lowest-paid person at every job you'll ever have.",
+  "Have your performance review broadcast on the office TV.",
+  "Have your boss find your OnlyFans on the company laptop.",
+  "Get a job you love that pays minimum wage forever.",
+  "Have a career that's amazing but everyone you meet thinks it's a porn job.",
+  "Make six figures but spend it all on a subscription you can't cancel.",
+  "Be famous, but only for a Cameo bloopers reel.",
+  "Win the lottery, but it's paid out in pennies dropped from a plane.",
+  "Have your job interview clothes always be a wet bathing suit.",
+  "Have your resume printed in Comic Sans on pink paper.",
+  "Have your LinkedIn profile picture be a mugshot.",
+  "Get fired via TikTok by your boss's teenage child.",
+  "Become a millionaire but lose 99 cents on the dollar to taxes.",
+  "Be promoted only after publicly humiliating yourself at the company picnic.",
+  "Have a coworker steal your idea every single quarter.",
+  "Have your performance reviews written by your dog.",
+  "Give a TED Talk about your worst life decision.",
+  "Become a CEO but lose all your friends in the process.",
+  "Have your office chair replaced with a yoga ball that randomly deflates.",
+  "Be a successful artist who only paints crying clowns.",
+  "Be famous, but everyone thinks you're someone else with a similar name.",
+  "Get hired only to be the office scapegoat for everything.",
+  "Win an Oscar for a movie you don't remember making.",
+  "Have your salary deposited into a stranger's account every other week.",
+  "Be CEO of a company that only sells expired yogurt.",
+  "Have your business card list \"Disappointment\" as your job title.",
+  "Get an unsolicited raise that comes with public roasting at the all-hands.",
+  "Clock in to your own bathroom breaks at home.",
+  "Have a coworker who finishes every sentence with \"Capisce?\"",
+  "Have a manager who exclusively communicates in memes.",
+  "Be the office IT person but you don't know how to use computers.",
+  "Have every Zoom call interrupted by a duck.",
+  "Do every PowerPoint presentation in Pig Latin.",
+  "Have your salary garnished by a kid running a lemonade stand.",
+  "Have every paycheck signed by your worst ex.",
+  "Have your dream job, but the commute is a four-hour helicopter ride.",
+  "Attend every meeting in a banana costume.",
+  "Be the founder of a company that sells chapstick made of earwax.",
+  "Have a boss who breathes loudly into the microphone at every meeting.",
+  "Be paid in Chuck E. Cheese tokens.",
+  "Win the lottery the day after you spend your last dollar burying it.",
+  "Be famous, but only on the dark web.",
+  "Have your tax returns audited every year by a goat.",
+  "Have a personal assistant who only assists with your worst decisions.",
+  "Get a promotion that comes with a basement office and a single candle.",
+  "Be financially independent but only by selling your toenail clippings.",
+  "Do a TikTok dance every time you ask for time off.",
+  "Have a coworker who steals your lunch and brags about it on Instagram.",
+  "Wear a permanent badge that reads \"Yes Person.\"",
+
+  // ---- Curses / supernatural (431-490) ----
+  "Be haunted by the ghost of a clown who only does knock-knock jokes.",
+  "Be possessed by your own grandfather for one hour a week.",
+  "Have a poltergeist that rearranges your sock drawer every night.",
+  "Be cursed to sing every time you make eye contact with a cat.",
+  "Have a ghost who follows you and rates every meal you eat.",
+  "Perform a séance every full moon to keep your toilet flushing.",
+  "Be reincarnated as a houseplant in your enemy's home.",
+  "Have your shadow operate on a five-second delay.",
+  "Be cursed so mirrors don't reflect you, only your dad.",
+  "Have a demon trapped inside your toaster.",
+  "Be visited by Krampus once a year and he leaves a mess.",
+  "Have your sleep paralysis demon also be your sleep coach.",
+  "Wear a tinfoil hat or hear your neighbor's thoughts.",
+  "Be cursed to age backwards but only in months with an R.",
+  "Have every drink you sip turn into prune juice.",
+  "Be turned into a stone gargoyle every full moon.",
+  "Transform into a goat between 2am and 4am every Tuesday.",
+  "Have your house haunted by the spirit of a passive-aggressive HOA president.",
+  "Have your reflection swear at you every time you brush your teeth.",
+  "Have a sentient mole on your back that gives unsolicited advice.",
+  "Have your guardian angel be your worst high school teacher.",
+  "Be cursed to dance the Macarena every time you hear an ambulance siren.",
+  "Be cursed to tell the truth one day a month — your choice which.",
+  "Be visited in dreams by your future self complaining about your present.",
+  "Be cursed so you only craft well during a thunderstorm.",
+  "Hear the thoughts of all dogs within a one-mile radius, forever.",
+  "Hear the thoughts of all pigeons within a one-block radius, forever.",
+  "Have your dreams replaced with PowerPoint presentations from 2007.",
+  "Have your soul anchored to a strip mall in Bakersfield.",
+  "Be cursed with the laugh of Woody the Woodpecker.",
+  "Be granted three wishes that all backfire spectacularly.",
+  "Have a fairy godmother whose only spell is mild indigestion.",
+  "Have a poltergeist that exclusively haunts your microwave.",
+  "Be cursed to wake up at 4:13 am every day forever.",
+  "Play \"Wonderwall\" on guitar to start your car each morning.",
+  "Have a familiar that's a possum with anger issues.",
+  "Have your dreams hijacked by your middle school crush.",
+  "Have your shadow occasionally turn into a chicken.",
+  "Be unable to enter a building unless someone says \"bless you\" first.",
+  "Have a guardian angel that talks like Christopher Walken.",
+  "Be cursed so every selfie features your worst enemy in the background.",
+  "Be reincarnated as your own ex.",
+  "Be cursed with a sneeze that lasts three full minutes.",
+  "Perform an interpretive dance whenever you tell a lie.",
+  "Have an unkillable houseplant that judges you out loud.",
+  "Be cursed so your shoes fill with sand once a month.",
+  "Be cursed so every photo you take is blurry.",
+  "Be visited by your future child who tells you you're a disappointment.",
+  "Have a Ouija board that only spells out shopping lists.",
+  "Have a curse that turns your hair into spaghetti once a year.",
+  "Be cursed to win every game of bingo at every retirement home you visit.",
+  "Be haunted by the ghost of a high school gym teacher who only screams about laps.",
+  "Have a poltergeist that exclusively unplugs your phone charger at 2% battery.",
+  "Be cursed so every dog you meet rolls its eyes at you.",
+  "Be granted a genie who only grants wishes in Comic Sans.",
+  "Have a sentient tattoo on your back that narrates your day.",
+  "Be visited every night by a ghost that wants to talk about its divorce.",
+  "Be cursed so you only dream of paperwork.",
+  "Have a poltergeist that exclusively haunts your spice rack.",
+  "Be cursed to read every road sign aloud in a baby voice.",
+
+  // ---- Senses / abilities lost (491-540) ----
+  "Lose the ability to taste anything but cilantro.",
+  "Lose your sense of smell except for wet dog — that's all you'll ever smell.",
+  "See only in sepia tones for life.",
+  "Hear everything around you delayed by three seconds.",
+  "Have constant background music of \"Despacito\" on a loop in your head.",
+  "Lose color vision and gain hearing of all dog whistles within a mile.",
+  "Have your hearing inverted: loud things are quiet, quiet things are deafening.",
+  "Have your vision in fish-eye lens permanently.",
+  "See everyone as a cartoon character but never know which one.",
+  "Hear a faint kazoo solo every time someone says your name.",
+  "Smell only what other people had for lunch yesterday.",
+  "Hear constant elevator music in every public space.",
+  "See ghosts but only the boring ones.",
+  "Hear everyone's thoughts, but only when they're judging you.",
+  "Have constant tinnitus in the rhythm of \"Mary Had a Little Lamb.\"",
+  "Lose the ability to taste sweet foods entirely.",
+  "Hear your inner critic out loud in your living room.",
+  "Lose 50% of your hearing in only one ear.",
+  "Have a permanent eye twitch in only your left eye.",
+  "Lose your sense of touch in only your dominant hand.",
+  "Have your eyesight be 20/100 in one eye and 20/15 in the other.",
+  "Be colorblind to only the color of money.",
+  "Wear blackout sunglasses indoors or you cry blood.",
+  "See only in low-resolution VHS quality for the rest of your life.",
+  "Hear everything in mono.",
+  "Be unable to taste salt — every chip is bland forever.",
+  "Hear constant whispering in Latin in your ear.",
+  "Have an eye that involuntarily winks at strangers.",
+  "Lose your peripheral vision and live with only tunnel vision.",
+  "See colors only when you're emotionally distressed.",
+  "Be unable to perceive time and live one minute behind everyone else.",
+  "Be deaf to all music but able to hear every conversation in a five-mile radius.",
+  "Have an extra eye on the back of your head that only sees the past.",
+  "Lose your ability to count past 47.",
+  "Be unable to read maps or follow GPS.",
+  "Lose your ability to dance even slightly to any beat.",
+  "Be unable to recognize your own face in any mirror.",
+  "Lose all sense of direction and walk in circles.",
+  "Be unable to remember names but never forget grudges.",
+  "Lose your ability to laugh out loud — only internal chuckles.",
+  "Be unable to keep a beat — every dance move is on the offbeat.",
+  "Lose your sense of personal space and stand too close to everyone forever.",
+  "Lose the ability to feel hot and cold; everything is room temperature.",
+  "Lose your ability to lie convincingly.",
+  "Be unable to apologize, ever, even when you mean it.",
+  "Lose the ability to whisper. Everything is at full volume.",
+  "Be unable to drink anything cold without a 30-second brain freeze.",
+  "Be unable to swallow without making a loud gulping noise.",
+  "Lose the ability to chew with your mouth closed.",
+  "Lose the ability to focus your eyes — everything is slightly blurry.",
+
+  // ---- Food / taste (541-590) ----
+  "Have every meal taste exactly like wet cardboard.",
+  "Have everything you eat taste like the inside of a 1998 Honda Civic.",
+  "Be unable to eat anything except white rice and ketchup.",
+  "Eat one tablespoon of expired mayo with every meal.",
+  "Chew gum that tastes like band-aids forever.",
+  "Have your favorite food cause projectile vomiting for life.",
+  "Be allergic to every food except oysters.",
+  "Drink only warm milk for hydration.",
+  "Be unable to taste anything but black licorice and pickles.",
+  "Eat raw onions like apples for breakfast every day.",
+  "Be vegan for life but only able to eat the worst-tasting vegetables.",
+  "Be unable to digest anything except mayonnaise sandwiches.",
+  "Eat with your bare hands at every restaurant.",
+  "Be unable to chew anything — only swallow whole.",
+  "Be unable to eat with utensils for the rest of your life.",
+  "Have a coffee addiction with no access to coffee.",
+  "Eat exclusively foods that smell the worst — durian, blue cheese, surströmming.",
+  "Have a peanut allergy that only flares up at restaurants.",
+  "Be addicted to a beverage that doesn't exist yet.",
+  "Drink exactly one gallon of milk per day or die.",
+  "Eat one cricket per meal forever.",
+  "Have dinner with your dad's coworkers every Friday.",
+  "Be allergic to every condiment.",
+  "Chew every meal for exactly two hours.",
+  "Be unable to drink water without choking.",
+  "Be unable to eat without crying.",
+  "Have a sensitive stomach that rejects every meal at least once.",
+  "Be unable to digest carbs without vomiting purple liquid.",
+  "Eat exclusively at chain restaurants for the rest of your life.",
+  "Drink room-temperature Diet Coke as your only beverage.",
+  "Chew tobacco at every business meeting.",
+  "Swallow a vitamin the size of a hockey puck every night.",
+  "Be unable to eat candy without your teeth falling out for a day.",
+  "Eat every meal in a public bathroom.",
+  "Use chopsticks for every meal — and you've never learned how.",
+  "Eat only what your worst ex makes for you forever.",
+  "Be unable to taste anything when you cook for yourself.",
+  "Have permanent garlic breath, but you've never eaten garlic.",
+  "Lick every fruit before buying it at the grocery store.",
+  "Be only able to eat one specific brand of bologna for the rest of your life.",
+  "Drink your morning coffee from a sippy cup.",
+  "Be unable to eat dessert before age 80.",
+  "Eat every meal off a Frisbee.",
+  "Have a food allergy that develops randomly each day.",
+  "Eat all your meals upside down.",
+  "Have chronic dry mouth requiring constant water sips during conversation.",
+  "Be unable to swallow without screaming first.",
+  "Drink one full beer between every coffee.",
+  "Be limited to only blue food and beverages forever.",
+  "Eat every meal with your hands tied behind your back.",
+
+  // ---- Pain / weird (591-620) ----
+  "Stub your pinky toe every time you stand up from a chair.",
+  "Have a paper cut on a different finger every single day.",
+  "Have a permanent splinter in the same spot of your foot that you can't remove.",
+  "Get a charley horse every time you stretch in bed.",
+  "Get a small electric shock every time you touch metal.",
+  "Have a sore throat every morning that disappears by noon.",
+  "Have a runny nose every time you cry.",
+  "Have permanent bruises in the shape of fingerprints all over your arms.",
+  "Get a cramp every time you sit down on a toilet.",
+  "Have a stinging eye every time you blink hard.",
+  "Stub the same toe in the same spot of your house every single morning.",
+  "Get a brain freeze from drinking room-temperature water.",
+  "Pull a muscle every time you laugh hard.",
+  "Have a hangover every Sunday even when you don't drink.",
+  "Have a stomachache every time someone eats dairy near you.",
+  "Be the only person at every event who's visibly hungover.",
+  "Sneeze so hard you fall over every single time.",
+  "Bite your tongue every time you eat anything.",
+  "Burn the roof of your mouth on every hot meal you ever eat.",
+  "Step on a Lego every morning, barefoot.",
+  "Get a leg cramp every time you fall asleep.",
+  "Have a chronic crick in your neck that can never be cracked.",
+  "Have a stitch in your side every time you walk faster than a stroll.",
+  "Have heartburn every time you eat fruit.",
+  "Have a migraine triggered by overhead fluorescent lights — you work in an office.",
+  "Have a permanent ringing in your ears at the frequency of a microwave beep.",
+  "Have a tooth that aches only on Mondays.",
+  "Sprain your ankle once a month, in the exact same way.",
+  "Have hangnails the size of dimes on every finger.",
+  "Have a back spasm every time you sneeze.",
+
+  // ---- Death / extinction / existential (621-640) ----
+  "Be the only person that survives the next great extinction.",
+  "Be the only person at your own funeral.",
+  "Have your last words be \"did I leave the oven on?\"",
+  "Die of embarrassment, literally, on your 70th birthday.",
+  "Have your obituary written in iambic pentameter by your worst enemy.",
+  "Be reincarnated as your ex's pet ferret.",
+  "Have a near-death experience every birthday.",
+  "Live to 105 but with all the joints of a 95-year-old starting now.",
+  "Be cryogenically frozen and thawed only when there's a sale at Costco.",
+  "Live forever, but your only job is refilling paper towel dispensers.",
+  "Live forever, but you have to relive your most embarrassing year every decade.",
+  "Spend your afterlife in line at a DMV with no chairs.",
+  "Be reincarnated as a goldfish in a dentist's waiting room.",
+  "Live a thousand years, but the entire time as a YouTube comment.",
+  "Have your epitaph written by an AI chatbot from 2008.",
+  "Be reincarnated as the office printer at a personal injury law firm.",
+  "Have your gravestone misspell your name in every possible way.",
+  "Be the ghost that haunts a Cracker Barrel for eternity.",
+  "Die peacefully but only after one more episode of a show that gets cancelled mid-season.",
+  "Live forever in a body that's exactly 87 years old."
+];
+
+// ============================================================
+// Game state
+// ============================================================
+let deck = [];
+let round = 0;
+let chose = 0;
+let chosenDeath = 0;
+let skipped = 0;
+
+const els = {
+  splash:    document.getElementById("splash"),
+  game:      document.getElementById("game"),
+  startBtn:  document.getElementById("startBtn"),
+  cardA:     document.getElementById("cardA"),
+  cardB:     document.getElementById("cardB"),
+  textA:     document.getElementById("textA"),
+  textB:     document.getElementById("textB"),
+  deathBtn:  document.getElementById("deathBtn"),
+  skipBtn:   document.getElementById("skipBtn"),
+  resetBtn:  document.getElementById("resetBtn"),
+  counter:   document.getElementById("counter"),
+  toast:     document.getElementById("toast"),
+  tallyChose: document.getElementById("tallyChose"),
+  tallyDeath: document.getElementById("tallyDeath"),
+  tallySkip:  document.getElementById("tallySkip"),
+};
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function resetDeck() {
+  deck = shuffle([...PROMPTS]);
+  round = 0;
+  chose = 0;
+  chosenDeath = 0;
+  skipped = 0;
+  updateTally();
+  updateCounter();
+}
+
+function drawTwo() {
+  if (deck.length < 2) {
+    deck = shuffle([...PROMPTS]);
+    toast("Deck reshuffled", false);
+  }
+  const a = deck.pop();
+  const b = deck.pop();
+  els.textA.textContent = a;
+  els.textB.textContent = b;
+  els.cardA.classList.remove("chosen", "rejected");
+  els.cardB.classList.remove("chosen", "rejected");
+  round++;
+  updateCounter();
+}
+
+function updateCounter() {
+  els.counter.textContent = `Round ${round}`;
+}
+
+function updateTally() {
+  els.tallyChose.textContent = chose;
+  els.tallyDeath.textContent = chosenDeath;
+  els.tallySkip.textContent = skipped;
+}
+
+function toast(msg, death) {
+  els.toast.textContent = msg;
+  els.toast.classList.toggle("death", !!death);
+  els.toast.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => els.toast.classList.remove("show"), 1400);
+}
+
+function chooseCard(side) {
+  const winner = side === "A" ? els.cardA : els.cardB;
+  const loser  = side === "A" ? els.cardB : els.cardA;
+  winner.classList.add("chosen");
+  loser.classList.add("rejected");
+  chose++;
+  updateTally();
+  toast(`You chose ${side}`, false);
+  setTimeout(drawTwo, 900);
+}
+
+function chooseDeath() {
+  els.cardA.classList.add("rejected");
+  els.cardB.classList.add("rejected");
+  chosenDeath++;
+  updateTally();
+  toast("You chose death", true);
+  setTimeout(drawTwo, 900);
+}
+
+function skip() {
+  skipped++;
+  updateTally();
+  drawTwo();
+}
+
+// Event wiring
+els.startBtn.addEventListener("click", () => {
+  els.splash.classList.add("hidden");
+  els.game.classList.add("active");
+  resetDeck();
+  drawTwo();
+});
+els.cardA.addEventListener("click", () => chooseCard("A"));
+els.cardB.addEventListener("click", () => chooseCard("B"));
+els.deathBtn.addEventListener("click", chooseDeath);
+els.skipBtn.addEventListener("click", skip);
+els.resetBtn.addEventListener("click", () => {
+  resetDeck();
+  drawTwo();
+  toast("Deck reset", false);
+});
+
+// Keyboard shortcuts
+document.addEventListener("keydown", (e) => {
+  if (!els.game.classList.contains("active")) return;
+  if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") chooseCard("A");
+  else if (e.key === "b" || e.key === "B" || e.key === "ArrowRight") chooseCard("B");
+  else if (e.key === "d" || e.key === "D") chooseDeath();
+  else if (e.key === "s" || e.key === "S") skip();
+});
+
+console.log(`I Choose Death — ${PROMPTS.length} prompts loaded.`);
+</script>
+
+</body>
+</html>
