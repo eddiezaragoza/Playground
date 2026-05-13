@@ -195,26 +195,15 @@
     clip-path: polygon(0 0, 100% 0, 50% 100%);
   }
 
-  /* Envelope front (covers bottom half) */
+  /* Envelope front (full body) */
   .env-front {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60%;
+    inset: 0;
     background:
       linear-gradient(180deg, #d8c294 0%, #c2a87a 100%);
-    border-radius: 0 0 6px 6px;
-    z-index: 4;
+    border-radius: 6px;
+    z-index: 3;
     box-shadow: inset 0 4px 12px rgba(100, 70, 30, 0.18);
-  }
-
-  .env-front::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 100%;
-    background: linear-gradient(180deg, transparent 0%, transparent 8%, rgba(80, 50, 20, 0.06) 8%, transparent 9%);
   }
 
   /* Decorative monogram on the envelope */
@@ -331,12 +320,18 @@
     transform: translateY(-110%) scale(1.02);
   }
 
-  .envelope-wrap.opened .tap-hint { opacity: 0; }
+  .envelope-wrap.opened ~ .tap-hint { opacity: 0; }
 
   /* Hide envelope after open */
   .envelope-wrap.gone {
     pointer-events: none;
     animation: envFlyOff 0.9s ease-in 0.2s forwards;
+  }
+
+  .envelope-wrap.hidden,
+  .tap-hint.hidden,
+  .top-label.hidden {
+    display: none;
   }
 
   @keyframes envFlyOff {
@@ -838,14 +833,19 @@
     setTimeout(() => {
       inviteCard.classList.add('reveal');
       inviteCard.setAttribute('aria-hidden', 'false');
-      // Smoothly bring card into view on small screens
-      setTimeout(() => {
-        inviteCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 200);
       launchConfetti();
       // Start countdown after reveal
       startCountdown();
     }, 1100);
+
+    // Collapse the envelope's layout space after fly-off animation finishes,
+    // then bring the card into view so the page doesn't have a big empty gap.
+    setTimeout(() => {
+      envWrap.classList.add('hidden');
+      document.getElementById('tapHint').classList.add('hidden');
+      document.querySelector('.top-label').classList.add('hidden');
+      inviteCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2100);
   }
 
   envWrap.addEventListener('click', openEnvelope);
