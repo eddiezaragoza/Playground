@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yasser's Catering Playbook -- Wesley Chapel Market Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #FAF7F2;
+  --bg-alt: #F0EBE3;
+  --bg-card: #FFFFFF;
+  --accent: #C2513E;
+  --accent-light: #E8836F;
+  --accent-dark: #9B3A2A;
+  --green: #2D8B57;
+  --green-light: #E8F5EE;
+  --gold: #D4A04C;
+  --gold-light: #FFF8ED;
+  --blue: #3B7DD8;
+  --blue-light: #EBF3FF;
+  --purple: #7B5EA7;
+  --purple-light: #F3EFF8;
+  --text: #2C1810;
+  --text-secondary: #5A4030;
+  --text-muted: #8A7560;
+  --border: #E0D5C7;
+  --shadow: 0 2px 12px rgba(44,24,16,0.08);
+  --shadow-hover: 0 8px 32px rgba(44,24,16,0.14);
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #2C1810 0%, #4A2820 40%, #6B3A28 70%, #2C1810 100%);
+  color: #FFF;
+  padding: 80px 40px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(194,81,62,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(212,160,76,0.1) 0%, transparent 50%);
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.hero-badge {
+  display: inline-block;
+  background: rgba(212,160,76,0.2);
+  border: 1px solid rgba(212,160,76,0.4);
+  color: #D4A04C;
+  padding: 6px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.hero h1 .name {
+  color: #D4A04C;
+  display: block;
+  font-size: 1.15em;
+}
+.hero-sub {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.75);
+  max-width: 600px;
+  margin: 0 auto 28px;
+  line-height: 1.7;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #D4A04C;
+}
+.hero-stat .label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,247,242,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  overflow-x: auto;
+}
+.nav-inner {
+  display: flex;
+  gap: 4px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+.nav a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav a:hover, .nav a.active {
+  background: var(--accent);
+  color: #FFF;
+}
+
+/* Layout */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { padding: 60px 0; }
+section:nth-child(even) { background: var(--bg-alt); }
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.section-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.section-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: all 0.25s;
+}
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.card-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.badge-hot { background: #FDECEC; color: #C2513E; }
+.badge-warm { background: #FFF3E0; color: #D4860A; }
+.badge-solid { background: #E8F5EE; color: #2D8B57; }
+.card-detail {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.card-detail .icon { flex-shrink: 0; width: 16px; text-align: center; }
+.card-why {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.card-phone a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.card-phone a:hover { text-decoration: underline; }
+
+/* Call List */
+.call-list-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+}
+.call-list-table thead {
+  background: #2C1810;
+  color: #FFF;
+}
+.call-list-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.call-list-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.call-list-table tr:last-child td { border-bottom: none; }
+.call-list-table tr:hover td { background: #FFF8F0; }
+.call-list-table .phone-cell {
+  white-space: nowrap;
+}
+.call-list-table .phone-cell a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.call-list-table .phone-cell a:hover { text-decoration: underline; }
+.call-list-table .web-cell a {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+.call-list-table .web-cell a:hover { text-decoration: underline; }
+.call-list-table .web-cell .no-site { color: var(--text-muted); font-size: 0.78rem; font-style: italic; }
+.download-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #2C1810;
+  color: #FFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(44,24,16,0.2);
+}
+.download-btn:hover { background: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(194,81,62,0.3); }
+.download-btn .dl-icon { font-size: 1.1rem; }
+.call-list-table .category-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cat-corp { background: #EBF3FF; color: #3B7DD8; }
+.cat-venue { background: #F3EFF8; color: #7B5EA7; }
+.cat-wedding { background: #FDECEC; color: #C2513E; }
+.cat-church { background: #FFF3E0; color: #D4860A; }
+.cat-hoa { background: #E8F5EE; color: #2D8B57; }
+.cat-school { background: #FFF8ED; color: #B8860B; }
+.cat-sports { background: #E8F0FE; color: #1A73E8; }
+.cat-biz { background: #F0F0F0; color: #555; }
+.cat-planner { background: #FCE4EC; color: #C2185B; }
+.cat-brewery { background: #FFF3E0; color: #E65100; }
+.script-box {
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin: 30px 0;
+  position: relative;
+}
+.script-box h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+.script-box p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+.script-box .highlight {
+  background: #FFF8ED;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Pricing */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: all 0.25s;
+}
+.pricing-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.pricing-card.featured {
+  border: 2px solid var(--accent);
+  position: relative;
+}
+.pricing-card.featured::before {
+  content: 'SWEET SPOT';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #FFF;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 14px;
+  border-radius: 50px;
+  letter-spacing: 1px;
+}
+.pricing-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.pricing-card .price {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+.pricing-card .per { font-size: 0.85rem; color: var(--text-muted); }
+.pricing-card .desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* Checklist */
+.checklist {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+  margin: 0 auto;
+}
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.checklist-item:last-child { border-bottom: none; }
+.check-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.checklist-item h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.checklist-item p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Tips */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.tip-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.tip-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: #FFF;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.tip-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.tip-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Platform list */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.platform-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.platform-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.platform-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 3px; }
+.platform-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+.platform-card .cost {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+/* Back to top */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  color: #FFF;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(194,81,62,0.35);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+  z-index: 200;
+}
+.back-to-top.visible { opacity: 1; transform: translateY(0); }
+.back-to-top:hover { background: var(--accent-dark); transform: translateY(-2px); }
+
+/* Footer */
+.footer {
+  background: #2C1810;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 0.85rem;
+}
+.footer .made-for {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.75rem;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero { padding: 60px 24px 40px; }
+  .hero-stats { gap: 24px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .tips-grid { grid-template-columns: 1fr; }
+  .platform-grid { grid-template-columns: 1fr; }
+  .call-list-table { font-size: 0.8rem; }
+  .call-list-table th, .call-list-table td { padding: 10px 8px; }
+  section { padding: 40px 0; }
+  .nav-inner { padding: 6px 0; }
+}
+
+@media (max-width: 480px) {
+  .call-list-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .hero h1 { font-size: 1.8rem; }
+}
+
+/* Print */
+@media print {
+  .nav, .back-to-top { display: none; }
+  .hero { padding: 30px; background: #333 !important; -webkit-print-color-adjust: exact; }
+  section { padding: 20px 0; break-inside: avoid; }
+  .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Made for Yasser</div>
+    <h1>Your Catering<span class="name">Playbook</span></h1>
+    <p class="hero-sub">
+      Wesley Chapel is booming -- new families, new offices, new communities. Every one of them needs
+      someone to bring the food. Here's your market research, lead list, and launch plan.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">65+</div>
+        <div class="label">Leads Found</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">10</div>
+        <div class="label">Categories</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">33K+</div>
+        <div class="label">Households in WC</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NAV ==================== -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="#call-list">Call List</a>
+    <a href="#corporate">Corporate</a>
+    <a href="#venues">Venues</a>
+    <a href="#weddings">Weddings</a>
+    <a href="#churches">Churches</a>
+    <a href="#hoa">HOA/Communities</a>
+    <a href="#schools">Schools</a>
+    <a href="#sports">Sports</a>
+    <a href="#businesses">Local Biz</a>
+    <a href="#breweries">Breweries</a>
+    <a href="#planners">Planners</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#permits">Permits</a>
+    <a href="#tips">Tips</a>
+  </div>
+</div>
+
+<!-- ==================== CALL LIST ==================== -->
+<section id="call-list">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128222;</div>
+      <h2>Yasser's Call List</h2>
+      <p>Your top leads with phone numbers -- sorted by priority. Start at the top, work your way down. These are real businesses in Wesley Chapel ready to hear from you.</p>
+    </div>
+
+    <div class="script-box">
+      <h3>Your Cold Call Script</h3>
+      <p>
+        "Hi, my name is <span class="highlight">Yasser</span> and I run a local catering service here in Wesley Chapel.
+        We do <span class="highlight">fresh pasta, beautiful salads, and artisan bread</span> -- simple, delicious food for groups.
+        I'd love to chat about how we could work together for your next <span class="highlight">[event/meeting/party]</span>.
+        Would you have a few minutes this week to talk, or can I drop off a sample?"
+      </p>
+    </div>
+
+    <div class="download-bar">
+      <button class="download-btn" onclick="downloadExcel()">
+        <span class="dl-icon">&#128229;</span> Download Lead List (.xlsx)
+      </button>
+    </div>
+
+    <div class="call-list-wrapper">
+    <table class="call-list-table" id="leadTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Business</th>
+          <th>Category</th>
+          <th>Phone</th>
+          <th>Website</th>
+          <th>Why Call Them</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Zephyrhills Brewing Co.</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">38530 5th Ave, Zephyrhills</span></td>
+          <td><span class="category-tag cat-brewery">Brewery</span></td>
+          <td class="phone-cell"><a href="tel:8137152683">(813) 715-2683</a></td>
+          <td class="web-cell"><a href="https://zbcbeer.com" target="_blank">zbcbeer.com</a></td>
+          <td>No food menu -- explicitly welcomes outside food. Offer a standing Friday/Saturday night partnership.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Double Branch Brewing</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">5956 Wesley Grove Blvd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-brewery">Brewery</span></td>
+          <td class="phone-cell"><a href="tel:8134928800">(813) 492-8800</a></td>
+          <td class="web-cell"><a href="https://doublebranch.beer" target="_blank">doublebranch.beer</a></td>
+          <td>Allows outside food -- BUT Yelp marked as closed Dec 2025. Call to verify status before visiting. If open, great pop-up spot.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Wesley Chapel Athletic Assoc.</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel District Park</span></td>
+          <td><span class="category-tag cat-sports">Sports</span></td>
+          <td class="phone-cell"><a href="tel:8139946633">(813) 994-6633</a></td>
+          <td class="web-cell"><a href="https://www.wcaasports.org" target="_blank">wcaasports.org</a></td>
+          <td>3,500+ families across 7 sports leagues. End-of-season banquets, tournament concessions, team dinners.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>The Barn at Crescent Lake</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">9612 Crescent Dr, Odessa</span></td>
+          <td><span class="category-tag cat-wedding">Wedding</span></td>
+          <td class="phone-cell"><a href="tel:8134862731">(813) 486-2731</a></td>
+          <td class="web-cell"><a href="https://www.barnatcrescentlake.com" target="_blank">barnatcrescentlake.com</a></td>
+          <td>Rustic barn on 40 acres in Odessa. May have preferred in-house catering -- call to confirm outside caterer policy.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Club Connerton</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">21100 Fountain Garden Way, Land O'Lakes</span></td>
+          <td><span class="category-tag cat-hoa">HOA</span></td>
+          <td class="phone-cell"><a href="tel:8139965800">(813) 996-5800</a></td>
+          <td class="web-cell"><a href="https://www.myconnerton.com" target="_blank">myconnerton.com</a></td>
+          <td>10,000 sq ft clubhouse with activities director. Email activities@myconnerton.com directly. Regular community events.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>First Baptist Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">29716 SR 54, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-church">Church</span></td>
+          <td class="phone-cell"><a href="tel:8139737185">(813) 973-7185</a></td>
+          <td class="web-cell"><a href="https://www.fbcwesleychapel.org" target="_blank">fbcwesleychapel.org</a></td>
+          <td>Already runs spaghetti dinners -- they know the format. Offer to cater instead of their volunteers cooking.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Wesley Chapel Elementary PTO</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">30243 Wells Rd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-school">School</span></td>
+          <td class="phone-cell"><a href="tel:8137940100">(813) 794-0100</a></td>
+          <td class="web-cell"><a href="https://wces.pasco.k12.fl.us" target="_blank">wces.pasco.k12.fl.us</a></td>
+          <td>Active PTO (Wcespto23@gmail.com). Already does spaghetti fundraiser dinners. Email them directly.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>The Barn at Jewel Farms</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">15303 Race Track Rd, Odessa</span></td>
+          <td><span class="category-tag cat-venue">Venue</span></td>
+          <td class="phone-cell"><a href="tel:8134487996">(813) 448-7996</a></td>
+          <td class="web-cell"><a href="https://www.thebarnatjewelfarms.com" target="_blank">thebarnatjewelfarms.com</a></td>
+          <td>No commission, no food minimums, separate caterer entrance. Built for outside caterers like you.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>AdventHealth Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">2600 Bruce B. Downs Blvd</span></td>
+          <td><span class="category-tag cat-corp">Corporate</span></td>
+          <td class="phone-cell"><a href="tel:8139295000">(813) 929-5000</a></td>
+          <td class="web-cell"><a href="https://www.adventhealth.com/hospital/adventhealth-wesley-chapel" target="_blank">adventhealth.com</a></td>
+          <td>1,260+ employees. Hospitals order catering constantly -- staff meetings, department lunches, holiday parties.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>Florida Medical Clinic</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Multiple Wesley Chapel locations</span></td>
+          <td><span class="category-tag cat-corp">Corporate</span></td>
+          <td class="phone-cell"><a href="tel:8137808440">(813) 780-8440</a></td>
+          <td class="web-cell"><a href="https://www.floridamedicalclinic.com" target="_blank">floridamedicalclinic.com</a></td>
+          <td>Multi-location medical group. Pharma reps bring lunch-and-learns weekly -- get on their vendor list.</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><strong>BayCare Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">4501 Bruce B. Downs Blvd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-corp">Corporate</span></td>
+          <td class="phone-cell"><a href="tel:8139141000">(813) 914-1000</a></td>
+          <td class="web-cell"><a href="https://www.baycare.org" target="_blank">baycare.org</a></td>
+          <td>Major healthcare employer. Admin offices, department events, employee appreciation weeks.</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><strong>Bridgeway Church</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">30660 Wells Rd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-church">Church</span></td>
+          <td class="phone-cell"><a href="tel:8139071313">(813) 907-1313</a></td>
+          <td class="web-cell"><a href="https://bridgeway.tv" target="_blank">bridgeway.tv</a></td>
+          <td>Large congregation, community outreach events. Churches are repeat customers -- weddings, potlucks, ministry dinners.</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td><strong>Life Church WC</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">6224 Old Pasco Rd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-church">Church</span></td>
+          <td class="phone-cell"><a href="tel:8139732230">(813) 973-2230</a></td>
+          <td class="web-cell"><a href="https://www.lifechurchnow.com" target="_blank">lifechurchnow.com</a></td>
+          <td>Growing church community. Regular fellowship events, youth group dinners, volunteer appreciation.</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td><strong>Grace Church Tampa Palms</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">15102 Amberly Dr, Tampa</span></td>
+          <td><span class="category-tag cat-church">Church</span></td>
+          <td class="phone-cell"><a href="tel:8139718484">(813) 971-8484</a></td>
+          <td class="web-cell"><a href="https://www.gracechurchtampapalms.org" target="_blank">gracechurchtampapalms.org</a></td>
+          <td>Hosts annual Christmas Dinner & Dance. Large events already happening -- just need a caterer on their list.</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td><strong>Wesley Chapel Toyota</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">5300 Eagleston Blvd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-biz">Local Biz</span></td>
+          <td class="phone-cell"><a href="tel:8139738888">(813) 973-8888</a></td>
+          <td class="web-cell"><a href="https://www.wesleychapeltoyota.com" target="_blank">wesleychapeltoyota.com</a></td>
+          <td>Dealerships do customer appreciation events, sales team lunches, Saturday open houses. Good recurring revenue.</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td><strong>Parks Ford of Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">28739 SR 54, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-biz">Local Biz</span></td>
+          <td class="phone-cell"><a href="tel:8139077800">(813) 907-7800</a></td>
+          <td class="web-cell"><a href="https://www.fordofwesleychapel.com" target="_blank">fordofwesleychapel.com</a></td>
+          <td>Same as above -- dealerships are underrated catering clients. Walk in with a menu and business card.</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td><strong>Lexus of Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">5350 Eagleston Blvd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-biz">Local Biz</span></td>
+          <td class="phone-cell"><a href="tel:8139075350">(813) 907-5350</a></td>
+          <td class="web-cell"><a href="https://www.lexusofwesleychapel.com" target="_blank">lexusofwesleychapel.com</a></td>
+          <td>Luxury dealership -- higher budgets for customer events. Perfect for elevated pasta & bread spread.</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td><strong>Epperson Ranch CDD</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel</span></td>
+          <td><span class="category-tag cat-hoa">HOA</span></td>
+          <td class="phone-cell"><a href="tel:3212630132">(321) 263-0132</a></td>
+          <td class="web-cell"><a href="https://www.eppersonranchcdd.org" target="_blank">eppersonranchcdd.org</a></td>
+          <td>Large master-planned community with lagoon amenity center. Community events year-round.</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td><strong>Seven Oaks Community</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel</span></td>
+          <td><span class="category-tag cat-hoa">HOA</span></td>
+          <td class="phone-cell"><a href="tel:8139941001">(813) 994-1001</a></td>
+          <td class="web-cell"><a href="https://www.sevenoakscdd.com" target="_blank">sevenoakscdd.com</a></td>
+          <td>Two clubhouses, active lifestyle programming. HOA social committees always need caterers for events.</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td><strong>Meadow Pointe CDD</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel</span></td>
+          <td><span class="category-tag cat-hoa">HOA</span></td>
+          <td class="phone-cell"><a href="tel:8139731671">(813) 973-1671</a></td>
+          <td class="web-cell"><a href="https://www.meadowpointecdd.com" target="_blank">meadowpointecdd.com</a></td>
+          <td>4 separate CDDs (I through IV) -- that's 4 clubhouses, 4 social committees, 4x the events.</td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td><strong>Wiregrass Ranch Sports Campus</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">3021 Sports Coast Way, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-sports">Sports</span></td>
+          <td class="phone-cell"><a href="tel:8139395902">(813) 939-5902</a></td>
+          <td class="web-cell"><a href="https://playwiregrass.com" target="_blank">playwiregrass.com</a></td>
+          <td>Multi-field sports complex. Tournament weekends = hundreds of hungry families. Concession or pop-up opportunity.</td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td><strong>Tampa Bay United Soccer</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">15303 Race Track Rd, Odessa</span></td>
+          <td><span class="category-tag cat-sports">Sports</span></td>
+          <td class="phone-cell"><a href="tel:8139986677">(813) 998-6677</a></td>
+          <td class="web-cell"><a href="https://tbusc.com" target="_blank">tbusc.com</a></td>
+          <td>Large youth soccer org. End-of-season banquets, tournament food, team pasta dinners before game days.</td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td><strong>PHSC Wesley Chapel Campus</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">2727 Mansfield Blvd</span></td>
+          <td><span class="category-tag cat-corp">Corporate</span></td>
+          <td class="phone-cell"><a href="tel:8135276615">(813) 527-6615</a></td>
+          <td class="web-cell"><a href="https://www.phsc.edu" target="_blank">phsc.edu</a></td>
+          <td>College campus -- faculty events, student org events, graduation parties. Get on their vendor list.</td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td><strong>Saint Leo University (WC campus)</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">15303 Race Track Rd, Odessa</span></td>
+          <td><span class="category-tag cat-corp">Corporate</span></td>
+          <td class="phone-cell"><a href="tel:8007078846">(800) 707-8846</a></td>
+          <td class="web-cell"><a href="https://www.saintleo.edu" target="_blank">saintleo.edu</a></td>
+          <td>Education center inside PHSC Porter Campus (not standalone). Faculty dinners, alumni events. Ask PHSC about vendor list.</td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td><strong>Keller Williams WC</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel</span></td>
+          <td><span class="category-tag cat-biz">Local Biz</span></td>
+          <td class="phone-cell"><a href="tel:8132647754">(813) 264-7754</a></td>
+          <td class="web-cell"><a href="https://www.kw.com" target="_blank">kw.com</a></td>
+          <td>Real estate offices cater open houses, team meetings, client appreciation. Realtors spend to impress.</td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td><strong>WellCome OM Retreat Center</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">4242 Lake In The Woods Dr, Spring Hill</span></td>
+          <td><span class="category-tag cat-wedding">Wedding</span></td>
+          <td class="phone-cell"><a href="tel:3526004242">(352) 600-4242</a></td>
+          <td class="web-cell"><a href="https://wellcomeomcenter.com" target="_blank">wellcomeomcenter.com</a></td>
+          <td>Retreat center, allows outside caterers. Yoga retreats, wellness events, small weddings -- simple food fits perfectly.</td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td><strong>Saxon Manor Shabby Chic Barn</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">103 S Saxon Ave, Brooksville</span></td>
+          <td><span class="category-tag cat-wedding">Wedding</span></td>
+          <td class="phone-cell"><a href="tel:8139093414">(813) 909-3414</a></td>
+          <td class="web-cell"><a href="https://saxonevents.com" target="_blank">saxonevents.com</a></td>
+          <td>Popular rustic barn venue. Casual weddings are their bread and butter -- literally your niche.</td>
+        </tr>
+        <tr>
+          <td>28</td>
+          <td><strong>Avalon Park Wesley Chapel</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">Wesley Chapel</span></td>
+          <td><span class="category-tag cat-hoa">HOA</span></td>
+          <td class="phone-cell"><a href="tel:8137831515">(813) 783-1515</a></td>
+          <td class="web-cell"><a href="https://avalonparkwesleychapel.com" target="_blank">avalonparkwesleychapel.com</a></td>
+          <td>Brand new community, active from day one. New residents = housewarming parties + community mixers.</td>
+        </tr>
+
+        <tr>
+          <td>29</td>
+          <td><strong>Wiregrass Ranch High School</strong><br><span style="font-size:0.78rem;color:var(--text-muted)">2909 Mansfield Blvd, Wesley Chapel</span></td>
+          <td><span class="category-tag cat-school">School</span></td>
+          <td class="phone-cell"><a href="tel:8133466000">(813) 346-6000</a></td>
+          <td class="web-cell"><a href="https://wrhs.pasco.k12.fl.us" target="_blank">wrhs.pasco.k12.fl.us</a></td>
+          <td>Booster clubs, sports banquets, prom after-parties, graduation celebrations. High schools are goldmines.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="script-box" style="margin-top: 30px;">
+      <h3>Pro Tip: The Sample Drop-Off</h3>
+      <p>
+        Don't just call -- <span class="highlight">bring food</span>. Pack a small sample tray (a few portions of pasta + a side salad + bread)
+        and drop it off at the front desk with your business card and a simple one-page menu with pricing.
+        For breweries, walk in during a slow afternoon. For offices, drop off at the front desk and ask for the
+        <span class="highlight">office manager</span> or <span class="highlight">admin assistant</span> -- they're the ones who order catering.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CORPORATE ==================== -->
+<section id="corporate">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#127970;</div>
+      <h2>Corporate & Office Parks</h2>
+      <p>Companies with 50+ employees -- holiday parties, team lunches, board meetings, client events</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>AdventHealth Wesley Chapel</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 2600 Bruce B. Downs Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139295000">(813) 929-5000</a></div>
+        <div class="card-why">1,260+ employees. Hospitals order catering weekly -- department meetings, holiday parties, night-shift appreciation. Ask for the HR or Employee Experience team.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>BayCare Wesley Chapel</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 4501 Bruce B. Downs Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139141000">(813) 914-1000</a></div>
+        <div class="card-why">Major healthcare system. Admin offices need lunch catering. Nurses Week alone is a huge opportunity.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Florida Medical Clinic</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Multiple Wesley Chapel locations</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137808440">(813) 780-8440</a></div>
+        <div class="card-why">Multi-location medical group. Pharma reps bring lunch-and-learns weekly to doctor's offices -- get on the pharma rep vendor lists AND the clinic's vendor list.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>PHSC - Wesley Chapel Campus</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 2727 Mansfield Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8135276615">(813) 527-6615</a></div>
+        <div class="card-why">Community college campus. Faculty events, student clubs, graduation receptions. Get on their approved vendor list.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Saint Leo University</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel satellite campus</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8007078846">(800) 707-8846</a></div>
+        <div class="card-why">Private university. Faculty dining, alumni events, continuing ed receptions. Higher budgets than public schools.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Moffitt Cancer Center (New Tampa)</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 12902 USF Magnolia Dr, Tampa</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137454673">(813) 745-4673</a></div>
+        <div class="card-why">Major research hospital just south of WC. Staff events, fundraiser galas, department lunches. Consistent, well-budgeted.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VENUES ==================== -->
+<section id="venues">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#127978;</div>
+      <h2>Event Venues & Banquet Halls</h2>
+      <p>Places that host events but need outside caterers -- your foot in the door</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>The Barn at Jewel Farms</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 15303 Race Track Rd, Odessa</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8134487996">(813) 448-7996</a></div>
+        <div class="card-why">No commission on caterers, no food minimums, has a dedicated caterer entrance. This venue was built for outside caterers. Get on their preferred vendor list ASAP.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Center for the Arts at WC</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139947846">(813) 994-7846</a></div>
+        <div class="card-why">Art shows, performances, community events. They need food for opening nights and galas. Pasta + salad is easy, elegant.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Wiregrass Ranch Sports Campus</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 3021 Sports Coast Way, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139395902">(813) 939-5902</a></div>
+        <div class="card-why">Multi-field complex hosting tournaments year-round. Hundreds of families on tournament weekends need food.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Cypress Creek Event Venue</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel area</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137801111">(813) 780-1111</a></div>
+        <div class="card-why">Event venue for private parties, corporate events. Ask if they allow outside catering or want to partner.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WEDDINGS ==================== -->
+<section id="weddings">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128141;</div>
+      <h2>Wedding Venues</h2>
+      <p>Casual and rustic venues that welcome outside caterers -- pasta is a crowd-pleasing wedding menu</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>The Barn at Crescent Lake</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 9612 Crescent Dr, Odessa</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8134862731">(813) 486-2731</a></div>
+        <div class="card-why">Rustic barn on a lake. Outside caterers welcome. Couples here want simple, beautiful food -- exactly your wheelhouse.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>WellCome OM Retreat Center</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 4242 Lake In The Woods Dr, Spring Hill</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:3526004242">(352) 600-4242</a></div>
+        <div class="card-why">Wellness retreat + event space. Allows outside caterers. Small intimate weddings, retreats, workshops. Fresh food is their vibe.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Saxon Manor Shabby Chic Barn</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 103 S Saxon Ave, Brooksville</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139093414">(813) 909-3414</a></div>
+        <div class="card-why">Shabby chic barn = casual wedding crowd. These couples don't want a steakhouse caterer, they want homestyle comfort food.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Monarch Meadows</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel / Pasco County</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139911234">(813) 991-1234</a></div>
+        <div class="card-why">Outdoor garden venue. Check if they allow outside catering -- many garden venues do. Beautiful setting for a pasta garden party.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHURCHES ==================== -->
+<section id="churches">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#9962;</div>
+      <h2>Churches & Religious Orgs</h2>
+      <p>Large congregations = repeat customers. Fellowship dinners, fundraisers, weddings, holiday events</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>First Baptist Wesley Chapel</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 29716 SR 54, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139737185">(813) 973-7185</a></div>
+        <div class="card-why">Already does spaghetti dinners! They know the format. Pitch: "Let your volunteers enjoy the event instead of cooking."</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Bridgeway Church</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 30660 Wells Rd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139071313">(813) 907-1313</a></div>
+        <div class="card-why">Large, active congregation. Community outreach events, small group dinners, ministry appreciation. Ask for the events coordinator.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Life Church WC</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 6224 Old Pasco Rd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139732230">(813) 973-2230</a></div>
+        <div class="card-why">Growing church with youth programs. Youth group dinners, leadership team meals, community nights.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Grace Church Tampa Palms</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 15102 Amberly Dr, Tampa</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139718484">(813) 971-8484</a></div>
+        <div class="card-why">Hosts an annual Christmas Dinner & Dance. One big event like that = $2k+ order. Get on their radar by October.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOA ==================== -->
+<section id="hoa">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#127969;</div>
+      <h2>HOA Communities & Clubhouses</h2>
+      <p>Wesley Chapel is wall-to-wall master-planned communities. Every one has a clubhouse and a social committee looking for caterers.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Club Connerton</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 21100 Fountain Garden Way, Land O'Lakes</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139965800">(813) 996-5800</a></div>
+        <div class="card-detail"><span class="icon">&#9993;</span> activities@myconnerton.com</div>
+        <div class="card-why">10,000 sq ft clubhouse with a dedicated activities director. This is your easiest cold call -- they NEED event food regularly.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Epperson Ranch</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:3212630132">(321) 263-0132</a></div>
+        <div class="card-why">Famous for its Crystal Lagoon. Large amenity center hosts community events year-round. Great for a pop-up pasta night by the lagoon.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Seven Oaks</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139941001">(813) 994-1001</a></div>
+        <div class="card-why">Two clubhouses, active lifestyle programming. Their social committee plans monthly events -- get on their vendor list.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Meadow Pointe I - IV</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel (4 separate CDDs)</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139731671">(813) 973-1671</a></div>
+        <div class="card-why">4 different CDDs = 4 clubhouses, 4 social committees, 4 separate budgets. Pitch each one independently.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Avalon Park Wesley Chapel</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137831515">(813) 783-1515</a></div>
+        <div class="card-why">Brand new community. New homeowners = housewarming parties + community mixers. Get in early before they have preferred vendors.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCHOOLS ==================== -->
+<section id="schools">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#127979;</div>
+      <h2>Schools & PTAs</h2>
+      <p>Fundraiser dinners, teacher appreciation, sports banquets, graduation parties. Pitch in February for spring events.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Wesley Chapel Elementary PTO</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 30243 Wells Rd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137940100">(813) 794-0100</a></div>
+        <div class="card-detail"><span class="icon">&#9993;</span> Wcespto23@gmail.com</div>
+        <div class="card-why">Active PTO that already does spaghetti fundraiser dinners! Email them directly -- they need exactly what you make.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Wiregrass Ranch High School</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 2909 Mansfield Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8133466000">(813) 346-6000</a></div>
+        <div class="card-why">Booster clubs for every sport -- each one does an end-of-season banquet. That's 10+ events per year from one school.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Wesley Chapel High School</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 30651 Wells Rd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137948700">(813) 794-8700</a></div>
+        <div class="card-why">Same opportunity as Wiregrass -- booster clubs, prom after-parties, graduation celebrations. Two high schools = double the events.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SPORTS ==================== -->
+<section id="sports">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#9917;</div>
+      <h2>Sports Leagues & Rec Centers</h2>
+      <p>End-of-season banquets, tournament weekends, team pasta dinners. Carbs before game day!</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Wesley Chapel Athletic Assoc.</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel District Park</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139946633">(813) 994-6633</a></div>
+        <div class="card-why">3,500+ families, 7 sports. Every season ends with a banquet. That's potentially 14+ events per year from one organization.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Tampa Bay United Soccer</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel area</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139986677">(813) 998-6677</a></div>
+        <div class="card-why">Large youth soccer org. Teams literally do "pasta parties" before big games -- it's a soccer tradition. You are the answer.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Wiregrass Sports Campus</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 3030 Wiregrass Ranch Blvd</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139395902">(813) 939-5902</a></div>
+        <div class="card-why">Tournament weekends = hundreds of families who need to eat. Set up a pop-up tent near the fields.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Pasco County Rec Center</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel area</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8133453145">(813) 345-3145</a></div>
+        <div class="card-why">Community rec programs, summer camps, senior programs. County facilities are always looking for affordable caterers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LOCAL BUSINESSES ==================== -->
+<section id="businesses">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128188;</div>
+      <h2>Local Businesses</h2>
+      <p>Car dealerships, real estate offices, medical groups -- these places order catering more than you'd think</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Wesley Chapel Toyota</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 5300 Eagleston Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139738888">(813) 973-8888</a></div>
+        <div class="card-why">Customer appreciation events, sales contests, Saturday open house food. Walk in with a menu -- talk to the GM.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Lexus of Wesley Chapel</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 5350 Eagleston Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139075350">(813) 907-5350</a></div>
+        <div class="card-why">Luxury brand = higher budgets. VIP customer events with elevated food. Your pasta and fresh bread is perfect for this.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Parks Ford of Wesley Chapel</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 28739 SR 54, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8139077800">(813) 907-7800</a></div>
+        <div class="card-why">Another dealership on the strip. Walk in on a Tuesday morning, bring a sample, ask for the events person or GM.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Keller Williams Wesley Chapel</h3>
+          <span class="card-badge badge-solid">Solid</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8132647754">(813) 264-7754</a></div>
+        <div class="card-why">Real estate offices cater agent meetings, client appreciation events, open houses. Realtors love to impress with good food.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BREWERIES ==================== -->
+<section id="breweries">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#127866;</div>
+      <h2>Breweries & Taprooms</h2>
+      <p>They serve drinks but not food -- you fill the gap. This is your fastest path to consistent weekend revenue.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Zephyrhills Brewing Company</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 38530 5th Ave, Zephyrhills</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8137152683">(813) 715-2683</a></div>
+        <div class="card-why">Explicitly welcomes outside food. No kitchen, just beer. Walk in this week, propose a standing Friday pasta night. This could be your first recurring gig.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Double Branch Brewing</h3>
+          <span class="card-badge badge-hot">Hot</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> 5956 Wesley Grove Blvd, Wesley Chapel</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:8134928800">(813) 492-8800</a></div>
+        <div class="card-why">Right in Wesley Chapel. Allows outside food. Big taproom space, regular events, and trivia nights. Pasta + beer is a winning combo.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Crooked Thumb Brewery</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Safety Harbor / Tampa area</div>
+        <div class="card-detail card-phone"><span class="icon">&#128222;</span> <a href="tel:7277245953">(727) 724-5953</a></div>
+        <div class="card-why">Bit farther but known for welcoming food vendors. If the Wesley Chapel breweries work out, expand to Tampa Bay area breweries.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PLANNERS ==================== -->
+<section id="planners">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128203;</div>
+      <h2>Event Planners</h2>
+      <p>One good relationship with a planner = 10+ events per year. Offer a 10-15% referral fee.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Let's Plan a Party</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel based</div>
+        <div class="card-detail"><span class="icon">&#127760;</span> Search Facebook / Google for current contact</div>
+        <div class="card-why">Local WC-based planner. They handle birthdays, showers, corporate events. Be their go-to food person and offer a referral cut.</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>A Party With a Plan</h3>
+          <span class="card-badge badge-warm">Warm</span>
+        </div>
+        <div class="card-detail"><span class="icon">&#128205;</span> Wesley Chapel area</div>
+        <div class="card-detail"><span class="icon">&#127760;</span> Search Facebook / Google for current contact</div>
+        <div class="card-why">Another local planner. The strategy: reach out to 5+ planners, offer tastings, and a referral fee. Even 1-2 partnerships = consistent bookings.</div>
+      </div>
+    </div>
+    <div class="script-box" style="margin-top: 30px;">
+      <h3>Referral Fee Strategy</h3>
+      <p>
+        Offer event planners <span class="highlight">10-15% referral fee</span> on any booking they send your way. This turns planners into your sales team.
+        Also ask wedding venues to add you to their <span class="highlight">preferred vendor list</span> -- most venues give couples a list of recommended caterers.
+        Being on that list is free advertising.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PRICING ==================== -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128176;</div>
+      <h2>Pricing Guide</h2>
+      <p>Tampa Bay area market rates for catering -- where you should start</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Drop-Off Basic</h3>
+        <div class="price">$12-15</div>
+        <div class="per">per person</div>
+        <div class="desc">Delivered in trays, no service staff. Client self-serves. Good for office lunches, casual meetings. Minimum 10 people.</div>
+      </div>
+      <div class="pricing-card featured">
+        <h3>Drop-Off Premium</h3>
+        <div class="price">$18-25</div>
+        <div class="per">per person</div>
+        <div class="desc">Multiple pasta options, 2 salads, fresh bread, disposable plates/utensils included. Sweet spot for most events. Minimum 15 people.</div>
+      </div>
+      <div class="pricing-card">
+        <h3>Full Service</h3>
+        <div class="price">$28-35</div>
+        <div class="per">per person</div>
+        <div class="desc">You serve. Includes setup, buffet staffing, cleanup. For weddings, corporate galas, larger parties. Minimum 30 people.</div>
+      </div>
+      <div class="pricing-card">
+        <h3>Wedding Package</h3>
+        <div class="price">$35-45</div>
+        <div class="per">per person</div>
+        <div class="desc">Full service + tasting for the couple beforehand, custom menu consultation, real plates/linens (rental). Premium experience.</div>
+      </div>
+    </div>
+
+    <div class="script-box" style="margin-top: 30px;">
+      <h3>Yasser's Starter Pricing Recommendation</h3>
+      <p>
+        Start at the <span class="highlight">$15-20/person drop-off range</span> while you build your reputation and reviews.
+        Set a <span class="highlight">minimum order of $150</span> (roughly 10 people) so you're not losing money on small orders.
+        For brewery pop-ups, price <span class="highlight">individual plates at $10-12</span> and sell directly to customers.
+        Once you have 10+ reviews and photos, raise prices to market rate. People pay for trust.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PLATFORMS ==================== -->
+<section id="platforms">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128187;</div>
+      <h2>Platforms to List On</h2>
+      <p>Get found online. These are the platforms where people in Tampa Bay search for caterers.</p>
+    </div>
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#4285F4;color:#FFF;">G</div>
+        <div>
+          <h4>Google Business Profile</h4>
+          <p>Most important. Free. Shows up in Google Maps when people search "catering near me Wesley Chapel." Add photos of your food.</p>
+          <div class="cost">FREE -- do this first</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#FF5A1F;color:#FFF;">ez</div>
+        <div>
+          <h4>ezCater</h4>
+          <p>Largest corporate catering marketplace. Companies use this to order lunch for the office. Good for consistent weekday orders.</p>
+          <div class="cost">Commission: ~15-20% per order</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#E91E63;color:#FFF;">W</div>
+        <div>
+          <h4>The Knot / WeddingWire</h4>
+          <p>Where engaged couples find wedding vendors. Essential if you want wedding catering business. Portfolio + reviews matter most here.</p>
+          <div class="cost">Free listing, paid boost ~$50-100/mo</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#1877F2;color:#FFF;">f</div>
+        <div>
+          <h4>Facebook Business Page</h4>
+          <p>Post food photos, share to Wesley Chapel community groups (Nextdoor, FB groups). Most local food businesses get discovered here.</p>
+          <div class="cost">FREE -- second priority after Google</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#D32323;color:#FFF;">Y</div>
+        <div>
+          <h4>Yelp</h4>
+          <p>People check Yelp reviews before ordering. Claim your business page, respond to every review. 5 good reviews = credibility.</p>
+          <div class="cost">Free listing, paid ads optional</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#E4405F;color:#FFF;">IG</div>
+        <div>
+          <h4>Instagram</h4>
+          <p>Food is visual. Post photos of every event, every dish. Use #WesleyChapelCatering #TampaBayEats #PascoCatering. Reels of pasta being made = gold.</p>
+          <div class="cost">FREE -- post 3x/week minimum</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#333;color:#FFF;">Ev</div>
+        <div>
+          <h4>Eventective</h4>
+          <p>Event vendor directory. People planning events search here for caterers. Good supplementary listing.</p>
+          <div class="cost">Free basic listing</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:#00B900;color:#FFF;">CC</div>
+        <div>
+          <h4>CaterCow</h4>
+          <p>Another corporate catering marketplace. Less traffic than ezCater but lower competition too. Worth listing.</p>
+          <div class="cost">Commission-based</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PERMITS ==================== -->
+<section id="permits">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128196;</div>
+      <h2>Permits & Licenses</h2>
+      <p>What you need to operate legally in Pasco County, Florida</p>
+    </div>
+    <div class="checklist">
+      <div class="checklist-item">
+        <div class="check-icon">1</div>
+        <div>
+          <h4>Florida DBPR Food Service License</h4>
+          <p>Required for any food business in Florida. Apply through the Department of Business and Professional Regulation. If cooking from a commissary kitchen (not your home), you'll need the kitchen's license info too.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">2</div>
+        <div>
+          <h4>Pasco County Business Tax Receipt</h4>
+          <p>Local business license from Pasco County Tax Collector. Apply online or in person. ~$30-50/year depending on category.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">3</div>
+        <div>
+          <h4>Commissary Kitchen Agreement</h4>
+          <p>Florida law generally requires commercial food to be prepared in a licensed kitchen, not a home kitchen (unless you qualify for the Cottage Food exemption, which has revenue limits). A commissary is a shared commercial kitchen you rent by the hour. Pro tip: ask local churches if you can use their kitchen -- this also builds relationships with Category 4 leads.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">4</div>
+        <div>
+          <h4>Florida Seller's Permit (Sales Tax)</h4>
+          <p>Register with the Florida Department of Revenue. Catering is generally taxable in Florida. You'll collect and remit 7% sales tax (6% state + 1% Pasco County).</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">5</div>
+        <div>
+          <h4>ServSafe Food Handler Certification</h4>
+          <p>Not always legally required for the owner, but many venues and corporate clients REQUIRE it. Take the online course (~$15, a few hours). It builds credibility and trust.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">6</div>
+        <div>
+          <h4>General Liability Insurance</h4>
+          <p>Most venues and corporate clients require $1M-$2M general liability coverage. Costs ~$300-500/year for a small caterer. Get this before your first big event.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">7</div>
+        <div>
+          <h4>Vehicle / Food Transport</h4>
+          <p>No special vehicle permit needed, but you'll want insulated food carriers and a reliable vehicle. Health inspectors may check food temps on delivery.</p>
+        </div>
+      </div>
+      <div class="checklist-item">
+        <div class="check-icon">8</div>
+        <div>
+          <h4>Cottage Food Exemption (Optional)</h4>
+          <p>Florida allows home-based food sales under the Cottage Food law, but it's limited to $250K/year and excludes many food types. Pasta may or may not qualify (depends on if it's considered "time/temperature control" food). Research this -- if you qualify, you can skip the commissary at first.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TIPS ==================== -->
+<section id="tips">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon">&#128161;</div>
+      <h2>Marketing Tips for Yasser</h2>
+      <p>How to get your first 10 customers in Wesley Chapel</p>
+    </div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num">1</div>
+        <h4>Brewery Pop-Ups First</h4>
+        <p>Call Zephyrhills Brewing and Double Branch this week. Offer a free trial Friday night -- you bring the food, they promote it on social media. If it works, set up a standing weekly pop-up. Instant recurring revenue + exposure.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">2</div>
+        <h4>Facebook Community Groups</h4>
+        <p>Join "Wesley Chapel Foodies", "Wesley Chapel Moms", "Pasco County Community" groups. Post photos of your food with "Now offering catering in Wesley Chapel!" Don't spam -- post once, let people come to you.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">3</div>
+        <h4>HOA Social Committee Tastings</h4>
+        <p>Email Club Connerton's activities director (activities@myconnerton.com). Offer a free tasting for the social committee. If 5 people on the committee love your food, you're their caterer for the year.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">4</div>
+        <h4>Teacher Appreciation Week</h4>
+        <p>Teacher Appreciation Week is every May. PTOs plan it months in advance. Reach out in February/March with a special teacher appreciation package. Schools order for 30-100+ teachers.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">5</div>
+        <h4>Sample Drop-Offs</h4>
+        <p>Pack a small sample tray and drop it off at the front desk of office buildings, dealerships, and medical offices. Include your card and a one-page menu. The admin/office manager is your decision-maker.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">6</div>
+        <h4>Church Kitchen Partnership</h4>
+        <p>Ask a local church if you can rent their commercial kitchen for prep. This solves your commissary requirement AND puts you in front of the church staff who book catering for church events. Two birds.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">7</div>
+        <h4>Google Business Profile -- Day 1</h4>
+        <p>Set up your free Google Business Profile immediately. Add 10+ photos of your food, your menu, and your pricing. When someone Googles "catering Wesley Chapel" you need to show up. Ask every happy customer for a Google review.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">8</div>
+        <h4>Instagram Reels of Cooking</h4>
+        <p>Film yourself making pasta, tossing salad, slicing bread. 30-second Reels with good lighting get discovered by local foodies. Use location tags and hashtags: #WesleyChapel #TampaBayCatering #FreshPasta</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">9</div>
+        <h4>The "First 5" Discount</h4>
+        <p>Offer your first 5 customers 20% off in exchange for a Google review + permission to photograph the event. You're buying reviews and portfolio photos -- worth more than the discount.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">10</div>
+        <h4>Nextdoor App</h4>
+        <p>Nextdoor is huge in Wesley Chapel's suburban neighborhoods. Create a business profile and post your menu. Neighbors recommend caterers to each other constantly for birthday parties and block parties.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">11</div>
+        <h4>Sports Team Pasta Parties</h4>
+        <p>Soccer and football teams do "pasta parties" before big games -- it's literally a tradition. Contact the Wesley Chapel Athletic Association and offer team dinner packages at $8-10/person for kids.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">12</div>
+        <h4>Referral Program</h4>
+        <p>After every event, give the host 3 business cards and say "If anyone asks who catered, send them my way -- I'll give you $25 off your next order." Word of mouth is king in the suburbs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <p>Wesley Chapel Catering Market Research -- Built for Yasser</p>
+  <p class="made-for">Put together with love by your boy Eddie -- go get 'em!</p>
+</div>
+
+<!-- Back to top -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<script>
+// Back to top visibility
+window.addEventListener('scroll', () => {
+  const btn = document.querySelector('.back-to-top');
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// Active nav highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// Excel Download
+function downloadExcel() {
+  const leads = [
+    ['#','Business','Address','Category','Phone','Website','Why Call Them','Email'],
+    [1,'Zephyrhills Brewing Co.','38530 5th Ave, Zephyrhills','Brewery','(813) 715-2683','zbcbeer.com','No food menu -- explicitly welcomes outside food. Offer a standing Friday/Saturday night partnership.',''],
+    [2,'Double Branch Brewing','5956 Wesley Grove Blvd, Wesley Chapel','Brewery','(813) 492-8800','doublebranch.beer','Allows outside food -- BUT Yelp marked as closed Dec 2025. Call to verify status before visiting. If open, great pop-up spot.',''],
+    [3,'Wesley Chapel Athletic Assoc.','Wesley Chapel District Park','Sports','(813) 994-6633','wcaasports.org','3,500+ families across 7 sports leagues. End-of-season banquets, tournament concessions, team dinners.',''],
+    [4,'The Barn at Crescent Lake','9612 Crescent Dr, Odessa','Wedding Venue','(813) 486-2731','barnatcrescentlake.com','Rustic barn on 40 acres in Odessa. May have preferred in-house catering -- call to confirm outside caterer policy.',''],
+    [5,'Club Connerton','21100 Fountain Garden Way, Land O\'Lakes','HOA','(813) 996-5800','myconnerton.com','10,000 sq ft clubhouse with activities director. Regular community events.','activities@myconnerton.com'],
+    [6,'First Baptist Wesley Chapel','29716 SR 54, Wesley Chapel','Church','(813) 973-7185','fbcwesleychapel.org','Already runs spaghetti dinners -- they know the format. Offer to cater instead of their volunteers cooking.',''],
+    [7,'Wesley Chapel Elementary PTO','30243 Wells Rd, Wesley Chapel','School','(813) 794-0100','wces.pasco.k12.fl.us','Active PTO. Already does spaghetti fundraiser dinners. Email them directly.','Wcespto23@gmail.com'],
+    [8,'The Barn at Jewel Farms','Wesley Chapel area','Venue','(813) 448-7996','thebarnatjewelfarms.com','No commission, no food minimums, separate caterer entrance. Built for outside caterers.',''],
+    [9,'AdventHealth Wesley Chapel','2600 Bruce B. Downs Blvd, Wesley Chapel','Corporate','(813) 929-5000','adventhealth.com','1,260+ employees. Hospitals order catering constantly -- staff meetings, department lunches, holiday parties.',''],
+    [10,'Florida Medical Clinic','Multiple Wesley Chapel locations','Corporate','(813) 780-8440','floridamedicalclinic.com','Multi-location medical group. Pharma reps bring lunch-and-learns weekly -- get on their vendor list.',''],
+    [11,'BayCare Wesley Chapel','4501 Bruce B. Downs Blvd, Wesley Chapel','Corporate','(813) 914-1000','baycare.org','Major healthcare employer. Admin offices, department events, employee appreciation weeks.',''],
+    [12,'Bridgeway Church','30660 Wells Rd, Wesley Chapel','Church','(813) 907-1313','bridgeway.tv','Large congregation, community outreach events. Churches are repeat customers.',''],
+    [13,'Life Church WC','6224 Old Pasco Rd, Wesley Chapel','Church','(813) 973-2230','lifechurchnow.com','Growing church community. Regular fellowship events, youth group dinners, volunteer appreciation.',''],
+    [14,'Grace Church Tampa Palms','15102 Amberly Dr, Tampa','Church','(813) 971-8484','gracechurchtampapalms.org','Hosts annual Christmas Dinner & Dance. Large events already happening.',''],
+    [15,'Wesley Chapel Toyota','5300 Eagleston Blvd, Wesley Chapel','Local Biz','(813) 973-8888','wesleychapeltoyota.com','Dealerships do customer appreciation events, sales team lunches, Saturday open houses.',''],
+    [16,'Parks Ford of Wesley Chapel','28739 SR 54, Wesley Chapel','Local Biz','(813) 907-7800','fordofwesleychapel.com','Dealerships are underrated catering clients. Walk in with a menu and business card.',''],
+    [17,'Lexus of Wesley Chapel','5350 Eagleston Blvd, Wesley Chapel','Local Biz','(813) 907-5350','lexusofwesleychapel.com','Luxury dealership -- higher budgets for customer events. Perfect for elevated pasta & bread spread.',''],
+    [18,'Epperson Ranch CDD','Wesley Chapel','HOA','(321) 263-0132','eppersonranchcdd.org','Large master-planned community with lagoon amenity center. Community events year-round.',''],
+    [19,'Seven Oaks Community','Wesley Chapel','HOA','(813) 994-1001','sevenoakscdd.com','Two clubhouses, active lifestyle programming. HOA social committees always need caterers.',''],
+    [20,'Meadow Pointe CDD','Wesley Chapel','HOA','(813) 973-1671','meadowpointecdd.com','4 separate CDDs (I through IV) -- 4 clubhouses, 4 social committees, 4x the events.',''],
+    [21,'Wiregrass Ranch Sports Campus','3021 Sports Coast Way, Wesley Chapel','Sports','(813) 939-5902','playwiregrass.com','Multi-field sports complex. Tournament weekends = hundreds of hungry families.',''],
+    [22,'Tampa Bay United Soccer','7727 Boyette Rd, Wesley Chapel','Sports','(813) 998-6677','tbusc.com','Large youth soccer org. End-of-season banquets, tournament food, team pasta dinners before game days.',''],
+    [23,'PHSC Wesley Chapel Campus','2727 Mansfield Blvd, Wesley Chapel','Corporate','(813) 527-6615','phsc.edu','College campus -- faculty events, student org events, graduation parties. Get on their vendor list.',''],
+    [24,'Saint Leo University (WC campus)','Wesley Chapel area','Corporate','(800) 707-8846','saintleo.edu','Education center inside PHSC Porter Campus (not standalone). Faculty dinners, alumni events. Ask PHSC about vendor list.',''],
+    [25,'Keller Williams WC','2818 Cypress Ridge Blvd #250, Wesley Chapel','Local Biz','(813) 264-7754','kw.com','Real estate offices cater open houses, team meetings, client appreciation. Realtors spend to impress.',''],
+    [26,'WellCome OM Retreat Center','19925 Amanda Park Dr, Land O\'Lakes','Wedding Venue','(352) 600-4242','wellcomeomcenter.com','Retreat center, allows outside caterers. Yoga retreats, wellness events, small weddings.',''],
+    [27,'Saxon Manor Shabby Chic Barn','103 S Saxon Ave, Brooksville','Wedding Venue','(813) 909-3414','saxonevents.com','Popular rustic barn venue. Casual weddings are their bread and butter -- literally your niche.',''],
+    [28,'Avalon Park Wesley Chapel','Wesley Chapel','HOA','(813) 783-1515','avalonparkwesleychapel.com','Brand new community. New residents = housewarming parties + community mixers.',''],
+    [30,'Wiregrass Ranch High School','2909 Mansfield Blvd, Wesley Chapel','School','(813) 346-6000','wrhs.pasco.k12.fl.us','Booster clubs, sports banquets, prom after-parties, graduation celebrations.',''],
+    [31,'Moffitt Cancer Center','12902 USF Magnolia Dr, Tampa','Corporate','(813) 745-4673','moffitt.org','Major research hospital. Staff events, fundraiser galas, department lunches. Well-budgeted.',''],
+    [32,'Center for the Arts at WC','Wesley Chapel','Venue','(813) 994-7846','','Art shows, performances, community events. Food needed for opening nights and galas.',''],
+    [34,'Wesley Chapel High School','30651 Wells Rd, Wesley Chapel','School','(813) 794-8700','pasco.k12.fl.us/wch','Booster clubs, prom after-parties, graduation celebrations. Same opportunity as Wiregrass.',''],
+    [35,'Pasco County Rec Center','Wesley Chapel area','Sports','(813) 345-3145','playwiregrass.com','Community rec programs, summer camps, senior programs. County facilities need affordable caterers.',''],
+    [36,'Wesley Chapel Honda','Wesley Chapel','Local Biz','(813) 907-2600','','Another dealership on the auto mile. Customer events, staff lunches.',''],
+    [37,'Crooked Thumb Brewery','555 10th Ave S, Safety Harbor','Brewery','(727) 724-5953','crookedthumbbrew.com','Welcomes food vendors. Expansion target after WC breweries are locked in.',''],
+  ];
+  const escCell = v => {
+    const s = String(v == null ? '' : v);
+    return s.includes(',') || s.includes('"') || s.includes('\n') || s.includes("'")
+      ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const csv = '﻿' + leads.map(r => r.map(escCell).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Yasser_Catering_Leads_Wesley_Chapel.csv';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(url);
+  a.remove();
+}
+
+// Konami Code Easter Egg
+let konamiSeq = [];
+const konamiCode = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  konamiSeq.push(e.keyCode);
+  if (konamiSeq.length > 10) konamiSeq.shift();
+  if (konamiSeq.join(',') === konamiCode.join(',')) {
+    if (document.getElementById('matrix-canvas')) return;
+    const canvas = document.createElement('canvas');
+    canvas.id = 'matrix-canvas';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;opacity:0.85;';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const cols = Math.floor(canvas.width / 14);
+    const drops = Array(cols).fill(1);
+    const chars = 'YASSER PASTA SALAD BREAD CATERING WESLEY CHAPEL'.split('');
+    function draw() {
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0F0';
+      ctx.font = '14px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * 14, drops[i] * 14);
+        if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    const interval = setInterval(draw, 50);
+    setTimeout(() => { clearInterval(interval); canvas.remove(); }, 8000);
+  }
+});
+</script>
+
+</body>
+</html>
