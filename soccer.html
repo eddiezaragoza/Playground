@@ -411,12 +411,13 @@
   rematchBtn.addEventListener('click', startMatch);
 
   // ---- Physics ----
-  const PLAYER_ACCEL = 1600;   // px/s^2
-  const PLAYER_MAX = 360;       // px/s
-  const PLAYER_FRICTION = 6;    // per second
-  const BALL_FRICTION = 1.2;    // per second
+  const PLAYER_ACCEL = 1600;       // px/s^2 (keyboard)
+  const PLAYER_MAX = 680;          // px/s
+  const PLAYER_FRICTION = 8;       // per second (used when no target)
+  const TOUCH_RESPONSIVENESS = 22; // higher = snappier finger follow
+  const BALL_FRICTION = 1.2;       // per second
   const BALL_MAX = 1400;
-  const KICK_BOOST = 1.65;      // multiplier on player velocity transferred to ball
+  const KICK_BOOST = 1.65;         // multiplier on player velocity transferred to ball
 
   function applyKeyboard(dt) {
     // WASD for P1
@@ -449,12 +450,16 @@
     const dx = p.targetX - p.x;
     const dy = p.targetY - p.y;
     const dist = Math.hypot(dx, dy);
-    if (dist < 2) return;
-    const nx = dx / dist, ny = dy / dist;
-    // Smooth approach: ease accel down when close
-    const approach = Math.min(1, dist / 40);
-    p.vx += nx * PLAYER_ACCEL * dt * approach;
-    p.vy += ny * PLAYER_ACCEL * dt * approach;
+    // Only ease the target speed in the last few px so we don't overshoot.
+    const speedScale = Math.min(1, dist / 18);
+    const nx = dist > 0.001 ? dx / dist : 0;
+    const ny = dist > 0.001 ? dy / dist : 0;
+    const targetVx = nx * PLAYER_MAX * speedScale;
+    const targetVy = ny * PLAYER_MAX * speedScale;
+    // Snappy critical-damped lerp toward target velocity.
+    const k = 1 - Math.exp(-TOUCH_RESPONSIVENESS * dt);
+    p.vx += (targetVx - p.vx) * k;
+    p.vy += (targetVy - p.vy) * k;
   }
 
   function clampSpeed(p, max) {
@@ -467,10 +472,13 @@
 
   function updatePlayer(p, dt) {
     moveTowardTarget(p, dt);
-    // Friction
-    const fr = Math.exp(-PLAYER_FRICTION * dt);
-    p.vx *= fr;
-    p.vy *= fr;
+    // Friction only applies when there's no active target (keyboard/coast).
+    // The touch-follow lerp handles its own deceleration so it can stop on a dime.
+    if (p.targetX == null) {
+      const fr = Math.exp(-PLAYER_FRICTION * dt);
+      p.vx *= fr;
+      p.vy *= fr;
+    }
     clampSpeed(p, PLAYER_MAX);
     p.x += p.vx * dt;
     p.y += p.vy * dt;
