@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Heroes & Villains Trivia — a pass-and-play Marvel & DC trivia game">
+  <title>Heroes &amp; Villains Trivia</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    :root {
+      --accent: #8a5cff;
+      --accent2: #ff4d6d;
+      --accent-soft: rgba(138, 92, 255, 0.18);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1c2350 0%, #0c0e1f 55%, #07080f 100%);
+      background-attachment: fixed;
+      color: #eef0ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    /* universe themes */
+    body.scope-marvel { --accent: #ff4d4d; --accent2: #ff8a3c; --accent-soft: rgba(255, 77, 77, 0.16); }
+    body.scope-dc     { --accent: #3d8bff; --accent2: #18e0ff; --accent-soft: rgba(61, 139, 255, 0.16); }
+    body.scope-multiverse { --accent: #8a5cff; --accent2: #ff4d6d; --accent-soft: rgba(138, 92, 255, 0.18); }
+
+    .app {
+      flex: 1; width: 100%; max-width: 520px; margin: 0 auto;
+      padding: 22px 18px 36px; display: flex; flex-direction: column;
+    }
+    h1 { font-size: 28px; letter-spacing: -0.5px; margin-bottom: 4px; }
+    h2 { font-size: 22px; margin-bottom: 12px; }
+    h3 { font-size: 13px; margin-bottom: 8px; color: #9aa0d6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+    p { line-height: 1.5; color: #c3c7ee; }
+    .subtitle { color: #9aa0d6; font-size: 14px; margin-bottom: 22px; }
+    .screen { display: none; animation: fadeIn 0.25s ease-out; }
+    .screen.active { display: flex; flex-direction: column; gap: 18px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 18px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    }
+
+    .btn {
+      display: inline-block; padding: 15px 22px; border: none; border-radius: 13px;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s, box-shadow 0.2s, filter 0.2s;
+      font-family: inherit; width: 100%; touch-action: manipulation; color: #fff;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 8px 22px var(--accent-soft);
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #d8dbff; border: 1px solid rgba(255,255,255,0.12); }
+    .btn-ghost { background: transparent; color: #9aa0d6; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row .btn { flex: 1; }
+
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
+      color: #eef0ff; font-size: 16px; font-family: inherit;
+    }
+    input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    input::placeholder { color: #777ca8; }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+
+    /* stepper */
+    .stepper { display: flex; align-items: center; gap: 12px; }
+    .stepper button {
+      width: 46px; height: 46px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05); color: #d8dbff; font-size: 22px; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+    }
+    .stepper button:active { transform: scale(0.95); }
+    .stepper .value { flex: 1; text-align: center; font-size: 20px; font-weight: 800; }
+
+    /* segmented control */
+    .seg { display: flex; gap: 8px; }
+    .seg button {
+      flex: 1; padding: 13px 8px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04); color: #c3c7ee; font-weight: 800; font-size: 15px;
+      cursor: pointer; font-family: inherit; transition: all 0.15s; line-height: 1.2;
+    }
+    .seg button .sub { display: block; font-size: 11px; font-weight: 600; color: #8a90c0; margin-top: 3px; }
+    .seg button.on { border-color: var(--accent); background: var(--accent-soft); color: #fff; }
+    .seg button.on .sub { color: #d8dbff; }
+
+    .player-inputs { display: flex; flex-direction: column; gap: 8px; }
+    .player-input { display: flex; align-items: center; gap: 10px; }
+    .player-input .ava { font-size: 24px; width: 34px; text-align: center; }
+    .player-input input { flex: 1; }
+
+    /* splash */
+    .splash-hero { text-align: center; padding: 26px 6px 8px; }
+    .splash-emoji { font-size: 64px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 6px 16px var(--accent-soft)); }
+    .splash-title {
+      font-size: 40px; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px; line-height: 1.05;
+      background: linear-gradient(135deg, #ff4d4d 0%, #8a5cff 50%, #3d8bff 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .splash-tagline { color: #c3c7ee; font-size: 16px; font-weight: 500; }
+    .how-list { display: flex; flex-direction: column; gap: 12px; }
+    .how-step { display: flex; gap: 13px; align-items: flex-start; }
+    .how-num {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+    }
+    .how-step p { font-size: 14px; }
+
+    /* pass screen */
+    .pass-card {
+      background: linear-gradient(150deg, rgba(138,92,255,0.12), rgba(255,77,109,0.10));
+      border: 1px solid rgba(255,255,255,0.10); border-radius: 20px;
+      padding: 40px 24px; text-align: center; min-height: 300px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
+    }
+    .pass-card .pass-emoji { font-size: 58px; }
+    .pass-card .pass-label { color: #9aa0d6; text-transform: uppercase; letter-spacing: 1px; font-size: 13px; font-weight: 700; }
+    .pass-card .pass-name { font-size: 34px; font-weight: 900; letter-spacing: -0.5px; }
+    .pass-card .pass-hint { color: #9aa0d6; font-size: 14px; max-width: 280px; }
+
+    .meta-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .pill {
+      padding: 6px 13px; border-radius: 999px; font-size: 12px; font-weight: 800;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); color: #c3c7ee;
+      letter-spacing: 0.3px;
+    }
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 900;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .badge.marvel { background: #e62429; color: #fff; }
+    .badge.dc { background: #0476f2; color: #fff; }
+    .badge.xmen { background: #f5b700; color: #1a1300; }
+    .tier-tag { color: var(--accent2); font-weight: 800; font-size: 13px; }
+
+    /* question */
+    .timer-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .timer-fill { height: 100%; width: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.1s linear; }
+    .timer-fill.low { background: linear-gradient(90deg, #ff3b3b, #ff7a3c); }
+    .q-text { font-size: 21px; font-weight: 800; line-height: 1.35; letter-spacing: -0.3px; }
+    .answers { display: flex; flex-direction: column; gap: 10px; }
+    .answer {
+      text-align: left; padding: 16px 18px; border-radius: 13px; font-size: 16px; font-weight: 700;
+      background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.10); color: #eef0ff;
+      cursor: pointer; font-family: inherit; transition: border-color 0.15s, background 0.15s; line-height: 1.35;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .answer .key {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9aa0d6;
+    }
+    .answer:hover:not(:disabled) { border-color: var(--accent); }
+    .answer:active:not(:disabled) { transform: scale(0.99); }
+    .answer:disabled { cursor: default; }
+    .answer.correct { border-color: #2fd17a; background: rgba(47,209,122,0.16); }
+    .answer.correct .key { background: #2fd17a; color: #06210f; }
+    .answer.wrong { border-color: #ff4d6d; background: rgba(255,77,109,0.14); }
+    .answer.wrong .key { background: #ff4d6d; color: #2a0610; }
+    .answer.dim { opacity: 0.5; }
+
+    /* reveal */
+    .reveal-head { text-align: center; padding: 6px 0; }
+    .reveal-verdict { font-size: 30px; font-weight: 900; margin-bottom: 4px; }
+    .reveal-verdict.win { color: #2fd17a; }
+    .reveal-verdict.miss { color: #ff6b87; }
+    .reveal-points { font-size: 18px; font-weight: 800; color: var(--accent2); }
+    .lore {
+      background: rgba(255,255,255,0.04); border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0; padding: 12px 14px; font-size: 14px; color: #c3c7ee; line-height: 1.5;
+    }
+    .lore strong { color: #eef0ff; }
+
+    /* scoreboard */
+    .score-list { display: flex; flex-direction: column; gap: 9px; }
+    .score-row {
+      display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .score-row.lead { border-color: var(--accent); background: var(--accent-soft); }
+    .score-row .rank { font-size: 14px; font-weight: 900; color: #9aa0d6; width: 22px; }
+    .score-row .ava { font-size: 26px; }
+    .score-row .nm { flex: 1; font-weight: 800; font-size: 16px; }
+    .score-row .pts { font-weight: 900; font-size: 18px; color: var(--accent2); }
+
+    /* final */
+    .winner-card {
+      text-align: center; padding: 30px 22px;
+      background: linear-gradient(150deg, rgba(138,92,255,0.16), rgba(255,77,109,0.12));
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
+    }
+    .winner-card .crown { font-size: 56px; }
+    .winner-card .w-label { color: #9aa0d6; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; font-weight: 800; margin-top: 6px; }
+    .winner-card .w-name { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; margin: 2px 0; }
+    .winner-card .w-title {
+      font-size: 16px; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .winner-card .w-score { color: #c3c7ee; margin-top: 8px; font-size: 15px; }
+
+    .nav-back {
+      background: none; border: none; color: #8a90c0; font-size: 14px; cursor: pointer;
+      padding: 6px 0; align-self: flex-start; font-family: inherit; font-weight: 700;
+    }
+    .nav-back:hover { color: #c3c7ee; }
+    .footer-note { text-align: center; color: #6c719e; font-size: 12px; margin-top: auto; padding-top: 30px; }
+    .footer-note a { color: #9aa0d6; }
+  </style>
+</head>
+<body class="scope-multiverse">
+  <div class="app">
+
+    <!-- ============ SPLASH ============ -->
+    <section class="screen active" id="screen-splash">
+      <div class="splash-hero">
+        <div class="splash-emoji">&#129464;&#9889;</div>
+        <div class="splash-title">Heroes &amp; Villains Trivia</div>
+        <p class="splash-tagline">Marvel vs. DC &mdash; pass-and-play for 2&ndash;6 players</p>
+      </div>
+      <div class="card">
+        <h3>How to play</h3>
+        <div class="how-list">
+          <div class="how-step"><div class="how-num">1</div><p>Add 2&ndash;6 players, pick a universe, and choose how many rounds.</p></div>
+          <div class="how-step"><div class="how-num">2</div><p>Pass the phone to whoever's up. They tap <strong>Ready</strong>, then beat the clock on a multiple-choice question.</p></div>
+          <div class="how-step"><div class="how-num">3</div><p>Each round bumps the difficulty &mdash; harder questions are worth more, and fast answers earn a speed bonus.</p></div>
+          <div class="how-step"><div class="how-num">4</div><p>Highest total score after the final round earns the title of <strong>Multiverse Legend</strong>.</p></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="splash-start">Get Started</button>
+      <p class="footer-note">A pass-and-play party game &middot; <a href="index.html">More projects</a></p>
+    </section>
+
+    <!-- ============ SETUP ============ -->
+    <section class="screen" id="screen-setup">
+      <button class="nav-back" id="setup-back">&larr; Back</button>
+      <h2>Set up the game</h2>
+
+      <div class="field">
+        <h3>Universe</h3>
+        <div class="seg" id="scope-seg">
+          <button data-scope="marvel">Marvel<span class="sub">incl. X-Men '97</span></button>
+          <button data-scope="dc">DC<span class="sub">comics &amp; films</span></button>
+          <button data-scope="multiverse" class="on">Multiverse<span class="sub">both mixed</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <h3>Rounds (best of)</h3>
+        <div class="seg" id="rounds-seg">
+          <button data-rounds="3">3<span class="sub">quick</span></button>
+          <button data-rounds="5" class="on">5<span class="sub">standard</span></button>
+          <button data-rounds="7">7<span class="sub">marathon</span></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <h3>Players <span id="player-count-label" style="color:#9aa0d6;font-weight:700;"></span></h3>
+        <div class="stepper">
+          <button id="pl-minus" aria-label="Fewer players">&minus;</button>
+          <div class="value"><span id="pl-count">3</span> players</div>
+          <button id="pl-plus" aria-label="More players">+</button>
+        </div>
+      </div>
+
+      <div class="player-inputs" id="player-inputs"></div>
+
+      <button class="btn btn-primary" id="start-game">Start Game</button>
+    </section>
+
+    <!-- ============ PASS ============ -->
+    <section class="screen" id="screen-pass">
+      <div class="meta-bar">
+        <span class="pill" id="pass-round"></span>
+        <span class="tier-tag" id="pass-tier"></span>
+      </div>
+      <div class="pass-card">
+        <div class="pass-emoji" id="pass-emoji">&#129464;</div>
+        <div class="pass-label">Pass the phone to</div>
+        <div class="pass-name" id="pass-name">Player</div>
+        <p class="pass-hint">No peeking, everyone else! Tap Ready when you've got the phone.</p>
+      </div>
+      <button class="btn btn-primary" id="pass-ready">I'm Ready &mdash; Show Question</button>
+      <button class="nav-back" id="pass-quit" style="align-self:center;">End game</button>
+    </section>
+
+    <!-- ============ QUESTION ============ -->
+    <section class="screen" id="screen-question">
+      <div class="meta-bar">
+        <span class="pill" id="q-player"></span>
+        <span id="q-badges"></span>
+      </div>
+      <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="answers" id="answers"></div>
+    </section>
+
+    <!-- ============ REVEAL ============ -->
+    <section class="screen" id="screen-reveal">
+      <div class="reveal-head">
+        <div class="reveal-verdict" id="reveal-verdict"></div>
+        <div class="reveal-points" id="reveal-points"></div>
+      </div>
+      <div class="answers" id="reveal-answers"></div>
+      <div class="lore" id="reveal-lore"></div>
+      <button class="btn btn-primary" id="reveal-next">Next</button>
+    </section>
+
+    <!-- ============ SCOREBOARD ============ -->
+    <section class="screen" id="screen-scoreboard">
+      <h2 id="sb-title">Scoreboard</h2>
+      <p class="subtitle" id="sb-sub"></p>
+      <div class="score-list" id="sb-list"></div>
+      <button class="btn btn-primary" id="sb-next"></button>
+    </section>
+
+    <!-- ============ FINAL ============ -->
+    <section class="screen" id="screen-final">
+      <div class="winner-card">
+        <div class="crown">&#128081;</div>
+        <div class="w-label">Winner</div>
+        <div class="w-name" id="final-name"></div>
+        <div class="w-title" id="final-title"></div>
+        <div class="w-score" id="final-score"></div>
+      </div>
+      <h3>Final standings</h3>
+      <div class="score-list" id="final-list"></div>
+      <button class="btn btn-primary" id="final-again">Play Again (same players)</button>
+      <button class="btn btn-secondary" id="final-new">New Game</button>
+    </section>
+
+  </div>
+
+  <script>
+    "use strict";
+    const $ = id => document.getElementById(id);
+
+    /* ---------------- Question bank ----------------
+       u: universe ("marvel" | "dc")   t: difficulty tier (1-5)
+       tag: optional sub-label badge   q: prompt
+       o: 4 options                    c: index of correct option
+       l: optional one-line "lore bite" shown on reveal             */
+    const QUESTIONS = [
+      // ===================== MARVEL =====================
+      // --- Tier 1: Rookie ---
+      {u:"marvel",t:1,q:"What metal coats Wolverine's skeleton and claws?",o:["Adamantium","Vibranium","Titanium","Carbonadium"],c:0,l:"Adamantium was bonded to his bones in the Weapon X program."},
+      {u:"marvel",t:1,q:"What is Tony Stark's superhero alter ego?",o:["Iron Man","War Machine","Iron Patriot","Iron Fist"],c:0},
+      {u:"marvel",t:1,q:"Which city does Spider-Man primarily protect?",o:["New York City","Metropolis","Gotham City","Chicago"],c:0},
+      {u:"marvel",t:1,q:"Captain America's shield is primarily made of what?",o:["Vibranium","Adamantium","Stainless steel","Uru"],c:0,l:"It absorbs and redistributes kinetic energy almost perfectly."},
+      {u:"marvel",t:1,q:"Thor's hammer is named what?",o:["Mjolnir","Stormbreaker","Gungnir","Hofund"],c:0},
+      {u:"marvel",t:1,q:"The Hulk's alter ego is which scientist?",o:["Bruce Banner","Reed Richards","Hank Pym","Stephen Strange"],c:0},
+      {u:"marvel",t:1,q:"Which team does Star-Lord lead?",o:["Guardians of the Galaxy","The Avengers","X-Men","Fantastic Four"],c:0},
+      {u:"marvel",t:1,q:"Black Panther is the protector of which nation?",o:["Wakanda","Genosha","Latveria","Sokovia"],c:0},
+      {u:"marvel",t:1,q:"What is the name of Thor's adopted brother?",o:["Loki","Balder","Heimdall","Fandral"],c:0},
+      {u:"marvel",t:1,q:"Which Avenger fights with a bow and arrows?",o:["Hawkeye","Black Widow","Falcon","Winter Soldier"],c:0},
+      {u:"marvel",t:1,q:"Doctor Strange holds which title as a protector of reality?",o:["Sorcerer Supreme","Master Mage","High Warlock","Ancient One"],c:0},
+      {u:"marvel",t:1,q:"What is the team name for Reed Richards' family of heroes?",o:["Fantastic Four","The Defenders","The Inhumans","The Eternals"],c:0},
+      {u:"marvel",t:1,q:"Peter Parker works as a photographer for which newspaper?",o:["Daily Bugle","Daily Planet","Gotham Gazette","The Globe"],c:0,l:"The Daily Planet is a DC paper — don't mix them up!"},
+      {u:"marvel",t:1,q:"What color is the Hulk in his classic form?",o:["Green","Red","Blue","Purple"],c:0},
+      // --- Tier 2: Fan ---
+      {u:"marvel",t:2,q:"What is the Black Widow's real name?",o:["Natasha Romanoff","Wanda Maximoff","Carol Danvers","Jennifer Walters"],c:0},
+      {u:"marvel",t:2,q:"Which Infinity Stone is set in the Vision's forehead?",o:["Mind Stone","Soul Stone","Time Stone","Reality Stone"],c:0},
+      {u:"marvel",t:2,q:"Who is the telepathic professor who founded the X-Men?",o:["Charles Xavier","Erik Lehnsherr","Hank McCoy","Scott Summers"],c:0},
+      {u:"marvel",t:2,q:"Carol Danvers currently goes by which superhero name?",o:["Captain Marvel","Scarlet Witch","Spectrum","She-Hulk"],c:0},
+      {u:"marvel",t:2,q:"Thanos was born on which moon?",o:["Titan","Sakaar","Xandar","Knowhere"],c:0},
+      {u:"marvel",t:2,q:"The Winter Soldier is the brainwashed alter ego of whom?",o:["Bucky Barnes","Sam Wilson","Clint Barton","Brock Rumlow"],c:0},
+      {u:"marvel",t:2,q:"What is Deadpool's real name?",o:["Wade Wilson","Slade Wilson","Nathan Summers","Nathaniel Essex"],c:0,l:"Slade Wilson is DC's Deathstroke — a deliberate parody target."},
+      {u:"marvel",t:2,q:"Which industrialist is Spider-Man's archenemy, the original Green Goblin?",o:["Norman Osborn","Otto Octavius","Adrian Toomes","Wilson Fisk"],c:0},
+      {u:"marvel",t:2,q:"The symbiote Venom is notably vulnerable to what?",o:["Sound and fire","Water","Cold","Sunlight"],c:0},
+      {u:"marvel",t:2,q:"Wanda Maximoff is known as which hero?",o:["Scarlet Witch","Quicksilver","Polaris","Spectrum"],c:0},
+      {u:"marvel",t:2,q:"Who is the Asgardian guardian of the Bifrost bridge?",o:["Heimdall","Balder","Tyr","Hogun"],c:0},
+      {u:"marvel",t:2,q:"The Sokovia Accords split the Avengers in which film?",o:["Captain America: Civil War","Age of Ultron","Infinity War","The Winter Soldier"],c:0},
+      {u:"marvel",t:2,q:"T'Challa's tech-genius sister is named what?",o:["Shuri","Nakia","Okoye","Ramonda"],c:0},
+      {u:"marvel",t:2,q:"Which villain is a Latverian monarch and the Fantastic Four's greatest foe?",o:["Doctor Doom","Magneto","Red Skull","Mandarin"],c:0},
+      // --- Tier 3: Comic Reader (X-Men '97 begins) ---
+      {u:"marvel",t:3,tag:"X-Men '97",q:"In X-Men '97, whom does Professor Xavier's will name as the new leader of the X-Men?",o:["Magneto","Cyclops","Storm","Wolverine"],c:0,l:"Magneto honors his old friend's final wish to lead the team."},
+      {u:"marvel",t:3,tag:"X-Men '97",q:"Which X-Man loses their powers after being struck by an anti-mutant weapon early in X-Men '97?",o:["Storm","Rogue","Jubilee","Jean Grey"],c:0,l:"Storm is hit by the X-Cutioner's weapon and must rebuild her sense of self."},
+      {u:"marvel",t:3,q:"Cyclops and Jean Grey's infant son is sent to the future and returns as whom?",o:["Cable","Nate Grey","Havok","Vulcan"],c:0,l:"Baby Nathan is sent forward to cure a techno-organic virus, growing up to be Cable."},
+      {u:"marvel",t:3,q:"Jean Grey famously becomes the host of which cosmic entity?",o:["The Phoenix Force","The Power Cosmic","The Void","Oblivion"],c:0},
+      {u:"marvel",t:3,q:"Which shape-shifting mutant is the biological mother of Nightcrawler?",o:["Mystique","Emma Frost","Selene","Madame Hydra"],c:0},
+      {u:"marvel",t:3,q:"What is the name of the living planet in Marvel cosmic lore?",o:["Ego","Galactus","Sakaar","Knowhere"],c:0},
+      {u:"marvel",t:3,q:"Reed Richards' superhero codename is what?",o:["Mister Fantastic","Invisible Man","Doctor Manhattan","The Thing"],c:0,l:"Doctor Manhattan is a Watchmen (DC) character — a classic trap answer."},
+      {u:"marvel",t:3,q:"Which world-devouring entity is heralded by the Silver Surfer?",o:["Galactus","Thanos","Annihilus","Dormammu"],c:0},
+      {u:"marvel",t:3,q:"The Punisher's real name is what?",o:["Frank Castle","Frank Grimes","Jack Russo","Frank Stone"],c:0},
+      {u:"marvel",t:3,q:"Who is the demonic ruler of the Dark Dimension and a foe of Doctor Strange?",o:["Dormammu","Mephisto","Nightmare","Surtur"],c:0},
+      {u:"marvel",t:3,tag:"X-Men '97",q:"In X-Men '97, who is revealed to be a clone of Jean Grey?",o:["Madelyne Pryor","Emma Frost","Psylocke","Sage"],c:0,l:"Created by Mister Sinister, Madelyne later becomes the Goblin Queen."},
+      {u:"marvel",t:3,q:"What is Storm's real name?",o:["Ororo Munroe","Cecilia Reyes","Monica Rambeau","Misty Knight"],c:0},
+      {u:"marvel",t:3,q:"Nightcrawler's signature mutant power is what?",o:["Teleportation","Super strength","Telepathy","Energy absorption"],c:0},
+      {u:"marvel",t:3,q:"The Kree fought a long galactic war against which shape-shifting race?",o:["Skrulls","Chitauri","Brood","Badoon"],c:0},
+      // --- Tier 4: Lore Master ---
+      {u:"marvel",t:4,tag:"X-Men '97",q:"Who is the primary antagonist of X-Men '97, a Sentinel-building being who is part human?",o:["Bastion","Master Mold","Nimrod","Bolivar Trask"],c:0,l:"Bastion is the merged offspring of Master Mold and the future Sentinel Nimrod."},
+      {u:"marvel",t:4,tag:"X-Men '97",q:"Which X-Man sacrifices himself during the Sentinel attack on Genosha in X-Men '97?",o:["Gambit","Morph","Sunspot","Beast"],c:0,l:"Gambit destroys a Master Mold by charging it with kinetic energy, dying in the blast."},
+      {u:"marvel",t:4,q:"Mister Sinister's real name is what?",o:["Nathaniel Essex","Nathaniel Richards","En Sabah Nur","Cain Marko"],c:0,l:"Nathaniel Richards is the name tied to Kang the Conqueror — not Sinister."},
+      {u:"marvel",t:4,q:"Which mutant island nation is destroyed by Sentinels in both comics and X-Men '97?",o:["Genosha","Krakoa","Madripoor","Utopia"],c:0},
+      {u:"marvel",t:4,q:"What is the name of Wolverine's adamantium-clawed female clone?",o:["X-23 (Laura Kinney)","Honey Badger","Yuriko","Mariko"],c:0},
+      {u:"marvel",t:4,q:"Which ancient villain is considered the first mutant, also called En Sabah Nur?",o:["Apocalypse","Exodus","Selene","Mister Sinister"],c:0},
+      {u:"marvel",t:4,q:"Stryfe, the recurring villain, is a clone of which mutant?",o:["Cable","Cyclops","Nate Grey","Gambit"],c:0,l:"Stryfe is a clone of the infant Cable, raised by Apocalypse."},
+      {u:"marvel",t:4,q:"What is the Silver Surfer's real name?",o:["Norrin Radd","Gabriel Lan","Pip the Troll","Glenn Talbot"],c:0},
+      {u:"marvel",t:4,q:"In the comics, Wanda and Pietro Maximoff were long depicted as the children of whom?",o:["Magneto","Apocalypse","Mister Sinister","The High Evolutionary"],c:0},
+      {u:"marvel",t:4,q:"Emma Frost's secondary mutation lets her transform into what?",o:["Organic diamond","Pure energy","Solid ice","Living stone"],c:0},
+      {u:"marvel",t:4,q:"Illyana Rasputin (Magik) rules over which other-dimensional realm?",o:["Limbo","The Dark Dimension","The Negative Zone","Mojoworld"],c:0},
+      {u:"marvel",t:4,q:"Cable's techno-organic virus was inflicted on him as a baby by which villain?",o:["Apocalypse","Stryfe","Mister Sinister","Bastion"],c:0},
+      {u:"marvel",t:4,q:"Which cosmic abstract does Thanos court and try to impress?",o:["Mistress Death","Hela","Eternity","Oblivion"],c:0},
+      {u:"marvel",t:4,q:"Franklin Richards is the son of which Fantastic Four couple?",o:["Reed Richards & Sue Storm","Johnny Storm & Crystal","Ben Grimm & Alicia","Reed & Medusa"],c:0},
+      // --- Tier 5: Multiverse Legend ---
+      {u:"marvel",t:5,tag:"X-Men '97",q:"Who created and originally headed the writing of X-Men '97 but departed just before its premiere?",o:["Beau DeMayo","Jake Castorena","Larry Houston","Eric Lewald"],c:0,l:"Beau DeMayo wrote the revival but left the production days before release in 2024."},
+      {u:"marvel",t:5,tag:"X-Men '97",q:"Which veteran voice actor reprised Wolverine in X-Men '97 from the 1992 animated series?",o:["Cal Dodd","Lenore Zann","Cedric Smith","Ron Rubin"],c:0,l:"Cal Dodd returned to voice Wolverine decades later."},
+      {u:"marvel",t:5,q:"The omnipotent Beyonder was the architect of which 1984 crossover event?",o:["Secret Wars","Infinity Gauntlet","Civil War","House of M"],c:0},
+      {u:"marvel",t:5,q:"In House of M, which three reality-altering words does the Scarlet Witch utter?",o:["“No more mutants”","“All is lost”","“Let there be light”","“No more heroes”"],c:0,l:"The line de-powers nearly the entire mutant population overnight."},
+      {u:"marvel",t:5,q:"The Dark Phoenix consumed a star, wiping out the inhabitants of which alien system?",o:["The D'Bari system","The Shi'ar Empire","Hala","Sakaar"],c:0},
+      {u:"marvel",t:5,q:"Onslaught was a psionic entity born from Professor X's mind merging with whose?",o:["Magneto","Apocalypse","Mister Sinister","Juggernaut"],c:0},
+      {u:"marvel",t:5,q:"The Mutant Massacre was carried out by which team of assassins serving Mister Sinister?",o:["The Marauders","The Reavers","The Acolytes","The Nasty Boys"],c:0},
+      {u:"marvel",t:5,q:"Which faceless cosmic judge maintains balance with a three-segmented head?",o:["The Living Tribunal","Eternity","The One Above All","Infinity"],c:0},
+      {u:"marvel",t:5,q:"In the Annihilation event, which Negative Zone insectoid leads the Annihilation Wave?",o:["Annihilus","Blastaar","Thanos","Ultron"],c:0},
+      {u:"marvel",t:5,q:"The Sentry harbors a destructive split-personality known as what?",o:["The Void","The Other","Knull","The Anti-Sentry"],c:0,l:"Robert Reynolds has “the power of a million exploding suns.”"},
+      {u:"marvel",t:5,q:"Korvac, who gained the Power Cosmic, hails from which future century?",o:["31st century","25th century","40th century","23rd century"],c:0},
+      {u:"marvel",t:5,q:"What is the name of the multiversal body of alternate Reed Richards variants?",o:["The Council of Reeds","The Living Tribunal","The Watchers","The TVA"],c:0},
+      {u:"marvel",t:5,q:"Which mutant possesses the reality-warping power level dubbed “Omega,” famous as Legion?",o:["David Haller","Franklin Richards","Nate Grey","Quentin Quire"],c:0,l:"David Haller is the son of Charles Xavier."},
+      {u:"marvel",t:5,q:"Apocalypse's living spacecraft, a piece of Celestial technology, is simply named what?",o:["Ship","Asteroid M","The Peak","Sanctuary II"],c:0},
+
+      // ===================== DC =====================
+      // --- Tier 1: Rookie ---
+      {u:"dc",t:1,q:"Which city does Batman protect?",o:["Gotham City","Metropolis","Central City","Star City"],c:0},
+      {u:"dc",t:1,q:"Superman's home planet is what?",o:["Krypton","Mars","Oa","Apokolips"],c:0},
+      {u:"dc",t:1,q:"What is Superman's classic weakness?",o:["Kryptonite","Adamantium","Water","Silver"],c:0},
+      {u:"dc",t:1,q:"Wonder Woman comes from an island of warrior women called what?",o:["Themyscira","Atlantis","Paradise Falls","Krypton"],c:0},
+      {u:"dc",t:1,q:"The Flash's signature power is what?",o:["Super speed","Flight","Telepathy","Super strength"],c:0},
+      {u:"dc",t:1,q:"Batman's real name is what?",o:["Bruce Wayne","Clark Kent","Hal Jordan","Oliver Queen"],c:0},
+      {u:"dc",t:1,q:"Which infamous Gotham institution houses Batman's criminally insane foes?",o:["Arkham Asylum","Belle Reve","Stryker's Island","Iron Heights"],c:0},
+      {u:"dc",t:1,q:"Aquaman is the king of where?",o:["Atlantis","Themyscira","Wakanda","Oa"],c:0},
+      {u:"dc",t:1,q:"Superman's alter ego works as a reporter named what?",o:["Clark Kent","Bruce Wayne","Barry Allen","Hal Jordan"],c:0},
+      {u:"dc",t:1,q:"What is the name of Batman's original young sidekick?",o:["Robin","Speedy","Kid Flash","Bucky"],c:0},
+      {u:"dc",t:1,q:"The Joker is the archenemy of which hero?",o:["Batman","Superman","The Flash","Green Lantern"],c:0},
+      {u:"dc",t:1,q:"A Green Lantern's power comes from a what?",o:["Power ring","Utility belt","Helmet","Hammer"],c:0},
+      {u:"dc",t:1,q:"DC's premier team of top heroes is called what?",o:["Justice League","The Avengers","Teen Titans","The Defenders"],c:0},
+      {u:"dc",t:1,q:"What is Wonder Woman's name as a princess of the Amazons?",o:["Diana","Selina","Lois","Barbara"],c:0},
+      // --- Tier 2: Fan ---
+      {u:"dc",t:2,q:"What is the Flash (Barry Allen)'s day job?",o:["Forensic scientist","Reporter","Defense lawyer","Detective"],c:0},
+      {u:"dc",t:2,q:"Which Green Lantern is a test pilot from Coast City?",o:["Hal Jordan","John Stewart","Guy Gardner","Kyle Rayner"],c:0},
+      {u:"dc",t:2,q:"Catwoman's real name is what?",o:["Selina Kyle","Pamela Isley","Harleen Quinzel","Talia al Ghul"],c:0},
+      {u:"dc",t:2,q:"In which Kansas town is Superman raised by the Kents?",o:["Smallville","Metropolis","Gotham","Central City"],c:0},
+      {u:"dc",t:2,q:"The Joker's frequent partner-in-crime is whom?",o:["Harley Quinn","Poison Ivy","Catwoman","Talia al Ghul"],c:0},
+      {u:"dc",t:2,q:"Eobard Thawne, a speedster enemy of the Flash, is better known as what?",o:["Reverse-Flash","Captain Cold","Gorilla Grodd","Mirror Master"],c:0},
+      {u:"dc",t:2,q:"Which Kryptonian general leads a coup and famously demands, “Kneel before Zod”?",o:["General Zod","Brainiac","Doomsday","Jax-Ur"],c:0},
+      {u:"dc",t:2,q:"Poison Ivy's real name is what?",o:["Pamela Isley","Selina Kyle","Harleen Quinzel","Barbara Gordon"],c:0},
+      {u:"dc",t:2,q:"What is the searchlight used to summon Batman called?",o:["The Bat-Signal","The Bat-Beacon","The Bat-Flare","The Bat-Light"],c:0},
+      {u:"dc",t:2,q:"Which original Robin grew up to become Nightwing?",o:["Dick Grayson","Jason Todd","Tim Drake","Damian Wayne"],c:0},
+      {u:"dc",t:2,q:"Which immortal eco-terrorist leads the League of Assassins?",o:["Ra's al Ghul","Deathstroke","Bane","Black Mask"],c:0},
+      {u:"dc",t:2,q:"Cyborg was originally a member of which younger hero team?",o:["Teen Titans","Justice League","Suicide Squad","Doom Patrol"],c:0},
+      {u:"dc",t:2,q:"Who is Bruce Wayne's loyal butler?",o:["Alfred Pennyworth","Lucius Fox","Jim Gordon","Thomas Wayne"],c:0},
+      {u:"dc",t:2,q:"The Suicide Squad is officially the government's what?",o:["Task Force X","A.R.G.U.S.","Checkmate","S.T.A.R. Labs"],c:0},
+      // --- Tier 3: Comic Reader ---
+      {u:"dc",t:3,q:"Darkseid rules which hellish planet?",o:["Apokolips","Oa","Thanagar","Daxam"],c:0},
+      {u:"dc",t:3,q:"What cosmic formula does Darkseid seek to dominate all free will?",o:["The Anti-Life Equation","The Speed Force","The Source","The Omega Sanction"],c:0},
+      {u:"dc",t:3,q:"The Green Lantern Corps channels which emotion of the spectrum?",o:["Willpower","Fear","Love","Rage"],c:0},
+      {u:"dc",t:3,q:"Barry Allen draws his speed from what energy field?",o:["The Speed Force","The Negative Force","Nth metal","The Bleed"],c:0},
+      {u:"dc",t:3,q:"Which Robin was murdered by the Joker and later returned as the Red Hood?",o:["Jason Todd","Dick Grayson","Tim Drake","Damian Wayne"],c:0},
+      {u:"dc",t:3,q:"Hawkman's flight and durability come from which fictional metal?",o:["Nth metal","Promethium","Dionesium","Inertron"],c:0},
+      {u:"dc",t:3,q:"The Martian Manhunter's well-known weakness is what?",o:["Fire","Water","Kryptonite","Sound"],c:0},
+      {u:"dc",t:3,q:"Which half-brother repeatedly challenges Aquaman for the Atlantean throne?",o:["Ocean Master (Orm)","Black Manta","King Shark","Trident"],c:0},
+      {u:"dc",t:3,q:"Which Lantern Corps wields the red light of rage?",o:["Red Lantern Corps","Sinestro Corps","Star Sapphires","Indigo Tribe"],c:0},
+      {u:"dc",t:3,q:"Booster Gold travels back to the present from which time period?",o:["The 25th century","Ancient Greece","The 1800s","The 31st century"],c:0},
+      {u:"dc",t:3,q:"What is the name of Wonder Woman's magical lasso?",o:["The Lasso of Truth","The Golden Lariat","The Lasso of Hestia","The Magic Rope"],c:0},
+      {u:"dc",t:3,q:"Which founding Justice Leaguer can shrink to subatomic size?",o:["The Atom","Plastic Man","Elongated Man","Firestorm"],c:0},
+      {u:"dc",t:3,q:"Black Adam hails from which fictional Middle Eastern nation?",o:["Kahndaq","Bialya","Markovia","Qurac"],c:0},
+      {u:"dc",t:3,q:"Which villain shrank and bottled the Kryptonian city of Kandor?",o:["Brainiac","Lex Luthor","Doomsday","Metallo"],c:0},
+      // --- Tier 4: Lore Master ---
+      {u:"dc",t:4,q:"Which 1985 event streamlined DC's tangled continuity into one universe?",o:["Crisis on Infinite Earths","Final Crisis","Flashpoint","Infinite Crisis"],c:0},
+      {u:"dc",t:4,q:"The Anti-Monitor originates from which realm of the multiverse?",o:["The antimatter universe","Earth-2","The Phantom Zone","The Bleed"],c:0},
+      {u:"dc",t:4,q:"In Flashpoint, Barry Allen shatters the timeline by doing what?",o:["Saving his mother from death","Killing Reverse-Flash","Entering the Speed Force","Defeating Darkseid"],c:0},
+      {u:"dc",t:4,q:"Which prison dimension is used to banish Kryptonian criminals like Zod?",o:["The Phantom Zone","The Negative Zone","Limbo","The Source Wall"],c:0,l:"The Negative Zone is a Marvel realm — don't confuse the two."},
+      {u:"dc",t:4,q:"In the emotional spectrum, which entity embodies willpower (green)?",o:["Ion","Parallax","Predator","Ophidian"],c:0,l:"Parallax embodies fear — Ion is willpower."},
+      {u:"dc",t:4,q:"The monster Doomsday, who killed Superman, was engineered on which world?",o:["Prehistoric Krypton","Apokolips","Earth","Daxam"],c:0},
+      {u:"dc",t:4,q:"The secret society known as the Court of Owls operates in which city?",o:["Gotham City","Metropolis","Blüdhaven","Central City"],c:0},
+      {u:"dc",t:4,q:"Which son of Darkseid was raised on New Genesis under a peace pact?",o:["Orion","Kalibak","Grayven","Mister Miracle"],c:0},
+      {u:"dc",t:4,q:"Mister Miracle (Scott Free) was raised in whose orphanage on Apokolips?",o:["Granny Goodness","Desaad","Glorious Godfrey","Kanto"],c:0},
+      {u:"dc",t:4,q:"Once the greatest Green Lantern, who fell to fear and founded a yellow-ring corps?",o:["Sinestro","Atrocitus","Krona","Hal Jordan"],c:0},
+      {u:"dc",t:4,q:"Swamp Thing is the elemental champion of which life force?",o:["The Green","The Red","The Speed Force","The Source"],c:0},
+      {u:"dc",t:4,q:"Vandal Savage gained his immortality from exposure to what?",o:["A radioactive meteor","A Lazarus Pit","The Speed Force","Amazonian magic"],c:0},
+      {u:"dc",t:4,q:"The rejuvenating Lazarus Pits are most associated with which villain?",o:["Ra's al Ghul","Vandal Savage","Darkseid","Brainiac"],c:0},
+      {u:"dc",t:4,q:"Which speedster villain calls himself Zoom and torments Wally West / the Flash?",o:["Hunter Zolomon","Eobard Thawne","Daniel West","Hartley Rathaway"],c:0},
+      // --- Tier 5: Multiverse Legend ---
+      {u:"dc",t:5,q:"In Final Crisis, Darkseid uses the Anti-Life Equation to do what to humanity?",o:["Enslave all free will","Erase the Speed Force","Destroy every Earth","Merge all timelines"],c:0},
+      {u:"dc",t:5,q:"Which Joker-infected evil Batman leads the Dark Knights in Dark Nights: Metal?",o:["The Batman Who Laughs","The Devastator","The Murder Machine","The Drowned"],c:0},
+      {u:"dc",t:5,q:"What is the name of the Highfather of New Genesis, Darkseid's counterpart?",o:["Izaya","Metron","Lightray","Takion"],c:0},
+      {u:"dc",t:5,q:"In the Sinestro Corps War, the yellow power rings are fueled by which emotion?",o:["Fear","Rage","Avarice","Hope"],c:0},
+      {u:"dc",t:5,q:"In Blackest Night, the dead rise wearing the rings of which corps?",o:["Black Lantern Corps","Indigo Tribe","White Lanterns","Red Lanterns"],c:0},
+      {u:"dc",t:5,q:"In the emotional spectrum, the indigo light represents which emotion?",o:["Compassion","Hope","Love","Greed"],c:0},
+      {u:"dc",t:5,q:"Perpetua is the cosmic mother of the Monitor, the Anti-Monitor, and which third being?",o:["The World Forger","Darkseid","The Spectre","Krona"],c:0},
+      {u:"dc",t:5,q:"The Spectre, DC's spirit of vengeance, is classically bonded to which slain detective?",o:["Jim Corrigan","Boston Brand","Hal Jordan","Jason Blood"],c:0},
+      {u:"dc",t:5,q:"The imp Mister Mxyzptlk can be banished only by tricking him into doing what?",o:["Saying his name backwards","Solving a riddle","Touching kryptonite","Leaving Metropolis"],c:0},
+      {u:"dc",t:5,q:"In Kingdom Come, whose killing of the Joker first launches the hero Magog to fame?",o:["Magog himself","The Red Hood","Deathstroke","Vigilante"],c:0,l:"Magog murders the Joker and is acquitted, ushering in a brutal new generation."},
+      {u:"dc",t:5,q:"Nekron, the central villain of Blackest Night, seeks to extinguish what?",o:["All life in the universe","The Speed Force","The Green","Every parallel Earth"],c:0},
+      {u:"dc",t:5,q:"Whose heroic death stopping the Anti-Monitor's cannon in Crisis on Infinite Earths is iconic?",o:["The Flash (Barry Allen)","Superman","Green Lantern","Robin"],c:0},
+      {u:"dc",t:5,q:"Which villain's origin has been tied to the biblical first murderer, Cain?",o:["Vandal Savage","Ra's al Ghul","Mordru","Felix Faust"],c:0},
+      {u:"dc",t:5,q:"The cosmic 'World of Cardboard' speech, delivered against Darkseid, is given by whom?",o:["Superman","Batman","Green Lantern","The Flash"],c:0,l:"Superman explains how he must always hold back his true strength."}
+    ];
+
+    const TIER_NAMES = { 1:"Rookie", 2:"Fan", 3:"Comic Reader", 4:"Lore Master", 5:"Multiverse Legend" };
+    const AVATARS = ["🦸","🦹","⚡","🛡️","🔥","🌟"];
+    const WINNER_TITLES = ["Sorcerer Supreme","World's Finest","Omega-Level Mind","The True Believer","Crisis Survivor"];
+    const TIME_LIMIT = 20; // seconds per question
+    const LS_KEY = "hv-trivia-settings";
+
+    const state = {
+      players: [],      // [{name, ava, score}]
+      scope: "multiverse",
+      rounds: 5,
+      numPlayers: 3,
+      buckets: {},      // tier -> shuffled question array
+      bucketPtr: {},    // tier -> pointer
+      round: 1,
+      turn: 0,
+      current: null,    // {question, shuffled:[...], correctIdx}
+      timeLeft: 0,
+      timerId: null,
+      picked: -1
+    };
+
+    const showScreen = id => {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      $(id).classList.add("active");
+      window.scrollTo(0, 0);
+    };
+
+    const shuffle = arr => {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+
+    const tierForRound = r => ((r - 1) % 5) + 1;
+
+    /* ---------------- Setup screen ---------------- */
+    function loadSettings() {
+      try {
+        const s = JSON.parse(localStorage.getItem(LS_KEY));
+        if (s) {
+          if (["marvel","dc","multiverse"].includes(s.scope)) state.scope = s.scope;
+          if ([3,5,7].includes(s.rounds)) state.rounds = s.rounds;
+          if (Array.isArray(s.names) && s.names.length) {
+            state.savedNames = s.names;
+            state.numPlayers = Math.min(6, Math.max(2, s.names.length));
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+    function saveSettings(names) {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify({ scope: state.scope, rounds: state.rounds, names }));
+      } catch (e) { /* ignore */ }
+    }
+
+    function renderSeg(segId, dataKey, current) {
+      $(segId).querySelectorAll("button").forEach(b => {
+        b.classList.toggle("on", b.dataset[dataKey] === String(current));
+      });
+    }
+
+    function renderPlayerInputs() {
+      const wrap = $("player-inputs");
+      const existing = {};
+      wrap.querySelectorAll("input").forEach((inp, i) => existing[i] = inp.value);
+      wrap.innerHTML = "";
+      for (let i = 0; i < state.numPlayers; i++) {
+        const row = document.createElement("div");
+        row.className = "player-input";
+        const prefill = existing[i] !== undefined ? existing[i]
+          : (state.savedNames && state.savedNames[i]) ? state.savedNames[i] : "";
+        row.innerHTML = '<span class="ava">' + AVATARS[i] + '</span>' +
+          '<input type="text" maxlength="14" placeholder="Player ' + (i + 1) + '" value="' +
+          prefill.replace(/"/g, "&quot;") + '">';
+        wrap.appendChild(row);
+      }
+      $("pl-count").textContent = state.numPlayers;
+    }
+
+    function setupInit() {
+      loadSettings();
+      document.body.className = "scope-" + state.scope;
+      renderSeg("scope-seg", "scope", state.scope);
+      renderSeg("rounds-seg", "rounds", state.rounds);
+      renderPlayerInputs();
+    }
+
+    $("scope-seg").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      state.scope = b.dataset.scope;
+      document.body.className = "scope-" + state.scope;
+      renderSeg("scope-seg", "scope", state.scope);
+    });
+    $("rounds-seg").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      state.rounds = parseInt(b.dataset.rounds, 10);
+      renderSeg("rounds-seg", "rounds", state.rounds);
+    });
+    $("pl-minus").addEventListener("click", () => { if (state.numPlayers > 2) { state.numPlayers--; renderPlayerInputs(); } });
+    $("pl-plus").addEventListener("click", () => { if (state.numPlayers < 6) { state.numPlayers++; renderPlayerInputs(); } });
+
+    $("splash-start").addEventListener("click", () => { setupInit(); showScreen("screen-setup"); });
+    $("setup-back").addEventListener("click", () => showScreen("screen-splash"));
+
+    /* ---------------- Game start ---------------- */
+    $("start-game").addEventListener("click", () => {
+      const inputs = [...$("player-inputs").querySelectorAll("input")];
+      const names = inputs.map((inp, i) => inp.value.trim() || ("Player " + (i + 1)));
+      state.players = names.map((name, i) => ({ name, ava: AVATARS[i], score: 0 }));
+      saveSettings(names);
+      buildBuckets();
+      state.round = 1;
+      state.turn = 0;
+      showPass();
+    });
+
+    function buildBuckets() {
+      const pool = QUESTIONS.filter(q => state.scope === "multiverse" || q.u === state.scope);
+      state.buckets = {};
+      state.bucketPtr = {};
+      for (let t = 1; t <= 5; t++) {
+        state.buckets[t] = shuffle(pool.filter(q => q.t === t));
+        state.bucketPtr[t] = 0;
+      }
+    }
+
+    function drawQuestion(tier) {
+      let bucket = state.buckets[tier];
+      // Fallback: if a tier somehow has no questions for this scope, borrow from nearest tier.
+      if (!bucket || bucket.length === 0) {
+        for (let d = 1; d <= 4 && (!bucket || bucket.length === 0); d++) {
+          bucket = state.buckets[tier - d] || state.buckets[tier + d];
+        }
+      }
+      if (state.bucketPtr[tier] >= bucket.length) {
+        state.buckets[tier] = shuffle(bucket);
+        bucket = state.buckets[tier];
+        state.bucketPtr[tier] = 0;
+      }
+      const q = bucket[state.bucketPtr[tier]++];
+      // shuffle answer options, track new correct index
+      const order = shuffle(q.o.map((_, i) => i));
+      const shuffled = order.map(i => q.o[i]);
+      const correctIdx = order.indexOf(q.c);
+      return { q, shuffled, correctIdx };
+    }
+
+    /* ---------------- Pass screen ---------------- */
+    function showPass() {
+      const p = state.players[state.turn];
+      const tier = tierForRound(state.round);
+      $("pass-round").textContent = "Round " + state.round + " of " + state.rounds;
+      $("pass-tier").textContent = "★ " + TIER_NAMES[tier] + " · " + (tier * 10) + " pts";
+      $("pass-emoji").textContent = p.ava;
+      $("pass-name").textContent = p.name;
+      showScreen("screen-pass");
+    }
+
+    $("pass-ready").addEventListener("click", showQuestion);
+    $("pass-quit").addEventListener("click", () => {
+      if (confirm("End this game and return to setup?")) showScreen("screen-setup");
+    });
+
+    /* ---------------- Question screen ---------------- */
+    function showQuestion() {
+      const tier = tierForRound(state.round);
+      const p = state.players[state.turn];
+      state.current = drawQuestion(tier);
+      state.picked = -1;
+      const q = state.current.q;
+
+      $("q-player").textContent = p.ava + " " + p.name;
+      let badges = '<span class="badge ' + q.u + '">' + (q.u === "dc" ? "DC" : "Marvel") + '</span>';
+      if (q.tag === "X-Men '97") badges += ' <span class="badge xmen">X-Men ’97</span>';
+      $("q-badges").innerHTML = badges;
+      $("q-text").textContent = q.q;
+
+      const ansWrap = $("answers");
+      ansWrap.innerHTML = "";
+      const keys = ["A", "B", "C", "D"];
+      state.current.shuffled.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "answer";
+        btn.innerHTML = '<span class="key">' + keys[i] + '</span><span>' + escapeHtml(opt) + '</span>';
+        btn.addEventListener("click", () => answer(i));
+        ansWrap.appendChild(btn);
+      });
+
+      startTimer();
+      showScreen("screen-question");
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function startTimer() {
+      state.timeLeft = TIME_LIMIT;
+      const fill = $("timer-fill");
+      fill.classList.remove("low");
+      fill.style.width = "100%";
+      clearInterval(state.timerId);
+      const start = Date.now();
+      state.timerId = setInterval(() => {
+        const elapsed = (Date.now() - start) / 1000;
+        state.timeLeft = Math.max(0, TIME_LIMIT - elapsed);
+        const pct = (state.timeLeft / TIME_LIMIT) * 100;
+        fill.style.width = pct + "%";
+        fill.classList.toggle("low", state.timeLeft <= 5);
+        if (state.timeLeft <= 0) { clearInterval(state.timerId); answer(-1); }
+      }, 100);
+    }
+
+    function answer(idx) {
+      if (state.picked !== -1) return; // already answered
+      clearInterval(state.timerId);
+      state.picked = idx;
+      const remaining = Math.ceil(state.timeLeft);
+      const tier = tierForRound(state.round);
+      const correct = idx === state.current.correctIdx;
+
+      let points = 0;
+      if (correct) points = tier * 10 + remaining; // base by difficulty + speed bonus
+      state.players[state.turn].score += points;
+      state.lastResult = { correct, points, remaining, timedOut: idx === -1 };
+      showReveal();
+    }
+
+    /* ---------------- Reveal screen ---------------- */
+    function showReveal() {
+      const { correct, points, timedOut } = state.lastResult;
+      const v = $("reveal-verdict");
+      if (correct) { v.textContent = "Correct!"; v.className = "reveal-verdict win"; }
+      else if (timedOut) { v.textContent = "Out of time!"; v.className = "reveal-verdict miss"; }
+      else { v.textContent = "Not quite"; v.className = "reveal-verdict miss"; }
+      $("reveal-points").textContent = correct ? "+" + points + " points" : "+0 points";
+
+      const wrap = $("reveal-answers");
+      wrap.innerHTML = "";
+      const keys = ["A", "B", "C", "D"];
+      state.current.shuffled.forEach((opt, i) => {
+        const div = document.createElement("div");
+        div.className = "answer";
+        if (i === state.current.correctIdx) div.classList.add("correct");
+        else if (i === state.picked) div.classList.add("wrong");
+        else div.classList.add("dim");
+        div.innerHTML = '<span class="key">' + keys[i] + '</span><span>' + escapeHtml(opt) + '</span>';
+        wrap.appendChild(div);
+      });
+
+      const loreEl = $("reveal-lore");
+      const correctText = state.current.shuffled[state.current.correctIdx];
+      let html = "<strong>Answer:</strong> " + escapeHtml(correctText) + ".";
+      if (state.current.q.l) html += " " + escapeHtml(state.current.q.l);
+      loreEl.innerHTML = html;
+
+      $("reveal-next").textContent = isLastTurnOfGame() ? "See Final Results" : "Next";
+      showScreen("screen-reveal");
+    }
+
+    function isLastTurnOfGame() {
+      return state.round >= state.rounds && state.turn >= state.players.length - 1;
+    }
+
+    $("reveal-next").addEventListener("click", () => {
+      state.turn++;
+      if (state.turn < state.players.length) {
+        showPass();
+      } else if (state.round < state.rounds) {
+        showScoreboard();
+      } else {
+        showFinal();
+      }
+    });
+
+    /* ---------------- Scoreboard (between rounds) ---------------- */
+    function rankedPlayers() {
+      return state.players
+        .map((p, i) => ({ ...p, idx: i }))
+        .sort((a, b) => b.score - a.score);
+    }
+
+    function renderScoreList(el, ranked, highlightLead) {
+      el.innerHTML = "";
+      ranked.forEach((p, i) => {
+        const row = document.createElement("div");
+        row.className = "score-row" + (highlightLead && i === 0 && p.score > 0 ? " lead" : "");
+        row.innerHTML =
+          '<span class="rank">' + (i + 1) + '</span>' +
+          '<span class="ava">' + p.ava + '</span>' +
+          '<span class="nm">' + escapeHtml(p.name) + '</span>' +
+          '<span class="pts">' + p.score + '</span>';
+        el.appendChild(row);
+      });
+    }
+
+    function showScoreboard() {
+      const nextRound = state.round + 1;
+      const nextTier = tierForRound(nextRound);
+      $("sb-title").textContent = "Round " + state.round + " complete";
+      $("sb-sub").textContent = "Up next — Round " + nextRound + ": " + TIER_NAMES[nextTier] +
+        " (" + (nextTier * 10) + " pts each)";
+      renderScoreList($("sb-list"), rankedPlayers(), true);
+      $("sb-next").textContent = "Start Round " + nextRound;
+      showScreen("screen-scoreboard");
+    }
+
+    $("sb-next").addEventListener("click", () => {
+      state.round++;
+      state.turn = 0;
+      showPass();
+    });
+
+    /* ---------------- Final ---------------- */
+    function showFinal() {
+      const ranked = rankedPlayers();
+      const winner = ranked[0];
+      const tie = ranked.length > 1 && ranked[1].score === winner.score;
+      $("final-name").textContent = tie ? "It's a tie!" : winner.name;
+      $("final-title").textContent = tie
+        ? ranked.filter(p => p.score === winner.score).map(p => p.name).join(" & ")
+        : "— " + WINNER_TITLES[Math.floor(Math.random() * WINNER_TITLES.length)] + " —";
+      $("final-score").textContent = winner.score + " points";
+      renderScoreList($("final-list"), ranked, true);
+      showScreen("screen-final");
+    }
+
+    $("final-again").addEventListener("click", () => {
+      state.players.forEach(p => p.score = 0);
+      buildBuckets();
+      state.round = 1;
+      state.turn = 0;
+      showPass();
+    });
+    $("final-new").addEventListener("click", () => { setupInit(); showScreen("screen-setup"); });
+  </script>
+</body>
+</html>
