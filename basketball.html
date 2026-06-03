@@ -263,7 +263,10 @@
   let aimCur = { x: 0, y: 0 };
 
   // ---- Audio (synthesized, no assets) ----
+  // Sounds are built from short noise bursts + body resonances rather than
+  // bare oscillators, so they read as "ball / rim / net / wood" instead of beeps.
   let audioCtx = null;
+  let noiseBuf = null;
   function ensureAudio() {
     if (!audioCtx) {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -273,77 +276,136 @@
     if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   }
+  // Cached 1s white-noise buffer reused as the raw material for most impacts.
+  function getNoise(ac) {
+    if (!noiseBuf || noiseBuf.sampleRate !== ac.sampleRate) {
+      const len = Math.floor(ac.sampleRate);
+      noiseBuf = ac.createBuffer(1, len, ac.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    }
+    return noiseBuf;
+  }
+  function noiseSource(ac, dur) {
+    const src = ac.createBufferSource();
+    src.buffer = getNoise(ac);
+    src.loop = true;
+    // Start at a random offset so repeated hits don't sound identical.
+    try { src.start(ac.currentTime, Math.random() * 0.5, dur); }
+    catch (_) { src.start(); src.stop(ac.currentTime + dur); }
+    return src;
+  }
+
+  // Soft "whoosh" of the ball leaving the hands — air, not a tone.
   function playShoot(power) {
     const ac = audioCtx; if (!ac) return;
     const t0 = ac.currentTime;
-    const osc = ac.createOscillator();
+    const dur = 0.22;
+    const src = noiseSource(ac, dur);
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.Q.value = 0.8;
+    bp.frequency.setValueAtTime(700 + power * 700, t0);
+    bp.frequency.exponentialRampToValueAtTime(280, t0 + dur);
     const gain = ac.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(220 + power * 160, t0);
-    osc.frequency.exponentialRampToValueAtTime(120, t0 + 0.18);
-    gain.gain.setValueAtTime(0.18, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.2);
-    osc.connect(gain).connect(ac.destination);
-    osc.start(t0); osc.stop(t0 + 0.22);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.07 + power * 0.06, t0 + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp).connect(gain).connect(ac.destination);
   }
+
+  // Metallic rim "clank" — inharmonic partials (like a struck steel hoop)
+  // plus a bright contact tick.
   function playRim() {
     const ac = audioCtx; if (!ac) return;
     const t0 = ac.currentTime;
-    const osc = ac.createOscillator();
-    const gain = ac.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(520, t0);
-    osc.frequency.exponentialRampToValueAtTime(300, t0 + 0.05);
-    gain.gain.setValueAtTime(0.12, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.07);
-    osc.connect(gain).connect(ac.destination);
-    osc.start(t0); osc.stop(t0 + 0.08);
+    const master = ac.createGain();
+    master.gain.value = 0.85;
+    master.connect(ac.destination);
+    const base = 360 * (0.96 + Math.random() * 0.08);
+    [1, 2.71, 5.15, 8.4].forEach((ratio, idx) => {
+      const osc = ac.createOscillator();
+      osc.type = idx === 0 ? 'triangle' : 'sine';
+      osc.frequency.value = base * ratio;
+      const g = ac.createGain();
+      const amp = 0.2 / (idx + 1);
+      g.gain.setValueAtTime(amp, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22 - idx * 0.035);
+      osc.connect(g).connect(master);
+      osc.start(t0); osc.stop(t0 + 0.24);
+    });
+    // contact tick
+    const src = noiseSource(ac, 0.04);
+    const hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 2500;
+    const ng = ac.createGain();
+    ng.gain.setValueAtTime(0.3, t0);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.03);
+    src.connect(hp).connect(ng).connect(master);
   }
+
+  // Backboard "thunk" — a low woody body plus a hard surface slap.
   function playBoard() {
     const ac = audioCtx; if (!ac) return;
     const t0 = ac.currentTime;
     const osc = ac.createOscillator();
-    const gain = ac.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(150, t0);
-    osc.frequency.exponentialRampToValueAtTime(80, t0 + 0.12);
-    gain.gain.setValueAtTime(0.2, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
-    osc.connect(gain).connect(ac.destination);
-    osc.start(t0); osc.stop(t0 + 0.16);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(190, t0);
+    osc.frequency.exponentialRampToValueAtTime(90, t0 + 0.13);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.32, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2);
+    osc.connect(g).connect(ac.destination);
+    osc.start(t0); osc.stop(t0 + 0.22);
+    const src = noiseSource(ac, 0.09);
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 480; bp.Q.value = 0.7;
+    const ng = ac.createGain();
+    ng.gain.setValueAtTime(0.28, t0);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
+    src.connect(bp).connect(ng).connect(ac.destination);
   }
+
+  // Ball bouncing on hardwood — deep rubbery thump with a short attack click.
   function playBounce() {
     const ac = audioCtx; if (!ac) return;
     const t0 = ac.currentTime;
     const osc = ac.createOscillator();
-    const gain = ac.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(120, t0);
-    osc.frequency.exponentialRampToValueAtTime(70, t0 + 0.1);
-    gain.gain.setValueAtTime(0.16, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.12);
-    osc.connect(gain).connect(ac.destination);
-    osc.start(t0); osc.stop(t0 + 0.14);
+    osc.frequency.setValueAtTime(165, t0);
+    osc.frequency.exponentialRampToValueAtTime(60, t0 + 0.13);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.34, t0 + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.18);
+    osc.connect(g).connect(ac.destination);
+    osc.start(t0); osc.stop(t0 + 0.2);
+    const src = noiseSource(ac, 0.05);
+    const lp = ac.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 1100;
+    const ng = ac.createGain();
+    ng.gain.setValueAtTime(0.22, t0);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.04);
+    src.connect(lp).connect(ng).connect(ac.destination);
   }
+
+  // Net "swish" — a quick high "shhk" of filtered noise sweeping downward.
   function playSwish() {
     const ac = audioCtx; if (!ac) return;
     const t0 = ac.currentTime;
-    // Filtered noise sweep = net swish
-    const len = 0.25;
-    const buf = ac.createBuffer(1, ac.sampleRate * len, ac.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
-    const src = ac.createBufferSource(); src.buffer = buf;
-    const filter = ac.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(2800, t0);
-    filter.frequency.exponentialRampToValueAtTime(900, t0 + len);
-    filter.Q.value = 1.2;
+    const len = 0.22;
+    const src = noiseSource(ac, len);
+    const hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 1300;
+    const bp = ac.createBiquadFilter();
+    bp.type = 'bandpass'; bp.Q.value = 1.8;
+    bp.frequency.setValueAtTime(5200, t0);
+    bp.frequency.exponentialRampToValueAtTime(1700, t0 + len);
     const gain = ac.createGain();
-    gain.gain.setValueAtTime(0.35, t0);
-    gain.gain.exponentialRampToValueAtTime(0.001, t0 + len);
-    src.connect(filter).connect(gain).connect(ac.destination);
-    src.start(t0); src.stop(t0 + len);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.32, t0 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+    src.connect(hp).connect(bp).connect(gain).connect(ac.destination);
   }
   function playCheer() {
     const ac = audioCtx; if (!ac) return;
@@ -737,85 +799,122 @@
       ctx.beginPath(); ctx.moveTo(x, court.floorY); ctx.lineTo(x, H); ctx.stroke();
     }
 
-    // Free-throw line + key (perspective trapezoid up toward the hoop)
-    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    // The key (painted lane) — a perspective trapezoid running from the
+    // free-throw line up to a baseline tucked just under the hoop.
+    const cx = W / 2;
+    const baseY = court.rimY + ball.r * 1.8;     // baseline under the basket
+    const laneBotHalf = W * 0.30;                // width at the free-throw line
+    const laneTopHalf = W * 0.165;               // narrower up by the hoop
+    ctx.beginPath();
+    ctx.moveTo(cx - laneBotHalf, court.lineY);
+    ctx.lineTo(cx - laneTopHalf, baseY);
+    ctx.lineTo(cx + laneTopHalf, baseY);
+    ctx.lineTo(cx + laneBotHalf, court.lineY);
+    ctx.closePath();
+    // Painted fill, a touch lighter/warmer than the surrounding floor.
+    ctx.fillStyle = 'rgba(150,80,38,0.32)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Baseline under the hoop
+    ctx.beginPath();
+    ctx.moveTo(cx - laneTopHalf, baseY);
+    ctx.lineTo(cx + laneTopHalf, baseY);
+    ctx.stroke();
+
+    // Free-throw line (brighter — that's where you shoot from)
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(W * 0.18, court.lineY);
-    ctx.lineTo(W * 0.82, court.lineY);
+    ctx.moveTo(cx - laneBotHalf, court.lineY);
+    ctx.lineTo(cx + laneBotHalf, court.lineY);
     ctx.stroke();
+
+    // Free-throw semicircle, bowing toward the shooter
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
     ctx.lineWidth = 3;
-    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
     ctx.beginPath();
-    ctx.moveTo(W * 0.18, court.lineY);
-    ctx.lineTo(W * 0.40, court.rimY + ball.r);
-    ctx.moveTo(W * 0.82, court.lineY);
-    ctx.lineTo(W * 0.60, court.rimY + ball.r);
-    ctx.stroke();
-    // Semicircle at the free-throw line
-    ctx.beginPath();
-    ctx.arc(W / 2, court.lineY, (W * 0.82 - W * 0.18) / 2, 0, Math.PI);
+    ctx.arc(cx, court.lineY, laneBotHalf, 0, Math.PI);
     ctx.stroke();
   }
 
   function drawHoop() {
     const cx = court.rimCx;
-    // Backboard
     const bw = court.boardHalf * 2;
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.fillRect(cx - court.boardHalf, court.boardTop, bw, court.boardBottom - court.boardTop);
-    ctx.strokeStyle = '#d84315';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(cx - court.boardHalf, court.boardTop, bw, court.boardBottom - court.boardTop);
+    const bTop = court.boardTop, bBot = court.boardBottom;
+    const rimRy = court.rimHalf * 0.28;          // rim ellipse vertical radius
+    const rimBackY = court.rimY - rimRy;         // back (top) edge of the rim
+
+    // --- Backboard (glass) ---
+    const bg = ctx.createLinearGradient(0, bTop, 0, bBot);
+    bg.addColorStop(0, 'rgba(238,246,250,0.95)');
+    bg.addColorStop(1, 'rgba(205,222,233,0.9)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(cx - court.boardHalf, bTop, bw, bBot - bTop);
+    ctx.strokeStyle = '#c63d12';
+    ctx.lineWidth = Math.max(4, ball.r * 0.2);
+    ctx.strokeRect(cx - court.boardHalf, bTop, bw, bBot - bTop);
     // Inner target square
     const sq = court.boardHalf * 0.6;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(cx - sq / 2, court.boardBottom - sq * 1.05, sq, sq * 0.78);
-    // Pole from board to rim
-    ctx.strokeStyle = '#9e9e9e';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#e2541d';
+    ctx.lineWidth = Math.max(3, ball.r * 0.14);
+    ctx.strokeRect(cx - sq / 2, bBot - sq * 1.05, sq, sq * 0.78);
+
+    // --- Mounting bracket: a short trapezoid from the board to the rim's back,
+    //     not a pole running down through the hoop. ---
+    ctx.fillStyle = '#8a9095';
     ctx.beginPath();
-    ctx.moveTo(cx, court.boardBottom);
-    ctx.lineTo(cx, court.rimY - ball.r * 0.4);
+    ctx.moveTo(cx - ball.r * 0.5, bBot - 1);
+    ctx.lineTo(cx + ball.r * 0.5, bBot - 1);
+    ctx.lineTo(cx + ball.r * 0.22, rimBackY);
+    ctx.lineTo(cx - ball.r * 0.22, rimBackY);
+    ctx.closePath();
+    ctx.fill();
+
+    // --- Net: a short hanging mesh that tapers only modestly (not a deep cone) ---
+    const top = court.rimY;
+    const depth = ball.r * 1.9;
+    const botY = top + depth;
+    const wob = Math.sin(performance.now() * 0.018) * netSwish * ball.r * 0.4;
+    const topRx = court.rimHalf, topRy = rimRy;
+    const botRx = court.rimHalf * 0.62, botRy = rimRy * 0.65;
+    const N = 12;
+    const netPt = (a, isTop) => isTop
+      ? [cx + Math.cos(a) * topRx, top + Math.sin(a) * topRy]
+      : [cx + Math.cos(a) * botRx + wob * Math.sin(a * 0.5), botY + Math.sin(a) * botRy];
+    ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+    ctx.lineWidth = 1.3;
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2;
+      const [tx, ty] = netPt(a, true);
+      const [bx1, by1] = netPt(a + Math.PI / N, false);
+      const [bx2, by2] = netPt(a - Math.PI / N, false);
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(bx1, by1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(bx2, by2); ctx.stroke();
+    }
+    // Mid + bottom hoops of the mesh
+    const midY = top + depth * 0.55;
+    const midRx = (topRx + botRx) / 2 * 0.92;
+    ctx.beginPath();
+    ctx.ellipse(cx, midY, midRx, midRx * 0.22, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(cx, botY, botRx, botRy, 0, 0, Math.PI * 2);
     ctx.stroke();
 
-    const lx = cx - court.rimHalf, rx = cx + court.rimHalf;
-    const netDepth = ball.r * 2.6;
-    const wob = Math.sin(performance.now() * 0.02) * netSwish * ball.r * 0.5;
-
-    // Net (drawn behind the rim line)
-    ctx.strokeStyle = 'rgba(255,255,255,0.75)';
-    ctx.lineWidth = 1.5;
-    const strands = 8;
-    for (let i = 0; i <= strands; i++) {
-      const t = i / strands;
-      const topX = lx + (rx - lx) * t;
-      const botX = cx + (topX - cx) * 0.42 + wob * (t - 0.5) * 2;
-      ctx.beginPath();
-      ctx.moveTo(topX, court.rimY);
-      ctx.lineTo(botX, court.rimY + netDepth);
-      ctx.stroke();
-    }
-    for (let r = 1; r <= 3; r++) {
-      const yy = court.rimY + (netDepth * r) / 3.2;
-      const shrink = 1 - r * 0.18;
-      ctx.beginPath();
-      ctx.moveTo(cx - court.rimHalf * shrink, yy);
-      ctx.lineTo(cx + court.rimHalf * shrink, yy + wob * 0.3);
-      ctx.stroke();
-    }
-
-    // Rim (orange ellipse for perspective)
+    // --- Rim (orange ellipse for perspective) ---
     ctx.strokeStyle = '#ff5722';
     ctx.lineWidth = Math.max(5, ball.r * 0.32);
     ctx.beginPath();
-    ctx.ellipse(cx, court.rimY, court.rimHalf, court.rimHalf * 0.28, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, court.rimY, court.rimHalf, rimRy, 0, 0, Math.PI * 2);
     ctx.stroke();
-    // Front of rim highlight
+    // Front-of-rim highlight
     ctx.strokeStyle = '#ff8a65';
     ctx.lineWidth = Math.max(2, ball.r * 0.12);
     ctx.beginPath();
-    ctx.ellipse(cx, court.rimY, court.rimHalf, court.rimHalf * 0.28, 0, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.ellipse(cx, court.rimY, court.rimHalf, rimRy, 0, 0.15 * Math.PI, 0.85 * Math.PI);
     ctx.stroke();
   }
 
