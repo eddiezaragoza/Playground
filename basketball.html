@@ -92,26 +92,82 @@
     position: fixed; top: 0; left: 0; right: 0;
     display: flex; justify-content: center; align-items: center;
     pointer-events: none;
-    padding: env(safe-area-inset-top, 10px) 12px 4px;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 12px;
     z-index: 5;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0) 100%);
   }
   #scoreboard {
-    background: rgba(0,0,0,0.55);
     color: white;
-    padding: 7px 16px;
-    border-radius: 999px;
-    font-size: clamp(15px, 4vw, 20px);
-    font-weight: bold;
-    display: flex; gap: 10px;
+    font-size: clamp(16px, 4.6vw, 22px);
+    font-weight: 800;
+    display: flex; gap: 16px;
     align-items: center;
-    backdrop-filter: blur(4px);
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
   }
-  #scoreboard .team { display: flex; align-items: center; gap: 7px; opacity: 0.55; transition: opacity 0.2s; padding: 2px 8px; border-radius: 999px; }
-  #scoreboard .team.up { opacity: 1; background: rgba(255,255,255,0.12); }
-  #scoreboard .team .name { font-size: 0.78em; letter-spacing: 0.5px; }
-  #scoreboard .p1c { color: #ffb74d; }
-  #scoreboard .p2c { color: #4dd0e1; }
-  #scoreboard .vs { opacity: 0.5; font-size: 0.7em; }
+  #scoreboard .team {
+    display: flex; align-items: baseline; gap: 9px;
+    opacity: 0.62; transition: opacity 0.25s;
+    padding: 3px 12px; border-radius: 999px;
+  }
+  #scoreboard .team.up { opacity: 1; background: rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+  #scoreboard .team .name { font-size: 0.92em; letter-spacing: 1.5px; }
+  #scoreboard .team .sc { font-variant-numeric: tabular-nums; }
+  #scoreboard .p1c { color: #ff8a3d; }
+  #scoreboard .p2c { color: #ff8a3d; }
+  #scoreboard .vs { opacity: 0.55; font-size: 0.85em; font-weight: 600; }
+
+  /* ---- Bottom control bar (ball count + swipe hint) ---- */
+  #controlBar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px;
+    padding: 14px 20px calc(env(safe-area-inset-bottom, 0px) + 16px);
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 55%, rgba(0,0,0,0) 100%);
+    pointer-events: none; z-index: 5;
+    color: #fff;
+  }
+  #ballCount { display: flex; align-items: center; gap: 12px; }
+  #ballCount .num {
+    font-size: clamp(26px, 8vw, 40px); font-weight: 900; line-height: 1;
+    color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
+  #ballCount .lbl {
+    font-size: clamp(9px, 2.6vw, 12px); letter-spacing: 2px; font-weight: 700;
+    color: rgba(255,255,255,0.6); text-transform: uppercase; line-height: 1; margin-top: 4px;
+  }
+  #ballIcons { display: flex; gap: 5px; }
+  #ballIcons .b {
+    width: clamp(15px, 4.4vw, 22px); height: clamp(15px, 4.4vw, 22px);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 32% 30%, #ffb472 0%, #e2671c 60%, #b54e10 100%);
+    box-shadow: inset -1px -2px 3px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.5);
+    position: relative; transition: opacity 0.25s, transform 0.25s;
+  }
+  #ballIcons .b::before, #ballIcons .b::after {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    border: 0; pointer-events: none;
+  }
+  /* seam lines on the mini balls */
+  #ballIcons .b::before {
+    background:
+      linear-gradient(to right, transparent 47%, rgba(60,25,5,0.85) 47%, rgba(60,25,5,0.85) 53%, transparent 53%),
+      linear-gradient(to bottom, transparent 47%, rgba(60,25,5,0.85) 47%, rgba(60,25,5,0.85) 53%, transparent 53%);
+  }
+  #ballIcons .b.spent { opacity: 0.22; transform: scale(0.86); filter: grayscale(0.6); }
+  #hint {
+    text-align: right; color: #fff;
+    pointer-events: none; max-width: 60%;
+  }
+  #hint .big {
+    font-size: clamp(12px, 3.6vw, 16px); font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  #hint .small {
+    font-size: clamp(9px, 2.8vw, 12px); letter-spacing: 1px;
+    color: rgba(255,255,255,0.55); text-transform: uppercase; margin-top: 3px;
+  }
 
   #shotFlash {
     position: fixed; inset: 0;
@@ -153,14 +209,6 @@
     letter-spacing: 1px;
   }
   #turnBanner .sub { font-size: clamp(14px, 4vw, 20px); opacity: 0.85; margin-top: 6px; }
-
-  #hint {
-    position: fixed; left: 0; right: 0; bottom: env(safe-area-inset-bottom, 14px);
-    text-align: center; color: rgba(255,255,255,0.85);
-    font-size: clamp(13px, 3.6vw, 17px);
-    pointer-events: none; z-index: 5;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-  }
 </style>
 </head>
 <body>
@@ -169,9 +217,9 @@
 
 <div id="hud">
   <div id="scoreboard">
-    <span class="team" id="team1"><span class="name p1c" id="name1">P1</span> <span class="p1c" id="score1">0</span></span>
+    <span class="team" id="team1"><span class="name p1c" id="name1">P1</span> <span class="sc p1c" id="score1">0</span></span>
     <span class="vs">—</span>
-    <span class="team" id="team2"><span class="name p2c" id="name2">P2</span> <span class="p2c" id="score2">0</span></span>
+    <span class="team" id="team2"><span class="name p2c" id="name2">P2</span> <span class="sc p2c" id="score2">0</span></span>
   </div>
 </div>
 
@@ -179,7 +227,19 @@
 
 <div id="turnBanner"><div class="big" id="turnBig">Player 2</div><div class="sub" id="turnSub">Step up to the line</div></div>
 
-<div id="hint">Swipe up to shoot &nbsp;•&nbsp; longer swipe = more power</div>
+<div id="controlBar">
+  <div id="ballCount">
+    <div class="num" id="ballNum">5</div>
+    <div>
+      <div class="lbl">Balls</div>
+      <div id="ballIcons"></div>
+    </div>
+  </div>
+  <div id="hint">
+    <div class="big">Swipe up to shoot</div>
+    <div class="small">Longer swipe = more power</div>
+  </div>
+</div>
 
 <div class="overlay" id="startScreen">
   <h1>🏀 FREE THROW</h1>
@@ -223,7 +283,9 @@
   const turnBanner = document.getElementById('turnBanner');
   const turnBig = document.getElementById('turnBig');
   const turnSub = document.getElementById('turnSub');
-  const hint = document.getElementById('hint');
+  const controlBar = document.getElementById('controlBar');
+  const ballNumEl = document.getElementById('ballNum');
+  const ballIconsEl = document.getElementById('ballIcons');
   const winTextEl = document.getElementById('winText');
   const finalScoreEl = document.getElementById('finalScore');
 
@@ -543,6 +605,26 @@
     score2El.textContent = score[1];
     team1El.classList.toggle('up', current === 0 && state !== STATE.END);
     team2El.classList.toggle('up', current === 1 && state !== STATE.END);
+    updateBallBar();
+  }
+
+  // Bottom-bar ball counter — mirrors the rack of shots the current player
+  // has left, dimming each ball as it's used (matches the reference layout).
+  function updateBallBar() {
+    if (ballIconsEl.children.length !== shotsPerPlayer) {
+      ballIconsEl.innerHTML = '';
+      for (let i = 0; i < shotsPerPlayer; i++) {
+        const b = document.createElement('div');
+        b.className = 'b';
+        ballIconsEl.appendChild(b);
+      }
+    }
+    const used = shotsTaken[current];
+    const remaining = Math.max(0, shotsPerPlayer - used);
+    ballNumEl.textContent = remaining;
+    [...ballIconsEl.children].forEach((el, i) => {
+      el.classList.toggle('spent', i < used);
+    });
   }
 
   function startMatch() {
@@ -554,7 +636,7 @@
     state = STATE.READY;
     startScreen.classList.add('hidden');
     endScreen.classList.add('hidden');
-    hint.style.display = '';
+    controlBar.style.display = '';
     placeBallAtLine();
     updateScoreUI();
     showTurnBanner('Player 1', "You're up — take your rack");
@@ -617,7 +699,7 @@
 
   function endMatch() {
     state = STATE.END;
-    hint.style.display = 'none';
+    controlBar.style.display = 'none';
     stopCrowd();
     updateScoreUI();
     let txt, color;
@@ -679,6 +761,7 @@
     if (!b) return;
     shotsPerPlayer = parseInt(b.dataset.shots, 10);
     [...shotChoices.children].forEach(c => c.classList.toggle('active', c === b));
+    updateBallBar();
   });
   startBtn.addEventListener('click', startMatch);
   rematchBtn.addEventListener('click', startMatch);
@@ -686,7 +769,7 @@
     state = STATE.MENU;
     endScreen.classList.add('hidden');
     startScreen.classList.remove('hidden');
-    hint.style.display = 'none';
+    controlBar.style.display = 'none';
   });
 
   // ---- Physics ----
@@ -777,66 +860,159 @@
   }
 
   // ---- Drawing ----
-  function drawCourt() {
-    // Arena backdrop
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#241a12');
-    bg.addColorStop(0.55, '#3a2a1c');
-    bg.addColorStop(1, '#5a3f28');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
 
-    // Crowd haze up top
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.fillRect(0, 0, W, court.rimY * 0.5);
-
-    // Hardwood floor
-    ctx.fillStyle = '#b5793b';
-    ctx.fillRect(0, court.floorY, W, H - court.floorY);
-    ctx.strokeStyle = 'rgba(120,70,30,0.5)';
-    ctx.lineWidth = 2;
-    for (let x = 0; x < W; x += Math.max(28, W / 14)) {
-      ctx.beginPath(); ctx.moveTo(x, court.floorY); ctx.lineTo(x, H); ctx.stroke();
+  // Tiered crowd behind the basket — deterministic specks of dark seats so it
+  // reads as a packed, dim arena rather than flickering noise.
+  function drawStands(horizonY) {
+    const bandTop = horizonY * 0.34;
+    const rows = 7;
+    const seatW = Math.max(9, W / 42);
+    for (let r = 0; r < rows; r++) {
+      const ry = bandTop + (horizonY - bandTop) * (r / rows);
+      const rh = (horizonY - bandTop) / rows;
+      for (let x = 0; x < W; x += seatW) {
+        // Hash position → stable per-seat brightness (no per-frame flicker).
+        const h = Math.sin(x * 12.9898 + r * 78.233) * 43758.5453;
+        const b = 0.45 + (h - Math.floor(h)) * 0.75;
+        const rr = Math.floor(46 * b), gg = Math.floor(16 * b), bb = Math.floor(18 * b);
+        ctx.fillStyle = `rgb(${rr},${gg},${bb})`;
+        ctx.fillRect(x + 0.5, ry, seatW - 1.5, rh * 0.74);
+      }
     }
+    // Dark rail / shadow line where the stands meet the court.
+    const grad = ctx.createLinearGradient(0, bandTop, 0, horizonY);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, bandTop, W, horizonY - bandTop);
+  }
 
-    // The key (painted lane) — a perspective trapezoid running from the
-    // free-throw line up to a baseline tucked just under the hoop.
+  // Overhead arena lights — bright sources with soft beams fanning down.
+  function drawSpotlights(horizonY) {
+    const xs = [W * 0.13, W * 0.38, W * 0.62, W * 0.87];
+    xs.forEach((x) => {
+      const beam = ctx.createLinearGradient(x, 0, x, horizonY);
+      beam.addColorStop(0, 'rgba(255,250,232,0.14)');
+      beam.addColorStop(1, 'rgba(255,250,232,0)');
+      ctx.fillStyle = beam;
+      ctx.beginPath();
+      ctx.moveTo(x - W * 0.02, 0);
+      ctx.lineTo(x + W * 0.02, 0);
+      ctx.lineTo(x + W * 0.14, horizonY);
+      ctx.lineTo(x - W * 0.14, horizonY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,248,224,0.35)';
+      ctx.beginPath(); ctx.ellipse(x, H * 0.018, 17, 9, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,252,238,0.95)';
+      ctx.beginPath(); ctx.ellipse(x, H * 0.018, 7, 4, 0, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  function drawCourt() {
     const cx = W / 2;
-    const baseY = court.rimY + ball.r * 1.8;     // baseline under the basket
-    const laneBotHalf = W * 0.30;                // width at the free-throw line
-    const laneTopHalf = W * 0.165;               // narrower up by the hoop
-    ctx.beginPath();
-    ctx.moveTo(cx - laneBotHalf, court.lineY);
-    ctx.lineTo(cx - laneTopHalf, baseY);
-    ctx.lineTo(cx + laneTopHalf, baseY);
-    ctx.lineTo(cx + laneBotHalf, court.lineY);
-    ctx.closePath();
-    // Painted fill, a touch lighter/warmer than the surrounding floor.
-    ctx.fillStyle = 'rgba(150,80,38,0.32)';
-    ctx.fill();
+    const horizonY = court.rimY + ball.r * 1.9;     // back edge of the floor, just under the basket
+    const bottomY = H;
+
+    // ---------- Arena (everything above the floor) ----------
+    const sky = ctx.createLinearGradient(0, 0, 0, horizonY);
+    sky.addColorStop(0, '#06060a');
+    sky.addColorStop(0.6, '#0c0b11');
+    sky.addColorStop(1, '#15131c');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, horizonY + 2);
+    drawSpotlights(horizonY);
+    drawStands(horizonY);
+
+    // ---------- Hardwood floor (perspective plane) ----------
+    // t: 0 = back (horizonY, far) … 1 = front (bottomY, near the shooter)
+    const yAt = (t) => horizonY + (bottomY - horizonY) * t;
+    const sAt = (t) => 0.34 + 0.66 * t;             // half-width scale with depth
+    const xAt = (nx, t) => cx + nx * (W * 0.5) * sAt(t);
+
+    const wood = ctx.createLinearGradient(0, horizonY, 0, bottomY);
+    wood.addColorStop(0, '#6b4720');
+    wood.addColorStop(0.28, '#a9763a');
+    wood.addColorStop(0.62, '#cd9a57');
+    wood.addColorStop(1, '#b9853f');
+    ctx.fillStyle = wood;
+    ctx.fillRect(0, horizonY, W, bottomY - horizonY);
+
+    // Glossy central sheen — the polished reflection of the lights.
+    const sheen = ctx.createRadialGradient(cx, yAt(0.55), 0, cx, yAt(0.55), W * 0.7);
+    sheen.addColorStop(0, 'rgba(255,231,180,0.28)');
+    sheen.addColorStop(0.5, 'rgba(255,231,180,0.08)');
+    sheen.addColorStop(1, 'rgba(255,231,180,0)');
+    ctx.fillStyle = sheen;
+    ctx.fillRect(0, horizonY, W, bottomY - horizonY);
+
+    // Plank seams — converge toward the vanishing point for perspective.
+    ctx.strokeStyle = 'rgba(80,46,18,0.4)';
+    ctx.lineWidth = 1.4;
+    for (let i = -7; i <= 7; i++) {
+      const nx = i / 7;
+      ctx.beginPath();
+      ctx.moveTo(xAt(nx, 0), horizonY);
+      ctx.lineTo(xAt(nx, 1), bottomY);
+      ctx.stroke();
+    }
+    // Soft reflections of the overhead lights streaking down the gloss.
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    [-0.5, 0, 0.5].forEach((nx) => {
+      const gx0 = xAt(nx, 0.1), gx1 = xAt(nx, 1);
+      const refl = ctx.createLinearGradient(gx0, horizonY, gx1, bottomY);
+      refl.addColorStop(0, 'rgba(255,244,210,0.10)');
+      refl.addColorStop(1, 'rgba(255,244,210,0)');
+      ctx.strokeStyle = refl;
+      ctx.lineWidth = W * 0.05;
+      ctx.beginPath(); ctx.moveTo(gx0, yAt(0.1)); ctx.lineTo(gx1, bottomY); ctx.stroke();
+    });
+    ctx.restore();
+
+    // ---------- Court markings (white lines, in perspective) ----------
+    const line = (na, ta, nb, tb, w, alpha) => {
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = w;
+      ctx.beginPath();
+      ctx.moveTo(xAt(na, ta), yAt(ta));
+      ctx.lineTo(xAt(nb, tb), yAt(tb));
+      ctx.stroke();
+    };
+
+    // 3-point arc, bowing toward the shooter near the back of the court.
     ctx.strokeStyle = 'rgba(255,255,255,0.5)';
     ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Baseline under the hoop
     ctx.beginPath();
-    ctx.moveTo(cx - laneTopHalf, baseY);
-    ctx.lineTo(cx + laneTopHalf, baseY);
+    ctx.ellipse(cx, yAt(0.14), W * 0.46, (bottomY - horizonY) * 0.4, 0, 0.05 * Math.PI, 0.95 * Math.PI);
     ctx.stroke();
+    // Baseline + side sweeps feeding the arc
+    line(-0.92, 0.02, 0.92, 0.02, 3, 0.45);
 
-    // Free-throw line (brighter — that's where you shoot from)
-    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-    ctx.lineWidth = 4;
+    // The painted key (lane) — navy trapezoid, narrow at the back.
+    const laneN = 0.27, ftT = 0.70, baseT = 0.03;
     ctx.beginPath();
-    ctx.moveTo(cx - laneBotHalf, court.lineY);
-    ctx.lineTo(cx + laneBotHalf, court.lineY);
+    ctx.moveTo(xAt(-laneN, baseT), yAt(baseT));
+    ctx.lineTo(xAt(-laneN, ftT), yAt(ftT));
+    ctx.lineTo(xAt(laneN, ftT), yAt(ftT));
+    ctx.lineTo(xAt(laneN, baseT), yAt(baseT));
+    ctx.closePath();
+    const key = ctx.createLinearGradient(0, yAt(baseT), 0, yAt(ftT));
+    key.addColorStop(0, 'rgba(18,28,44,0.78)');
+    key.addColorStop(1, 'rgba(26,40,60,0.82)');
+    ctx.fillStyle = key;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Free-throw semicircle, bowing toward the shooter
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    // Free-throw line + circle at the front of the key.
+    line(-laneN, ftT, laneN, ftT, 4, 0.95);
+    const ftRx = xAt(laneN, ftT) - cx;
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(cx, court.lineY, laneBotHalf, 0, Math.PI);
+    ctx.ellipse(cx, yAt(ftT), ftRx, ftRx * 0.34, 0, 0, Math.PI * 2);
     ctx.stroke();
   }
 
@@ -847,16 +1023,34 @@
     const rimRy = court.rimHalf * 0.28;          // rim ellipse vertical radius
     const rimBackY = court.rimY - rimRy;         // back (top) edge of the rim
 
-    // --- Backboard (glass) ---
+    // --- Support post behind the board (mounts it over the baseline) ---
+    ctx.fillStyle = 'rgba(28,30,36,0.9)';
+    ctx.fillRect(cx - ball.r * 0.16, bTop - ball.r * 1.4, ball.r * 0.32, ball.r * 1.5);
+
+    // --- Backboard (translucent glass, white frame) ---
+    const bL = cx - court.boardHalf;
     const bg = ctx.createLinearGradient(0, bTop, 0, bBot);
-    bg.addColorStop(0, 'rgba(238,246,250,0.95)');
-    bg.addColorStop(1, 'rgba(205,222,233,0.9)');
+    bg.addColorStop(0, 'rgba(214,232,242,0.34)');
+    bg.addColorStop(1, 'rgba(180,205,222,0.30)');
     ctx.fillStyle = bg;
-    ctx.fillRect(cx - court.boardHalf, bTop, bw, bBot - bTop);
-    ctx.strokeStyle = '#c63d12';
+    ctx.fillRect(bL, bTop, bw, bBot - bTop);
+    // Diagonal glass glare streak
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(bL, bTop, bw, bBot - bTop);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = bw * 0.16;
+    ctx.beginPath();
+    ctx.moveTo(bL - bw * 0.1, bBot);
+    ctx.lineTo(bL + bw * 0.6, bTop - 4);
+    ctx.stroke();
+    ctx.restore();
+    // White outer frame
+    ctx.strokeStyle = 'rgba(255,255,255,0.92)';
     ctx.lineWidth = Math.max(4, ball.r * 0.2);
-    ctx.strokeRect(cx - court.boardHalf, bTop, bw, bBot - bTop);
-    // Inner target square
+    ctx.strokeRect(bL, bTop, bw, bBot - bTop);
+    // Inner target square (red/orange, the shooter's mark)
     const sq = court.boardHalf * 0.6;
     ctx.strokeStyle = '#e2541d';
     ctx.lineWidth = Math.max(3, ball.r * 0.14);
@@ -940,25 +1134,6 @@
     ctx.restore();
   }
 
-  function drawRack() {
-    // Remaining balls in the current player's rack, along the bottom-left.
-    const remaining = shotsPerPlayer - shotsTaken[current] - (state === STATE.FLIGHT || state === STATE.RESOLVE ? 1 : 0);
-    const rr = ball.r * 0.42;
-    const baseY = court.floorY - rr - 6;
-    ctx.save();
-    for (let i = 0; i < Math.max(0, remaining); i++) {
-      const bx = 16 + rr + i * (rr * 2 + 5);
-      if (bx > W * 0.45) break;
-      drawBall(bx, baseY, rr, 0);
-    }
-    // Label
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    ctx.font = `bold ${Math.max(11, ball.r * 0.55)}px -apple-system, sans-serif`;
-    ctx.textAlign = 'left';
-    ctx.fillText(`${Math.max(0, remaining)} left`, 16, baseY - rr - 6);
-    ctx.restore();
-  }
-
   function drawAim() {
     if (!aiming) return;
     const dx = aimCur.x - aimStart.x;
@@ -1021,7 +1196,6 @@
 
     // ---- Render ----
     drawCourt();
-    drawRack();
     drawHoop();
     if (state === STATE.READY) drawAim();
     if (state !== STATE.MENU && state !== STATE.END) {
@@ -1040,7 +1214,8 @@
 
   resize();
   placeBallAtLine();
-  hint.style.display = 'none';
+  controlBar.style.display = 'none';
+  updateBallBar();
   lastTick = performance.now();
   requestAnimationFrame(loop);
 })();
