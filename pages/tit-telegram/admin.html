@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Tit-Telegram — Operator Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Special+Elite&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="admin">
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">TIT-<span class="tt-neon">TELEGRAM</span></a>
+  <div class="nav-links">
+    <a href="book.html">Booking</a>
+    <a href="join.html">Signup</a>
+    <button class="btn btn-ghost btn-sm" id="resetBtn" type="button">Reset demo data</button>
+  </div>
+</nav>
+
+<div class="section">
+  <h1 class="section-title">Operator console</h1>
+  <hr class="gold-rule">
+  <p class="section-sub">Unlinked prototype view — bookings and performer signups stored in this browser. This becomes the real admin dashboard in phase 2.</p>
+
+  <h2 style="font-family:var(--type);color:var(--gold);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px">Bookings (<span id="bookCount">0</span>)</h2>
+  <div class="tbl-wrap" style="margin-bottom:46px">
+    <table class="tt-table">
+      <thead><tr><th>Order</th><th>Recipient</th><th>Performer</th><th>Package</th><th>Window</th><th>Total</th><th>Buyer email</th><th>Status</th></tr></thead>
+      <tbody id="bookingsBody"></tbody>
+    </table>
+  </div>
+
+  <h2 style="font-family:var(--type);color:var(--gold);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px">Performer signups (<span id="recruitCount">0</span>)</h2>
+  <div class="tbl-wrap">
+    <table class="tt-table">
+      <thead><tr><th>Stage name</th><th>Modes</th><th>City</th><th>Rates (video/in-person)</th><th>Email</th></tr></thead>
+      <tbody id="recruitsBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="foot-brand">TIT-TELEGRAM CO.</div>
+  <p class="proto-note">Operator eyes only STOP</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="tt.js"></script>
+</body>
+</html>

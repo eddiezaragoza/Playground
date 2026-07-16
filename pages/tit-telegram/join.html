@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Perform with Tit-Telegram — Join the Troupe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Special+Elite&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="join">
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">TIT-<span class="tt-neon">TELEGRAM</span></a>
+  <div class="nav-links">
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#packages">Packages</a>
+    <a class="btn btn-book btn-sm" href="book.html">Send one</a>
+  </div>
+</nav>
+
+<div class="section" id="joinFormWrap" style="max-width:760px">
+  <h1 class="section-title">Join the troupe</h1>
+  <hr class="gold-rule">
+  <p class="section-sub">Set your own availability. Keep the majority of every booking. Bring your own feathers — or borrow ours.</p>
+
+  <form id="joinForm">
+    <div class="field-row">
+      <div class="field"><label for="jStage">Stage name</label><input id="jStage" name="stage" required placeholder="Ruby Riot" autocomplete="off"></div>
+      <div class="field"><label for="jEmail">Email</label><input id="jEmail" name="email" type="email" required placeholder="you@example.com" autocomplete="off"></div>
+    </div>
+
+    <div class="field">
+      <label>Delivery modes</label>
+      <div class="mode-toggle" style="margin-bottom:0">
+        <label class="mode-btn" style="display:block">
+          <input type="checkbox" name="mode" value="video"> <span class="m-title">📹 Video telegrams</span>
+          <span class="m-sub">Record from anywhere. 48-hour turnaround per order.</span>
+        </label>
+        <label class="mode-btn" style="display:block">
+          <input type="checkbox" name="mode" value="inperson"> <span class="m-title">🚪 In-person (Tampa Bay)</span>
+          <span class="m-sub">Live deliveries. Safety protocols on every booking.</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field"><label for="jVideoRate">Video rate from ($)</label><input id="jVideoRate" name="videorate" type="number" min="19" placeholder="45"></div>
+      <div class="field"><label for="jPersonRate">In-person rate from ($)</label><input id="jPersonRate" name="personrate" type="number" min="99" placeholder="175"></div>
+    </div>
+
+    <div class="field"><label for="jCity">City (if performing in person)</label><input id="jCity" name="city" placeholder="Tampa, FL" autocomplete="off"></div>
+    <div class="field"><label for="jTagline">Tagline</label><input id="jTagline" name="tagline" maxlength="80" placeholder="One line of pure confidence" autocomplete="off"></div>
+    <div class="field"><label for="jBio">Bio</label><textarea id="jBio" name="bio" placeholder="Experience, specialties, signature moves, whether the boa is negotiable."></textarea></div>
+
+    <div class="field">
+      <label>Weekly availability — tap the windows you work</label>
+      <div class="avail-grid" id="availGrid"></div>
+      <p class="hint">This drives the booking calendar customers see. You can change it any time (in the real version).</p>
+    </div>
+
+    <div class="pay-stub" style="margin-bottom:24px">
+      <h3>📋 Prototype note</h3>
+      <p>Signups save to this browser only and appear instantly on the public roster — try it, then check the booking page. Real onboarding (ID check, 18+ verification, contract, payout setup) arrives with the live version.</p>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Enlist me STOP</button>
+  </form>
+</div>
+
+<div class="confirm-wrap hidden" id="joinConfirm">
+  <h1 class="section-title">You're in.</h1>
+  <div class="telegram" id="tgJoin"></div>
+  <p class="section-sub" style="margin-bottom:26px">Your profile is live on the roster (in this browser). Go admire yourself.</p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="book.html">See yourself on the roster</a>
+    <a class="btn btn-ghost" href="index.html">Back to the lobby</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="foot-brand">TIT-TELEGRAM CO.</div>
+  <p class="proto-note">Working prototype — no payments processed, no performers dispatched (yet) STOP</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="tt.js"></script>
+</body>
+</html>
