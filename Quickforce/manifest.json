@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "QuickForce",
+  "version": "1.9.0",
+  "description": "Shortcuts to quickly copy record IDs and navigate to them. Jump to setup for the current object, and even more bodacious shortcuts!",
+  "permissions": ["tabs", "scripting", "activeTab"],
+  "host_permissions": [
+    "https://*.lightning.force.com/*",
+    "https://*.visual.force.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["https://*.lightning.force.com/*", "https://*.visual.force.com/*"],
+    "js": ["contentScript.js"],
+    "run_at": "document_end",
+    "all_frames": true
+  }],
+  "commands": {
+    "copy-record-id": {
+      "suggested_key": { "default": "Alt+C", "mac": "Alt+C" },
+      "description": "Copy current record Id"
+    },
+    "open-record-from-clipboard": {
+      "suggested_key": { "default": "Alt+V", "mac": "Alt+V" },
+      "description": "Open record Id from clipboard"
+    },
+    "toggle-setup": {
+      "suggested_key": { "default": "Alt+S", "mac": "Alt+S" },
+      "description": "Open Setup (Fields & Relationships or Setup Home)"
+    },
+    "open-flows-home": {
+      "description": "Open Flow Setup Home"
+    },
+    "open-reports-home": {
+      "description": "Open Reports Home"
+    },
+    "open-dashboards-home": {
+      "description": "Open Dashboards Home"
+    },
+    "open-app-manager": {
+      "description": "Open App Manager"
+    },
+    "open-installed-packages": {
+      "description": "Open Installed Packages"
+    },
+    "open-users-home": {
+      "description": "Open Users Setup"
+    }
+  },
+  "homepage_url": "https://buymeacoffee.com/eddiez63",
+  "action": { "default_title": "QuickForce" }
+}
