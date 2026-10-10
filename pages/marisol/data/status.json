@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-10T03:07:44.853Z",
+  "generatedAt": "2026-10-10T03:18:56.907Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -8,17 +8,18 @@
         "title": "Perpetual Adoration live from St Benedict's, Melbourne",
         "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
         "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
-        "startedAt": null
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
-      "lastLiveAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
+      "lastLiveAt": "2026-10-10T03:18:56.907Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
-          "startedAt": "2026-10-10T03:05:17.145Z",
-          "lastSeenLiveAt": "2026-10-10T03:07:44.853Z"
+          "startedAt": "2026-10-10T03:18:56.907Z",
+          "lastSeenLiveAt": "2026-10-10T03:18:56.907Z"
         }
       ]
     },
@@ -29,17 +30,18 @@
         "title": "Vatican Media Live",
         "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
         "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
-        "startedAt": null
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
-      "lastLiveAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
+      "lastLiveAt": "2026-10-10T03:18:56.907Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
-          "startedAt": "2026-10-10T03:05:17.145Z",
-          "lastSeenLiveAt": "2026-10-10T03:07:44.853Z"
+          "startedAt": "2026-10-10T03:18:56.907Z",
+          "lastSeenLiveAt": "2026-10-10T03:18:56.907Z"
         }
       ]
     },
@@ -47,7 +49,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -58,9 +60,10 @@
         "title": "Napa Institute Mass and Eucharistic Procession from NYC",
         "url": "https://www.youtube.com/watch?v=UDjZw7EAqeQ",
         "thumbnail": "https://i.ytimg.com/vi/UDjZw7EAqeQ/hqdefault.jpg",
-        "scheduledFor": "2026-10-13T20:00:00.000Z"
+        "scheduledFor": "2026-10-13T20:00:00.000Z",
+        "embeddable": true
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -68,7 +71,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -76,7 +79,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-10T03:07:44.853Z",
+      "checkedAt": "2026-10-10T03:18:56.907Z",
       "lastLiveAt": null,
       "history": []
     }

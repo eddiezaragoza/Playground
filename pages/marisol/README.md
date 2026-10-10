@@ -62,6 +62,8 @@ This folder is part of the Playground repo, which GitHub Pages serves as eddieza
 
 ## Known limits
 
+- **In-page player.** Streams play on the page through YouTube's privacy-enhanced embed (youtube-nocookie.com). The checker tests each stream; if a channel has embedding turned off, its card links to YouTube instead. YouTube may still show ads on monetized channels, and the site can't control that. Embeds need the page to send its address as the referrer; GitHub Pages does by default, and the iframe sets `referrerpolicy` explicitly.
+
 - **YouTube only.** Many parishes stream on Facebook Live. Facebook offers no public way to check whether an arbitrary page is live, so Facebook-only parishes can be listed but cannot get a Live badge.
 - **Channels that stream all day** (24/7 adoration) never "end", so they get no usual times.
 - **GitHub cron is best-effort.** Scheduled runs can be 5–15 minutes late at busy times. Live status may lag that much.

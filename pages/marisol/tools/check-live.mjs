@@ -100,7 +100,7 @@ export async function checkChannelsViaApi(channelIds, key) {
   const videos = {};
   const allIds = Object.values(recent).filter(Array.isArray).flat();
   for (let i = 0; i < allIds.length; i += 50) {
-    const res = await api('videos', { part: 'snippet,liveStreamingDetails', id: allIds.slice(i, i + 50).join(',') });
+    const res = await api('videos', { part: 'snippet,liveStreamingDetails,status', id: allIds.slice(i, i + 50).join(',') });
     for (const v of res.items) videos[v.id] = v;
   }
 
@@ -115,6 +115,7 @@ export async function checkChannelsViaApi(channelIds, key) {
       .sort((a, b) => a.scheduledFor.localeCompare(b.scheduledFor))[0];
     out[id] = now ? live(now.id, now.snippet.title, now.liveStreamingDetails.actualStartTime)
       : next ?? { state: 'offline' };
+    if (out[id].videoId) out[id].embeddable = videos[out[id].videoId]?.status?.embeddable ?? null;
     out[id].pastBroadcasts = vids.filter((v) => v.liveStreamingDetails.actualEndTime).map((v) => ({
       videoId: v.id, title: v.snippet.title, url: `https://www.youtube.com/watch?v=${v.id}`,
       startedAt: v.liveStreamingDetails.actualStartTime, endedAt: v.liveStreamingDetails.actualEndTime,
@@ -135,6 +136,16 @@ const upcoming = (videoId, title, scheduledFor) =>
   scheduledFor && Date.parse(scheduledFor) < Date.now() - 2 * 3600e3
     ? { state: 'offline' }
     : { state: 'upcoming', ...video(videoId, title), scheduledFor: scheduledFor ?? null };
+
+// YouTube's oEmbed endpoint answers 401 when the owner has disabled embedding.
+async function isEmbeddable(videoId) {
+  try {
+    const r = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${videoId}`,
+      { headers: { 'User-Agent': UA } });
+    if (r.status === 401 || r.status === 403) return false;
+    return r.ok ? true : null;
+  } catch { return null; }
+}
 
 async function mapLimit(items, limit, fn) {
   const out = new Array(items.length);
@@ -166,6 +177,9 @@ async function main() {
     if (byChannel[ch.youtubeChannelId]) return [ch.id, byChannel[ch.youtubeChannelId]];
     try { return [ch.id, await checkChannel(ch.youtubeChannelId)]; }
     catch (e) { return [ch.id, { state: 'error', error: String(e.message ?? e) }]; }
+  });
+  await mapLimit(results, CONCURRENCY, async ([, r]) => {
+    if (r.videoId && r.embeddable == null) r.embeddable = await isEmbeddable(r.videoId);
   });
   console.log(`Mode: ${key && Object.keys(byChannel).length ? 'YouTube Data API' : 'public page'}`);
 

@@ -109,6 +109,17 @@ h2 .count { font: 500 13px/1 var(--font-mono); color: var(--muted); }
 .add { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 10px; }
 .add p, .add ul { margin: 0; max-width: 65ch; }
 .add ul { padding-left: 20px; }
+/* In-page player */
+.player { display: grid; gap: 12px; scroll-margin-top: 16px; }
+.screen { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; overflow: hidden; }
+.screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player-bar { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 16px; }
+.player-bar .info { display: grid; gap: 2px; min-width: 0; flex: 1 1 260px; }
+button.btn { cursor: pointer; }
+.thumb { cursor: pointer; border: 0; padding: 0; width: 100%; }
+.thumb .play { position: absolute; inset: 0; margin: auto; width: 56px; height: 56px; border-radius: 50%; background: rgba(0,0,0,.6); display: grid; place-items: center; }
+.thumb .play::after { content: ""; border-left: 18px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent; margin-left: 5px; }
+.yt-link { font-size: 14px; align-self: center; }
 footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px; }
 footer p { margin: 0; }
 </style>
@@ -118,9 +129,24 @@ footer p { margin: 0; }
   <header>
     <span class="eyebrow">Catholic Mainstream · Online Ministry</span>
     <h1>Parish Livestreams</h1>
-    <p class="lede">Masses, adoration and devotions streaming from parishes and shrines around the world. Who is live right now comes first, then what is starting soon. No ads, no sign-in.</p>
+    <p class="lede">Masses, adoration and devotions streaming from parishes and shrines around the world. Who is live right now comes first, then what is starting soon. Watch right here, with no ads from us and no sign-in.</p>
     <div class="pulse" id="pulse" aria-live="polite"></div>
   </header>
+
+  <section class="player" id="player" aria-labelledby="h-player" hidden>
+    <div class="screen" id="screen"></div>
+    <div class="player-bar">
+      <div class="info">
+        <span class="pill live" id="p-pill">Live</span>
+        <h2 id="h-player" class="name" style="font: 600 20px/1.3 var(--font-display)"></h2>
+        <p class="place" id="p-place"></p>
+      </div>
+      <div class="actions">
+        <a class="btn" id="p-yt" href="#" target="_blank" rel="noopener">Open on YouTube</a>
+        <button class="btn" id="p-close" type="button">Close player</button>
+      </div>
+    </div>
+  </section>
 
   <div class="filters" role="search">
     <input id="q" type="search" placeholder="Search parish, city or country" aria-label="Search parishes">
@@ -213,21 +239,49 @@ function card(ch, cur, kind) {
   const when = kind === 'live'
     ? (cur.startedAt ? `Started ${ago(cur.startedAt)}` : 'Streaming now')
     : `${fmtLocal(cur.scheduledFor)} your time · ${fmtIn(cur.scheduledFor, ch.timezone)} local`;
+  const inPage = cur.embeddable !== false;
+  const pill = `<span class="pill ${kind === 'live' ? 'live' : 'soon'}">${kind === 'live' ? 'Live' : 'Upcoming'}</span>`;
+  const thumb = inPage
+    ? `<button class="thumb" type="button" data-play="${esc(ch.id)}" aria-label="Play ${esc(ch.name)} here"><img src="${esc(cur.thumbnail)}" alt="" loading="lazy">${pill}<span class="play"></span></button>`
+    : `<a class="thumb" href="${esc(cur.url)}" target="_blank" rel="noopener"><img src="${esc(cur.thumbnail)}" alt="" loading="lazy">${pill}</a>`;
+  const primary = inPage
+    ? `<button class="btn primary" type="button" data-play="${esc(ch.id)}">${kind === 'live' ? 'Watch here' : 'Open waiting room'}</button>
+       <a class="yt-link" href="${esc(cur.url)}" target="_blank" rel="noopener">${kind === 'live' ? 'YouTube' : 'Remind me on YouTube'}</a>`
+    : `<a class="btn primary" href="${esc(cur.url)}" target="_blank" rel="noopener">${kind === 'live' ? 'Watch on YouTube' : 'Remind me on YouTube'}</a>`;
   return `<article class="card">
-    <a class="thumb" href="${esc(cur.url)}" target="_blank" rel="noopener">
-      <img src="${esc(cur.thumbnail)}" alt="" loading="lazy">
-      <span class="pill ${kind === 'live' ? 'live' : 'soon'}">${kind === 'live' ? 'Live' : 'Upcoming'}</span>
-    </a>
+    ${thumb}
     <div class="body">
       <h3 class="name">${esc(ch.name)}</h3>
       <p class="place">${esc(place(ch))}${ch.language ? ' · ' + esc(ch.language) : ''}</p>
       <p class="title">${esc(cur.title)}</p>
       <p class="meta">${esc(when)}</p>
-      <div class="actions">
-        <a class="btn primary" href="${esc(cur.url)}" target="_blank" rel="noopener">${kind === 'live' ? 'Watch now' : 'Set reminder on YouTube'}</a>
-      </div>
+      <div class="actions">${primary}</div>
     </div>
   </article>`;
+}
+
+// Plays a stream in the page. The player lives outside the lists, so the
+// two-minute refresh never interrupts it.
+function play(id) {
+  const ch = channels.find((c) => c.id === id);
+  const cur = status.channels?.[id]?.current;
+  if (!ch || !cur?.videoId) return;
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(cur.videoId)}?autoplay=1&rel=0&playsinline=1`;
+  $('screen').innerHTML = `<iframe src="${esc(src)}" title="${esc(cur.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+  $('h-player').textContent = `${ch.name}: ${cur.title}`;
+  $('p-place').textContent = [place(ch), ch.language].filter(Boolean).join(' · ');
+  $('p-pill').className = `pill ${cur.state === 'live' ? 'live' : 'soon'}`;
+  $('p-pill').textContent = cur.state === 'live' ? 'Live' : 'Upcoming';
+  $('p-yt').href = cur.url;
+  $('player').hidden = false;
+  history.replaceState(null, '', `#watch-${id}`);
+  $('player').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}
+
+function closePlayer() {
+  $('screen').innerHTML = '';
+  $('player').hidden = true;
+  history.replaceState(null, '', location.pathname + location.search);
 }
 
 function row(ch, st, showLast) {
@@ -302,14 +356,22 @@ async function load() {
       fillSelect('country', c.map((x) => x.country));
       fillSelect('language', c.map((x) => x.language));
     }
+    const first = !channels.length;
     channels = c; status = s;
     render();
+    const m = first && location.hash.match(/^#watch-([\w-]+)$/);
+    if (m) play(m[1]);
   } catch (e) {
     $('pulse').textContent = 'Could not load the parish list. Refresh the page to try again.';
   }
 }
 
 for (const id of ['q', 'country', 'language']) $(id).addEventListener('input', render);
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-play]');
+  if (b) play(b.dataset.play);
+});
+$('p-close').addEventListener('click', closePlayer);
 $('add-contact').innerHTML = SUBMIT_URL
   ? `<a class="btn primary" href="${esc(SUBMIT_URL)}" target="_blank" rel="noopener">Submit a parish</a>`
   : 'Submissions open soon.';
