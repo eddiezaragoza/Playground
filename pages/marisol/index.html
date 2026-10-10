@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parish Livestreams</title>
+<meta name="description" content="Catholic Masses, adoration and devotions streaming live from parishes and shrines around the world. No ads.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; state-ordered sections (live → soon → recent → directory), cards in an auto-fill grid */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --fg: #1a2233;
+  --muted: #5b6577;
+  --line: #dde1e8;
+  --accent: #2a4f8f;       /* Marian blue */
+  --accent-ink: #ffffff;
+  --live: #c62828;
+  --live-soft: #fde8e8;
+  --soon: #8a6514;
+  --soon-soft: #f8efd9;
+  --font-display: "Spectral", Georgia, "Times New Roman", serif;
+  --font-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141c; --surface: #171d28; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2a3242;
+    --accent: #8fb0ea; --accent-ink: #0d1422; --live: #ff6b6b; --live-soft: #3a1c20;
+    --soon: #e2b75a; --soon-soft: #33291a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141c; --surface: #171d28; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2a3242;
+  --accent: #8fb0ea; --accent-ink: #0d1422; --live: #ff6b6b; --live-soft: #3a1c20;
+  --soon: #e2b75a; --soon-soft: #33291a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 var(--font-body);
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 64px; display: grid; gap: 40px; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: grid; gap: 12px; }
+.eyebrow { font: 600 12px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 600 clamp(30px, 5vw, 44px)/1.1 var(--font-display); margin: 0; text-wrap: balance; }
+.lede { margin: 0; color: var(--muted); max-width: 62ch; }
+.pulse { display: flex; flex-wrap: wrap; gap: 8px 20px; font: 500 14px/1.4 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.pulse b { color: var(--fg); font-weight: 500; }
+.pulse .on b { color: var(--live); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters input, .filters select {
+  font: inherit; font-size: 15px; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 0;
+}
+.filters input { flex: 1 1 240px; }
+.filters select { flex: 0 1 180px; }
+
+section { display: grid; gap: 16px; }
+h2 { font: 600 22px/1.2 var(--font-display); margin: 0; display: flex; align-items: center; gap: 10px; }
+h2 .count { font: 500 13px/1 var(--font-mono); color: var(--muted); }
+.empty { color: var(--muted); margin: 0; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  display: grid; grid-template-rows: auto 1fr; min-width: 0;
+}
+.thumb { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: var(--line); display: block; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.body { padding: 14px 16px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.name { font: 600 17px/1.3 var(--font-body); margin: 0; }
+.place { color: var(--muted); font-size: 14px; margin: 0; }
+.title { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
+.meta { font: 400 13px/1.5 var(--font-mono); color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1 var(--font-body);
+  padding: 9px 14px; border-radius: 8px; text-decoration: none; border: 1px solid var(--line); color: var(--fg); background: transparent;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 700 11px/1 var(--font-body); letter-spacing: .1em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; justify-self: start; }
+.pill.live { background: var(--live-soft); color: var(--live); }
+.pill.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--live); animation: blink 1.6s ease-in-out infinite; }
+.pill.soon { background: var(--soon-soft); color: var(--soon); }
+.thumb .pill { position: absolute; top: 10px; left: 10px; }
+@keyframes blink { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .pill.live::before { animation: none; } }
+
+/* Recent + directory: compact rows */
+.rows { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 14px 16px; border-top: 1px solid var(--line); align-items: center; }
+.row:first-child { border-top: 0; }
+.row .info { display: grid; gap: 2px; min-width: 0; }
+.row .usual { font: 400 13px/1.5 var(--font-mono); color: var(--fg); margin: 0; }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+.add { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 10px; }
+.add p, .add ul { margin: 0; max-width: 65ch; }
+.add ul { padding-left: 20px; }
+footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px; }
+footer p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Catholic Mainstream · Online Ministry</span>
+    <h1>Parish Livestreams</h1>
+    <p class="lede">Masses, adoration and devotions streaming from parishes and shrines around the world. Who is live right now comes first, then what is starting soon. No ads, no sign-in.</p>
+    <div class="pulse" id="pulse" aria-live="polite"></div>
+  </header>
+
+  <div class="filters" role="search">
+    <input id="q" type="search" placeholder="Search parish, city or country" aria-label="Search parishes">
+    <select id="country" aria-label="Country"><option value="">All countries</option></select>
+    <select id="language" aria-label="Language"><option value="">All languages</option></select>
+  </div>
+
+  <section id="live-section" aria-labelledby="h-live">
+    <h2 id="h-live">Live now <span class="count" id="c-live"></span></h2>
+    <div class="grid" id="live"></div>
+  </section>
+
+  <section id="soon-section" aria-labelledby="h-soon">
+    <h2 id="h-soon">Starting soon <span class="count" id="c-soon"></span></h2>
+    <div class="grid" id="soon"></div>
+  </section>
+
+  <section aria-labelledby="h-recent">
+    <h2 id="h-recent">Recently streamed <span class="count" id="c-recent"></span></h2>
+    <div class="rows" id="recent"></div>
+  </section>
+
+  <section aria-labelledby="h-all">
+    <h2 id="h-all">All parishes &amp; shrines <span class="count" id="c-all"></span></h2>
+    <div class="rows" id="all"></div>
+  </section>
+
+  <section class="add" aria-labelledby="h-add">
+    <h2 id="h-add">Add a parish</h2>
+    <p>Know a parish that streams Mass? Send its name, city and country, and the link to its YouTube channel. Once it is added, this page picks up its streams automatically.</p>
+    <p id="add-contact"></p>
+  </section>
+
+  <footer>
+    <p>Times are shown in your time zone. "Usually" times are learned from each parish's past streams.</p>
+    <p id="updated"></p>
+  </footer>
+</div>
+
+<script>
+// Set this to a Google Form (or similar) link to show an "Add a parish" button.
+const SUBMIT_URL = '';
+const REFRESH_MS = 2 * 60 * 1000;
+// Live status is committed to its own branch by GitHub Actions so the bot
+// never writes to main; data/status.json is only a fallback snapshot.
+const STATUS_URL = 'https://raw.githubusercontent.com/eddiezaragoza/Playground/marisol-data/status.json';
+const SOON_WINDOW_MS = 24 * 3600e3;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let channels = [], status = { channels: {} };
+
+function ago(iso) {
+  if (!iso) return '';
+  const s = (Date.now() - Date.parse(iso)) / 1000;
+  if (s < 90) return 'just now';
+  if (s < 3600) return `${Math.round(s / 60)} min ago`;
+  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+  return `${Math.round(s / 86400)} d ago`;
+}
+const fmtLocal = (iso, opts) => new Date(iso).toLocaleString(undefined, opts ?? { weekday: 'short', hour: 'numeric', minute: '2-digit' });
+const fmtIn = (iso, tz) => new Date(iso).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit', timeZone: tz, timeZoneName: 'short' });
+
+// Finds weekday + time slots (in the parish's own time zone, to the nearest
+// 15 min) that recur at least twice in the stream history.
+function usualTimes(ch, history) {
+  const tz = ch.timezone || 'UTC';
+  const fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' });
+  const counts = new Map();
+  for (const h of history ?? []) {
+    if (!h.startedAt) continue;
+    const p = Object.fromEntries(fmt.formatToParts(new Date(h.startedAt)).map((x) => [x.type, x.value]));
+    const mins = Math.round((+p.hour * 60 + +p.minute) / 15) * 15;
+    const key = `${p.weekday}|${mins}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const order = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return [...counts].filter(([, n]) => n >= 2)
+    .map(([k]) => k.split('|'))
+    .sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0]) || a[1] - b[1])
+    .map(([d, m]) => {
+      const h = Math.floor(m / 60) % 24, mm = String(m % 60).padStart(2, '0');
+      return `${d} ${(h % 12) || 12}:${mm} ${h < 12 ? 'AM' : 'PM'}`;
+    });
+}
+
+function place(ch) { return [...new Set([ch.city, ch.country].filter(Boolean))].join(', '); }
+
+function card(ch, cur, kind) {
+  const when = kind === 'live'
+    ? (cur.startedAt ? `Started ${ago(cur.startedAt)}` : 'Streaming now')
+    : `${fmtLocal(cur.scheduledFor)} your time · ${fmtIn(cur.scheduledFor, ch.timezone)} local`;
+  return `<article class="card">
+    <a class="thumb" href="${esc(cur.url)}" target="_blank" rel="noopener">
+      <img src="${esc(cur.thumbnail)}" alt="" loading="lazy">
+      <span class="pill ${kind === 'live' ? 'live' : 'soon'}">${kind === 'live' ? 'Live' : 'Upcoming'}</span>
+    </a>
+    <div class="body">
+      <h3 class="name">${esc(ch.name)}</h3>
+      <p class="place">${esc(place(ch))}${ch.language ? ' · ' + esc(ch.language) : ''}</p>
+      <p class="title">${esc(cur.title)}</p>
+      <p class="meta">${esc(when)}</p>
+      <div class="actions">
+        <a class="btn primary" href="${esc(cur.url)}" target="_blank" rel="noopener">${kind === 'live' ? 'Watch now' : 'Set reminder on YouTube'}</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function row(ch, st, showLast) {
+  const usual = usualTimes(ch, st?.history);
+  const last = st?.lastLiveAt;
+  const channelUrl = ch.youtubeChannelId ? `https://www.youtube.com/channel/${ch.youtubeChannelId}/streams` : ch.website;
+  return `<div class="row">
+    <div class="info">
+      <h3 class="name">${esc(ch.name)}${ch.note ? ` <span class="place">· ${esc(ch.note)}</span>` : ''}</h3>
+      <p class="place">${esc(place(ch))}${ch.language ? ' · ' + esc(ch.language) : ''}${ch.kind ? ' · ' + esc(ch.kind) : ''}</p>
+      ${usual.length ? `<p class="usual">Usually: ${esc(usual.slice(0, 4).join(', '))} (local)</p>` : ''}
+      ${showLast && last ? `<p class="meta">Last live ${esc(ago(last))}</p>` : ''}
+    </div>
+    <div class="actions"><a class="btn" href="${esc(channelUrl)}" target="_blank" rel="noopener">Past streams</a></div>
+  </div>`;
+}
+
+function matches(ch) {
+  const q = $('q').value.trim().toLowerCase();
+  const c = $('country').value, l = $('language').value;
+  if (c && ch.country !== c) return false;
+  if (l && ch.language !== l) return false;
+  return !q || [ch.name, ch.city, ch.country, ch.note].join(' ').toLowerCase().includes(q);
+}
+
+function render() {
+  const now = Date.now();
+  const list = channels.filter(matches).map((ch) => ({ ch, st: status.channels?.[ch.id] }));
+  const live = list.filter((x) => x.st?.current?.state === 'live');
+  const soon = list.filter((x) => x.st?.current?.state === 'upcoming' && x.st.current.scheduledFor
+      && Date.parse(x.st.current.scheduledFor) - now < SOON_WINDOW_MS)
+    .sort((a, b) => a.st.current.scheduledFor.localeCompare(b.st.current.scheduledFor));
+  const shown = new Set([...live, ...soon].map((x) => x.ch.id));
+  const recent = list.filter((x) => !shown.has(x.ch.id) && x.st?.lastLiveAt)
+    .sort((a, b) => b.st.lastLiveAt.localeCompare(a.st.lastLiveAt));
+  const all = [...list].sort((a, b) => a.ch.country.localeCompare(b.ch.country) || a.ch.name.localeCompare(b.ch.name));
+
+  $('live').innerHTML = live.map((x) => card(x.ch, x.st.current, 'live')).join('');
+  $('soon').innerHTML = soon.map((x) => card(x.ch, x.st.current, 'soon')).join('');
+  $('live-section').hidden = !live.length;
+  $('soon-section').hidden = !soon.length;
+  $('recent').innerHTML = recent.map((x) => row(x.ch, x.st, true)).join('') || '<div class="row"><p class="empty">No other recent streams yet. This list fills in as parishes go live.</p></div>';
+  $('all').innerHTML = all.map((x) => row(x.ch, x.st, false)).join('') || '<div class="row"><p class="empty">No parishes match those filters.</p></div>';
+
+  $('c-live').textContent = live.length || '';
+  $('c-soon').textContent = soon.length || '';
+  $('c-recent').textContent = recent.length || '';
+  $('c-all').textContent = all.length;
+
+  const countries = new Set(channels.map((c) => c.country));
+  $('pulse').innerHTML = `<span class="${live.length ? 'on' : ''}"><b>${live.length}</b> live now</span>`
+    + `<span><b>${soon.length}</b> starting within 24 h</span>`
+    + `<span><b>${channels.length}</b> channels · <b>${countries.size}</b> countries</span>`;
+  $('updated').textContent = status.generatedAt ? `Live status checked ${ago(status.generatedAt)}.` : '';
+}
+
+function fillSelect(id, values) {
+  const sel = $(id);
+  for (const v of [...new Set(values)].filter(Boolean).sort()) sel.add(new Option(v, v));
+}
+
+async function load() {
+  const bust = `?t=${Math.floor(Date.now() / 60000)}`;
+  try {
+    const [c, s] = await Promise.all([
+      fetch('data/channels.json' + bust).then((r) => r.json()),
+      fetch(STATUS_URL + bust).then((r) => r.ok ? r.json() : Promise.reject())
+        .catch(() => fetch('data/status.json' + bust).then((r) => r.json()))
+        .catch(() => ({ channels: {} })),
+    ]);
+    if (!channels.length) {
+      fillSelect('country', c.map((x) => x.country));
+      fillSelect('language', c.map((x) => x.language));
+    }
+    channels = c; status = s;
+    render();
+  } catch (e) {
+    $('pulse').textContent = 'Could not load the parish list. Refresh the page to try again.';
+  }
+}
+
+for (const id of ['q', 'country', 'language']) $(id).addEventListener('input', render);
+$('add-contact').innerHTML = SUBMIT_URL
+  ? `<a class="btn primary" href="${esc(SUBMIT_URL)}" target="_blank" rel="noopener">Submit a parish</a>`
+  : 'Submissions open soon.';
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>

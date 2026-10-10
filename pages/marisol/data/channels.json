@@ -1,0 +1,69 @@
+[
+  {
+    "id": "st-benedicts-burwood",
+    "name": "St Benedict's Parish, Burwood",
+    "kind": "Parish",
+    "city": "Melbourne, VIC",
+    "country": "Australia",
+    "language": "English",
+    "timezone": "Australia/Melbourne",
+    "youtubeChannelId": "UCKnBdffdcxV9-Pi6rU9y7UQ",
+    "website": "https://www.youtube.com/@StBensBurwood",
+    "note": "24/7 Perpetual Adoration"
+  },
+  {
+    "id": "vatican-news",
+    "name": "Vatican News",
+    "kind": "Holy See",
+    "city": "Vatican City",
+    "country": "Vatican City",
+    "language": "Multilingual",
+    "timezone": "Europe/Rome",
+    "youtubeChannelId": "UC7E-LYc1wivk33iyt5bR5zQ",
+    "website": "https://www.vaticannews.va"
+  },
+  {
+    "id": "fatima",
+    "name": "Santuário de Fátima",
+    "kind": "Shrine",
+    "city": "Fátima",
+    "country": "Portugal",
+    "language": "Portuguese",
+    "timezone": "Europe/Lisbon",
+    "youtubeChannelId": "UC6kSAPg9SQi26CZYxmEt5Bg",
+    "website": "https://www.fatima.pt"
+  },
+  {
+    "id": "ewtn",
+    "name": "EWTN",
+    "kind": "Network",
+    "city": "Irondale, AL",
+    "country": "United States",
+    "language": "English",
+    "timezone": "America/Chicago",
+    "youtubeChannelId": "UCijDos-LUTh9RQvSCMQqN6Q",
+    "website": "https://www.ewtn.com"
+  },
+  {
+    "id": "ewtn-espanol",
+    "name": "EWTN Español",
+    "kind": "Network",
+    "city": "Irondale, AL",
+    "country": "United States",
+    "language": "Spanish",
+    "timezone": "America/Chicago",
+    "youtubeChannelId": "UC5IhMW3nYXyBODozNVFwtOg",
+    "website": "https://www.ewtnespanol.com"
+  },
+  {
+    "id": "catholictv",
+    "name": "CatholicTV Network",
+    "kind": "Network",
+    "city": "Watertown, MA",
+    "country": "United States",
+    "language": "English",
+    "timezone": "America/New_York",
+    "youtubeChannelId": "UCORAZZmab8apqy2TMHZlZVQ",
+    "website": "https://www.catholictv.org"
+  }
+]

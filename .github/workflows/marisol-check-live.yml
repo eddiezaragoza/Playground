@@ -1,0 +1,47 @@
+# Live status for pages/marisol (Parish Livestreams).
+# Writes status.json to the marisol-data branch only, so main (and the
+# site deploy) never gets bot commits.
+name: Marisol livestream check
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'   # GitHub may delay scheduled runs by a few minutes
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['pages/marisol/data/channels.json', 'pages/marisol/tools/**']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: marisol-check-live
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check out status branch
+        run: |
+          git fetch --depth 1 origin marisol-data && git worktree add status origin/marisol-data \
+            || { git worktree add --detach status && git -C status checkout --orphan marisol-data && git -C status rm -rfq . ; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check every channel
+        env:
+          # Optional. Without it the checker reads public YouTube pages instead.
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node pages/marisol/tools/check-live.mjs --status status/status.json
+      - name: Commit status
+        working-directory: status
+        run: |
+          git config user.name "livestream-bot"
+          git config user.email "livestream-bot@users.noreply.github.com"
+          git add status.json
+          git diff --cached --quiet && exit 0
+          git commit -qm "Update live status"
+          git push -q origin HEAD:marisol-data
