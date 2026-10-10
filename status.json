@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-10-10T03:15:48.158Z",
+  "channels": {
+    "st-benedicts-burwood": {
+      "current": {
+        "state": "live",
+        "videoId": "qz8YE61BoXM",
+        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "startedAt": null
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": "2026-10-10T03:15:48.158Z",
+      "history": [
+        {
+          "videoId": "qz8YE61BoXM",
+          "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+          "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+          "startedAt": "2026-10-10T03:15:48.158Z",
+          "lastSeenLiveAt": "2026-10-10T03:15:48.158Z"
+        }
+      ]
+    },
+    "vatican-news": {
+      "current": {
+        "state": "live",
+        "videoId": "03pYP2Nmreo",
+        "title": "Vatican Media Live",
+        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
+        "startedAt": null
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": "2026-10-10T03:15:48.158Z",
+      "history": [
+        {
+          "videoId": "03pYP2Nmreo",
+          "title": "Vatican Media Live",
+          "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+          "startedAt": "2026-10-10T03:15:48.158Z",
+          "lastSeenLiveAt": "2026-10-10T03:15:48.158Z"
+        }
+      ]
+    },
+    "fatima": {
+      "current": {
+        "state": "offline"
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": null,
+      "history": []
+    },
+    "ewtn": {
+      "current": {
+        "state": "upcoming",
+        "videoId": "UDjZw7EAqeQ",
+        "title": "Napa Institute Mass and Eucharistic Procession from NYC",
+        "url": "https://www.youtube.com/watch?v=UDjZw7EAqeQ",
+        "thumbnail": "https://i.ytimg.com/vi/UDjZw7EAqeQ/hqdefault.jpg",
+        "scheduledFor": "2026-10-13T20:00:00.000Z"
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": null,
+      "history": []
+    },
+    "ewtn-espanol": {
+      "current": {
+        "state": "offline"
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": null,
+      "history": []
+    },
+    "catholictv": {
+      "current": {
+        "state": "offline"
+      },
+      "checkedAt": "2026-10-10T03:15:48.158Z",
+      "lastLiveAt": null,
+      "history": []
+    }
+  }
+}
