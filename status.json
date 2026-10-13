@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2026-10-13T20:31:22.791Z",
+  "generatedAt": "2026-10-13T23:50:45.586Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
         "state": "live",
-        "videoId": "qz8YE61BoXM",
-        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
-        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
-        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "videoId": "VGPNzgBsZRQ",
+        "title": "Wednesday 14th October 2026 - St Benedict's, Melbourne. Welcome!",
+        "url": "https://www.youtube.com/watch?v=VGPNzgBsZRQ",
+        "thumbnail": "https://i.ytimg.com/vi/VGPNzgBsZRQ/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
-      "lastLiveAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
+      "lastLiveAt": "2026-10-13T23:50:45.586Z",
       "history": [
+        {
+          "videoId": "VGPNzgBsZRQ",
+          "title": "Wednesday 14th October 2026 - St Benedict's, Melbourne. Welcome!",
+          "url": "https://www.youtube.com/watch?v=VGPNzgBsZRQ",
+          "startedAt": "2026-10-13T23:50:45.586Z",
+          "lastSeenLiveAt": "2026-10-13T23:50:45.586Z"
+        },
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
@@ -33,15 +40,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
-      "lastLiveAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
+      "lastLiveAt": "2026-10-13T23:50:45.586Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-10T03:15:48.158Z",
-          "lastSeenLiveAt": "2026-10-13T20:31:22.791Z"
+          "lastSeenLiveAt": "2026-10-13T23:50:45.586Z"
         }
       ]
     },
@@ -49,21 +56,21 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
       "lastLiveAt": null,
       "history": []
     },
     "ewtn": {
       "current": {
-        "state": "live",
-        "videoId": "UDjZw7EAqeQ",
-        "title": "Napa Institute Mass and Eucharistic Procession from NYC",
-        "url": "https://www.youtube.com/watch?v=UDjZw7EAqeQ",
-        "thumbnail": "https://i.ytimg.com/vi/UDjZw7EAqeQ/hqdefault.jpg",
-        "startedAt": null,
+        "state": "upcoming",
+        "videoId": "uDSJvDdSlFk",
+        "title": "Napa Institute 2026 Faith & Business Conference",
+        "url": "https://www.youtube.com/watch?v=uDSJvDdSlFk",
+        "thumbnail": "https://i.ytimg.com/vi/uDSJvDdSlFk/hqdefault.jpg",
+        "scheduledFor": "2026-10-14T12:00:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
       "lastLiveAt": "2026-10-13T20:31:22.791Z",
       "history": [
         {
@@ -79,7 +86,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -87,7 +94,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-13T23:50:45.586Z",
       "lastLiveAt": null,
       "history": []
     }
