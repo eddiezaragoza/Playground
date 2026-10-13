@@ -1,0 +1,13 @@
+# Cloudflare Worker for eddiezaragoza.com/gym (the rest of the site stays on GitHub Pages).
+# Secrets are NOT in this file. Set them with: npx wrangler secret put NOTION_TOKEN | APP_PASSWORD | COOKIE_SECRET
+name = "gym-buddy"
+main = "src/worker.js"
+compatibility_date = "2026-06-01"
+workers_dev = false
+routes = [{ pattern = "eddiezaragoza.com/gym*", zone_name = "eddiezaragoza.com" }]
+
+# Ship the browser files as plain text strings inside the Worker bundle.
+[[rules]]
+type = "Text"
+globs = ["**/client/*.html", "**/client/*.js", "**/client/*.css"]
+fallthrough = false

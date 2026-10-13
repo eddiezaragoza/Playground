@@ -18,6 +18,13 @@ Personal portfolio website showcasing my Salesforce expertise, development skill
 | Styling | CSS3 (custom properties, responsive grid) |
 | Interactivity | Vanilla JavaScript (typing animation, scroll effects, mobile nav) |
 
+## Gym Buddy (eddiezaragoza.com/gym)
+
+A phone-first workout logger that reads the planned session from Notion and writes your results back. It runs as a
+Cloudflare Worker on the `/gym*` route, so the Notion token stays server-side, and it's password protected. Setup,
+secrets (`NOTION_TOKEN`, `APP_PASSWORD`, `COOKIE_SECRET`) and the Plan JSON format are in
+[gym-buddy/README.md](gym-buddy/README.md).
+
 ## Contact
 
 - Email: [edward.zaragoza@gmail.com](mailto:edward.zaragoza@gmail.com)

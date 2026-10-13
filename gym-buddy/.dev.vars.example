@@ -1,0 +1,4 @@
+# Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
+NOTION_TOKEN=ntn_xxx
+APP_PASSWORD=pick-a-long-passphrase
+COOKIE_SECRET=run: openssl rand -base64 32
