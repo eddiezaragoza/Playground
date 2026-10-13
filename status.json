@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T14:58:05.297Z",
+  "generatedAt": "2026-10-13T20:31:22.791Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
-      "lastLiveAt": "2026-10-13T14:58:05.297Z",
+      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "lastLiveAt": "2026-10-13T20:31:22.791Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-10T03:15:48.158Z",
-          "lastSeenLiveAt": "2026-10-13T14:58:05.297Z"
+          "lastSeenLiveAt": "2026-10-13T20:31:22.791Z"
         }
       ]
     },
@@ -33,15 +33,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
-      "lastLiveAt": "2026-10-13T14:58:05.297Z",
+      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "lastLiveAt": "2026-10-13T20:31:22.791Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-10T03:15:48.158Z",
-          "lastSeenLiveAt": "2026-10-13T14:58:05.297Z"
+          "lastSeenLiveAt": "2026-10-13T20:31:22.791Z"
         }
       ]
     },
@@ -49,29 +49,37 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
+      "checkedAt": "2026-10-13T20:31:22.791Z",
       "lastLiveAt": null,
       "history": []
     },
     "ewtn": {
       "current": {
-        "state": "upcoming",
+        "state": "live",
         "videoId": "UDjZw7EAqeQ",
         "title": "Napa Institute Mass and Eucharistic Procession from NYC",
         "url": "https://www.youtube.com/watch?v=UDjZw7EAqeQ",
         "thumbnail": "https://i.ytimg.com/vi/UDjZw7EAqeQ/hqdefault.jpg",
-        "scheduledFor": "2026-10-13T20:00:00.000Z",
+        "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
-      "lastLiveAt": null,
-      "history": []
+      "checkedAt": "2026-10-13T20:31:22.791Z",
+      "lastLiveAt": "2026-10-13T20:31:22.791Z",
+      "history": [
+        {
+          "videoId": "UDjZw7EAqeQ",
+          "title": "Napa Institute Mass and Eucharistic Procession from NYC",
+          "url": "https://www.youtube.com/watch?v=UDjZw7EAqeQ",
+          "startedAt": "2026-10-13T20:31:22.791Z",
+          "lastSeenLiveAt": "2026-10-13T20:31:22.791Z"
+        }
+      ]
     },
     "ewtn-espanol": {
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
+      "checkedAt": "2026-10-13T20:31:22.791Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -79,7 +87,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-13T14:58:05.297Z",
+      "checkedAt": "2026-10-13T20:31:22.791Z",
       "lastLiveAt": null,
       "history": []
     }
