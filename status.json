@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T13:59:32.376Z",
+  "generatedAt": "2026-10-14T18:24:54.056Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
-      "lastLiveAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
+      "lastLiveAt": "2026-10-14T18:24:54.056Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-14T08:32:53.372Z",
-          "lastSeenLiveAt": "2026-10-14T13:59:32.376Z"
+          "lastSeenLiveAt": "2026-10-14T18:24:54.056Z"
         },
         {
           "videoId": "VGPNzgBsZRQ",
@@ -40,16 +40,23 @@
     "vatican-news": {
       "current": {
         "state": "live",
-        "videoId": "03pYP2Nmreo",
-        "title": "Vatican Media Live",
-        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
-        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
+        "videoId": "XHBrpnX_5bU",
+        "title": "Briefing, 14th october 2026",
+        "url": "https://www.youtube.com/watch?v=XHBrpnX_5bU",
+        "thumbnail": "https://i.ytimg.com/vi/XHBrpnX_5bU/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
-      "lastLiveAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
+      "lastLiveAt": "2026-10-14T18:24:54.056Z",
       "history": [
+        {
+          "videoId": "XHBrpnX_5bU",
+          "title": "Briefing, 14th october 2026",
+          "url": "https://www.youtube.com/watch?v=XHBrpnX_5bU",
+          "startedAt": "2026-10-14T18:24:54.056Z",
+          "lastSeenLiveAt": "2026-10-14T18:24:54.056Z"
+        },
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
@@ -63,7 +70,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -77,15 +84,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
-      "lastLiveAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
+      "lastLiveAt": "2026-10-14T18:24:54.056Z",
       "history": [
         {
           "videoId": "uDSJvDdSlFk",
           "title": "Napa Institute 2026 Faith & Business Conference",
           "url": "https://www.youtube.com/watch?v=uDSJvDdSlFk",
           "startedAt": "2026-10-14T13:59:32.376Z",
-          "lastSeenLiveAt": "2026-10-14T13:59:32.376Z"
+          "lastSeenLiveAt": "2026-10-14T18:24:54.056Z"
         },
         {
           "videoId": "UDjZw7EAqeQ",
@@ -100,7 +107,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -108,7 +115,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "checkedAt": "2026-10-14T18:24:54.056Z",
       "lastLiveAt": null,
       "history": []
     }
