@@ -10,8 +10,17 @@ const int = (v, lo, hi, dflt) => {
 };
 
 // Plan JSON -> a predictable shape. Bad pieces get defaults instead of crashing the page.
+// Text may carry a prefix or code fence ("PLAN {...}"): the claude.ai Notion connector rejects
+// a text property whose whole value is bare JSON, so the coach writes it with a "PLAN " prefix.
+export function extractPlanJson(text) {
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start < 0 || end < start) throw new Error('no JSON object found');
+  return text.slice(start, end + 1);
+}
+
 export function normalizePlan(raw) {
-  const plan = typeof raw === 'string' ? JSON.parse(raw) : raw;
+  const plan = typeof raw === 'string' ? JSON.parse(extractPlanJson(raw)) : raw;
   if (!plan || !Array.isArray(plan.blocks)) throw new Error('Plan JSON needs a "blocks" array');
   return {
     blocks: plan.blocks.map((b, bi) => ({

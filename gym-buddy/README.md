@@ -44,7 +44,8 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
   `Done` row, shown read-only.
 - **Writes** (only on a row that's still `Planned`): `Workout`, `Anchor Lifts`, `RPE`, `Energy`, `Duration (min)`,
   `Stretching Done`, `Pain/Flags`, and `Status = Done`. **Coach Note is never written.**
-- `Plan JSON` (text):
+- `Plan JSON` (text). The page reads from the first `{` to the last `}`, so `PLAN {...}` works. The claude.ai Notion
+  connector rejects a text value that is bare JSON, so the coach writes it with that prefix:
 
 ```json
 {"blocks":[{"name":"Superset 1","rest_sec":90,"exercises":[

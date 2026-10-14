@@ -47,6 +47,12 @@ test('missing results become skipped, not a crash', () => {
   const plan = normalizePlan(PLAN);
   assert.equal(buildSummary(plan, cleanResults(plan, null)).workout, 'DB RDL (skipped)\nPush-up (skipped)');
 });
+test('plan text with PLAN prefix or code fence parses', () => {
+  const j = JSON.stringify(PLAN);
+  assert.equal(normalizePlan(`PLAN ${j}`).blocks[0].exercises[0].name, 'DB RDL');
+  assert.equal(normalizePlan('```json\n' + j + '\n```').blocks.length, 1);
+  assert.throws(() => normalizePlan('PLAN none yet'));
+});
 test('bad plan throws', () => assert.throws(() => normalizePlan('{"nope":1}')));
 test('rich text chunks at 2000', () => {
   const rt = richText('a'.repeat(4500));
