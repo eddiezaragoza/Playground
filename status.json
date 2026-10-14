@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T08:32:53.372Z",
+  "generatedAt": "2026-10-14T13:59:32.376Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
-      "lastLiveAt": "2026-10-14T08:32:53.372Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "lastLiveAt": "2026-10-14T13:59:32.376Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-14T08:32:53.372Z",
-          "lastSeenLiveAt": "2026-10-14T08:32:53.372Z"
+          "lastSeenLiveAt": "2026-10-14T13:59:32.376Z"
         },
         {
           "videoId": "VGPNzgBsZRQ",
@@ -47,15 +47,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
-      "lastLiveAt": "2026-10-14T08:32:53.372Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "lastLiveAt": "2026-10-14T13:59:32.376Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-10T03:15:48.158Z",
-          "lastSeenLiveAt": "2026-10-14T08:32:53.372Z"
+          "lastSeenLiveAt": "2026-10-14T13:59:32.376Z"
         }
       ]
     },
@@ -63,23 +63,30 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
       "lastLiveAt": null,
       "history": []
     },
     "ewtn": {
       "current": {
-        "state": "upcoming",
+        "state": "live",
         "videoId": "uDSJvDdSlFk",
         "title": "Napa Institute 2026 Faith & Business Conference",
         "url": "https://www.youtube.com/watch?v=uDSJvDdSlFk",
         "thumbnail": "https://i.ytimg.com/vi/uDSJvDdSlFk/hqdefault.jpg",
-        "scheduledFor": "2026-10-14T12:00:00.000Z",
+        "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
-      "lastLiveAt": "2026-10-13T20:31:22.791Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
+      "lastLiveAt": "2026-10-14T13:59:32.376Z",
       "history": [
+        {
+          "videoId": "uDSJvDdSlFk",
+          "title": "Napa Institute 2026 Faith & Business Conference",
+          "url": "https://www.youtube.com/watch?v=uDSJvDdSlFk",
+          "startedAt": "2026-10-14T13:59:32.376Z",
+          "lastSeenLiveAt": "2026-10-14T13:59:32.376Z"
+        },
         {
           "videoId": "UDjZw7EAqeQ",
           "title": "Napa Institute Mass and Eucharistic Procession from NYC",
@@ -93,7 +100,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -101,7 +108,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-14T08:32:53.372Z",
+      "checkedAt": "2026-10-14T13:59:32.376Z",
       "lastLiveAt": null,
       "history": []
     }
