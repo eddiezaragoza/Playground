@@ -53,8 +53,10 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
 
 - **Workout** is written one line per exercise: `DB RDL 3x10 @ 30s` when every set matched, `DB RDL 10@30s, 10@35s`
   when they didn't, and `DB RDL (skipped)` when no set was ticked.
-- **Anchor Lifts** is the top completed set for each anchor lift: the heaviest weight, with the most reps breaking a
+- **Anchor Lifts** is the top completed set (`DB RDL 35s x10`) for each anchor lift: the heaviest weight, with the most reps breaking a
   tie.
+- Each exercise also has an optional RPE (5-10) and a note, added to both texts:
+  `Goblet Squat 2x10 @ 30 lb (RPE 6) - stopped after round 2, left knee` and `Goblet Squat 30 lb x10 (RPE 6)`.
 
 ## Security
 
