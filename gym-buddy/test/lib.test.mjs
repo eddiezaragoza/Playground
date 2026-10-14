@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizePlan, cleanResults, buildSummary, formatExercise, topSet, richText, cleanFields, isNotionId } from '../src/lib.js';
+import { normalizePlan, cleanResults, cleanExtras, buildSummary, formatExercise, topSet, richText, cleanFields, isNotionId } from '../src/lib.js';
 
 const PLAN = {"blocks":[{"name":"Superset 1","rest_sec":90,"exercises":[
   {"name":"DB RDL","sets":3,"reps":"10","weight":"30s","anchor":true,"cue":"hips back, flat back"},
@@ -25,8 +25,23 @@ test('summary end to end', () => {
   const res = cleanResults(plan, [[[s('10','30s'), s('10','35s'), s('10','35s')], [s('12',''), s('12','', false)]]]);
   assert.deepEqual(buildSummary(plan, res), {
     workout: 'DB RDL 10@30s, 10@35s, 10@35s\nPush-up 1x12',
-    anchorLifts: 'DB RDL 10 @ 35s',
+    anchorLifts: 'DB RDL 35s x10',
   });
+});
+test('per-exercise RPE and note', () => {
+  const plan = normalizePlan(PLAN);
+  const res = cleanResults(plan, [[[s('10','30s'), s('10','30s'), s('10','30s')], [s('12',''), s('12','', false)]]]);
+  const ex = cleanExtras(plan, [[{ rpe: '7', note: ' felt strong\n' }, { rpe: '', note: 'wrist sore' }]]);
+  assert.deepEqual(buildSummary(plan, res, ex), {
+    workout: 'DB RDL 3x10 @ 30s (RPE 7) - felt strong\nPush-up 1x12 - wrist sore',
+    anchorLifts: 'DB RDL 30s x10 (RPE 7)',
+  });
+});
+test('note on a skipped exercise is kept; bad RPE dropped', () => {
+  const plan = normalizePlan(PLAN);
+  const ex = cleanExtras(plan, [[{ rpe: 42, note: 'knee, skipped' }]]);
+  assert.equal(ex[0][0].rpe, null);
+  assert.equal(buildSummary(plan, cleanResults(plan, null), ex).workout, 'DB RDL (skipped) - knee, skipped\nPush-up (skipped)');
 });
 test('missing results become skipped, not a crash', () => {
   const plan = normalizePlan(PLAN);

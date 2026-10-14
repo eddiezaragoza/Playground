@@ -45,13 +45,28 @@ export function cleanResults(plan, results) {
 
 const repsWeight = (s, sep) => (s.weight ? `${s.reps}${sep}${s.weight}` : s.reps);
 
-// "DB RDL 3x10 @ 30s", or per-set detail when sets differ, or "(skipped)".
-export function formatExercise(name, sets) {
+// Per-exercise extras from the browser: extras[blockIndex][exerciseIndex] = {rpe, note}.
+export function cleanExtras(plan, extras) {
+  return plan.blocks.map((b, bi) =>
+    b.exercises.map((_, ei) => {
+      const x = (extras && extras[bi] && extras[bi][ei]) || {};
+      const n = Number(x.rpe);
+      const rpe = x.rpe !== '' && x.rpe != null && Number.isFinite(n) && n >= 1 && n <= 10 ? Math.round(n * 2) / 2 : null;
+      return { rpe, note: str(x.note, 300).replace(/\s+/g, ' ') };
+    }),
+  );
+}
+
+const withExtras = (text, x) => `${text}${x && x.rpe != null ? ` (RPE ${x.rpe})` : ''}${x && x.note ? ` - ${x.note}` : ''}`;
+
+// "DB RDL 3x10 @ 30s", or per-set detail when sets differ, or "(skipped)"; then " (RPE 7) - note".
+export function formatExercise(name, sets, extra) {
   const done = sets.filter((s) => s.done);
-  if (!done.length) return `${name} (skipped)`;
-  const same = done.every((s) => s.reps === done[0].reps && s.weight === done[0].weight);
-  if (same) return `${name} ${done.length}x${repsWeight(done[0], ' @ ')}`;
-  return `${name} ${done.map((s) => repsWeight(s, '@')).join(', ')}`;
+  let text;
+  if (!done.length) text = `${name} (skipped)`;
+  else if (done.every((s) => s.reps === done[0].reps && s.weight === done[0].weight)) text = `${name} ${done.length}x${repsWeight(done[0], ' @ ')}`;
+  else text = `${name} ${done.map((s) => repsWeight(s, '@')).join(', ')}`;
+  return withExtras(text, extra);
 }
 
 const leadingNumber = (v) => {
@@ -71,16 +86,18 @@ export function topSet(sets) {
   return best;
 }
 
-export function buildSummary(plan, results) {
+// Anchor format matches the coach's existing log style: "Floor press 30s x10 (RPE 7)".
+export function buildSummary(plan, results, extras) {
   const workout = [];
   const anchors = [];
   plan.blocks.forEach((b, bi) =>
     b.exercises.forEach((e, ei) => {
       const sets = results[bi][ei];
-      workout.push(formatExercise(e.name, sets));
+      const x = extras ? extras[bi][ei] : null;
+      workout.push(formatExercise(e.name, sets, x));
       if (e.anchor) {
         const t = topSet(sets);
-        if (t) anchors.push(`${e.name} ${repsWeight(t, ' @ ')}`);
+        if (t) anchors.push(withExtras(`${e.name} ${t.weight ? `${t.weight} ` : ''}x${t.reps}`, x && { rpe: x.rpe }));
       }
     }),
   );

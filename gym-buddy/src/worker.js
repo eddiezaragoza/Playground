@@ -5,7 +5,7 @@ import LOGIN_HTML from './client/login.html';
 import APP_JS from './client/app.js';
 import APP_CSS from './client/app.css';
 import {
-  normalizePlan, cleanResults, buildSummary, cleanFields, richText, plainText, normalizeId, isNotionId,
+  normalizePlan, cleanResults, cleanExtras, buildSummary, cleanFields, richText, plainText, normalizeId, isNotionId,
 } from './lib.js';
 
 // The one data source this Worker may read or write. Hardcoded on purpose.
@@ -158,7 +158,7 @@ async function saveSession(env, body) {
   if (raw) {
     try {
       const plan = normalizePlan(raw);
-      summary = buildSummary(plan, cleanResults(plan, body.results));
+      summary = buildSummary(plan, cleanResults(plan, body.results), cleanExtras(plan, body.extras));
     } catch (e) { return json({ error: `Plan JSON is invalid: ${e.message}` }, 422); }
   }
 
@@ -184,8 +184,9 @@ async function saveSession(env, body) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    // Never serve the login form (or anything else) over plain HTTP.
-    if (url.protocol === 'http:' && url.hostname !== '127.0.0.1' && url.hostname !== 'localhost') {
+    // Never serve the login form (or anything else) over plain HTTP. ALLOW_HTTP is only set in local .dev.vars
+    // (wrangler dev presents the production hostname, so a hostname check can't detect local runs).
+    if (url.protocol === 'http:' && env.ALLOW_HTTP !== '1') {
       url.protocol = 'https:';
       return Response.redirect(url.toString(), 301);
     }

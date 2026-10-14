@@ -68,6 +68,17 @@ button.primary {
 }
 button.primary:disabled { opacity: .5; }
 
+/* per-exercise RPE + note */
+.ex-extras { margin-top: 10px; display: grid; gap: 8px; }
+.ex-extras-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ex-extras-row .set-label { width: 44px; }
+.chips.small { gap: 4px; }
+.chips.small .chip { min-width: 38px; height: 38px; font-size: 14px; }
+.note-btn { margin-left: auto; }
+.ex-note-input {
+  width: 100%; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #0d0f13; padding: 0 10px; font-size: 16px;
+}
+
 /* session fields */
 .field { display: grid; gap: 6px; margin-top: 12px; }
 .field:first-of-type { margin-top: 8px; }

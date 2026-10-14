@@ -35,6 +35,7 @@
       fields: { energy: s.fields.energy, rpe: s.fields.rpe, duration: s.fields.duration, stretching: s.fields.stretching, pain: s.fields.pain || '' },
       results: s.plan ? s.plan.blocks.map((b) => b.exercises.map((e) =>
         Array.from({ length: e.sets }, () => ({ reps: e.reps, weight: e.weight, done: false })))) : [],
+      extras: s.plan ? s.plan.blocks.map((b) => b.exercises.map(() => ({ rpe: null, note: '' }))) : [],
     };
   }
 
@@ -49,6 +50,10 @@
       const old = saved.results?.[bi]?.[ei]?.[si];
       return old ? { reps: String(old.reps ?? ''), weight: String(old.weight ?? ''), done: !!old.done } : set;
     })));
+    fresh.extras = fresh.extras.map((blk, bi) => blk.map((x, ei) => {
+      const old = saved.extras?.[bi]?.[ei];
+      return old ? { rpe: old.rpe ?? null, note: String(old.note ?? '') } : x;
+    }));
     return fresh;
   }
 
@@ -175,6 +180,29 @@
     return row;
   }
 
+  // Optional RPE (5-10, tap again to clear) and a note for one exercise.
+  function exerciseExtras(e, bi, ei) {
+    const x = state.extras[bi][ei];
+    const chipsWrap = h('div', { class: 'chips small', role: 'group', 'aria-label': `${e.name} RPE` });
+    for (let v = 5; v <= 10; v++) {
+      const btn = h('button', { type: 'button', class: 'chip', 'aria-pressed': String(x.rpe === v) }, String(v));
+      btn.addEventListener('click', () => {
+        x.rpe = x.rpe === v ? null : v;
+        for (const c of chipsWrap.children) c.setAttribute('aria-pressed', String(Number(c.textContent) === x.rpe));
+        persist();
+      });
+      chipsWrap.append(btn);
+    }
+    const note = h('input', { type: 'text', class: 'ex-note-input', maxlength: '300', placeholder: 'Note (e.g. knee felt off on set 2)', 'aria-label': `${e.name} note`, hidden: !x.note });
+    note.value = x.note;
+    note.addEventListener('input', () => { x.note = note.value; persist(); });
+    const noteBtn = h('button', { type: 'button', class: 'small note-btn', 'aria-label': `${e.name} add note`, hidden: !!x.note }, '+ Note');
+    noteBtn.addEventListener('click', () => { note.hidden = false; noteBtn.hidden = true; note.focus(); });
+    return h('div', { class: 'ex-extras' },
+      h('div', { class: 'ex-extras-row' }, h('span', { class: 'set-label' }, 'RPE'), chipsWrap, noteBtn),
+      note);
+  }
+
   function renderPlanned(s) {
     const kids = [];
     if (s.coachNote) kids.push(h('div', { class: 'card note' }, h('div', { class: 'muted' }, 'Coach note'), s.coachNote));
@@ -191,6 +219,7 @@
           h('div', { class: 'target' }, `Target ${targetText(e)}`),
           e.cue ? h('div', { class: 'cue' }, e.cue) : null,
           Array.from({ length: e.sets }, (_, si) => setRow(b, bi, e, ei, si)),
+          exerciseExtras(e, bi, ei),
         )),
       ));
     });
@@ -252,7 +281,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
-        body: JSON.stringify({ id: state.id, fields: state.fields, results: state.results }),
+        body: JSON.stringify({ id: state.id, fields: state.fields, results: state.results, extras: state.extras }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw new Error('You were logged out. Your progress is kept on this phone; reload and log in, then save again.');
