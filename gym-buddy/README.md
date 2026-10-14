@@ -59,6 +59,24 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
 - Each exercise also has an optional RPE (5-10) and a note, added to both texts:
   `Goblet Squat 2x10 @ 30 lb (RPE 6) - stopped after round 2, left knee` and `Goblet Squat 30 lb x10 (RPE 6)`.
 
+## Exercise library (how-to cards)
+
+- Notion **Exercise Library** (data source `cf4fdd21-651b-4f8f-bfa8-baaf3fba7945`, under Claude Brain). The Worker
+  reads it **read-only** and attaches a how-to card to each planned exercise: start/end photos flipping like a GIF,
+  steps, cue, and a YouTube link. If the library can't be read, the workout still loads (cards fall back to a YouTube
+  search). The Gym Buddy integration must be connected to this database too.
+- Matching ignores case and punctuation, accepts a trailing "s", checks **Also Called**, then retries without
+  details like `(strict, max)` or `, nose-breathing pace`.
+- Photos: [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense), resized to 640px and
+  served from `/images/exercises/` by GitHub Pages. Only URLs under `https://eddiezaragoza.com/images/exercises/` and
+  YouTube links are honored, since coaches can add rows.
+- Source of truth: `library/exercises.seed.json`. To add exercises, edit the seed, then:
+
+```bash
+python3 tools/fetch_photos.py <free-exercise-db dist/exercises.json> <download dir>
+NOTION_TOKEN=... python3 tools/build_library.py upsert cf4fdd21-651b-4f8f-bfa8-baaf3fba7945 <exercises.json>
+```
+
 ## Security
 
 - Every route except the login form, manifest, icon and CSS requires a valid signed cookie (HMAC-SHA256,
