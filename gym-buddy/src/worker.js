@@ -14,6 +14,7 @@ const NOTION_VERSION = '2026-03-11';
 const COOKIE = 'gb_session';
 const COOKIE_DAYS = 180;
 const BASE = '/gym';
+const MAX_FAILS_PER_DAY = 20; // all logins refused after this many wrong guesses (UTC day)
 
 const SECURITY_HEADERS = {
   'Cache-Control': 'no-store',
@@ -185,7 +186,7 @@ export default {
     const url = new URL(request.url);
     let path = url.pathname.replace(/\/+$/, '') || '/';
     if (path !== BASE && !path.startsWith(`${BASE}/`)) return respond('Not found', 404, 'text/plain');
-    if (!env.NOTION_TOKEN || !env.APP_PASSWORD || !env.COOKIE_SECRET) {
+    if (!env.NOTION_TOKEN || !env.APP_PASSWORD || !env.COOKIE_SECRET || !env.GB_KV) {
       return respond('Gym Buddy is not configured (missing secrets).', 500, 'text/plain');
     }
     const sub = path.slice(BASE.length) || '/';
@@ -197,10 +198,17 @@ export default {
 
     if (sub === '/login' && request.method === 'POST') {
       if (!sameOrigin(request)) return respond('Forbidden', 403, 'text/plain');
+      // Global daily cap, checked before the password so a locked day can't be guessed through.
+      const failKey = `login-fails:${new Date().toISOString().slice(0, 10)}`;
+      const fails = Number(await env.GB_KV.get(failKey)) || 0;
+      if (fails >= MAX_FAILS_PER_DAY) {
+        return respond(LOGIN_HTML.replace('<!--ERROR-->', '<p class="error">Too many wrong passwords today. Try again tomorrow.</p>'), 429);
+      }
       const form = await request.formData().catch(() => null);
       if (form && (await safeEqual(env.COOKIE_SECRET, form.get('password') || '', env.APP_PASSWORD))) {
         return new Response(null, { status: 303, headers: { Location: BASE, 'Set-Cookie': await makeCookie(env), ...SECURITY_HEADERS } });
       }
+      await env.GB_KV.put(failKey, String(fails + 1), { expirationTtl: 2 * 86400 });
       await new Promise((r) => setTimeout(r, 1000)); // slow down guessing
       return respond(LOGIN_HTML.replace('<!--ERROR-->', '<p class="error">Wrong password.</p>'), 401);
     }

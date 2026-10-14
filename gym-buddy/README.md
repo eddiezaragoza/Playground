@@ -62,6 +62,8 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
   `HttpOnly; Secure; SameSite=Strict`, path `/gym`).
 - Logins and saves must come from this site (Origin check), and saves must be JSON. Each wrong password waits 1
   second before answering.
+- After 20 wrong passwords in a UTC day, **all** logins are refused until the next day. The counter lives in the
+  `GB_KV` Workers KV namespace. Phones already logged in are not affected.
 - The Worker has the data source ID hardcoded. Before writing, it fetches the target page and refuses if the page's
   parent isn't that data source. The Notion integration itself is shared with that one database only.
 - Responses send `no-store`, a strict CSP, `X-Frame-Options: DENY`, and `noindex`.

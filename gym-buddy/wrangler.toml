@@ -6,6 +6,11 @@ compatibility_date = "2026-06-01"
 workers_dev = false
 routes = [{ pattern = "eddiezaragoza.com/gym*", zone_name = "eddiezaragoza.com" }]
 
+# Holds the daily failed-login counter (lockout after MAX_FAILS_PER_DAY).
+[[kv_namespaces]]
+binding = "GB_KV"
+id = "26b52d3455c843108eac98200a8c99cb"
+
 # Ship the browser files as plain text strings inside the Worker bundle.
 [[rules]]
 type = "Text"
