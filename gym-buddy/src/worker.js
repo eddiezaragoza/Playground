@@ -6,10 +6,13 @@ import APP_JS from './client/app.js';
 import APP_CSS from './client/app.css';
 import {
   normalizePlan, cleanResults, cleanExtras, buildSummary, cleanFields, richText, plainText, normalizeId, isNotionId,
+  libraryEntry, buildLibraryIndex, findExercise, youtubeSearch,
 } from './lib.js';
 
 // The one data source this Worker may read or write. Hardcoded on purpose.
 const DATA_SOURCE_ID = '0d083beb-504f-4522-b761-d41fc5c9f561';
+// Exercise Library: read-only. Nothing in this Worker writes to it.
+const LIBRARY_SOURCE_ID = 'cf4fdd21-651b-4f8f-bfa8-baaf3fba7945';
 const NOTION_VERSION = '2026-03-11';
 const COOKIE = 'gb_session';
 const COOKIE_DAYS = 180;
@@ -130,9 +133,39 @@ function pageToSession(page, readOnly) {
   return out;
 }
 
+async function loadLibrary(env) {
+  const entries = [];
+  let cursor;
+  do {
+    const d = await notion(env, `/data_sources/${LIBRARY_SOURCE_ID}/query`, 'POST', {
+      page_size: 100, ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    entries.push(...d.results.map((r) => libraryEntry(r.properties)));
+    cursor = d.has_more ? d.next_cursor : null;
+  } while (cursor);
+  return buildLibraryIndex(entries);
+}
+
+// Attach a how-to card to every exercise in the plan. A library failure must never block the workout.
+async function attachHowTo(env, session) {
+  if (!session?.plan) return session;
+  let index = new Map();
+  try { index = await loadLibrary(env); } catch (e) { session.libraryError = e.message; }
+  session.howTo = {};
+  for (const b of session.plan.blocks) {
+    for (const e of b.exercises) {
+      const hit = findExercise(index, e.name);
+      session.howTo[e.name] = hit
+        ? { name: hit.name, match: hit.match, note: hit.note, cue: hit.cue, steps: hit.steps, photos: hit.photos, video: hit.video || youtubeSearch(hit.name) }
+        : { name: e.name, match: 'Missing', note: '', cue: '', steps: [], photos: [], video: youtubeSearch(e.name) };
+    }
+  }
+  return session;
+}
+
 async function getSession(env) {
   const planned = await newestByStatus(env, 'Planned');
-  if (planned) return pageToSession(planned, false);
+  if (planned) return attachHowTo(env, pageToSession(planned, false));
   const done = await newestByStatus(env, 'Done');
   return done ? pageToSession(done, true) : null;
 }

@@ -140,3 +140,56 @@ export function cleanFields(f = {}) {
 
 export const normalizeId = (id) => String(id || '').replace(/-/g, '').toLowerCase();
 export const isNotionId = (id) => /^[0-9a-f]{32}$/.test(normalizeId(id));
+
+// ---------- exercise library ----------
+const PHOTO_PREFIX = 'https://eddiezaragoza.com/images/exercises/';
+const VIDEO_PREFIXES = ['https://www.youtube.com/', 'https://youtube.com/', 'https://youtu.be/', 'https://m.youtube.com/'];
+const normName = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// Notion library row -> what the page needs. Photos must be our own hosted files (served same-origin, so the CSP
+// stays 'self'); videos must be YouTube. Anything else is dropped, since coaches can add rows.
+export function libraryEntry(props) {
+  const text = (k) => plainText(props[k]?.rich_text);
+  const photo = (k) => {
+    const u = props[k]?.url || '';
+    return u.startsWith(PHOTO_PREFIX) && !u.includes('..') ? `/images/exercises/${u.slice(PHOTO_PREFIX.length)}` : null;
+  };
+  const video = props.Video?.url || '';
+  return {
+    name: plainText(props.Name?.title),
+    match: props['Photo Match']?.select?.name || 'None',
+    note: text('Photo Note'),
+    cue: text('Cue'),
+    steps: text('Steps').split('\n').map((s) => s.replace(/^\s*\d+[.)]\s*/, '').trim()).filter(Boolean),
+    photos: [photo('Image Start'), photo('Image End')].filter(Boolean),
+    video: VIDEO_PREFIXES.some((p) => video.startsWith(p)) ? video : null,
+    also: text('Also Called').split(',').map((s) => s.trim()).filter(Boolean),
+  };
+}
+
+// Index by name and every alias; lookups ignore case, spaces and punctuation, and a trailing "s".
+export function buildLibraryIndex(entries) {
+  const index = new Map();
+  for (const e of entries) {
+    for (const n of [e.name, ...e.also]) {
+      const k = normName(n);
+      if (k && !index.has(k)) index.set(k, e);
+    }
+  }
+  return index;
+}
+
+function lookup(index, name) {
+  const k = normName(name);
+  return (k && (index.get(k) || index.get(k.replace(/s$/, '')) || index.get(`${k}s`))) || null;
+}
+
+// Exact name or alias first; then the name without details like "(strict, max)", ", nose-breathing pace" or
+// "+ leg swings", which coaches tend to tack on.
+export function findExercise(index, name) {
+  const s = String(name || '');
+  return lookup(index, s) || lookup(index, s.replace(/\(.*?\)/g, '')) || lookup(index, s.split(/[(,+/]/)[0]) || null;
+}
+
+export const youtubeSearch = (name) =>
+  `https://www.youtube.com/results?search_query=${encodeURIComponent(`${name} exercise proper form`)}`;

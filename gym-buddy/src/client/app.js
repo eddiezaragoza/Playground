@@ -203,6 +203,58 @@
       note);
   }
 
+  // ---------- how-to card ----------
+  let howToTimer = null;
+  function closeHowTo() {
+    clearInterval(howToTimer);
+    howToTimer = null;
+    document.getElementById('howto')?.remove();
+    document.body.classList.remove('sheet-open');
+  }
+  function openHowTo(info) {
+    closeHowTo();
+    const photos = info.photos.map((src, i) => h('img', { src, alt: `${info.name} ${i ? 'end' : 'start'} position`, class: i ? '' : 'show' }));
+    const frame = photos.length ? h('div', { class: 'howto-photos' }, photos, h('span', { class: 'howto-step' }, 'Start')) : null;
+    if (frame) {
+      // Flip start/end like a GIF; hide the frame if the photos can't load.
+      let i = 0;
+      howToTimer = setInterval(() => {
+        i = (i + 1) % photos.length;
+        photos.forEach((p, n) => p.classList.toggle('show', n === i));
+        frame.lastChild.textContent = i ? 'End' : 'Start';
+      }, 1100);
+      photos[0].addEventListener('error', () => { frame.hidden = true; });
+    }
+    const sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': `How to: ${info.name}` },
+      h('div', { class: 'sheet-head' }, h('h2', {}, info.name), h('button', { type: 'button', class: 'small', onclick: closeHowTo }, 'Close')),
+      frame,
+      info.match === 'Close' && info.note ? h('div', { class: 'banner' }, `Close match: ${info.note}`) : null,
+      info.match === 'Missing' ? h('div', { class: 'banner' }, 'Not in your exercise library yet.') : null,
+      info.match === 'None' && info.note ? h('div', { class: 'banner' }, info.note) : null,
+      info.cue ? h('div', { class: 'cue' }, info.cue) : null,
+      info.steps.length ? h('ol', { class: 'howto-steps' }, info.steps.map((t) => h('li', {}, t))) : null,
+      h('a', { class: 'howto-video', href: info.video, target: '_blank', rel: 'noopener noreferrer' }, 'Watch a demo on YouTube ↗'));
+    const overlay = h('div', { id: 'howto', class: 'overlay' }, sheet);
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) closeHowTo(); });
+    document.body.append(overlay);
+    document.body.classList.add('sheet-open');
+    sheet.querySelector('button').focus();
+  }
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeHowTo(); });
+
+  function howToButton(name) {
+    const info = session?.howTo?.[name];
+    if (!info) return null;
+    const label = `How to do ${name}`;
+    const btn = info.photos.length
+      ? h('button', { type: 'button', class: 'howto-thumb', 'aria-label': label }, h('img', { src: info.photos[0], alt: '' }))
+      : h('button', { type: 'button', class: 'small howto-btn', 'aria-label': label }, 'How to');
+    btn.addEventListener('click', () => openHowTo(info));
+    const img = btn.querySelector('img');
+    if (img) img.addEventListener('error', () => btn.replaceChildren('How to'));
+    return btn;
+  }
+
   function renderPlanned(s) {
     const kids = [];
     if (s.coachNote) kids.push(h('div', { class: 'card note' }, h('div', { class: 'muted' }, 'Coach note'), s.coachNote));
@@ -215,7 +267,9 @@
       kids.push(h('section', { class: 'card' },
         h('div', { class: 'block-head' }, h('h2', {}, b.name), restBtn),
         b.exercises.map((e, ei) => h('div', { class: 'ex' },
-          h('div', { class: 'ex-name' }, e.name, e.anchor ? h('span', { class: 'badge' }, 'Anchor') : null),
+          h('div', { class: 'ex-head' },
+            h('div', { class: 'ex-name' }, e.name, e.anchor ? h('span', { class: 'badge' }, 'Anchor') : null),
+            howToButton(e.name)),
           h('div', { class: 'target' }, `Target ${targetText(e)}`),
           e.cue ? h('div', { class: 'cue' }, e.cue) : null,
           Array.from({ length: e.sets }, (_, si) => setRow(b, bi, e, ei, si)),

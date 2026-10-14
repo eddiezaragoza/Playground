@@ -1,0 +1,976 @@
+{
+ "_about": "Seed for the Notion 'Exercise Library'. src = exact name in yuhonas/free-exercise-db (Unlicense); photos are downloaded from it by tools/build_library.py. match: Exact | Close | None. steps are only written here when the dataset has none for this movement.",
+ "exercises": [
+  {
+   "name": "Bodyweight Squat",
+   "category": "Warm-up",
+   "pattern": "Squat",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Bodyweight Squat",
+   "match": "Exact"
+  },
+  {
+   "name": "Inchworm",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Inchworm",
+   "match": "Exact"
+  },
+  {
+   "name": "Arm Circles",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Arm Circles",
+   "match": "Exact"
+  },
+  {
+   "name": "Ankle Circles",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Ankle Circles",
+   "match": "Exact"
+  },
+  {
+   "name": "Hip Circles",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Standing Hip Circles",
+   "match": "Exact"
+  },
+  {
+   "name": "Cat-Cow",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Cat Stretch",
+   "match": "Close",
+   "note": "Photos show the cat (rounded) half. Alternate: round the back up, then let the belly drop and lift the chest.",
+   "also": "Cat Cow, Cat Stretch"
+  },
+  {
+   "name": "World's Greatest Stretch",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "World's Greatest Stretch",
+   "match": "Exact",
+   "also": "Worlds Greatest Stretch, WGS"
+  },
+  {
+   "name": "Leg Swings",
+   "category": "Warm-up",
+   "pattern": "Mobility",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "steps": [
+    "Hold a wall or doorframe for balance.",
+    "Swing one leg forward and back like a pendulum, 10-15 times, letting the range grow.",
+    "Turn to face the wall and swing the same leg side to side across your body, 10-15 times.",
+    "Switch legs."
+   ]
+  },
+  {
+   "name": "Easy Walk",
+   "category": "Warm-up",
+   "pattern": "Cardio",
+   "equipment": [
+    "Outdoors"
+   ],
+   "match": "None",
+   "also": "Easy walk + leg swings, Warm-up walk",
+   "steps": [
+    "Walk at an easy, relaxed pace for the time given.",
+    "Swing the arms and breathe through the nose.",
+    "Finish warm, not tired."
+   ]
+  },
+  {
+   "name": "Goblet Squat",
+   "category": "Strength",
+   "pattern": "Squat",
+   "equipment": [
+    "Dumbbells",
+    "Kettlebell"
+   ],
+   "src": "Goblet Squat",
+   "match": "Close",
+   "anchor": true,
+   "note": "Shown with a kettlebell. With a dumbbell, hold one end vertically against your chest; the movement is the same.",
+   "cue": "Chest up, elbows inside the knees, sit between the heels."
+  },
+  {
+   "name": "DB Floor Press",
+   "category": "Strength",
+   "pattern": "Push",
+   "equipment": [
+    "Dumbbells",
+    "Mat"
+   ],
+   "src": "Dumbbell Floor Press",
+   "match": "Exact",
+   "anchor": true,
+   "also": "Dumbbell Floor Press, Floor Press",
+   "cue": "Elbows about 45 degrees, pause when the upper arm touches the floor."
+  },
+  {
+   "name": "Pull-ups",
+   "category": "Strength",
+   "pattern": "Pull",
+   "equipment": [
+    "Pull-up Bar"
+   ],
+   "src": "Pullups",
+   "match": "Exact",
+   "anchor": true,
+   "also": "Pull-up, Pullups, Pullup, Strict Pull-ups",
+   "cue": "Start from a dead hang, pull the chest to the bar, no kicking."
+  },
+  {
+   "name": "DB RDL",
+   "category": "Strength",
+   "pattern": "Hinge",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Stiff-Legged Dumbbell Deadlift",
+   "match": "Close",
+   "anchor": true,
+   "also": "Dumbbell RDL, Romanian Deadlift, DB Romanian Deadlift, RDL",
+   "note": "Photos show a stiff-leg version. For an RDL keep a soft bend in the knees and push the hips back; stop when you feel the hamstrings stretch.",
+   "cue": "Hips back, flat back, dumbbells close to the legs."
+  },
+  {
+   "name": "Dips",
+   "category": "Strength",
+   "pattern": "Push",
+   "equipment": [
+    "Dip Station"
+   ],
+   "src": "Dips - Triceps Version",
+   "match": "Exact",
+   "anchor": true,
+   "also": "Dip, Bodyweight Dips, Parallel Bar Dips",
+   "cue": "Shoulders down and back, lower until the upper arm is about parallel."
+  },
+  {
+   "name": "Box Squat",
+   "category": "Strength",
+   "pattern": "Squat",
+   "equipment": [
+    "Dumbbells",
+    "Chair/Step"
+   ],
+   "src": "Box Squat",
+   "match": "Close",
+   "also": "Goblet Box Squat, DB Box Squat",
+   "note": "Shown with a barbell. At home, hold a dumbbell goblet-style and sit back to a chair or step set at pain-free depth, touch, then stand.",
+   "cue": "Sit back to the box, touch lightly, drive up through the heels."
+  },
+  {
+   "name": "Bulgarian Split Squat",
+   "category": "Strength",
+   "pattern": "Lunge",
+   "equipment": [
+    "Dumbbells",
+    "Chair/Step"
+   ],
+   "src": "Split Squat with Dumbbells",
+   "match": "Exact",
+   "also": "BSS, Rear Foot Elevated Split Squat, DB Bulgarian Split Squat",
+   "cue": "Most weight on the front foot, torso tall, back knee drops straight down."
+  },
+  {
+   "name": "DB Overhead Press",
+   "category": "Strength",
+   "pattern": "Push",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Standing Dumbbell Press",
+   "match": "Exact",
+   "also": "Dumbbell Overhead Press, DB Shoulder Press, OHP, Overhead Press",
+   "cue": "Ribs down, squeeze the glutes, press straight up."
+  },
+  {
+   "name": "One-Arm DB Row",
+   "category": "Strength",
+   "pattern": "Pull",
+   "equipment": [
+    "Dumbbells",
+    "Chair/Step"
+   ],
+   "src": "One-Arm Dumbbell Row",
+   "match": "Exact",
+   "also": "One-Arm Dumbbell Row, Single-Arm DB Row, DB Row",
+   "cue": "Flat back, pull the elbow toward the hip."
+  },
+  {
+   "name": "KB Swing",
+   "category": "Strength",
+   "pattern": "Hinge",
+   "equipment": [
+    "Kettlebell"
+   ],
+   "src": "One-Arm Kettlebell Swings",
+   "match": "Close",
+   "also": "Kettlebell Swing, KB Swings, Kettlebell Swings",
+   "note": "Shown one-handed. Default to two hands on the handle; the hip snap is the same.",
+   "steps": [
+    "Stand with feet a bit wider than the hips, bell a foot in front of you.",
+    "Hinge at the hips, grab the handle with both hands, and hike the bell back between your legs.",
+    "Snap the hips forward to float the bell to chest height; the arms just guide it.",
+    "Let it swing back between the legs and go straight into the next rep."
+   ],
+   "cue": "Hike it back, snap the hips, arms just guide the bell to chest height."
+  },
+  {
+   "name": "Hanging Knee Raise",
+   "category": "Strength",
+   "pattern": "Core",
+   "equipment": [
+    "Pull-up Bar"
+   ],
+   "src": "Hanging Leg Raise",
+   "match": "Close",
+   "also": "Hanging Knee Raises, Knee Raise",
+   "note": "Photos show a gym knee-raise station. At home, hang from the pull-up bar, then bend the knees and bring them toward the chest.",
+   "cue": "No swinging, curl the pelvis up at the top."
+  },
+  {
+   "name": "Reverse Lunge",
+   "category": "Strength",
+   "pattern": "Lunge",
+   "equipment": [
+    "Dumbbells",
+    "Bodyweight"
+   ],
+   "src": "Dumbbell Rear Lunge",
+   "match": "Exact",
+   "also": "Reverse Lunges, DB Reverse Lunge, Rear Lunge",
+   "cue": "Step back, both knees about 90 degrees, push through the front heel."
+  },
+  {
+   "name": "Push-ups",
+   "category": "Strength",
+   "pattern": "Push",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Pushups",
+   "match": "Exact",
+   "also": "Push-up, Pushups, Pushup",
+   "cue": "Body in one straight line, chest to a fist's height from the floor."
+  },
+  {
+   "name": "Incline Push-ups",
+   "category": "Strength",
+   "pattern": "Push",
+   "equipment": [
+    "Chair/Step"
+   ],
+   "src": "Incline Push-Up",
+   "match": "Exact",
+   "also": "Incline Push-up, Incline Pushups",
+   "cue": "Hands on a sturdy surface, same straight body line as a push-up."
+  },
+  {
+   "name": "Chin-ups",
+   "category": "Strength",
+   "pattern": "Pull",
+   "equipment": [
+    "Pull-up Bar"
+   ],
+   "src": "Chin-Up",
+   "match": "Exact",
+   "also": "Chin-up, Chinups, Chinup",
+   "cue": "Palms facing you, chest to the bar, full hang at the bottom."
+  },
+  {
+   "name": "DB Thruster",
+   "category": "Strength",
+   "pattern": "Squat",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Kettlebell Thruster",
+   "match": "Close",
+   "also": "Dumbbell Thruster, Thrusters, DB Thrusters",
+   "note": "Shown with kettlebells. With dumbbells: hold them at the shoulders, squat, then drive up and press overhead in one motion.",
+   "cue": "Use the leg drive to launch the press."
+  },
+  {
+   "name": "Farmer Carry",
+   "category": "Strength",
+   "pattern": "Carry",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Farmer's Walk",
+   "match": "Close",
+   "also": "Farmer's Carry, Farmers Walk, Farmer's Walk",
+   "cue": "Tall posture, shoulders packed, short quick steps.",
+   "note": "Shown with gym farmer's handles. At home, carry a heavy dumbbell in each hand."
+  },
+  {
+   "name": "Front Plank",
+   "category": "Strength",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Plank",
+   "match": "Exact",
+   "also": "Plank, Forearm Plank",
+   "cue": "Squeeze glutes and quads, ribs down, straight line head to heels."
+  },
+  {
+   "name": "Side Plank",
+   "category": "Strength",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Side Bridge",
+   "match": "Exact",
+   "also": "Side Bridge, Side Planks",
+   "steps": [
+    "Lie on your side with the forearm under the shoulder and feet stacked.",
+    "Lift the hips so the body forms a straight line from head to feet.",
+    "Hold for the time given without letting the hips sag, then switch sides."
+   ],
+   "cue": "Hips high, push the floor away with the forearm."
+  },
+  {
+   "name": "Pull-up Negative",
+   "category": "Strength",
+   "pattern": "Pull",
+   "equipment": [
+    "Pull-up Bar",
+    "Chair/Step"
+   ],
+   "src": "Pullups",
+   "match": "Close",
+   "also": "Pull-up Negatives, Negative Pull-ups, Slow Negatives, Eccentric Pull-up",
+   "note": "Uses the pull-up photos. Jump or step up to the top position (chin over the bar), then lower yourself as slowly as you can, 3-5 seconds.",
+   "cue": "Fight the way down, control all the way to a dead hang."
+  },
+  {
+   "name": "Single-Leg RDL",
+   "category": "Accessory",
+   "pattern": "Hinge",
+   "equipment": [
+    "Dumbbells",
+    "Kettlebell"
+   ],
+   "src": "Kettlebell One-Legged Deadlift",
+   "match": "Close",
+   "also": "Single Leg RDL, One-Leg RDL, SL RDL",
+   "note": "Shown with a kettlebell. A dumbbell works the same way.",
+   "cue": "Hips square to the floor, back leg and torso move as one."
+  },
+  {
+   "name": "Glute Bridge",
+   "category": "Accessory",
+   "pattern": "Hinge",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Butt Lift (Bridge)",
+   "match": "Exact",
+   "also": "Glute Bridges, Hip Bridge",
+   "cue": "Drive through the heels, squeeze the glutes at the top, don't arch the low back."
+  },
+  {
+   "name": "Single-Leg Glute Bridge",
+   "category": "Accessory",
+   "pattern": "Hinge",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Single Leg Glute Bridge",
+   "match": "Exact",
+   "also": "Single Leg Glute Bridge, One-Leg Glute Bridge"
+  },
+  {
+   "name": "Step-ups",
+   "category": "Accessory",
+   "pattern": "Lunge",
+   "equipment": [
+    "Dumbbells",
+    "Chair/Step"
+   ],
+   "src": "Dumbbell Step Ups",
+   "match": "Exact",
+   "also": "Step-up, DB Step-ups, Step Ups",
+   "cue": "Drive through the top foot, don't push off the bottom one."
+  },
+  {
+   "name": "DB Curl",
+   "category": "Accessory",
+   "pattern": "Arms",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Dumbbell Bicep Curl",
+   "match": "Exact",
+   "also": "Dumbbell Curl, Bicep Curl, Biceps Curl"
+  },
+  {
+   "name": "Hammer Curl",
+   "category": "Accessory",
+   "pattern": "Arms",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Hammer Curls",
+   "match": "Exact",
+   "also": "Hammer Curls, DB Hammer Curl"
+  },
+  {
+   "name": "DB Lateral Raise",
+   "category": "Accessory",
+   "pattern": "Push",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Side Lateral Raise",
+   "match": "Exact",
+   "also": "Lateral Raise, Side Lateral Raise, Lateral Raises"
+  },
+  {
+   "name": "DB Overhead Triceps Extension",
+   "category": "Accessory",
+   "pattern": "Arms",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Standing Dumbbell Triceps Extension",
+   "match": "Exact",
+   "also": "Overhead Triceps Extension, Triceps Extension, DB Triceps Extension"
+  },
+  {
+   "name": "DB Rear Delt Raise",
+   "category": "Accessory",
+   "pattern": "Pull",
+   "equipment": [
+    "Dumbbells"
+   ],
+   "src": "Seated Bent-Over Rear Delt Raise",
+   "match": "Close",
+   "also": "Rear Delt Raise, Reverse Fly, DB Reverse Fly, Bent-Over Reverse Fly",
+   "note": "Shown seated on a bench. Standing bent over with a flat back works the same."
+  },
+  {
+   "name": "Dead Bug",
+   "category": "Accessory",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Dead Bug",
+   "match": "Exact",
+   "also": "Dead Bugs"
+  },
+  {
+   "name": "Russian Twist",
+   "category": "Accessory",
+   "pattern": "Core",
+   "equipment": [
+    "Mat",
+    "Dumbbells"
+   ],
+   "src": "Russian Twist",
+   "match": "Exact",
+   "also": "Russian Twists"
+  },
+  {
+   "name": "Superman",
+   "category": "Accessory",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Superman",
+   "match": "Exact",
+   "also": "Supermans, Superman Hold"
+  },
+  {
+   "name": "Dead Hang",
+   "category": "Accessory",
+   "pattern": "Pull",
+   "equipment": [
+    "Pull-up Bar"
+   ],
+   "match": "None",
+   "also": "Top Hold, Flexed-Arm Hang, Bar Hang, Top Holds",
+   "steps": [
+    "Dead hang: grip the bar shoulder-width and hang with straight arms, shoulders slightly pulled down. Hold for time.",
+    "Top hold: step or jump up so your chin is over the bar and hold that position for time.",
+    "Both build grip and the strength to finish a pull-up."
+   ]
+  },
+  {
+   "name": "Bird Dog",
+   "category": "Accessory",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Bird Dogs",
+   "steps": [
+    "Start on hands and knees, back flat.",
+    "Reach one arm forward and the opposite leg back until both are level with your body.",
+    "Pause for 2 seconds without rocking the hips, return, and switch sides."
+   ]
+  },
+  {
+   "name": "Hollow Hold",
+   "category": "Accessory",
+   "pattern": "Core",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Hollow Body Hold, Hollow Body",
+   "steps": [
+    "Lie on your back and press the low back into the floor.",
+    "Lift the shoulders and straight legs a few inches off the floor, arms by your ears or at your sides.",
+    "Hold for time. Bend the knees to make it easier."
+   ]
+  },
+  {
+   "name": "Calf Raise",
+   "category": "Accessory",
+   "pattern": "Squat",
+   "equipment": [
+    "Bodyweight",
+    "Chair/Step",
+    "Dumbbells"
+   ],
+   "match": "None",
+   "also": "Calf Raises, Standing Calf Raise",
+   "steps": [
+    "Stand with the balls of your feet on a step, heels hanging off. Hold a wall for balance.",
+    "Rise as high as you can onto your toes and pause.",
+    "Lower slowly until the heels drop below the step."
+   ]
+  },
+  {
+   "name": "Mountain Climbers",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Mountain Climbers",
+   "match": "Exact",
+   "also": "Mountain Climber"
+  },
+  {
+   "name": "Jumping Jacks",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Star Jump",
+   "match": "Close",
+   "also": "Jumping Jack, Star Jumps",
+   "note": "Photos show a star jump (a bigger jump). For jumping jacks, hop the feet out and in while the arms go overhead and back down."
+  },
+  {
+   "name": "Jump Squat",
+   "category": "Conditioning",
+   "pattern": "Squat",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Freehand Jump Squat",
+   "match": "Exact",
+   "also": "Jump Squats, Squat Jump, Squat Jumps"
+  },
+  {
+   "name": "Burpee",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "also": "Burpees",
+   "steps": [
+    "From standing, squat and put your hands on the floor.",
+    "Jump or step the feet back to a plank.",
+    "Jump or step the feet back in, then stand up and jump lightly with the arms overhead.",
+    "Low-impact version: step back and in, no push-up, no jump."
+   ]
+  },
+  {
+   "name": "High Knees",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "also": "High Knee",
+   "steps": [
+    "Run in place, driving each knee up to about hip height.",
+    "Stay on the balls of the feet and pump the arms.",
+    "Low-impact version: march fast with the same knee height."
+   ]
+  },
+  {
+   "name": "Shadow Boxing",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "steps": [
+    "Stand in a staggered stance, hands up by the chin.",
+    "Throw quick punches (jab, cross, hooks) while staying light on your feet.",
+    "Rotate the hips into each punch and bring the hand straight back to guard."
+   ]
+  },
+  {
+   "name": "Hill Sprint",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Outdoors"
+   ],
+   "match": "None",
+   "also": "Hill Sprints, Hill Run, Hill Runs, Hill sprint 30s / walk 90s",
+   "steps": [
+    "Find a moderate hill.",
+    "Sprint up hard for the work time, leaning slightly forward and driving the arms.",
+    "Walk back down slowly as recovery."
+   ]
+  },
+  {
+   "name": "Brisk Walk",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Outdoors"
+   ],
+   "match": "None",
+   "also": "Zone 2 Walk, Brisk flat walk, Brisk walk, nose-breathing pace",
+   "steps": [
+    "Walk at a pace where you can still talk in full sentences and breathe through the nose.",
+    "Keep it steady for the whole time. This is Zone 2: easy on purpose."
+   ]
+  },
+  {
+   "name": "Easy Jog",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Outdoors"
+   ],
+   "match": "None",
+   "also": "Zone 2 Jog, Jog",
+   "steps": [
+    "Jog at a conversational pace, nose-breathing if you can.",
+    "If you can't talk, slow down or walk. Zone 2 is meant to feel easy."
+   ]
+  },
+  {
+   "name": "12-Minute Run/Walk Test",
+   "category": "Conditioning",
+   "pattern": "Cardio",
+   "equipment": [
+    "Outdoors"
+   ],
+   "match": "None",
+   "also": "12-minute run/walk test, Cooper Test",
+   "steps": [
+    "Warm up for 5 minutes.",
+    "Cover as much distance as you can in 12 minutes, running and walking as needed.",
+    "Record the distance in miles. Gym-ready target: 1.5+ miles."
+   ]
+  },
+  {
+   "name": "Overhead Triceps Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Triceps Stretch",
+   "match": "Exact",
+   "also": "Triceps Stretch, Tricep Stretch"
+  },
+  {
+   "name": "Lying Hamstring Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Hamstring Stretch",
+   "match": "Close",
+   "also": "Hamstring Stretch, Supine Hamstring Stretch",
+   "note": "Shown with a band. Use a towel or belt around the foot, or hold behind the thigh."
+  },
+  {
+   "name": "Seated Hamstring Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Seated Floor Hamstring Stretch",
+   "match": "Exact"
+  },
+  {
+   "name": "Half-Kneeling Hip Flexor Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Kneeling Hip Flexor",
+   "match": "Exact",
+   "also": "Hip Flexor Stretch, Kneeling Hip Flexor Stretch, Couch Stretch"
+  },
+  {
+   "name": "Quad Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "On Your Side Quad Stretch",
+   "match": "Close",
+   "also": "Standing Quad Stretch, Side-Lying Quad Stretch",
+   "note": "Shown lying on your side. Standing and holding a wall works too: pull the heel to the glute and keep the knees together."
+  },
+  {
+   "name": "Calf Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Calf Stretch Hands Against Wall",
+   "match": "Exact",
+   "also": "Wall Calf Stretch"
+  },
+  {
+   "name": "Cross-Body Shoulder Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Shoulder Stretch",
+   "match": "Exact",
+   "also": "Shoulder Stretch, Cross Body Shoulder Stretch"
+  },
+  {
+   "name": "Child's Pose",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Child's Pose",
+   "match": "Exact",
+   "also": "Childs Pose"
+  },
+  {
+   "name": "Butterfly Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "src": "Groin and Back Stretch",
+   "match": "Close",
+   "also": "Butterfly, Groin Stretch",
+   "note": "Photos show folding forward with hands on the head. Start sitting tall, soles together, holding the ankles; let the knees drop. Fold forward only if it feels good."
+  },
+  {
+   "name": "Standing Side Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Standing Lateral Stretch",
+   "match": "Exact",
+   "also": "Side Stretch, Lateral Stretch"
+  },
+  {
+   "name": "Deep Squat Hold",
+   "category": "Mobility",
+   "pattern": "Squat",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "src": "Bodyweight Squat",
+   "match": "Close",
+   "also": "Deep Squat, Squat Hold, Deep squat hold 60s",
+   "note": "Uses the squat photos. Sink to the bottom position and stay there: heels down, chest up, elbows pushing the knees out. Hold a doorframe if needed."
+  },
+  {
+   "name": "Doorway Chest Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "also": "Doorway chest stretch, Pec Stretch, Chest Stretch",
+   "steps": [
+    "Stand in a doorway with the forearm on the frame, elbow at shoulder height.",
+    "Step through gently until you feel a stretch across the chest and front of the shoulder.",
+    "Hold for the time given, then switch sides."
+   ]
+  },
+  {
+   "name": "Figure-4 Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Figure 4 Stretch, Supine Piriformis Stretch",
+   "steps": [
+    "Lie on your back with both knees bent.",
+    "Cross one ankle over the opposite knee.",
+    "Pull the bottom thigh toward your chest until you feel it in the glute of the crossed leg. Hold, then switch."
+   ]
+  },
+  {
+   "name": "Pigeon Stretch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Pigeon Pose, Pigeon",
+   "steps": [
+    "From hands and knees, bring one knee forward behind the same-side wrist, shin angled across.",
+    "Slide the other leg straight back.",
+    "Keep the hips square and lower the chest toward the floor. Hold, then switch.",
+    "If the knee complains, use the Figure-4 Stretch instead."
+   ]
+  },
+  {
+   "name": "Open Book",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Open Book Stretch, T-Spine Rotation, Thoracic Rotation",
+   "steps": [
+    "Lie on your side with knees bent to 90 degrees and arms straight out in front, palms together.",
+    "Keeping the knees stacked, sweep the top arm up and over to the other side, rotating through the upper back.",
+    "Follow the hand with your eyes, pause, and return. Do all reps, then switch sides."
+   ]
+  },
+  {
+   "name": "Thread the Needle",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "steps": [
+    "Start on hands and knees.",
+    "Slide one arm under your body along the floor until that shoulder and the side of your head rest down.",
+    "Hold, then open that arm up toward the ceiling. Repeat and switch sides."
+   ]
+  },
+  {
+   "name": "Knee-to-Wall Ankle Mobility",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "also": "Knee to Wall, Ankle Mobility, Ankle Dorsiflexion",
+   "steps": [
+    "Stand facing a wall in a half-kneeling or split stance, front toes a few inches from the wall.",
+    "Push the front knee forward to touch the wall without lifting the heel.",
+    "Rock in and out for reps. Move the foot back as it gets easier."
+   ]
+  },
+  {
+   "name": "Downward Dog",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Downward Facing Dog, Down Dog",
+   "steps": [
+    "From hands and knees, tuck the toes and lift the hips up and back.",
+    "Push the floor away, lengthen the spine, and let the heels sink toward the floor.",
+    "Bend the knees as much as you need to keep the back long."
+   ]
+  },
+  {
+   "name": "Cobra",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "Cobra Stretch, Cobra Pose",
+   "steps": [
+    "Lie face down with the hands under the shoulders.",
+    "Press up gently, lifting the chest while the hips stay on the floor.",
+    "Keep the shoulders away from the ears. Only go as high as the low back is comfortable."
+   ]
+  },
+  {
+   "name": "90/90 Hip Switch",
+   "category": "Mobility",
+   "pattern": "Stretch",
+   "equipment": [
+    "Mat"
+   ],
+   "match": "None",
+   "also": "90/90, 90-90 Hip Stretch, 90/90 Hip Stretch",
+   "steps": [
+    "Sit with both knees bent to 90 degrees: front leg across your body, back leg out to the side.",
+    "Sit tall over the front shin, then rotate both knees over to the other side.",
+    "Move slowly between sides, using your hands for support if needed."
+   ]
+  }
+ ]
+}
