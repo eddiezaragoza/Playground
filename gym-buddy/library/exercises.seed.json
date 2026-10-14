@@ -12,6 +12,23 @@
    "match": "Exact"
   },
   {
+   "name": "Hip Hinge Drill",
+   "category": "Warm-up",
+   "pattern": "Hinge",
+   "equipment": [
+    "Bodyweight"
+   ],
+   "match": "None",
+   "also": "Bodyweight Hip Hinge Drill, Bodyweight Hip Hinge, Hip Hinge, Dowel Hip Hinge",
+   "steps": [
+    "Stand tall with soft knees, hands on the hip creases.",
+    "Push the hips straight back as if closing a car door with your butt, keeping the back flat.",
+    "Stop when you feel a stretch in the hamstrings, then squeeze the glutes to stand.",
+    "Optional: hold a broomstick along your spine touching head, upper back and tailbone the whole time."
+   ],
+   "cue": "Hips go back, not down."
+  },
+  {
    "name": "Inchworm",
    "category": "Warm-up",
    "pattern": "Mobility",
@@ -373,6 +390,18 @@
    "also": "Pull-up Negatives, Negative Pull-ups, Slow Negatives, Eccentric Pull-up",
    "note": "Uses the pull-up photos. Jump or step up to the top position (chin over the bar), then lower yourself as slowly as you can, 3-5 seconds.",
    "cue": "Fight the way down, control all the way to a dead hang."
+  },
+  {
+   "name": "Scap Pull-ups",
+   "category": "Strength",
+   "pattern": "Pull",
+   "equipment": [
+    "Pull-up Bar"
+   ],
+   "src": "Scapular Pull-Up",
+   "match": "Exact",
+   "also": "Scap Pull-up, Scapular Pull-ups, Scapular Pull-Up, Scap Pulls",
+   "cue": "Arms stay straight; pull the shoulder blades down and back, then relax."
   },
   {
    "name": "Single-Leg RDL",
@@ -800,7 +829,7 @@
    ],
    "src": "Child's Pose",
    "match": "Exact",
-   "also": "Childs Pose"
+   "also": "Childs Pose, Child's Pose Lat Reach, Childs Pose Lat Stretch"
   },
   {
    "name": "Butterfly Stretch",

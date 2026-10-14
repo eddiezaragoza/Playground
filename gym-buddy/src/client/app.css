@@ -77,8 +77,10 @@ body.sheet-open { overflow: hidden; }
 .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
 .sheet {
   width: 100%; max-width: 640px; max-height: 92dvh; overflow-y: auto; background: var(--card); border-radius: 18px 18px 0 0;
-  padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); display: grid; gap: 12px; border-top: 1px solid var(--line);
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line);
 }
+/* Column, not grid: a capped-height grid shrinks the photo's row and the photo then overlaps the text below. */
+.sheet > * { flex-shrink: 0; }
 .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .sheet-head h2 { margin: 0; font-size: 19px; }
 .howto-photos { position: relative; aspect-ratio: 3 / 2; border-radius: 12px; overflow: hidden; background: #000; }
