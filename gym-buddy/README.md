@@ -66,6 +66,7 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
   `GB_KV` Workers KV namespace. Phones already logged in are not affected.
 - The Worker has the data source ID hardcoded. Before writing, it fetches the target page and refuses if the page's
   parent isn't that data source. The Notion integration itself is shared with that one database only.
+- Plain-HTTP requests to `/gym*` are redirected (301) to HTTPS.
 - Responses send `no-store`, a strict CSP, `X-Frame-Options: DENY`, and `noindex`.
 
 ## Dev

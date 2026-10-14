@@ -184,6 +184,11 @@ async function saveSession(env, body) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // Never serve the login form (or anything else) over plain HTTP.
+    if (url.protocol === 'http:' && url.hostname !== '127.0.0.1' && url.hostname !== 'localhost') {
+      url.protocol = 'https:';
+      return Response.redirect(url.toString(), 301);
+    }
     let path = url.pathname.replace(/\/+$/, '') || '/';
     if (path !== BASE && !path.startsWith(`${BASE}/`)) return respond('Not found', 404, 'text/plain');
     if (!env.NOTION_TOKEN || !env.APP_PASSWORD || !env.COOKIE_SECRET || !env.GB_KV) {
