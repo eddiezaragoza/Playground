@@ -31,6 +31,8 @@
     return {
       id: s.id,
       startedAt: null,
+      pausedAt: null, // set while paused
+      pausedMs: 0, // total paused time, excluded from the clock and Duration
       durationTouched: false,
       fields: { energy: s.fields.energy, rpe: s.fields.rpe, duration: s.fields.duration, stretching: s.fields.stretching, pain: s.fields.pain || '' },
       results: s.plan ? s.plan.blocks.map((b) => b.exercises.map((e) =>
@@ -44,6 +46,8 @@
     const fresh = freshState(s);
     if (!saved || saved.id !== s.id) return fresh;
     fresh.startedAt = saved.startedAt || null;
+    fresh.pausedAt = saved.pausedAt || null;
+    fresh.pausedMs = Number(saved.pausedMs) || 0;
     fresh.durationTouched = !!saved.durationTouched;
     Object.assign(fresh.fields, saved.fields || {});
     fresh.results = fresh.results.map((blk, bi) => blk.map((sets, ei) => sets.map((set, si) => {
@@ -57,15 +61,42 @@
     return fresh;
   }
 
-  const startClock = () => { if (!state.startedAt) { state.startedAt = Date.now(); persist(); } };
+  // Any workout action starts the clock, or resumes it if paused.
+  const startClock = () => {
+    if (!state.startedAt) { state.startedAt = Date.now(); persist(); } else if (state.pausedAt) resumeWorkout();
+  };
 
   // ---------- workout clock ----------
+  const elapsedSec = () => Math.max(0, Math.floor(((state.pausedAt || Date.now()) - state.startedAt - state.pausedMs) / 1000));
+
+  function pauseWorkout() {
+    if (!state?.startedAt || state.pausedAt) return;
+    state.pausedAt = Date.now();
+    stopRest();
+    persist();
+    if (wakeLock) wakeLock.release().catch(() => {});
+    tickClock();
+  }
+  function resumeWorkout() {
+    if (!state?.pausedAt) return;
+    state.pausedMs += Date.now() - state.pausedAt;
+    state.pausedAt = null;
+    persist();
+    keepAwake();
+    tickClock();
+  }
+
   function tickClock() {
-    const el = $('clock');
-    if (!state || !state.startedAt || session?.readOnly) { el.hidden = true; return; }
-    const sec = Math.floor((Date.now() - state.startedAt) / 1000);
-    el.hidden = false;
-    el.textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    const box = $('clockbox');
+    if (!state || !state.startedAt || session?.readOnly) { box.hidden = true; document.body.classList.remove('is-paused'); return; }
+    const sec = elapsedSec();
+    const paused = !!state.pausedAt;
+    box.hidden = false;
+    document.body.classList.toggle('is-paused', paused);
+    $('clock').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    const btn = $('pause');
+    btn.textContent = paused ? 'Resume' : 'Pause';
+    btn.setAttribute('aria-pressed', String(paused));
     if (!state.durationTouched) {
       const mins = Math.max(1, Math.round(sec / 60));
       if (state.fields.duration !== mins) {
@@ -94,6 +125,7 @@
   }
   function startRest(seconds, label) {
     if (!seconds) return;
+    if (state?.pausedAt) resumeWorkout();
     try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); } catch { /* unlock audio on a tap */ }
     stopRest();
     timer = { endAt: Date.now() + seconds * 1000, label, handle: setInterval(renderRest, 250) };
@@ -134,7 +166,8 @@
   async function keepAwake() {
     try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch { /* not allowed */ }
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && session && !session.readOnly) keepAwake(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && session && !session.readOnly && !state?.pausedAt) keepAwake(); });
+  $('pause').addEventListener('click', () => (state?.pausedAt ? resumeWorkout() : pauseWorkout()));
 
   // ---------- rendering ----------
   const targetText = (e) => `${e.sets} × ${e.reps || '?'}${e.weight ? ` @ ${e.weight}` : ''}`;

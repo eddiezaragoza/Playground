@@ -30,6 +30,13 @@ body.login { display: grid; place-items: center; min-height: 100dvh; padding: 16
 .title { font-weight: 700; font-size: 18px; }
 .meta { color: var(--muted); font-size: 13px; }
 .clock { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); font-size: 20px; }
+.clockbox { display: flex; align-items: center; gap: 8px; flex: none; }
+.pause-btn { height: 40px; min-width: 84px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); font-weight: 700; }
+.is-paused .clock { color: var(--warn); }
+.is-paused .pause-btn { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+/* Bottom bar while paused (pausing stops the rest timer, which normally lives there). */
+.paused-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); background: #3a2a0c; border-top: 2px solid var(--warn); color: var(--warn); font-size: 15px; text-align: center; }
+.is-paused .paused-bar { display: block; }
 
 main { max-width: 640px; margin: 0 auto; padding: 12px 12px 0; display: grid; gap: 12px; }
 .card { background: var(--card); border-radius: var(--r); padding: 14px; border: 1px solid var(--line); }

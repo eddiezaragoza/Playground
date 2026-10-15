@@ -21,8 +21,12 @@
     <div id="title" class="title">Loading…</div>
     <div id="meta" class="meta"></div>
   </div>
-  <div id="clock" class="clock" hidden></div>
+  <div id="clockbox" class="clockbox" hidden>
+    <span id="clock" class="clock" role="timer" aria-live="off"></span>
+    <button id="pause" type="button" class="pause-btn" aria-pressed="false">Pause</button>
+  </div>
 </header>
+<div class="paused-bar" role="status">Paused. The clock is stopped. Tap Resume or tick a set to continue.</div>
 <main id="app"><p class="muted pad">Loading your session…</p></main>
 <div id="timer" class="timer" hidden>
   <span id="timer-label"></span>
