@@ -11,7 +11,9 @@ Notion pages (all under Claude Brain):
 
 1. `NOTION_TOKEN=... python3 tools/add_friend.py <username> "<Name>" 3fa144f3-8f3c-8163-9e02-dfa2ddee6918`
    (creates "Gym Buddy - Name" + their log, stores the login, prints the password once).
-2. Fill their page with the Profile below (Claude Code does this via the Notion connector).
+2. Fill their page with the Profile below (Claude Code does this via the Notion connector). Include the ONBOARDING
+   questionnaire with `ONBOARDING STATUS: Not started`; their coach interviews them on first contact (Core: ONBOARDING).
+   Keep the `<database ...>` tag for their log when rewriting the page, or the log gets deleted.
 3. In Notion, share **their page** with them (guest, **Can edit**) and **Gym Buddy Shared** (guest, **Can view**).
 4. Send them: username, password, the Start Here link, and their pointer text.
 5. Remove later: `python3 tools/add_friend.py --remove <username>` (login only; their Notion page stays).
@@ -23,6 +25,7 @@ Notion pages (all under Claude Brain):
 (mention) in full, then this page, and follow both. Precedence: Core wins on NOTION, PLAN JSON, AFTER THE SESSION,
 EXERCISE LIBRARY and SAFETY. This page's MY RULES win on everything else. NAME can edit this page.
 
+## ONBOARDING      status line + 10 questions with 'Answer:' lines (see Jose's page)
 ## ABOUT ME        name, age, height, where they train, schedule limits (kids, work, mornings only), nutrition status
 ## EQUIPMENT       exact list; program only from it
 ## GOAL            "Core default: gym-ready" or their own goal and benchmarks
@@ -45,7 +48,7 @@ fetch and read both in full:
 Precedence: Core wins on logging, Plan JSON, the Exercise Library and safety. My Profile's MY RULES, and anything
 I add below, win on everything else.
 If you can't fetch either page, say so in one line. Do not coach from memory or create or change any Notion rows
-until both load. Never edit these pages unless I explicitly ask.
+until both load. Never edit these pages unless I explicitly ask, except during onboarding as Core describes.
 
 (Optional: your own extra instructions below this line.)
 ```
