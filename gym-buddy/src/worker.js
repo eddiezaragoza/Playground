@@ -1,5 +1,6 @@
 // Gym Buddy: serves /gym on eddiezaragoza.com and is the only thing that talks to Notion.
-// Secrets (wrangler secret put): NOTION_TOKEN, APP_PASSWORD, COOKIE_SECRET.
+// Secrets (wrangler secret put): NOTION_TOKEN, APP_PASSWORD (Eddie's password), COOKIE_SECRET.
+// Friends: KV key user:<username> = {name, ds, salt, hash, iter} (PBKDF2-SHA256), written by tools/add_friend.py.
 import APP_HTML from './client/app.html';
 import LOGIN_HTML from './client/login.html';
 import APP_JS from './client/app.js';
@@ -9,8 +10,11 @@ import {
   libraryEntry, buildLibraryIndex, findExercise, youtubeSearch,
 } from './lib.js';
 
-// The one data source this Worker may read or write. Hardcoded on purpose.
+// Eddie's log. Each friend's log id lives in their KV user record; a user can only ever touch their own log.
 const DATA_SOURCE_ID = '0d083beb-504f-4522-b761-d41fc5c9f561';
+const OWNER = 'eddie'; // logs in with APP_PASSWORD
+const USERNAME_RE = /^[a-z0-9-]{1,32}$/;
+const PBKDF2_MAX_ITER = 100000; // Workers' WebCrypto ceiling
 // Exercise Library: read-only. Nothing in this Worker writes to it.
 const LIBRARY_SOURCE_ID = 'cf4fdd21-651b-4f8f-bfa8-baaf3fba7945';
 const NOTION_VERSION = '2026-03-11';
@@ -57,18 +61,50 @@ async function safeEqual(secret, a, b) {
   return crypto.subtle.timingSafeEqual(x, y);
 }
 
-async function makeCookie(env) {
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+// username -> {username, name, ds, salt?, hash?, iter?}, or null if unknown. Deleting the KV record revokes access.
+async function loadUser(env, username) {
+  if (username === OWNER) return { username: OWNER, name: 'Eddie', ds: DATA_SOURCE_ID };
+  if (!USERNAME_RE.test(username || '')) return null;
+  const rec = await env.GB_KV.get(`user:${username}`, 'json');
+  if (!rec || !isNotionId(rec.ds) || !rec.salt || !rec.hash) return null;
+  return { username, name: rec.name || username, ds: rec.ds, salt: rec.salt, hash: rec.hash, iter: Number(rec.iter) || PBKDF2_MAX_ITER };
+}
+
+async function pbkdf2(password, saltB64, iter) {
+  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: unb64(saltB64), iterations: Math.min(iter, PBKDF2_MAX_ITER) }, key, 256);
+  return b64(bits);
+}
+
+async function checkPassword(env, user, password) {
+  if (!user) {
+    await safeEqual(env.COOKIE_SECRET, password, 'unknown-user'); // keep timing similar for unknown names
+    return false;
+  }
+  if (user.username === OWNER) return safeEqual(env.COOKIE_SECRET, password, env.APP_PASSWORD);
+  return safeEqual(env.COOKIE_SECRET, await pbkdf2(password, user.salt, user.iter), user.hash);
+}
+
+async function makeCookie(env, username) {
   const exp = Date.now() + COOKIE_DAYS * 864e5;
-  const val = `${exp}.${await sign(env.COOKIE_SECRET, `gb:${exp}`)}`;
+  const val = `${username}.${exp}.${await sign(env.COOKIE_SECRET, `gb:${username}:${exp}`)}`;
   return `${COOKIE}=${val}; Path=${BASE}; Max-Age=${COOKIE_DAYS * 86400}; HttpOnly; Secure; SameSite=Strict`;
 }
 
-async function isAuthed(request, env) {
+// Returns the logged-in user or null. Cookies from before multi-user ("exp.sig") belong to Eddie.
+async function authedUser(request, env) {
   const m = (request.headers.get('Cookie') || '').match(new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]+)`));
-  if (!m) return false;
-  const [exp, sig] = m[1].split('.');
-  if (!exp || !sig || !(Number(exp) > Date.now())) return false;
-  return safeEqual(env.COOKIE_SECRET, sig, await sign(env.COOKIE_SECRET, `gb:${exp}`));
+  if (!m) return null;
+  const parts = m[1].split('.');
+  const [username, exp, sig] = parts.length === 2 ? [OWNER, ...parts] : parts;
+  if (parts.length < 2 || parts.length > 3 || !exp || !sig || !(Number(exp) > Date.now())) return null;
+  const msg = parts.length === 2 ? `gb:${exp}` : `gb:${username}:${exp}`;
+  if (!(await safeEqual(env.COOKIE_SECRET, sig, await sign(env.COOKIE_SECRET, msg)))) return null;
+  return loadUser(env, username);
 }
 
 // Blocks cross-site POSTs even if SameSite were bypassed.
@@ -94,8 +130,8 @@ async function notion(env, path, method = 'GET', body) {
   return data;
 }
 
-const newestByStatus = (env, status) =>
-  notion(env, `/data_sources/${DATA_SOURCE_ID}/query`, 'POST', {
+const newestByStatus = (env, ds, status) =>
+  notion(env, `/data_sources/${ds}/query`, 'POST', {
     filter: { property: 'Status', select: { equals: status } },
     sorts: [{ property: 'Date', direction: 'descending' }, { timestamp: 'created_time', direction: 'descending' }],
     page_size: 1,
@@ -163,19 +199,19 @@ async function attachHowTo(env, session) {
   return session;
 }
 
-async function getSession(env) {
-  const planned = await newestByStatus(env, 'Planned');
+async function getSession(env, user) {
+  const planned = await newestByStatus(env, user.ds, 'Planned');
   if (planned) return attachHowTo(env, pageToSession(planned, false));
-  const done = await newestByStatus(env, 'Done');
+  const done = await newestByStatus(env, user.ds, 'Done');
   return done ? pageToSession(done, true) : null;
 }
 
-async function saveSession(env, body) {
+async function saveSession(env, user, body) {
   if (!body || !isNotionId(body.id)) return json({ error: 'Bad page id' }, 400);
   const page = await notion(env, `/pages/${normalizeId(body.id)}`);
-  // Only rows that live in the Gym Buddy data source, and only while still Planned.
-  if (page.parent?.type !== 'data_source_id' || normalizeId(page.parent.data_source_id) !== normalizeId(DATA_SOURCE_ID)) {
-    return json({ error: 'That page is not in Gym Buddy Log' }, 403);
+  // Only rows in this user's own log, and only while still Planned.
+  if (page.parent?.type !== 'data_source_id' || normalizeId(page.parent.data_source_id) !== normalizeId(user.ds)) {
+    return json({ error: 'That page is not in your Gym Buddy Log' }, 403);
   }
   if (page.in_trash) return json({ error: 'That row is in the trash' }, 409);
   if (page.properties.Status?.select?.name !== 'Planned') {
@@ -237,26 +273,29 @@ export default {
 
     if (sub === '/login' && request.method === 'POST') {
       if (!sameOrigin(request)) return respond('Forbidden', 403, 'text/plain');
-      // Global daily cap, checked before the password so a locked day can't be guessed through.
-      const failKey = `login-fails:${new Date().toISOString().slice(0, 10)}`;
+      const form = await request.formData().catch(() => null);
+      const username = String(form?.get('username') || '').trim().toLowerCase();
+      const user = await loadUser(env, username);
+      // Daily cap per username (unknown names share one bucket), checked before the password so a locked day
+      // can't be guessed through.
+      const failKey = `login-fails:${new Date().toISOString().slice(0, 10)}:${user ? user.username : '_unknown'}`;
       const fails = Number(await env.GB_KV.get(failKey)) || 0;
       if (fails >= MAX_FAILS_PER_DAY) {
         return respond(LOGIN_HTML.replace('<!--ERROR-->', '<p class="error">Too many wrong passwords today. Try again tomorrow.</p>'), 429);
       }
-      const form = await request.formData().catch(() => null);
-      if (form && (await safeEqual(env.COOKIE_SECRET, form.get('password') || '', env.APP_PASSWORD))) {
-        return new Response(null, { status: 303, headers: { Location: BASE, 'Set-Cookie': await makeCookie(env), ...SECURITY_HEADERS } });
+      if (await checkPassword(env, user, String(form?.get('password') || ''))) {
+        return new Response(null, { status: 303, headers: { Location: BASE, 'Set-Cookie': await makeCookie(env, user.username), ...SECURITY_HEADERS } });
       }
       await env.GB_KV.put(failKey, String(fails + 1), { expirationTtl: 2 * 86400 });
       await new Promise((r) => setTimeout(r, 1000)); // slow down guessing
-      return respond(LOGIN_HTML.replace('<!--ERROR-->', '<p class="error">Wrong password.</p>'), 401);
+      return respond(LOGIN_HTML.replace('<!--ERROR-->', '<p class="error">Wrong username or password.</p>'), 401);
     }
 
-    const authed = await isAuthed(request, env);
+    const user = await authedUser(request, env);
     if (sub === '/logout') {
       return new Response(null, { status: 303, headers: { Location: BASE, 'Set-Cookie': `${COOKIE}=; Path=${BASE}; Max-Age=0; HttpOnly; Secure; SameSite=Strict`, ...SECURITY_HEADERS } });
     }
-    if (!authed) {
+    if (!user) {
       if (sub.startsWith('/api/')) return json({ error: 'Not logged in' }, 401);
       if (sub === '/' && request.method === 'GET') return respond(LOGIN_HTML);
       return respond('Not found', 404, 'text/plain');
@@ -265,12 +304,12 @@ export default {
     try {
       if (sub === '/' && request.method === 'GET') return respond(APP_HTML);
       if (sub === '/app.js') return respond(APP_JS, 200, 'text/javascript; charset=utf-8');
-      if (sub === '/api/session' && request.method === 'GET') return json({ session: await getSession(env) });
+      if (sub === '/api/session' && request.method === 'GET') return json({ athlete: user.name, session: await getSession(env, user) });
       if (sub === '/api/save' && request.method === 'POST') {
         if (!sameOrigin(request) || !(request.headers.get('Content-Type') || '').startsWith('application/json')) {
           return json({ error: 'Forbidden' }, 403);
         }
-        return await saveSession(env, await request.json().catch(() => null));
+        return await saveSession(env, user, await request.json().catch(() => null));
       }
     } catch (e) {
       console.error(e);

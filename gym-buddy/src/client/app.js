@@ -26,6 +26,7 @@
 
   let session = null;
   let state = null;
+  let athlete = '';
 
   function freshState(s) {
     return {
@@ -355,7 +356,7 @@
   function footer(s) {
     return h('div', { class: 'footer-links' },
       s.url ? h('a', { href: s.url, target: '_blank', rel: 'noopener' }, 'Open in Notion') : h('span'),
-      h('a', { href: '/gym/logout' }, 'Log out'));
+      h('a', { href: '/gym/logout' }, athlete ? `Log out (${athlete})` : 'Log out'));
   }
 
   // ---------- save ----------
@@ -403,9 +404,13 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Load failed (${res.status})`);
       session = data.session;
+      athlete = data.athlete || '';
       if (!session) {
         $('title').textContent = 'Gym Buddy';
-        app.replaceChildren(h('div', { class: 'banner' }, 'No Planned or Done sessions found in Gym Buddy Log.'));
+        app.replaceChildren(
+          h('div', { class: 'card' }, h('h2', {}, athlete ? `Welcome, ${athlete}` : 'Welcome'),
+            h('p', {}, 'No sessions yet. Tell your Gym Buddy coach "let\'s go" and it will plan today\'s workout here. Then refresh this page.')),
+          footer({}));
         return;
       }
       header(session);
