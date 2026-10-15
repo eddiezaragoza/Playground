@@ -77,6 +77,16 @@ python3 tools/fetch_photos.py <free-exercise-db dist/exercises.json> <download d
 NOTION_TOKEN=... python3 tools/build_library.py upsert cf4fdd21-651b-4f8f-bfa8-baaf3fba7945 <exercises.json>
 ```
 
+## Friends (multi-user)
+
+- Log in with **username + password**. Eddie is `eddie` with `APP_PASSWORD`. Each friend is a KV record
+  `user:<username>` = `{name, ds, salt, hash, iter}` (PBKDF2-SHA256, 100k iterations). `ds` is their own log; the
+  Worker reads and writes only the logged-in user's log, and save re-checks the row's parent against it.
+- The login cookie is `username.expiry.signature`. Cookies from before multi-user (`expiry.signature`) count as Eddie.
+  Deleting a user's KV record logs them out at once.
+- Each username gets its own 20-wrong-passwords-a-day lockout; unknown usernames share one.
+- Onboarding, Notion layout and the Profile and pointer templates: [library/friend-templates.md](library/friend-templates.md).
+
 ## Security
 
 - Every route except the login form, manifest, icon and CSS requires a valid signed cookie (HMAC-SHA256,
