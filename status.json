@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-16T15:34:58.894Z",
+  "generatedAt": "2026-10-16T18:59:08.268Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
-      "lastLiveAt": "2026-10-16T15:34:58.894Z",
+      "checkedAt": "2026-10-16T18:59:08.268Z",
+      "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-14T08:32:53.372Z",
-          "lastSeenLiveAt": "2026-10-16T15:34:58.894Z"
+          "lastSeenLiveAt": "2026-10-16T18:59:08.268Z"
         },
         {
           "videoId": "VGPNzgBsZRQ",
@@ -47,15 +47,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
-      "lastLiveAt": "2026-10-16T15:34:58.894Z",
+      "checkedAt": "2026-10-16T18:59:08.268Z",
+      "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-14T21:51:33.549Z",
-          "lastSeenLiveAt": "2026-10-16T15:34:58.894Z"
+          "lastSeenLiveAt": "2026-10-16T18:59:08.268Z"
         },
         {
           "videoId": "XHBrpnX_5bU",
@@ -77,7 +77,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
+      "checkedAt": "2026-10-16T18:59:08.268Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -85,7 +85,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
+      "checkedAt": "2026-10-16T18:59:08.268Z",
       "lastLiveAt": "2026-10-14T21:51:33.549Z",
       "history": [
         {
@@ -115,7 +115,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
+      "checkedAt": "2026-10-16T18:59:08.268Z",
       "lastLiveAt": "2026-10-15T21:35:22.512Z",
       "history": [
         {
@@ -129,17 +129,25 @@
     },
     "catholictv": {
       "current": {
-        "state": "upcoming",
+        "state": "live",
         "videoId": "rlt7vt5Gwcc",
         "title": "Live Adoration of the Blessed Sacrament From the CatholicTV Chapel 10/16/26",
         "url": "https://www.youtube.com/watch?v=rlt7vt5Gwcc",
         "thumbnail": "https://i.ytimg.com/vi/rlt7vt5Gwcc/hqdefault.jpg",
-        "scheduledFor": "2026-10-16T19:00:00.000Z",
+        "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-16T15:34:58.894Z",
-      "lastLiveAt": null,
-      "history": []
+      "checkedAt": "2026-10-16T18:59:08.268Z",
+      "lastLiveAt": "2026-10-16T18:59:08.268Z",
+      "history": [
+        {
+          "videoId": "rlt7vt5Gwcc",
+          "title": "Live Adoration of the Blessed Sacrament From the CatholicTV Chapel 10/16/26",
+          "url": "https://www.youtube.com/watch?v=rlt7vt5Gwcc",
+          "startedAt": "2026-10-16T18:59:08.268Z",
+          "lastSeenLiveAt": "2026-10-16T18:59:08.268Z"
+        }
+      ]
     }
   }
 }
