@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-23T12:12:07.524Z",
+  "generatedAt": "2026-10-23T17:12:21.702Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
-      "lastLiveAt": "2026-10-23T12:12:07.524Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
+      "lastLiveAt": "2026-10-23T17:12:21.702Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-20T01:25:52.268Z",
-          "lastSeenLiveAt": "2026-10-23T12:12:07.524Z"
+          "lastSeenLiveAt": "2026-10-23T17:12:21.702Z"
         },
         {
           "videoId": "l-1w5e5649Q",
@@ -75,15 +75,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
-      "lastLiveAt": "2026-10-23T12:12:07.524Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
+      "lastLiveAt": "2026-10-23T17:12:21.702Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-14T21:51:33.549Z",
-          "lastSeenLiveAt": "2026-10-23T12:12:07.524Z"
+          "lastSeenLiveAt": "2026-10-23T17:12:21.702Z"
         },
         {
           "videoId": "XHBrpnX_5bU",
@@ -105,7 +105,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -113,7 +113,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
       "lastLiveAt": "2026-10-14T21:51:33.549Z",
       "history": [
         {
@@ -141,11 +141,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "CzawqxAGqC8",
+        "title": "Conectados en Familia: Vivir el primer mandamiento",
+        "url": "https://www.youtube.com/watch?v=CzawqxAGqC8",
+        "thumbnail": "https://i.ytimg.com/vi/CzawqxAGqC8/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
-      "lastLiveAt": "2026-10-22T17:14:04.450Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
+      "lastLiveAt": "2026-10-23T17:12:21.702Z",
       "history": [
+        {
+          "videoId": "CzawqxAGqC8",
+          "title": "Conectados en Familia: Vivir el primer mandamiento",
+          "url": "https://www.youtube.com/watch?v=CzawqxAGqC8",
+          "startedAt": "2026-10-23T17:12:21.702Z",
+          "lastSeenLiveAt": "2026-10-23T17:12:21.702Z"
+        },
         {
           "videoId": "-ostwHZvQTU",
           "title": "Conectados en Familia: El riesgo de la idolatría",
@@ -166,7 +179,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-23T12:12:07.524Z",
+      "checkedAt": "2026-10-23T17:12:21.702Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
