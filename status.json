@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-24T11:32:50.869Z",
+  "generatedAt": "2026-10-24T14:50:14.569Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
-      "lastLiveAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
+      "lastLiveAt": "2026-10-24T14:50:14.569Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-20T01:25:52.268Z",
-          "lastSeenLiveAt": "2026-10-24T11:32:50.869Z"
+          "lastSeenLiveAt": "2026-10-24T14:50:14.569Z"
         },
         {
           "videoId": "l-1w5e5649Q",
@@ -68,16 +68,23 @@
     "vatican-news": {
       "current": {
         "state": "live",
-        "videoId": "03pYP2Nmreo",
-        "title": "Vatican Media Live",
-        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
-        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
+        "videoId": "ikv1HV9lnuE",
+        "title": "Lectio Francisci - 24 ottobre 2026",
+        "url": "https://www.youtube.com/watch?v=ikv1HV9lnuE",
+        "thumbnail": "https://i.ytimg.com/vi/ikv1HV9lnuE/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
-      "lastLiveAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
+      "lastLiveAt": "2026-10-24T14:50:14.569Z",
       "history": [
+        {
+          "videoId": "ikv1HV9lnuE",
+          "title": "Lectio Francisci - 24 ottobre 2026",
+          "url": "https://www.youtube.com/watch?v=ikv1HV9lnuE",
+          "startedAt": "2026-10-24T14:50:14.569Z",
+          "lastSeenLiveAt": "2026-10-24T14:50:14.569Z"
+        },
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
@@ -105,7 +112,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -113,7 +120,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
       "lastLiveAt": "2026-10-14T21:51:33.549Z",
       "history": [
         {
@@ -143,7 +150,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
       "lastLiveAt": "2026-10-23T17:12:21.702Z",
       "history": [
         {
@@ -173,7 +180,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-24T11:32:50.869Z",
+      "checkedAt": "2026-10-24T14:50:14.569Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
