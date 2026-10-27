@@ -25,6 +25,12 @@ Cloudflare Worker on the `/gym*` route, so the Notion token stays server-side, a
 secrets (`NOTION_TOKEN`, `APP_PASSWORD`, `COOKIE_SECRET`) and the Plan JSON format are in
 [gym-buddy/README.md](gym-buddy/README.md).
 
+## Glasses Vision
+
+A reusable toolkit for footage from Meta glasses: video → frames → Claude vision → typed answers, plus voice output.
+Comes with an after-the-game chess review (rebuilds the game from a recording, then flags mistakes with Stockfish). It
+is analysis-only and gives no help during a game. See [glasses-vision/README.md](glasses-vision/README.md).
+
 ## Contact
 
 - Email: [edward.zaragoza@gmail.com](mailto:edward.zaragoza@gmail.com)
