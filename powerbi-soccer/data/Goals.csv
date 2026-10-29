@@ -1,0 +1,170 @@
+GoalID,MatchID,PlayerID,TeamID,Minute,GoalType
+1,1,66,6,43,Penalty
+2,1,65,6,37,Header
+3,1,66,6,71,Open Play
+4,2,31,3,41,Open Play
+5,3,73,7,52,Free Kick
+6,4,99,9,1,Header
+7,4,99,9,60,Penalty
+8,4,80,8,67,Open Play
+9,4,87,8,64,Header
+10,5,97,9,7,Open Play
+11,6,40,4,17,Open Play
+12,6,42,4,90,Penalty
+13,6,16,2,81,Free Kick
+14,7,54,5,91,Open Play
+15,7,51,5,2,Free Kick
+16,7,19,2,29,Open Play
+17,7,20,2,16,Header
+18,8,77,7,64,Header
+19,8,73,7,91,Open Play
+20,8,74,7,62,Penalty
+21,8,73,7,71,Open Play
+22,9,107,10,77,Free Kick
+23,9,109,10,18,Open Play
+24,10,29,3,54,Open Play
+25,11,22,2,65,Open Play
+26,12,77,7,37,Header
+27,12,95,9,76,Free Kick
+28,13,44,4,63,Open Play
+29,13,31,3,62,Open Play
+30,13,30,3,70,Penalty
+31,14,53,5,42,Open Play
+32,14,55,5,31,Free Kick
+33,14,30,3,53,Open Play
+34,15,51,5,61,Header
+35,17,44,4,49,Penalty
+36,17,44,4,84,Open Play
+37,18,86,8,5,Open Play
+38,18,86,8,76,Open Play
+39,19,22,2,57,Open Play
+40,19,20,2,59,Open Play
+41,19,87,8,53,Header
+42,20,22,2,10,Penalty
+43,20,21,2,34,Open Play
+44,20,21,2,51,Header
+45,21,48,5,43,Header
+46,22,11,1,49,Open Play
+47,22,10,1,63,Free Kick
+48,23,69,7,9,Open Play
+49,24,87,8,37,Open Play
+50,24,87,8,56,Open Play
+51,25,21,2,91,Open Play
+52,25,20,2,89,Open Play
+53,25,33,3,6,Open Play
+54,26,65,6,38,Open Play
+55,26,63,6,19,Open Play
+56,26,97,9,73,Header
+57,27,76,7,22,Open Play
+58,27,70,7,49,Free Kick
+59,28,43,4,64,Free Kick
+60,29,94,9,60,Header
+61,30,95,9,33,Header
+62,30,57,6,60,Open Play
+63,31,10,1,21,Open Play
+64,34,86,8,45,Free Kick
+65,35,62,6,55,Header
+66,37,7,1,39,Open Play
+67,37,11,1,62,Open Play
+68,38,18,2,74,Open Play
+69,38,20,2,90,Open Play
+70,38,13,2,85,Penalty
+71,38,40,4,73,Header
+72,38,43,4,7,Free Kick
+73,39,109,10,37,Open Play
+74,39,108,10,46,Open Play
+75,41,21,2,80,Open Play
+76,41,21,2,85,Header
+77,41,55,5,81,Open Play
+78,42,110,10,83,Open Play
+79,43,106,10,57,Open Play
+80,45,108,10,17,Open Play
+81,46,88,8,42,Header
+82,46,8,1,26,Open Play
+83,47,87,8,47,Free Kick
+84,47,86,8,35,Open Play
+85,48,106,10,62,Open Play
+86,48,109,10,44,Open Play
+87,49,9,1,10,Open Play
+88,50,109,10,29,Header
+89,50,87,8,51,Free Kick
+90,50,85,8,51,Open Play
+91,51,51,5,16,Penalty
+92,52,19,2,87,Open Play
+93,54,9,1,82,Open Play
+94,54,5,1,30,Penalty
+95,54,90,9,72,Open Play
+96,55,77,7,29,Header
+97,55,58,6,60,Header
+98,55,62,6,53,Open Play
+99,56,39,4,5,Open Play
+100,57,55,5,15,Open Play
+101,58,29,3,69,Open Play
+102,58,30,3,48,Header
+103,58,55,5,90,Free Kick
+104,59,74,7,20,Penalty
+105,59,76,7,63,Free Kick
+106,59,52,5,36,Open Play
+107,59,54,5,28,Penalty
+108,60,108,10,31,Open Play
+109,60,103,10,88,Open Play
+110,60,108,10,83,Open Play
+111,61,69,7,36,Open Play
+112,62,44,4,59,Open Play
+113,62,10,1,83,Header
+114,62,9,1,3,Open Play
+115,62,10,1,32,Open Play
+116,62,10,1,27,Open Play
+117,63,33,3,71,Open Play
+118,64,31,3,30,Open Play
+119,64,98,9,77,Open Play
+120,65,18,2,19,Open Play
+121,66,97,9,23,Open Play
+122,66,98,9,4,Open Play
+123,67,2,1,31,Free Kick
+124,67,73,7,23,Open Play
+125,68,36,4,54,Free Kick
+126,68,38,4,9,Penalty
+127,68,75,7,47,Free Kick
+128,68,75,7,58,Free Kick
+129,69,28,3,79,Open Play
+130,69,32,3,85,Free Kick
+131,69,84,8,83,Open Play
+132,71,25,3,62,Penalty
+133,72,108,10,14,Penalty
+134,72,98,9,57,Open Play
+135,72,99,9,42,Free Kick
+136,73,94,9,17,Open Play
+137,73,98,9,75,Free Kick
+138,74,54,5,49,Free Kick
+139,75,53,5,59,Free Kick
+140,75,53,5,13,Header
+141,75,104,10,84,Header
+142,75,110,10,71,Header
+143,76,77,7,56,Penalty
+144,76,22,2,53,Open Play
+145,77,99,9,52,Penalty
+146,78,21,2,41,Penalty
+147,78,18,2,33,Open Play
+148,78,22,2,88,Penalty
+149,79,58,6,11,Open Play
+150,80,108,10,48,Open Play
+151,80,108,10,76,Free Kick
+152,80,108,10,86,Open Play
+153,81,96,9,86,Penalty
+154,81,99,9,7,Open Play
+155,81,31,3,46,Open Play
+156,82,64,6,28,Open Play
+157,83,43,4,29,Open Play
+158,83,41,4,72,Open Play
+159,84,16,2,36,Free Kick
+160,84,72,7,55,Free Kick
+161,85,11,1,80,Free Kick
+162,86,54,5,72,Open Play
+163,86,53,5,85,Header
+164,86,51,5,24,Open Play
+165,86,87,8,40,Open Play
+166,87,85,8,24,Open Play
+167,88,108,10,52,Open Play
+168,88,105,10,82,Open Play
+169,90,26,3,68,Open Play

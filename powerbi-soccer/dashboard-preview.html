@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soccer Season Dashboard</title>
+<style>
+  :root {
+    --bg:        #f3f2f1;
+    --card:      #ffffff;
+    --ink:       #252423;
+    --ink-dim:   #605e5c;
+    --rule:      #edebe9;
+    --accent:    #118dff;
+    --accent-2:  #12239e;
+    --good:      #52b369;
+    --warn:      #e66c37;
+    --bad:       #d13438;
+    --draw:      #f2c811;
+    --chip:      #eef4ff;
+    --shadow:    0 1px 2px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.06);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #1b1a19; --card: #252423; --ink: #faf9f8; --ink-dim: #c8c6c4;
+      --rule: #3b3a39; --chip: #0e2a4a; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1a19; --card: #252423; --ink: #faf9f8; --ink-dim: #c8c6c4;
+    --rule: #3b3a39; --chip: #0e2a4a; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 13px/1.4 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    padding: 16px;
+  }
+  .pbi-shell { max-width: 1340px; margin: 0 auto; }
+  .pbi-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px 6px 0 0;
+  }
+  .pbi-header .logo {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg,#f2c811 0%, #e66c37 100%);
+    display: grid; place-items: center;
+    color: #000; font-weight: 800; font-size: 15px;
+  }
+  .pbi-header h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  .pbi-header .sub { color: var(--ink-dim); font-size: 12px; }
+  .pbi-header .right { margin-left: auto; display: flex; gap: 8px; }
+  .pill {
+    font-size: 11px; padding: 3px 8px; border-radius: 10px;
+    background: var(--chip); color: var(--accent-2); font-weight: 600;
+  }
+
+  .pbi-tabs {
+    display: flex; gap: 2px; padding: 0 8px;
+    background: var(--card); border-left: 1px solid var(--rule); border-right: 1px solid var(--rule);
+  }
+  .pbi-tabs .tab {
+    padding: 8px 14px; font-size: 12px; font-weight: 600;
+    color: var(--ink-dim); border-bottom: 2px solid transparent;
+    cursor: default;
+  }
+  .pbi-tabs .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .pbi-canvas {
+    background: var(--card);
+    border: 1px solid var(--rule); border-top: 0;
+    border-radius: 0 0 6px 6px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+  }
+
+  .visual {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+    min-height: 90px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .visual h3 {
+    margin: 0 0 6px; font-size: 12px; font-weight: 600;
+    color: var(--ink-dim); text-transform: uppercase; letter-spacing: .3px;
+  }
+
+  /* KPI cards */
+  .kpi { grid-column: span 3; min-height: 96px; }
+  .kpi .value { font-size: 28px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+  .kpi .unit  { font-size: 12px; color: var(--ink-dim); margin-left: 2px; }
+  .kpi .trend { margin-top: 2px; font-size: 11px; color: var(--good); }
+
+  /* spans */
+  .span-3  { grid-column: span 3; }
+  .span-4  { grid-column: span 4; }
+  .span-5  { grid-column: span 5; }
+  .span-6  { grid-column: span 6; }
+  .span-7  { grid-column: span 7; }
+  .span-8  { grid-column: span 8; }
+  .span-12 { grid-column: span 12; }
+
+  /* Bar chart */
+  .bar-row { display: grid; grid-template-columns: 110px 1fr 46px; align-items: center; gap: 8px; padding: 3px 0; font-size: 12px; }
+  .bar-row .label { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-row .track { height: 12px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+  .bar-row .fill  { height: 100%; background: var(--accent); border-radius: 2px; }
+  .bar-row .fill.good { background: var(--good); }
+  .bar-row .fill.warn { background: var(--warn); }
+  .bar-row .num   { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+
+  /* Standings table */
+  table.pbt { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.pbt th, table.pbt td { text-align: right; padding: 5px 6px; border-bottom: 1px solid var(--rule); }
+  table.pbt th:first-child, table.pbt td:first-child, table.pbt th.tn, table.pbt td.tn { text-align: left; }
+  table.pbt th { color: var(--ink-dim); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: .3px; }
+  table.pbt td { font-variant-numeric: tabular-nums; }
+  table.pbt tr.pos-top { background: rgba(82,179,105,.08); }
+  table.pbt tr.pos-cl  { background: rgba(17,141,255,.06); }
+  table.pbt tr.pos-rel { background: rgba(209,52,56,.06); }
+
+  .form-pill {
+    display: inline-block; width: 14px; height: 14px; margin: 0 1px;
+    border-radius: 3px; color: #fff; font-size: 9px; font-weight: 700;
+    text-align: center; line-height: 14px;
+  }
+  .f-W { background: var(--good); }
+  .f-D { background: var(--draw); color: #333; }
+  .f-L { background: var(--bad); }
+
+  /* Donut */
+  .donut-wrap { display: flex; align-items: center; gap: 14px; flex: 1; min-height: 0; }
+  .donut-wrap svg { flex: 0 0 auto; }
+  .donut-legend { font-size: 12px; display: grid; gap: 4px; }
+  .donut-legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+
+  /* Column chart */
+  .cols { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; align-items: end; height: 160px; padding: 0 2px; }
+  .col { background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%); border-radius: 3px 3px 0 0; position: relative; }
+  .col .cv { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .col-labels { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; margin-top: 4px; font-size: 10px; color: var(--ink-dim); text-align: center; }
+
+  /* Scorer list */
+  .scorer-list { display: grid; gap: 6px; }
+  .scorer {
+    display: grid; grid-template-columns: 24px 1fr 46px; gap: 10px; align-items: center;
+    padding: 6px 8px; border-radius: 4px; background: var(--bg);
+  }
+  .scorer .rk { font-weight: 700; color: var(--ink-dim); font-size: 12px; text-align: center; }
+  .scorer .nm { font-weight: 600; }
+  .scorer .mt { font-size: 11px; color: var(--ink-dim); }
+  .scorer .g  { text-align: right; font-weight: 700; color: var(--accent); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .pos-chip { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; color: #fff; margin-left: 4px; }
+  .pos-GK { background: #f2c811; color: #000; }
+  .pos-DF { background: #118dff; }
+  .pos-MF { background: #12239e; }
+  .pos-FW { background: #e66c37; }
+
+  .footer-note {
+    margin-top: 14px; padding: 10px 14px;
+    background: var(--card); border: 1px solid var(--rule); border-radius: 6px;
+    font-size: 12px; color: var(--ink-dim);
+  }
+  .footer-note strong { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .kpi { grid-column: span 6; }
+    .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+  }
+</style>
+</head>
+<body>
+<div class="pbi-shell">
+
+  <div class="pbi-header">
+    <div class="logo">⚽</div>
+    <div>
+      <h1>Soccer Season Dashboard — 2025/26</h1>
+      <div class="sub">Preview of the Power BI report · 10 teams · 90 matches · 169 goals</div>
+    </div>
+    <div class="right">
+      <span class="pill">Sample data</span>
+      <span class="pill">pbix · pbit</span>
+    </div>
+  </div>
+
+  <div class="pbi-tabs">
+    <div class="tab active">Overview</div>
+    <div class="tab">Standings</div>
+    <div class="tab">Top Scorers</div>
+    <div class="tab">Goals Analysis</div>
+  </div>
+
+  <div class="pbi-canvas" id="canvas"><!-- rendered by JS --></div>
+
+  <div class="footer-note">
+    <strong>Files in this folder:</strong>
+    <code>Soccer_Season_Dashboard.pbix</code> ·
+    <code>Soccer_Season_Dashboard.pbit</code> ·
+    <code>data/*.csv</code> (Teams, Players, Matches, Goals) ·
+    <code>README.md</code> for Power BI Desktop import steps.
+  </div>
+
+</div>
+
+<script id="pbi-data" type="application/json">{
+  "kpis": {
+    "matches": 90,
+    "goals": 169,
+    "gpm": 1.88,
+    "att": 5218869,
+    "sqv": 9008.0
+  },
+  "standings": [
+    {
+      "P": 18,
+      "W": 9,
+      "D": 5,
+      "L": 4,
+      "GF": 23,
+      "GA": 16,
+      "GD": 7,
+      "Pts": 32,
+      "Form": "WDWLD",
+      "Name": "Real Madrid",
+      "Country": "Spain"
+    },
+    {
+      "P": 18,
+      "W": 9,
+      "D": 1,
+      "L": 8,
+      "GF": 21,
+      "GA": 16,
+      "GD": 5,
+      "Pts": 28,
+      "Form": "LLDWW",
+      "Name": "Chelsea",
+      "Country": "England"
+    },
+    {
+      "P": 18,
+      "W": 8,
+      "D": 3,
+      "L": 7,
+      "GF": 15,
+      "GA": 15,
+      "GD": 0,
+      "Pts": 27,
+      "Form": "WWLLW",
+      "Name": "FC Barcelona",
+      "Country": "Spain"
+    },
+    {
+      "P": 18,
+      "W": 7,
+      "D": 5,
+      "L": 6,
+      "GF": 18,
+      "GA": 18,
+      "GD": 0,
+      "Pts": 26,
+      "Form": "WWWWW",
+      "Name": "AC Milan",
+      "Country": "Italy"
+    },
+    {
+      "P": 18,
+      "W": 7,
+      "D": 5,
+      "L": 6,
+      "GF": 18,
+      "GA": 19,
+      "GD": -1,
+      "Pts": 26,
+      "Form": "WDLLW",
+      "Name": "Paris Saint-Germain",
+      "Country": "France"
+    },
+    {
+      "P": 18,
+      "W": 7,
+      "D": 4,
+      "L": 7,
+      "GF": 15,
+      "GA": 13,
+      "GD": 2,
+      "Pts": 25,
+      "Form": "LLDLW",
+      "Name": "Manchester United",
+      "Country": "England"
+    },
+    {
+      "P": 18,
+      "W": 6,
+      "D": 6,
+      "L": 6,
+      "GF": 11,
+      "GA": 13,
+      "GD": -2,
+      "Pts": 24,
+      "Form": "WWLLD",
+      "Name": "Juventus",
+      "Country": "Italy"
+    },
+    {
+      "P": 18,
+      "W": 5,
+      "D": 7,
+      "L": 6,
+      "GF": 18,
+      "GA": 16,
+      "GD": 2,
+      "Pts": 22,
+      "Form": "LDDDD",
+      "Name": "Liverpool",
+      "Country": "England"
+    },
+    {
+      "P": 18,
+      "W": 6,
+      "D": 4,
+      "L": 8,
+      "GF": 16,
+      "GA": 20,
+      "GD": -4,
+      "Pts": 22,
+      "Form": "LLWDL",
+      "Name": "Manchester City",
+      "Country": "England"
+    },
+    {
+      "P": 18,
+      "W": 5,
+      "D": 2,
+      "L": 11,
+      "GF": 14,
+      "GA": 23,
+      "GD": -9,
+      "Pts": 17,
+      "Form": "LLDLW",
+      "Name": "Bayern Munich",
+      "Country": "Germany"
+    }
+  ],
+  "top_scorers": [
+    {
+      "name": "Florian Dubois",
+      "team": "Chelsea",
+      "pos": "FW",
+      "goals": 9
+    },
+    {
+      "name": "Antoine Novak",
+      "team": "Manchester City",
+      "pos": "FW",
+      "goals": 7
+    },
+    {
+      "name": "Ethan Nakamura",
+      "team": "Real Madrid",
+      "pos": "FW",
+      "goals": 6
+    },
+    {
+      "name": "Florian Martinez",
+      "team": "AC Milan",
+      "pos": "FW",
+      "goals": 5
+    },
+    {
+      "name": "Antoine Cole",
+      "team": "Real Madrid",
+      "pos": "FW",
+      "goals": 5
+    },
+    {
+      "name": "Ethan Fernandez",
+      "team": "Manchester United",
+      "pos": "FW",
+      "goals": 5
+    },
+    {
+      "name": "Ethan Costa",
+      "team": "FC Barcelona",
+      "pos": "FW",
+      "goals": 4
+    },
+    {
+      "name": "Leo M\u00fcller",
+      "team": "Liverpool",
+      "pos": "MF",
+      "goals": 4
+    },
+    {
+      "name": "Erling Vargas",
+      "team": "Paris Saint-Germain",
+      "pos": "FW",
+      "goals": 4
+    },
+    {
+      "name": "Pedri Hakimi",
+      "team": "Paris Saint-Germain",
+      "pos": "MF",
+      "goals": 4
+    }
+  ],
+  "country_goals": [
+    [
+      "England",
+      70
+    ],
+    [
+      "Spain",
+      38
+    ],
+    [
+      "Italy",
+      29
+    ],
+    [
+      "France",
+      18
+    ],
+    [
+      "Germany",
+      14
+    ]
+  ],
+  "goal_types": [
+    [
+      "Open Play",
+      95
+    ],
+    [
+      "Free Kick",
+      28
+    ],
+    [
+      "Header",
+      26
+    ],
+    [
+      "Penalty",
+      20
+    ]
+  ],
+  "buckets": [
+    [
+      "0-15",
+      18
+    ],
+    [
+      "16-30",
+      25
+    ],
+    [
+      "31-45",
+      27
+    ],
+    [
+      "46-60",
+      37
+    ],
+    [
+      "61-75",
+      28
+    ],
+    [
+      "76-90+",
+      34
+    ]
+  ],
+  "squad_vals": [
+    [
+      "Manchester United",
+      1078.3000000000002
+    ],
+    [
+      "Liverpool",
+      1044.6000000000001
+    ],
+    [
+      "Real Madrid",
+      966.5
+    ],
+    [
+      "Juventus",
+      958.4
+    ],
+    [
+      "FC Barcelona",
+      957.9
+    ],
+    [
+      "Bayern Munich",
+      924.8000000000001
+    ],
+    [
+      "Chelsea",
+      886.3
+    ],
+    [
+      "AC Milan",
+      826.7
+    ],
+    [
+      "Paris Saint-Germain",
+      738.8
+    ],
+    [
+      "Manchester City",
+      626.2
+    ]
+  ]
+}</script>
+<script>
+const D = JSON.parse(document.getElementById('pbi-data').textContent);
+const canvas = document.getElementById('canvas');
+
+const fmt = n => n.toLocaleString('en-US');
+const fmt1 = n => n.toLocaleString('en-US', {maximumFractionDigits:1, minimumFractionDigits:1});
+const fmt2 = n => n.toLocaleString('en-US', {maximumFractionDigits:2, minimumFractionDigits:2});
+
+const el = (tag, cls, html) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (html !== undefined) n.innerHTML = html;
+  return n;
+};
+
+// ----- KPI tiles
+const kpis = [
+  {label:'Matches Played',   value: fmt(D.kpis.matches),           trend:'Season to date'},
+  {label:'Total Goals',      value: fmt(D.kpis.goals),             trend:'All competitions'},
+  {label:'Goals / Match',    value: fmt2(D.kpis.gpm),              trend:'League average'},
+  {label:'Total Attendance', value: fmt(D.kpis.att),               trend:'Across 90 fixtures'},
+];
+kpis.forEach(k => {
+  const c = el('div', 'visual kpi');
+  c.innerHTML = `<h3>${k.label}</h3>
+    <div class="value">${k.value}</div>
+    <div class="trend">▲ ${k.trend}</div>`;
+  canvas.appendChild(c);
+});
+
+// ----- Goals by Country (horizontal bar)
+{
+  const v = el('div','visual span-4'); v.appendChild(el('h3','',`Goals by Country`));
+  const max = Math.max(...D.country_goals.map(c=>c[1]));
+  D.country_goals.forEach(([name,cnt]) => {
+    const r = el('div','bar-row');
+    r.innerHTML = `<div class="label">${name}</div>
+      <div class="track"><div class="fill" style="width:${cnt/max*100}%"></div></div>
+      <div class="num">${cnt}</div>`;
+    v.appendChild(r);
+  });
+  canvas.appendChild(v);
+}
+
+// ----- Squad value by Team (horizontal bar)
+{
+  const v = el('div','visual span-4'); v.appendChild(el('h3','',`Squad Value by Team (£M)`));
+  const max = Math.max(...D.squad_vals.map(s=>s[1]));
+  D.squad_vals.slice(0,10).forEach(([name,val]) => {
+    const r = el('div','bar-row');
+    r.innerHTML = `<div class="label">${name}</div>
+      <div class="track"><div class="fill good" style="width:${val/max*100}%"></div></div>
+      <div class="num">${fmt1(val)}</div>`;
+    v.appendChild(r);
+  });
+  canvas.appendChild(v);
+}
+
+// ----- Goal types (donut)
+{
+  const v = el('div','visual span-4'); v.appendChild(el('h3','',`Goals by Type`));
+  const total = D.goal_types.reduce((s,g)=>s+g[1],0);
+  const palette = ['#118dff','#12239e','#e66c37','#52b369','#f2c811','#8661c5'];
+  const r = 42, cx = 60, cy = 60;
+  const circ = 2*Math.PI*r;
+  let off = 0;
+  let segs = '';
+  D.goal_types.forEach(([name,cnt],i) => {
+    const frac = cnt/total;
+    const len = frac*circ;
+    segs += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+             stroke="${palette[i%palette.length]}" stroke-width="18"
+             stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-off}" />`;
+    off += len;
+  });
+  const legend = D.goal_types.map(([n,c],i)=>
+    `<div><span class="sw" style="background:${palette[i%palette.length]}"></span>${n} <strong>${c}</strong> <span style="color:var(--ink-dim)">(${(c/total*100).toFixed(0)}%)</span></div>`
+  ).join('');
+  const wrap = el('div','donut-wrap');
+  wrap.innerHTML = `
+    <svg width="120" height="120" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
+      <circle cx="60" cy="60" r="42" fill="none" stroke="var(--rule)" stroke-width="18"/>
+      ${segs}
+    </svg>
+    <div class="donut-legend">${legend}</div>`;
+  v.appendChild(wrap);
+  canvas.appendChild(v);
+}
+
+// ----- Standings table
+{
+  const v = el('div','visual span-7'); v.appendChild(el('h3','',`League Table`));
+  const t = el('table','pbt');
+  t.innerHTML = `<thead><tr>
+    <th>#</th><th class="tn">Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
+    <th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th class="tn">Form</th></tr></thead>`;
+  const tb = el('tbody');
+  D.standings.forEach((s,i) => {
+    const cls = i<2 ? 'pos-top' : i<4 ? 'pos-cl' : i>=8 ? 'pos-rel' : '';
+    const form = (s.Form||'').split('').map(c=>`<span class="form-pill f-${c}">${c}</span>`).join('');
+    const row = el('tr', cls);
+    row.innerHTML = `<td>${i+1}</td><td class="tn">${s.Name}</td>
+      <td>${s.P}</td><td>${s.W}</td><td>${s.D}</td><td>${s.L}</td>
+      <td>${s.GF}</td><td>${s.GA}</td><td>${s.GD>0?'+':''}${s.GD}</td>
+      <td><strong>${s.Pts}</strong></td><td class="tn">${form}</td>`;
+    tb.appendChild(row);
+  });
+  t.appendChild(tb);
+  v.appendChild(t);
+  canvas.appendChild(v);
+}
+
+// ----- Top scorers
+{
+  const v = el('div','visual span-5'); v.appendChild(el('h3','',`Top Scorers`));
+  const list = el('div','scorer-list');
+  D.top_scorers.forEach((s,i) => {
+    const r = el('div','scorer');
+    r.innerHTML = `<div class="rk">${i+1}</div>
+      <div><div class="nm">${s.name}<span class="pos-chip pos-${s.pos}">${s.pos}</span></div>
+      <div class="mt">${s.team}</div></div>
+      <div class="g">${s.goals}</div>`;
+    list.appendChild(r);
+  });
+  v.appendChild(list);
+  canvas.appendChild(v);
+}
+
+// ----- Goal timings column chart
+{
+  const v = el('div','visual span-12'); v.appendChild(el('h3','',`When Are Goals Scored? (minutes)`));
+  const max = Math.max(...D.buckets.map(b=>b[1]));
+  const cols = el('div','cols');
+  D.buckets.forEach(([label,val]) => {
+    const c = el('div','col');
+    c.style.height = (val/max*100)+'%';
+    c.innerHTML = `<span class="cv">${val}</span>`;
+    cols.appendChild(c);
+  });
+  v.appendChild(cols);
+  const lbls = el('div','col-labels');
+  D.buckets.forEach(([label]) => lbls.appendChild(el('div','',label)));
+  v.appendChild(lbls);
+  canvas.appendChild(v);
+}
+</script>
+</body>
+</html>
