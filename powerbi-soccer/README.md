@@ -5,6 +5,12 @@ European soccer league season. The data lives inside the file via
 Power Query M expressions, so there are no external connections to
 wire up.
 
+The file structure was built by inspecting Microsoft's official
+samples (`microsoft/powerbi-desktop-samples`) and matching their format:
+UTF-16 LE text parts (no BOM), proper `[MS-QDEFF]` DataMashup
+container, TOM-schema DataModelSchema with M partitions, and a
+Power BI Report/Layout.
+
 ## Files
 
 | File | What it is |
@@ -20,12 +26,14 @@ wire up.
 ## How to open
 
 1. Install [Power BI Desktop](https://powerbi.microsoft.com/desktop/) (Windows, free).
-2. Double-click `Soccer_Season_Dashboard.pbix`.
-3. If Power BI asks to **refresh / build** the model, click **Yes** — it will
-   compile the embedded M queries into the tabular model.
-4. If instead it offers to **repair**, cancel, open
-   `Soccer_Season_Dashboard.pbit` directly, let it build, then
-   `File → Save As → Soccer_Season_Dashboard.pbix`.
+2. Double-click **`Soccer_Season_Dashboard.pbix`**.
+3. Power BI Desktop will see that no cached data model is baked in and
+   run the embedded M queries to build it. Approve the refresh when
+   prompted — it finishes in a couple of seconds since all data lives
+   inside the file.
+4. If the `.pbix` fails to open for any reason, open
+   **`Soccer_Season_Dashboard.pbit`** instead (identical bytes, template
+   extension) and then **File → Save As → .pbix**.
 
 ## What's in the model
 
