@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T05:30:34.543Z",
+  "generatedAt": "2026-10-31T11:10:10.474Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
-      "lastLiveAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
+      "lastLiveAt": "2026-10-31T11:10:10.474Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-10-25T04:32:36.548Z",
-          "lastSeenLiveAt": "2026-10-31T05:30:34.543Z"
+          "lastSeenLiveAt": "2026-10-31T11:10:10.474Z"
         },
         {
           "videoId": "2UQWfr-jXK4",
@@ -89,15 +89,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
-      "lastLiveAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
+      "lastLiveAt": "2026-10-31T11:10:10.474Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-24T17:45:00.701Z",
-          "lastSeenLiveAt": "2026-10-31T05:30:34.543Z"
+          "lastSeenLiveAt": "2026-10-31T11:10:10.474Z"
         },
         {
           "videoId": "ikv1HV9lnuE",
@@ -133,7 +133,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -147,7 +147,7 @@
         "scheduledFor": "2026-10-31T14:30:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
       "lastLiveAt": "2026-10-14T21:51:33.549Z",
       "history": [
         {
@@ -177,7 +177,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
       "lastLiveAt": "2026-10-28T21:48:16.544Z",
       "history": [
         {
@@ -228,7 +228,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-10-31T05:30:34.543Z",
+      "checkedAt": "2026-10-31T11:10:10.474Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
