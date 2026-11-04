@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2026-11-03T22:10:06.980Z",
+  "generatedAt": "2026-11-04T02:17:36.488Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
         "state": "live",
-        "videoId": "pGBPYC9M3MI",
-        "title": "Wednesday 4th November 2026 - St Benedict's, Melbourne. Welcome!",
-        "url": "https://www.youtube.com/watch?v=pGBPYC9M3MI",
-        "thumbnail": "https://i.ytimg.com/vi/pGBPYC9M3MI/hqdefault.jpg",
+        "videoId": "qz8YE61BoXM",
+        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
-      "lastLiveAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
+      "lastLiveAt": "2026-11-04T02:17:36.488Z",
       "history": [
+        {
+          "videoId": "qz8YE61BoXM",
+          "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+          "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+          "startedAt": "2026-11-04T02:17:36.488Z",
+          "lastSeenLiveAt": "2026-11-04T02:17:36.488Z"
+        },
         {
           "videoId": "pGBPYC9M3MI",
           "title": "Wednesday 4th November 2026 - St Benedict's, Melbourne. Welcome!",
@@ -110,15 +117,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
-      "lastLiveAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
+      "lastLiveAt": "2026-11-04T02:17:36.488Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-10-24T17:45:00.701Z",
-          "lastSeenLiveAt": "2026-11-03T22:10:06.980Z"
+          "lastSeenLiveAt": "2026-11-04T02:17:36.488Z"
         },
         {
           "videoId": "ikv1HV9lnuE",
@@ -154,7 +161,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -162,7 +169,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -197,15 +204,9 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "ujVKNnMiPLU",
-        "title": "Café con Cristo Radio Show -  La sensibilidad del Espíritu Santo y la pureza de nuestro corazón",
-        "url": "https://www.youtube.com/watch?v=ujVKNnMiPLU",
-        "thumbnail": "https://i.ytimg.com/vi/ujVKNnMiPLU/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
       "lastLiveAt": "2026-11-03T22:10:06.980Z",
       "history": [
         {
@@ -263,7 +264,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-03T22:10:06.980Z",
+      "checkedAt": "2026-11-04T02:17:36.488Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
