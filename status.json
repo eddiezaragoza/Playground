@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T22:44:30.351Z",
+  "generatedAt": "2026-11-05T02:51:11.269Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
-      "lastLiveAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
+      "lastLiveAt": "2026-11-05T02:51:11.269Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-04T02:17:36.488Z",
-          "lastSeenLiveAt": "2026-11-04T22:44:30.351Z"
+          "lastSeenLiveAt": "2026-11-05T02:51:11.269Z"
         },
         {
           "videoId": "pGBPYC9M3MI",
@@ -117,15 +117,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
-      "lastLiveAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
+      "lastLiveAt": "2026-11-05T02:51:11.269Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-04T17:24:48.218Z",
-          "lastSeenLiveAt": "2026-11-04T22:44:30.351Z"
+          "lastSeenLiveAt": "2026-11-05T02:51:11.269Z"
         },
         {
           "videoId": "xTthtOmcBFo",
@@ -175,7 +175,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -183,7 +183,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -218,15 +218,9 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "0-RUcFxAe74",
-        "title": "Café con Cristo Radio Show -  Dios y tus deseos",
-        "url": "https://www.youtube.com/watch?v=0-RUcFxAe74",
-        "thumbnail": "https://i.ytimg.com/vi/0-RUcFxAe74/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
       "lastLiveAt": "2026-11-04T22:44:30.351Z",
       "history": [
         {
@@ -298,7 +292,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-04T22:44:30.351Z",
+      "checkedAt": "2026-11-05T02:51:11.269Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
