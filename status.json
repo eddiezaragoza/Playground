@@ -1,19 +1,25 @@
 {
-  "generatedAt": "2026-11-06T18:11:20.399Z",
+  "generatedAt": "2026-11-06T23:12:48.885Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "qz8YE61BoXM",
+        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
-      "lastLiveAt": "2026-11-06T11:26:06.761Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "lastLiveAt": "2026-11-06T23:12:48.885Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-04T02:17:36.488Z",
-          "lastSeenLiveAt": "2026-11-06T11:26:06.761Z"
+          "lastSeenLiveAt": "2026-11-06T23:12:48.885Z"
         },
         {
           "videoId": "pGBPYC9M3MI",
@@ -111,15 +117,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
-      "lastLiveAt": "2026-11-06T18:11:20.399Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "lastLiveAt": "2026-11-06T23:12:48.885Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-04T17:24:48.218Z",
-          "lastSeenLiveAt": "2026-11-06T18:11:20.399Z"
+          "lastSeenLiveAt": "2026-11-06T23:12:48.885Z"
         },
         {
           "videoId": "xTthtOmcBFo",
@@ -169,7 +175,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -177,7 +183,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -213,16 +219,23 @@
     "ewtn-espanol": {
       "current": {
         "state": "live",
-        "videoId": "P7R8ok2CMzQ",
-        "title": "Conectados en Familia: El quinto mandamiento hoy",
-        "url": "https://www.youtube.com/watch?v=P7R8ok2CMzQ",
-        "thumbnail": "https://i.ytimg.com/vi/P7R8ok2CMzQ/hqdefault.jpg",
+        "videoId": "6KxHfeElRYk",
+        "title": "EN VIVO | León XIV en Uruguay: Vísperas en la Catedral Metropolitana | 6 de noviembre de 2026",
+        "url": "https://www.youtube.com/watch?v=6KxHfeElRYk",
+        "thumbnail": "https://i.ytimg.com/vi/6KxHfeElRYk/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
-      "lastLiveAt": "2026-11-06T18:11:20.399Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "lastLiveAt": "2026-11-06T23:12:48.885Z",
       "history": [
+        {
+          "videoId": "6KxHfeElRYk",
+          "title": "EN VIVO | León XIV en Uruguay: Vísperas en la Catedral Metropolitana | 6 de noviembre de 2026",
+          "url": "https://www.youtube.com/watch?v=6KxHfeElRYk",
+          "startedAt": "2026-11-06T23:12:48.885Z",
+          "lastSeenLiveAt": "2026-11-06T23:12:48.885Z"
+        },
         {
           "videoId": "P7R8ok2CMzQ",
           "title": "Conectados en Familia: El quinto mandamiento hoy",
@@ -304,15 +317,9 @@
     },
     "catholictv": {
       "current": {
-        "state": "upcoming",
-        "videoId": "cj00U4CdWpw",
-        "title": "Live Adoration of the Blessed Sacrament From the CatholicTV Chapel 11/6/26",
-        "url": "https://www.youtube.com/watch?v=cj00U4CdWpw",
-        "thumbnail": "https://i.ytimg.com/vi/cj00U4CdWpw/hqdefault.jpg",
-        "scheduledFor": "2026-11-06T20:00:00.000Z",
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-06T18:11:20.399Z",
+      "checkedAt": "2026-11-06T23:12:48.885Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
