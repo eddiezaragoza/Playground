@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T23:12:48.885Z",
+  "generatedAt": "2026-11-07T02:50:58.637Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
-      "lastLiveAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "lastLiveAt": "2026-11-07T02:50:58.637Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-04T02:17:36.488Z",
-          "lastSeenLiveAt": "2026-11-06T23:12:48.885Z"
+          "lastSeenLiveAt": "2026-11-07T02:50:58.637Z"
         },
         {
           "videoId": "pGBPYC9M3MI",
@@ -117,15 +117,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
-      "lastLiveAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "lastLiveAt": "2026-11-07T02:50:58.637Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-04T17:24:48.218Z",
-          "lastSeenLiveAt": "2026-11-06T23:12:48.885Z"
+          "lastSeenLiveAt": "2026-11-07T02:50:58.637Z"
         },
         {
           "videoId": "xTthtOmcBFo",
@@ -175,7 +175,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -183,7 +183,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -218,15 +218,9 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "6KxHfeElRYk",
-        "title": "EN VIVO | León XIV en Uruguay: Vísperas en la Catedral Metropolitana | 6 de noviembre de 2026",
-        "url": "https://www.youtube.com/watch?v=6KxHfeElRYk",
-        "thumbnail": "https://i.ytimg.com/vi/6KxHfeElRYk/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
       "lastLiveAt": "2026-11-06T23:12:48.885Z",
       "history": [
         {
@@ -319,7 +313,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T02:50:58.637Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
