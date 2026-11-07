@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T02:50:58.637Z",
+  "generatedAt": "2026-11-07T09:29:38.644Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
-      "lastLiveAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
+      "lastLiveAt": "2026-11-07T09:29:38.644Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-04T02:17:36.488Z",
-          "lastSeenLiveAt": "2026-11-07T02:50:58.637Z"
+          "lastSeenLiveAt": "2026-11-07T09:29:38.644Z"
         },
         {
           "videoId": "pGBPYC9M3MI",
@@ -110,16 +110,23 @@
     "vatican-news": {
       "current": {
         "state": "live",
-        "videoId": "03pYP2Nmreo",
-        "title": "Vatican Media Live",
-        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
-        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
+        "videoId": "JlZaxpGBeoE",
+        "title": "8° Capitolo Generale Monastero Wi-Fi - 7 novembre 2026",
+        "url": "https://www.youtube.com/watch?v=JlZaxpGBeoE",
+        "thumbnail": "https://i.ytimg.com/vi/JlZaxpGBeoE/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
-      "lastLiveAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
+      "lastLiveAt": "2026-11-07T09:29:38.644Z",
       "history": [
+        {
+          "videoId": "JlZaxpGBeoE",
+          "title": "8° Capitolo Generale Monastero Wi-Fi - 7 novembre 2026",
+          "url": "https://www.youtube.com/watch?v=JlZaxpGBeoE",
+          "startedAt": "2026-11-07T09:29:38.644Z",
+          "lastSeenLiveAt": "2026-11-07T09:29:38.644Z"
+        },
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
@@ -175,7 +182,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -183,7 +190,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -220,7 +227,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
       "lastLiveAt": "2026-11-06T23:12:48.885Z",
       "history": [
         {
@@ -313,7 +320,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T02:50:58.637Z",
+      "checkedAt": "2026-11-07T09:29:38.644Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
