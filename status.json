@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2026-11-07T19:46:12.103Z",
+  "generatedAt": "2026-11-07T23:06:18.902Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
         "state": "live",
-        "videoId": "qz8YE61BoXM",
-        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
-        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
-        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "videoId": "i5t518NS-rk",
+        "title": "Thirty-Second Sunday in Ordinary Time - St Benedict's, Melbourne. Welcome!",
+        "url": "https://www.youtube.com/watch?v=i5t518NS-rk",
+        "thumbnail": "https://i.ytimg.com/vi/i5t518NS-rk/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
-      "lastLiveAt": "2026-11-07T19:46:12.103Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
+      "lastLiveAt": "2026-11-07T23:06:18.902Z",
       "history": [
+        {
+          "videoId": "i5t518NS-rk",
+          "title": "Thirty-Second Sunday in Ordinary Time - St Benedict's, Melbourne. Welcome!",
+          "url": "https://www.youtube.com/watch?v=i5t518NS-rk",
+          "startedAt": "2026-11-07T23:06:18.902Z",
+          "lastSeenLiveAt": "2026-11-07T23:06:18.902Z"
+        },
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
@@ -117,15 +124,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
-      "lastLiveAt": "2026-11-07T19:46:12.103Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
+      "lastLiveAt": "2026-11-07T23:06:18.902Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-07T15:50:53.207Z",
-          "lastSeenLiveAt": "2026-11-07T19:46:12.103Z"
+          "lastSeenLiveAt": "2026-11-07T23:06:18.902Z"
         },
         {
           "videoId": "JlZaxpGBeoE",
@@ -189,7 +196,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -197,7 +204,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -232,11 +239,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "85DxdH8dK3Q",
+        "title": "EN VIVO | León XIV en Uruguay: Casavalle y Universidad Católica | 7 de noviembre de 2026",
+        "url": "https://www.youtube.com/watch?v=85DxdH8dK3Q",
+        "thumbnail": "https://i.ytimg.com/vi/85DxdH8dK3Q/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
-      "lastLiveAt": "2026-11-06T23:12:48.885Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
+      "lastLiveAt": "2026-11-07T23:06:18.902Z",
       "history": [
+        {
+          "videoId": "85DxdH8dK3Q",
+          "title": "EN VIVO | León XIV en Uruguay: Casavalle y Universidad Católica | 7 de noviembre de 2026",
+          "url": "https://www.youtube.com/watch?v=85DxdH8dK3Q",
+          "startedAt": "2026-11-07T23:06:18.902Z",
+          "lastSeenLiveAt": "2026-11-07T23:06:18.902Z"
+        },
         {
           "videoId": "6KxHfeElRYk",
           "title": "EN VIVO | León XIV en Uruguay: Vísperas en la Catedral Metropolitana | 6 de noviembre de 2026",
@@ -327,7 +347,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-07T19:46:12.103Z",
+      "checkedAt": "2026-11-07T23:06:18.902Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
