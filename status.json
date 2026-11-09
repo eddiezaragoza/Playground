@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T03:57:19.252Z",
+  "generatedAt": "2026-11-09T12:33:10.163Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
-      "lastLiveAt": "2026-11-09T03:57:19.252Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
+      "lastLiveAt": "2026-11-09T12:33:10.163Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-08T02:22:19.854Z",
-          "lastSeenLiveAt": "2026-11-09T03:57:19.252Z"
+          "lastSeenLiveAt": "2026-11-09T12:33:10.163Z"
         },
         {
           "videoId": "i5t518NS-rk",
@@ -131,15 +131,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
-      "lastLiveAt": "2026-11-09T03:57:19.252Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
+      "lastLiveAt": "2026-11-09T12:33:10.163Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-07T15:50:53.207Z",
-          "lastSeenLiveAt": "2026-11-09T03:57:19.252Z"
+          "lastSeenLiveAt": "2026-11-09T12:33:10.163Z"
         },
         {
           "videoId": "JlZaxpGBeoE",
@@ -203,7 +203,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -211,7 +211,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -246,17 +246,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "upcoming",
+        "state": "live",
         "videoId": "yjEv3pcHrhw",
         "title": "EN VIVO | Papa León XIV en Argentina: Visita al Pequeño Cottolengo Don Orione | 9 noviembre 2026",
         "url": "https://www.youtube.com/watch?v=yjEv3pcHrhw",
         "thumbnail": "https://i.ytimg.com/vi/yjEv3pcHrhw/hqdefault.jpg",
-        "scheduledFor": "2026-11-09T12:00:00.000Z",
+        "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
-      "lastLiveAt": "2026-11-08T20:24:28.502Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
+      "lastLiveAt": "2026-11-09T12:33:10.163Z",
       "history": [
+        {
+          "videoId": "yjEv3pcHrhw",
+          "title": "EN VIVO | Papa León XIV en Argentina: Visita al Pequeño Cottolengo Don Orione | 9 noviembre 2026",
+          "url": "https://www.youtube.com/watch?v=yjEv3pcHrhw",
+          "startedAt": "2026-11-09T12:33:10.163Z",
+          "lastSeenLiveAt": "2026-11-09T12:33:10.163Z"
+        },
         {
           "videoId": "62-QgImdooE",
           "title": "EN VIVO | León XIV en Argentina: Llegada, bienvenida y visita al Presidente Milei | 8 noviembre 2026",
@@ -361,7 +368,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-09T03:57:19.252Z",
+      "checkedAt": "2026-11-09T12:33:10.163Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
