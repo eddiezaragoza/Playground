@@ -1,0 +1,34 @@
+# Cloudflare Worker for eddiezaragoza.com/secret and /chat (the rest of the site stays on GitHub Pages).
+# Secrets are NOT in this file. Set them with: npx wrangler secret put CREATE_CODE | COOKIE_SECRET
+name = "vanish"
+main = "src/worker.js"
+compatibility_date = "2026-06-01"
+workers_dev = false
+routes = [
+  { pattern = "eddiezaragoza.com/secret*", zone_name = "eddiezaragoza.com" },
+  { pattern = "eddiezaragoza.com/chat*", zone_name = "eddiezaragoza.com" },
+]
+
+# One Durable Object per secret, one per chat room, and one that counts wrong access codes.
+# Each holds only ciphertext and deletes itself (alarm) when it expires.
+[[durable_objects.bindings]]
+name = "SECRETS"
+class_name = "SecretBox"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "ChatRoom"
+
+[[durable_objects.bindings]]
+name = "GUARD"
+class_name = "LoginGuard"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SecretBox", "ChatRoom", "LoginGuard"]
+
+# Ship the browser files as plain text strings inside the Worker bundle.
+[[rules]]
+type = "Text"
+globs = ["**/client/*.html", "**/client/*.js", "**/client/*.css", "**/client/*.svg"]
+fallthrough = false
