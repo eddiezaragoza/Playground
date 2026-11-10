@@ -66,9 +66,12 @@ async function isAuthed(req, env) {
   const want = await hmac(env.COOKIE_SECRET, `vanish:${exp}`);
   return crypto.subtle.timingSafeEqual(enc.encode(sig), enc.encode(hex(want)));
 }
+// Forgiving about how the words are typed: "Button Glacier basket-lagoon" == "button-glacier-basket-lagoon".
+// Phones capitalize the first letter on their own, and ignoring case costs almost nothing against a 20-tries-a-day lock.
+const normCode = (c) => String(c).trim().toLowerCase().replace(/[\s_-]+/g, '-');
 // HMAC both sides first so the comparison is constant-time even when lengths differ.
 async function codeMatches(env, code) {
-  const [a, b] = await Promise.all([hmac(env.COOKIE_SECRET, `code:${code}`), hmac(env.COOKIE_SECRET, `code:${env.CREATE_CODE}`)]);
+  const [a, b] = await Promise.all([hmac(env.COOKIE_SECRET, `code:${normCode(code)}`), hmac(env.COOKIE_SECRET, `code:${normCode(env.CREATE_CODE)}`)]);
   return crypto.subtle.timingSafeEqual(a, b);
 }
 

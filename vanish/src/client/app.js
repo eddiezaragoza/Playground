@@ -161,7 +161,7 @@ const idFromPath = () => location.pathname.split('/')[3];
 
 // ---------- pages ----------
 function login() {
-  const input = el('input', { type: 'password', id: 'code', autocomplete: 'current-password', required: true });
+  const input = el('input', { type: 'password', id: 'code', autocomplete: 'current-password', autocapitalize: 'none', spellcheck: 'false', required: true });
   const msg = status();
   const btn = el('button', { type: 'submit', class: 'primary' }, 'Continue');
   const form = el('form', {
