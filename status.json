@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T12:46:39.299Z",
+  "generatedAt": "2026-11-10T20:02:06.724Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
-      "lastLiveAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
+      "lastLiveAt": "2026-11-10T20:02:06.724Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-08T02:22:19.854Z",
-          "lastSeenLiveAt": "2026-11-10T12:46:39.299Z"
+          "lastSeenLiveAt": "2026-11-10T20:02:06.724Z"
         },
         {
           "videoId": "i5t518NS-rk",
@@ -131,15 +131,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
-      "lastLiveAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
+      "lastLiveAt": "2026-11-10T20:02:06.724Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-07T15:50:53.207Z",
-          "lastSeenLiveAt": "2026-11-10T12:46:39.299Z"
+          "lastSeenLiveAt": "2026-11-10T20:02:06.724Z"
         },
         {
           "videoId": "JlZaxpGBeoE",
@@ -203,7 +203,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -211,7 +211,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -247,14 +247,14 @@
     "ewtn-espanol": {
       "current": {
         "state": "upcoming",
-        "videoId": "twCicmbOkSs",
-        "title": "EN VIVO | Papa León XIV en Argentina: Santa Misa en Córdoba | 10 noviembre 2026",
-        "url": "https://www.youtube.com/watch?v=twCicmbOkSs",
-        "thumbnail": "https://i.ytimg.com/vi/twCicmbOkSs/hqdefault.jpg",
-        "scheduledFor": "2026-11-10T12:30:00.000Z",
+        "videoId": "A-d2VHzZnaQ",
+        "title": "Café con Cristo Radio Show -  Haz lo que te toca y deja los resultados en las manos de Dios",
+        "url": "https://www.youtube.com/watch?v=A-d2VHzZnaQ",
+        "thumbnail": "https://i.ytimg.com/vi/A-d2VHzZnaQ/hqdefault.jpg",
+        "scheduledFor": "2026-11-10T22:00:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
       "lastLiveAt": "2026-11-09T22:40:01.268Z",
       "history": [
         {
@@ -375,7 +375,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-10T12:46:39.299Z",
+      "checkedAt": "2026-11-10T20:02:06.724Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
