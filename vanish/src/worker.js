@@ -43,8 +43,48 @@ const PAGE_TITLES = {
   login: 'Sign in', 'create-secret': 'Send a poof', 'view-secret': 'A poof for you',
   'create-room': 'Start a chat', room: 'Chat room',
 };
-const page = (url, name) =>
-  respond(url, SHELL_HTML.replaceAll('__PAGE__', name).replace('__TITLE__', `${PAGE_TITLES[name]} - Poof`));
+// Chat rooms may show GIFs from Giphy's image servers; every other page stays locked to our own origin.
+const GIPHY_IMG = 'https://*.giphy.com';
+const page = (url, name) => {
+  const res = respond(url, SHELL_HTML.replaceAll('__PAGE__', name).replace('__TITLE__', `${PAGE_TITLES[name]} - Poof`));
+  if (name === 'room') {
+    res.headers.set('Content-Security-Policy', res.headers.get('Content-Security-Policy').replace("img-src 'self' data: blob:;", `img-src 'self' data: blob: ${GIPHY_IMG};`));
+  }
+  return res;
+};
+
+// ---------- GIF search (Giphy) ----------
+// The browser asks us, we ask Giphy: the API key stays secret and Giphy never sees who searched.
+// Results are cached for 5 minutes so popular searches don't burn the Giphy rate limit.
+async function giphy(env, q, offset) {
+  if (env.GIPHY_FAKE) { // local tests only: fake results that point at our own icon
+    const u = '/secret/assets/icon.svg';
+    return Array.from({ length: 6 }, (_, i) => ({ id: `fake${i}`, title: `${q || 'trending'} ${i}`, p: u, pw: 100, ph: 100, u, w: 200, h: 200 }));
+  }
+  const api = new URL(`https://api.giphy.com/v1/gifs/${q ? 'search' : 'trending'}`);
+  api.searchParams.set('api_key', env.GIPHY_KEY);
+  if (q) api.searchParams.set('q', q);
+  api.searchParams.set('limit', '24');
+  api.searchParams.set('offset', String(offset));
+  api.searchParams.set('rating', 'pg-13');
+  const cacheKey = new Request(`https://giphy-cache.invalid/${encodeURIComponent(q)}/${offset}`);
+  const cache = caches.default;
+  let res = await cache.match(cacheKey);
+  if (!res) {
+    const r = await fetch(api, { headers: { Accept: 'application/json' } });
+    if (!r.ok) return null;
+    res = new Response(await r.text(), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' } });
+    await cache.put(cacheKey, res.clone());
+  }
+  const data = (await res.json()).data || [];
+  return data.map((g) => {
+    const pv = g.images?.fixed_width || g.images?.fixed_width_downsampled;
+    const big = g.images?.fixed_height || g.images?.downsized || pv;
+    if (!pv?.url || !big?.url) return null;
+    return { id: String(g.id), title: String(g.title || '').slice(0, 80), p: pv.url, pw: Number(pv.width) || 200, ph: Number(pv.height) || 200,
+      u: big.url, w: Number(big.width) || 200, h: Number(big.height) || 200 };
+  }).filter(Boolean);
+}
 
 // ---------- auth (only needed to CREATE things; opening a link never needs it) ----------
 const enc = new TextEncoder();
@@ -229,6 +269,15 @@ async function route(req, env) {
       return fromDO(url, await stub.rename(req.headers.get('X-Manage-Token') || '', b.name));
     }
     if (rest === 'ws' && method === 'GET') return stub.fetch(req);
+    if (rest === 'gifs' && method === 'GET') {
+      if (!env.GIPHY_KEY && !env.GIPHY_FAKE) return json(url, { error: 'GIF search is not set up yet.' }, 503);
+      const ok = await stub.check(req.headers.get('X-Room-Verifier') || ''); // only room members can search
+      if (ok.status !== 200) return fromDO(url, ok);
+      const q = (url.searchParams.get('q') || '').trim().slice(0, 50);
+      const offset = Math.min(Math.max(Number(url.searchParams.get('offset')) || 0, 0), 200);
+      const results = await giphy(env, q, offset);
+      return results ? json(url, { results }) : json(url, { error: 'GIF search is unavailable right now.' }, 502);
+    }
     const verifier = req.headers.get('X-Room-Verifier') || '';
     if (rest === 'img' && method === 'PUT') {
       if (Number(req.headers.get('Content-Length') || 0) > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);

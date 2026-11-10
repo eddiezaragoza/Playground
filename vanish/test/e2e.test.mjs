@@ -282,3 +282,19 @@ test('chat photos: encrypted upload/download, key required, size cap, oldest evi
   for (let i = 0; i < 60; i++) { last = await put(tiny); if (last.status !== 200) break; }
   assert.equal(last.status, 429, 'photo flood is refused');
 });
+
+test('GIF search: room members only (needs GIPHY_FAKE=1 locally)', async () => {
+  const { verifier } = await C.deriveKeys(C.newLinkKey());
+  const { id } = (await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 } })).data;
+  const wrong = await C.deriveKeys(C.newLinkKey());
+  const g = (v, q = 'cat') => call(`/chat/api/r/${id}/gifs?q=${q}`, { headers: { 'X-Room-Verifier': v }, auth: false, origin: null });
+  assert.equal((await g(wrong.verifier)).status, 403, 'outsiders cannot search');
+  const r = await g(verifier);
+  assert.equal(r.status, 200);
+  assert.ok(r.data.results.length > 0);
+  assert.ok(r.data.results.every((x) => x.u && x.w && x.h && x.p));
+  const page = await fetch(`${BASE}/chat/r/${id}`);
+  assert.match(page.headers.get('Content-Security-Policy'), /img-src[^;]*giphy\.com/, 'room page may load Giphy images');
+  const other = await fetch(`${BASE}/secret`);
+  assert.doesNotMatch(other.headers.get('Content-Security-Policy'), /giphy/, 'secret pages stay locked down');
+});

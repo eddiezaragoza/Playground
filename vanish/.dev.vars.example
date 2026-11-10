@@ -5,3 +5,5 @@ COOKIE_SECRET=run: openssl rand -base64 32
 # TEST_HOUR_MS=3000
 # Local testing only: raises the 30-photos-per-10-minutes limit so the e2e test can check old-photo cleanup.
 # TEST_ROOM_UPLOADS=200
+# Giphy search key (production: wrangler secret put GIPHY_KEY). Locally, GIPHY_FAKE=1 returns fake results instead.
+# GIPHY_FAKE=1

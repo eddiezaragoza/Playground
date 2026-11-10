@@ -11,6 +11,10 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏', '🔥'];
 const SMILE_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="currentColor"/><circle cx="15" cy="10" r="1.3" fill="currentColor"/><path d="M8.5 14.2a4.2 4.2 0 0 0 7 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const MAX_PHOTO_EDGE = 1920; // photos are shrunk to this many pixels on the long side before encrypting
 const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
+// Giphy GIFs are shown straight from Giphy's image servers. Only those URLs are accepted from a message.
+const GIPHY_URL_RE = /^https:\/\/(?:media\d*|i)\.giphy\.com\/[A-Za-z0-9/_.\-?=&%]+$/;
+const okGiphyUrl = (u) => typeof u === 'string' && u.length < 600 &&
+  (GIPHY_URL_RE.test(u) || (location.hostname === 'localhost' && u === '/secret/assets/icon.svg')); // the second form is for local tests only
 const MAX_GIF_BYTES = 5 * 1024 * 1024; // GIFs are sent as-is (re-drawing would freeze the animation)
 
 // GIFs keep their animation, so they skip the canvas step. Only their size is read here.
@@ -537,6 +541,12 @@ function chat(id, info, { key, verifier }, myName) {
     onchange: () => { if (picker.files[0]) choosePhoto(picker.files[0]); picker.value = ''; },
   });
   const photoBtn = el('button', { type: 'button', class: 'ghost icon', 'aria-label': 'Add a photo', title: 'Add a photo', onclick: () => picker.click() });
+  const gifBtn = el('button', { type: 'button', class: 'ghost icon gif-btn', 'aria-label': 'Send a GIF', title: 'Send a GIF', 'aria-expanded': 'false', onclick: () => toggleGifs() }, 'GIF');
+  const gifSearch = el('input', { type: 'search', class: 'gif-search', placeholder: 'Search GIPHY', 'aria-label': 'Search GIFs', maxlength: 50 });
+  const gifGrid = el('div', { class: 'gif-grid', role: 'list' });
+  const gifPanel = el('div', { class: 'gif-panel', hidden: true },
+    el('div', { class: 'gif-top' }, gifSearch, el('button', { type: 'button', class: 'link-btn plain gif-close', 'aria-label': 'Close GIF search', title: 'Close', onclick: () => toggleGifs(false) }, '✕')),
+    gifGrid, el('p', { class: 'giphy-attr' }, 'Powered by GIPHY'));
   photoBtn.innerHTML = CAMERA_SVG; // static markup, not user data
   const inviteBtn = el('button', { type: 'button', class: 'ghost small', onclick: () => copy(location.href, inviteBtn) }, 'Copy invite link');
   const renameBtn = manage && el('button', {
@@ -563,6 +573,49 @@ function chat(id, info, { key, verifier }, myName) {
 
   const setConn = (t) => { conn.textContent = t; conn.hidden = !t; };
   const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
+
+  // ----- GIF search -----
+  let gifTimer;
+  let gifSeq = 0;
+  function toggleGifs(show = gifPanel.hidden) {
+    gifPanel.hidden = !show;
+    gifBtn.setAttribute('aria-expanded', String(show));
+    if (show) { gifSearch.focus(); if (!gifGrid.childElementCount) loadGifs(''); } else box.focus();
+  }
+  async function loadGifs(q) {
+    const seq = ++gifSeq; // ignore answers to older searches that arrive late
+    gifGrid.replaceChildren(el('p', { class: 'muted gif-note', text: 'Loading...' }));
+    try {
+      const { results } = await api(`/chat/api/r/${id}/gifs?q=${encodeURIComponent(q)}`, { headers: { 'X-Room-Verifier': verifier } });
+      if (seq !== gifSeq) return;
+      gifGrid.replaceChildren(...(results.length ? results.filter((g) => okGiphyUrl(g.p) && okGiphyUrl(g.u)).map((g) => {
+        const b = el('button', { type: 'button', class: 'gif-pick', role: 'listitem', title: g.title, 'aria-label': `Send GIF: ${g.title || 'untitled'}`, onclick: () => sendGif(g) },
+          el('img', { src: g.p, alt: g.title || 'GIF', loading: 'lazy', referrerpolicy: 'no-referrer' }));
+        b.style.aspectRatio = `${g.pw} / ${g.ph}`;
+        return b;
+      }) : [el('p', { class: 'muted gif-note', text: 'No GIFs found. Try another word.' })]));
+    } catch (err) {
+      if (seq === gifSeq) gifGrid.replaceChildren(el('p', { class: 'muted gif-note', text: err.message }));
+    }
+  }
+  gifSearch.addEventListener('input', () => { clearTimeout(gifTimer); gifTimer = setTimeout(() => loadGifs(gifSearch.value.trim()), 350); });
+  gifSearch.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); toggleGifs(false); } });
+  async function sendGif(g) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) { flash('Not connected yet. Try again in a moment.'); return; }
+    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, { n: myName, s: sender, t: '', gif: { u: g.u, w: g.w, h: g.h, t: g.title } }) }));
+    toggleGifs(false);
+  }
+  function openGiphy(u, title) {
+    const close = () => { overlay.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    const closeBtn = el('button', { type: 'button', class: 'ghost small on-dark', onclick: close }, 'Close');
+    const overlay = el('div', { class: 'lightbox', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'GIF', onclick: (e) => { if (e.target === overlay) close(); } },
+      el('img', { src: u, alt: title || 'GIF', referrerpolicy: 'no-referrer' }),
+      el('div', { class: 'lightbox-bar' }, el('span', { class: 'giphy-attr on-dark-text', text: 'via GIPHY' }), closeBtn));
+    document.body.append(overlay);
+    document.addEventListener('keydown', onKey);
+    closeBtn.focus();
+  }
 
   // ----- photos -----
   function fetchPhoto(imgId, gif = false) {
@@ -642,7 +695,14 @@ function chat(id, info, { key, verifier }, myName) {
     const mine = p.s === sender;
     const text = String(p.t ?? '');
     let photo = null;
-    if (p.img && typeof p.img.id === 'string' && /^[A-Za-z0-9_-]{22}$/.test(p.img.id)) {
+    if (p.gif && okGiphyUrl(p.gif.u)) {
+      const gt = String(p.gif.t || '').slice(0, 80);
+      const img = el('img', { src: p.gif.u, alt: gt || 'GIF', loading: 'lazy', referrerpolicy: 'no-referrer' });
+      photo = el('button', { type: 'button', class: 'photo gif', 'aria-label': 'Open GIF', onclick: () => openGiphy(p.gif.u, gt) }, el('span', { class: 'ph', text: 'Loading GIF...' }), img);
+      img.addEventListener('load', () => photo.classList.add('loaded'));
+      img.addEventListener('error', () => { photo.classList.add('missing'); photo.querySelector('.ph').textContent = 'GIF could not be loaded'; });
+      photo.style.aspectRatio = `${Number(p.gif.w) > 0 ? Number(p.gif.w) : 4} / ${Number(p.gif.h) > 0 ? Number(p.gif.h) : 3}`;
+    } else if (p.img && typeof p.img.id === 'string' && /^[A-Za-z0-9_-]{22}$/.test(p.img.id)) {
       const w = Number(p.img.w) > 0 ? Number(p.img.w) : 4;
       const h = Number(p.img.h) > 0 ? Number(p.img.h) : 3;
       const gif = p.img.g === 1;
@@ -829,8 +889,8 @@ function chat(id, info, { key, verifier }, myName) {
     el('div', { class: 'chat-head' },
       el('div', {}, titleEl, left, el('br'), online),
       el('div', { class: 'actions' }, inviteBtn, renameBtn, delBtn)),
-    conn, log, tray,
-    el('form', { class: 'composer', onsubmit: submit }, photoBtn, picker, box, send));
+    conn, log, tray, gifPanel,
+    el('form', { class: 'composer', onsubmit: submit }, photoBtn, gifBtn, picker, box, send));
   // Drag a photo anywhere onto the chat.
   section.addEventListener('dragover', (e) => {
     if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); section.classList.add('drop'); }

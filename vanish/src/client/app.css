@@ -262,3 +262,32 @@ body.chat-page main { padding-bottom: 16px; }
   content: "GIF"; position: absolute; left: 8px; bottom: 8px; padding: 1px 6px; border-radius: 4px;
   font-size: .7rem; font-weight: 800; letter-spacing: .04em; background: rgba(0, 0, 0, .55); color: #fff;
 }
+
+/* ---------- GIF search ---------- */
+.gif-btn { font-weight: 800; font-size: .8rem; letter-spacing: .03em; min-width: 46px; }
+.gif-panel { border-top: 1px solid var(--line); padding: 10px 12px 4px; display: flex; flex-direction: column; gap: 8px; max-height: 46vh; }
+.gif-panel[hidden] { display: none; }
+.gif-top { display: flex; gap: 8px; align-items: center; }
+.gif-search { flex: 1; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.link-btn.plain { color: var(--muted); }
+.gif-grid { overflow-y: auto; columns: 3 120px; column-gap: 6px; min-height: 80px; }
+.gif-pick { display: block; width: 100%; margin: 0 0 6px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: rgba(127, 127, 127, .18); break-inside: avoid; cursor: pointer; }
+.gif-pick img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.gif-pick:hover, .gif-pick:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.gif-note { column-span: all; text-align: center; margin: 12px 0; }
+.giphy-attr { margin: 0; font-size: .72rem; font-weight: 800; letter-spacing: .06em; color: var(--muted); text-align: right; }
+.on-dark-text { color: #fff; align-self: center; }
+@media (max-width: 520px) { .gif-grid { columns: 2 110px; } .composer .icon { padding: 9px 8px; } .gif-btn { min-width: 40px; } }
+
+.gif-close { font-size: 1.1rem; padding: 4px 6px; }
+.composer textarea { min-width: 0; flex: 1; }
+@media (max-width: 380px) {
+  .top { padding-left: 12px; padding-right: 12px; }
+  .brand { font-size: 1.15rem; gap: 8px; }
+  nav a { padding: 6px 9px; font-size: .88rem; white-space: nowrap; }
+  main { padding-left: 10px; padding-right: 10px; }
+  .composer { gap: 6px; padding: 10px 8px; }
+  .composer .icon { padding: 8px 7px; }
+  .gif-btn { min-width: 36px; font-size: .72rem; }
+  .composer button[type=submit] { padding: 10px 12px; }
+}
