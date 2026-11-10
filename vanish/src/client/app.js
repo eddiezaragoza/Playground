@@ -153,7 +153,7 @@ function createSecret() {
     addBtn.disabled = files.length >= MAX_FILES;
   }
 
-  const views = el('input', { type: 'number', id: 'views', min: 1, max: 20, value: 2, inputmode: 'numeric' });
+  const views = el('input', { type: 'number', id: 'views', min: 1, max: 20, value: 3, inputmode: 'numeric' });
   const hours = el('input', { type: 'number', id: 'hours', min: 1, max: 720, value: 72, inputmode: 'numeric' });
   const pass = el('input', { type: 'text', id: 'pass', autocomplete: 'off', spellcheck: 'false', placeholder: 'Optional' });
   const submit = el('button', { type: 'submit', class: 'primary wide' }, 'Create secret link');
