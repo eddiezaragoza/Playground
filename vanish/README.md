@@ -29,7 +29,7 @@ Our own take on quickforget.com.
 ## Who can create things
 Creating a secret or room needs the shared access code (`CREATE_CODE`), which sets a 180-day cookie.
 Opening a link never needs it. 20 wrong codes in one UTC day locks login until the next day (`src/login-guard.js`).
-- Change the access code: `printf '%s' 'new-code' > /tmp/c && npx wrangler secret put CREATE_CODE < /tmp/c && rm /tmp/c`
+- Access code = 4 random words; the check ignores case and treats spaces/underscores as hyphens. Change it: `printf '%s' 'new-code' > /tmp/c && npx wrangler secret put CREATE_CODE < /tmp/c && rm /tmp/c`
 - Sign everyone out: put a new `COOKIE_SECRET` the same way.
   (Don't use `! npx wrangler secret put` from Claude Code: `!` commands have no keyboard input and save an EMPTY value.)
 
