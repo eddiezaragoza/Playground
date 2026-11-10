@@ -7,6 +7,34 @@ const PAGE = document.body.dataset.page;
 const MAX_FILE = 10 * 1024 * 1024;
 const MAX_FILES = 3;
 const MAX_MSG = 4000;
+const MAX_PHOTO_EDGE = 1920; // photos are shrunk to this many pixels on the long side before encrypting
+const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
+const CAMERA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 4h6l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L9 4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>';
+
+// Redraws a photo on a canvas and saves it as JPEG. That shrinks it AND strips hidden metadata
+// (GPS location, camera details), because only the pixels are copied.
+async function shrinkPhoto(file) {
+  let bmp;
+  try { bmp = await createImageBitmap(file); } catch { throw new Error('That file is not a photo this browser can read.'); }
+  const scale = Math.min(1, MAX_PHOTO_EDGE / Math.max(bmp.width, bmp.height));
+  const w = Math.max(1, Math.round(bmp.width * scale));
+  const h = Math.max(1, Math.round(bmp.height * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const g = canvas.getContext('2d');
+  g.fillStyle = '#ffffff'; // transparent PNGs get a white background instead of black
+  g.fillRect(0, 0, w, h);
+  g.drawImage(bmp, 0, 0, w, h);
+  bmp.close?.();
+  let blob;
+  for (let q = 0.85; ; q -= 0.15) {
+    blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', q));
+    if (!blob) throw new Error('This browser could not prepare that photo.');
+    if (blob.size <= MAX_PHOTO_BYTES || q <= 0.4) break;
+  }
+  return { bytes: new Uint8Array(await blob.arrayBuffer()), w, h, preview: URL.createObjectURL(blob) };
+}
 
 // ---------- small helpers ----------
 function el(tag, props = {}, ...kids) {
@@ -92,8 +120,37 @@ function status() {
   return p;
 }
 
-function notice(title, body) {
-  app.replaceChildren(el('section', { class: 'card narrow center' }, el('h1', { text: title }), el('p', { class: 'muted', text: body })));
+// Static markup (no user data), shared by the burst animation and the "it's gone" pages.
+const CLOUD_SVG = '<svg viewBox="0 0 120 80" aria-hidden="true"><g fill="currentColor"><circle cx="38" cy="48" r="20"/><circle cx="60" cy="34" r="25"/><circle cx="84" cy="48" r="18"/><rect x="30" y="46" width="62" height="22" rx="11"/></g></svg>';
+
+function cloud(cls) {
+  const d = el('div', { class: cls, 'aria-hidden': 'true' });
+  d.innerHTML = CLOUD_SVG;
+  return d;
+}
+
+// The poof burst: a cloud pops, sparkles fly out, then it all clears away.
+function poofBurst({ big = false } = {}) {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+  const fx = el('div', { class: `poof-fx${big ? ' big' : ''}`, 'aria-hidden': 'true' }, cloud('poof-cloud'));
+  const n = big ? 14 : 9;
+  for (let i = 0; i < n; i++) {
+    const a = (Math.PI * 2 * i) / n + Math.random() * 0.5;
+    const r = (big ? 170 : 120) + Math.random() * 60;
+    const dot = el('span', { class: 'spark' });
+    dot.style.setProperty('--dx', `${Math.round(Math.cos(a) * r)}px`);
+    dot.style.setProperty('--dy', `${Math.round(Math.sin(a) * r)}px`);
+    dot.style.setProperty('--s', `${(0.6 + Math.random() * 0.9).toFixed(2)}`);
+    fx.append(dot);
+  }
+  if (big) fx.append(el('div', { class: 'poof-word' }, 'Poof!', el('small', { text: 'Deleted from the server' })));
+  document.body.append(fx);
+  setTimeout(() => fx.remove(), big ? 2300 : 1400);
+}
+
+function notice(title, body, { poof = false } = {}) {
+  app.replaceChildren(el('section', { class: 'card narrow center' },
+    poof && cloud('gone-cloud'), el('h1', { text: title }), el('p', { class: 'muted', text: body })));
 }
 
 function field(label, input, hint) {
@@ -212,7 +269,8 @@ function created({ id, manage, link, v, h, hasPass }) {
       if (!confirm('Delete this poof now? The link will stop working.')) return;
       try {
         await api(`/secret/api/s/${id}/destroy`, { method: 'POST', headers: { 'X-Manage-Token': manage } });
-        notice('Poof! Deleted.', 'It is gone and the link no longer works.');
+        notice('Poof! Deleted.', 'It is gone and the link no longer works.', { poof: true });
+        poofBurst({ big: true });
       } catch (err) { msg.say(err.status === 404 ? 'It is already gone.' : err.message, true); }
     },
   }, 'Delete it now');
@@ -236,7 +294,7 @@ async function viewSecret() {
   } catch (err) {
     return notice('Poof! It is gone.', err.status === 404
       ? 'It was already opened the maximum number of times, it expired, or the link is wrong. Ask the sender to make a new one.'
-      : err.message);
+      : err.message, { poof: err.status === 404 });
   }
   const pass = info.hasPass ? el('input', { type: 'password', id: 'pass', autocomplete: 'off', required: true }) : null;
   const btn = el('button', { type: 'submit', class: 'primary wide' }, 'Open the poof');
@@ -257,8 +315,8 @@ async function viewSecret() {
       } catch (err) {
         btn.disabled = false;
         if (err.status === 403) msg.say(`Wrong passphrase. ${err.data.triesLeft} ${err.data.triesLeft === 1 ? 'try' : 'tries'} left before it destroys itself.`, true);
-        else if (err.status === 410) notice('Destroyed', err.message);
-        else if (err.status === 404) notice('Poof! It is gone.', 'Someone else may have just used the last view.');
+        else if (err.status === 410) notice('Poof! Destroyed.', err.message, { poof: true });
+        else if (err.status === 404) notice('Poof! It is gone.', 'Someone else may have just used the last view.', { poof: true });
         else msg.say(err.message, true);
       }
     },
@@ -294,7 +352,8 @@ async function revealed(id, key, data) {
         try {
           const res = await api(`/secret/api/s/${id}/file/${i}?t=${encodeURIComponent(data.ticket)}`, { raw: true });
           const plain = await C.unseal(key, await res.arrayBuffer());
-          const url = URL.createObjectURL(new Blob([plain], { type: f.type || 'application/octet-stream' }));
+          // Always a plain download: never trust the sender's claimed file type with our page's origin.
+          const url = URL.createObjectURL(new Blob([plain], { type: 'application/octet-stream' }));
           const a = el('a', { href: url, download: f.name || 'attachment' });
           document.body.append(a);
           a.click();
@@ -318,6 +377,7 @@ async function revealed(id, key, data) {
     files.length > 0 && el('ul', { class: 'files' }, fileRows),
     el('p', { class: 'callout', text: `${left} Save what you need before leaving this page.` }),
     msg));
+  poofBurst({ big: data.viewsLeft === 0 }); // the final view gets the full "Poof! Deleted" burst
 }
 
 function createRoom() {
@@ -369,7 +429,7 @@ async function room() {
   try {
     info = await api(`/chat/api/r/${id}`);
   } catch (err) {
-    return notice('This room is gone', err.status === 404 ? 'It expired or was deleted.' : err.message);
+    return notice('Poof! This room is gone.', err.status === 404 ? 'It expired or was deleted.' : err.message, { poof: err.status === 404 });
   }
   const name = el('input', { type: 'text', id: 'name', maxlength: 40, required: true, autocomplete: 'nickname' });
   name.value = store.get('vanish-name') || '';
@@ -390,7 +450,7 @@ async function room() {
         chat(id, info, keys, who);
       } catch (err) {
         btn.disabled = false;
-        if (err.status === 404) notice('This room is gone', 'It expired or was deleted.');
+        if (err.status === 404) notice('Poof! This room is gone.', 'It expired or was deleted.', { poof: true });
         else msg.say(err.message, true);
       }
     },
@@ -413,12 +473,21 @@ function chat(id, info, { key, verifier }, myName) {
   let unread = 0;
   let ping;
   let queue = Promise.resolve();
+  let pending = null; // photo waiting in the tray: { bytes, w, h, preview }
+  const photos = new Map(); // photo id -> Promise<object URL of the decrypted photo>
 
   const log = el('div', { class: 'log', role: 'log', 'aria-live': 'polite' });
   const online = el('span', { class: 'online muted' });
   const conn = el('span', { class: 'conn' });
   const box = el('textarea', { rows: 1, maxlength: MAX_MSG, placeholder: 'Message', 'aria-label': 'Message' });
   const send = el('button', { type: 'submit', class: 'primary' }, 'Send');
+  const tray = el('div', { class: 'tray', hidden: true });
+  const picker = el('input', {
+    type: 'file', accept: 'image/*', class: 'offscreen', tabindex: '-1', 'aria-hidden': 'true',
+    onchange: () => { if (picker.files[0]) choosePhoto(picker.files[0]); picker.value = ''; },
+  });
+  const photoBtn = el('button', { type: 'button', class: 'ghost icon', 'aria-label': 'Add a photo', title: 'Add a photo', onclick: () => picker.click() });
+  photoBtn.innerHTML = CAMERA_SVG; // static markup, not user data
   const inviteBtn = el('button', { type: 'button', class: 'ghost small', onclick: () => copy(location.href, inviteBtn) }, 'Copy invite link');
   const delBtn = manage && el('button', {
     type: 'button', class: 'danger small',
@@ -432,6 +501,76 @@ function chat(id, info, { key, verifier }, myName) {
   }, 'Delete room');
 
   const setConn = (t) => { conn.textContent = t; conn.hidden = !t; };
+  const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
+
+  // ----- photos -----
+  function fetchPhoto(imgId) {
+    if (!photos.has(imgId)) {
+      const p = (async () => {
+        const res = await api(`/chat/api/r/${id}/img/${imgId}`, { raw: true, headers: { 'X-Room-Verifier': verifier } });
+        const plain = await C.unseal(key, await res.arrayBuffer());
+        return URL.createObjectURL(new Blob([plain], { type: 'image/jpeg' }));
+      })();
+      photos.set(imgId, p);
+      p.catch(() => photos.delete(imgId));
+    }
+    return photos.get(imgId);
+  }
+  // Only download photos as they scroll into view, so a long history doesn't fetch everything at once.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      io.unobserve(e.target);
+      const frame = e.target;
+      fetchPhoto(frame.dataset.img).then((url) => {
+        frame.querySelector('img').src = url;
+        frame.classList.add('loaded');
+      }).catch((err) => {
+        frame.classList.add('missing');
+        frame.querySelector('.ph').textContent = err.status === 404 ? 'Photo no longer available' : 'Photo could not be loaded';
+      });
+    }
+  }, { root: log, rootMargin: '600px 0px' });
+
+  async function openPhoto(imgId, ts) {
+    let url;
+    try { url = await fetchPhoto(imgId); } catch { return; }
+    const close = () => { overlay.remove(); document.removeEventListener('keydown', onKey); photoBtn.focus(); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    const closeBtn = el('button', { type: 'button', class: 'ghost small on-dark', onclick: close }, 'Close');
+    const overlay = el('div', { class: 'lightbox', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Photo', onclick: (e) => { if (e.target === overlay) close(); } },
+      el('img', { src: url, alt: 'Photo' }),
+      el('div', { class: 'lightbox-bar' },
+        el('a', { class: 'button primary small', href: url, download: `poof-photo-${new Date(ts).toISOString().slice(0, 10)}.jpg` }, 'Download'),
+        closeBtn));
+    document.body.append(overlay);
+    document.addEventListener('keydown', onKey);
+    closeBtn.focus();
+  }
+
+  function clearPending() {
+    if (pending?.preview) URL.revokeObjectURL(pending.preview);
+    pending = null;
+    tray.hidden = true;
+    tray.replaceChildren();
+    box.placeholder = 'Message';
+  }
+  async function choosePhoto(file) {
+    if (!file.type.startsWith('image/')) return flash('That is not a photo.');
+    setConn('Preparing photo...');
+    try {
+      const shot = await shrinkPhoto(file);
+      clearPending();
+      pending = shot;
+      tray.replaceChildren(el('img', { src: shot.preview, alt: 'Photo to send' }),
+        el('span', { class: 'muted', text: 'Add a caption if you like, then press Send.' }),
+        el('button', { type: 'button', class: 'link-btn', onclick: () => { clearPending(); box.focus(); } }, 'Remove'));
+      tray.hidden = false;
+      box.placeholder = 'Caption (optional)';
+      setConn('');
+      box.focus();
+    } catch (err) { flash(err.message); }
+  }
   const nearBottom = () => log.scrollHeight - log.scrollTop - log.clientHeight < 80;
   const toBottom = () => { log.scrollTop = log.scrollHeight; };
 
@@ -439,9 +578,19 @@ function chat(id, info, { key, verifier }, myName) {
     let p;
     try { p = await C.unsealJson(key, m.data); } catch { p = { n: '?', t: '[this message could not be decrypted]' }; }
     const mine = p.s === sender;
-    return el('div', { class: `bubble${mine ? ' mine' : ''}` },
+    const text = String(p.t ?? '');
+    let photo = null;
+    if (p.img && typeof p.img.id === 'string' && /^[A-Za-z0-9_-]{22}$/.test(p.img.id)) {
+      const w = Number(p.img.w) > 0 ? Number(p.img.w) : 4;
+      const h = Number(p.img.h) > 0 ? Number(p.img.h) : 3;
+      photo = el('button', { type: 'button', class: 'photo', 'data-img': p.img.id, 'aria-label': 'Open photo full size', onclick: () => openPhoto(p.img.id, m.ts) },
+        el('span', { class: 'ph', text: 'Loading photo...' }), el('img', { alt: text ? text.slice(0, 120) : 'Photo' }));
+      photo.style.aspectRatio = `${w} / ${h}`; // reserve the space so the chat doesn't jump when it loads
+      io.observe(photo);
+    }
+    return el('div', { class: `bubble${mine ? ' mine' : ''}${photo ? ' has-photo' : ''}` },
       el('div', { class: 'meta' }, el('span', { class: 'who', text: mine ? 'You' : String(p.n || '?').slice(0, 40) }), el('time', { text: fmtTime(m.ts) })),
-      el('div', { class: 'body', text: String(p.t ?? '') }));
+      photo, (text || !photo) && el('div', { class: 'body', text }));
   }
 
   async function handle(raw) {
@@ -471,7 +620,7 @@ function chat(id, info, { key, verifier }, myName) {
 
   function connect() {
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    ws = new WebSocket(`${proto}//${location.host}/chat/api/r/${id}/ws?v=${encodeURIComponent(verifier)}`);
+    ws = new WebSocket(`${proto}//${location.host}/chat/api/r/${id}/ws`, ['poof', verifier]); // verifier rides in a header, not the URL
     ws.onopen = async () => {
       retry = 0;
       setConn('');
@@ -485,11 +634,12 @@ function chat(id, info, { key, verifier }, myName) {
       if (ended) return;
       if (ev.code === 4000 || ev.code === 4001) {
         ended = true;
-        return notice('This chat has ended', ev.reason || 'The room is gone.');
+        poofBurst({ big: true });
+        return notice('Poof! This chat has ended.', ev.reason || 'The room is gone.', { poof: true });
       }
       // The room may have expired while we were away.
       try { await api(`/chat/api/r/${id}`); } catch (err) {
-        if (err.status === 404) { ended = true; return notice('This chat has ended', 'The room expired or was deleted.'); }
+        if (err.status === 404) { ended = true; return notice('Poof! This chat has ended.', 'The room expired or was deleted.', { poof: true }); }
       }
       setConn('Reconnecting...');
       setTimeout(connect, Math.min(15000, 1000 * 2 ** retry++));
@@ -499,9 +649,28 @@ function chat(id, info, { key, verifier }, myName) {
   async function submit(e) {
     e?.preventDefault();
     const t = box.value.trim();
-    if (!t) return;
+    if (!t && !pending) return;
     if (!ws || ws.readyState !== WebSocket.OPEN) { setConn('Not connected yet. Try again in a moment.'); return; }
-    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, { n: myName, s: sender, t }) }));
+    let img = null;
+    if (pending) {
+      send.disabled = true;
+      setConn('Encrypting and sending photo...');
+      try {
+        const sealed = await C.seal(key, pending.bytes);
+        const r = await api(`/chat/api/r/${id}/img`, { method: 'PUT', body: sealed, headers: { 'X-Room-Verifier': verifier } });
+        img = { id: r.id, w: pending.w, h: pending.h };
+        photos.set(r.id, Promise.resolve(pending.preview)); // show our own copy instantly, no re-download
+        pending.preview = null;
+      } catch (err) {
+        send.disabled = false;
+        flash(err.message);
+        return;
+      }
+      send.disabled = false;
+      setConn('');
+    }
+    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, img ? { n: myName, s: sender, t, img } : { n: myName, s: sender, t }) }));
+    if (img) clearPending();
     box.value = '';
     grow();
     box.focus();
@@ -511,16 +680,32 @@ function chat(id, info, { key, verifier }, myName) {
   box.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) submit(e);
   });
+  box.addEventListener('paste', (e) => {
+    const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
+    if (f) { e.preventDefault(); choosePhoto(f); }
+  });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) { unread = 0; document.title = baseTitle; }
   });
 
-  app.replaceChildren(el('section', { class: 'chat' },
+  const section = el('section', { class: 'chat' },
     el('div', { class: 'chat-head' },
       el('div', {}, el('strong', { text: 'Chat room' }), el('span', { class: 'muted', text: ` · deleted ${fmtWhen(info.expiresAt)}` }), el('br'), online),
       el('div', { class: 'actions' }, inviteBtn, delBtn)),
-    conn, log,
-    el('form', { class: 'composer', onsubmit: submit }, box, send)));
+    conn, log, tray,
+    el('form', { class: 'composer', onsubmit: submit }, photoBtn, picker, box, send));
+  // Drag a photo anywhere onto the chat.
+  section.addEventListener('dragover', (e) => {
+    if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); section.classList.add('drop'); }
+  });
+  section.addEventListener('dragleave', (e) => { if (!section.contains(e.relatedTarget)) section.classList.remove('drop'); });
+  section.addEventListener('drop', (e) => {
+    e.preventDefault();
+    section.classList.remove('drop');
+    const f = [...e.dataTransfer.files].find((x) => x.type.startsWith('image/'));
+    if (f) choosePhoto(f);
+  });
+  app.replaceChildren(section);
   setConn('Connecting...');
   connect();
   box.focus();

@@ -42,3 +42,21 @@ npm run dev                       # then, in another terminal:
 npm run test:e2e                  # full flow against the local server (secrets, expiry, races, chat)
 npm run deploy
 ```
+
+## Chat photos
+Photos are redrawn on a canvas in the sender's browser (max 1920 px, JPEG): that shrinks them and strips hidden
+metadata (GPS location, camera details). Then they're encrypted with the room key and uploaded separately from the
+message (`PUT /chat/api/r/<id>/img`); the message carries only the photo id. Up to 150 photos / 100 MB per room
+(oldest removed), 30 uploads per room per 10 minutes, 2.5 MB each.
+
+## Security review (2026-11-09)
+Fixed in review: login lockout raced (count-then-check -> atomic reserve/refund); unlimited chat passphrase guessing
+(now 10 wrong per 15 min per room, then locked); no photo rate limit (free-plan write quota DoS); room verifier was in
+the WebSocket URL (now a subprotocol header); attachment download used the sender's MIME type (now always
+octet-stream); photo ids from messages are validated; added HSTS, COOP, CORP, Permissions-Policy.
+Attack checks that pass: forged/tampered cookies, CSRF, path tricks, oversized bodies, forged download tickets,
+owner-token forgery, brute force, script injection via text/filenames/chat, cross-origin WebSockets.
+Known limits (by design): anyone holding a room link is a full member and can pick any display name; a leaked
+link without a passphrase is a leaked secret; a determined flood of requests can still use up the free plan's
+daily request quota (Cloudflare rate-limiting rule recommended); 20 wrong access codes lock login for everyone
+until the next UTC day.

@@ -24,6 +24,10 @@ function headers(url, type) {
     'Referrer-Policy': 'no-referrer', // the key is in the #fragment, which is never sent anyway; this is belt and braces
     'X-Frame-Options': 'DENY',
     'X-Robots-Tag': 'noindex, nofollow',
+    'Strict-Transport-Security': 'max-age=31536000',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
     'Content-Security-Policy':
       `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; ` +
       `connect-src 'self' wss://${url.host}; frame-ancestors 'none'; base-uri 'none'; form-action 'self'`,
@@ -130,13 +134,13 @@ async function route(req, env) {
   // Login / logout
   if (path === '/secret/api/login' && method === 'POST') {
     const guard = env.GUARD.get(env.GUARD.idFromName('login'));
-    if (!(await guard.allowed())) return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429);
+    if (!(await guard.attempt())) return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429);
     const b = await readJson(req, 1000);
     if (b && typeof b.code === 'string' && b.code.length <= 200 && (await codeMatches(env, b.code))) {
+      await guard.refund();
       const cookie = `${COOKIE}=${await sessionValue(env)}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; HttpOnly; Secure; SameSite=Strict`;
       return json(url, { ok: true }, 200, { 'Set-Cookie': cookie });
     }
-    await guard.fail();
     return json(url, { error: 'Wrong access code.' }, 401);
   }
   if (path === '/secret/api/logout' && method === 'POST') {
@@ -214,6 +218,18 @@ async function route(req, env) {
     }
     if (rest === 'destroy' && method === 'POST') return fromDO(url, await stub.destroy(req.headers.get('X-Manage-Token') || ''));
     if (rest === 'ws' && method === 'GET') return stub.fetch(req);
+    const verifier = req.headers.get('X-Room-Verifier') || '';
+    if (rest === 'img' && method === 'PUT') {
+      if (Number(req.headers.get('Content-Length') || 0) > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);
+      const buf = await req.arrayBuffer();
+      if (buf.byteLength > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);
+      return fromDO(url, await stub.putImage(verifier, buf));
+    }
+    if (parts[4] === 'img' && parts.length === 6 && method === 'GET') {
+      const r = await stub.getImage(verifier, parts[5]);
+      if (r.status !== 200) return fromDO(url, r);
+      return respond(url, r.body, 200, 'application/octet-stream');
+    }
   }
 
   return json(url, { error: 'Not found.' }, 404);

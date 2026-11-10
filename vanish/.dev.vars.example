@@ -3,3 +3,5 @@ CREATE_CODE=pick-an-access-code
 COOKIE_SECRET=run: openssl rand -base64 32
 # Local testing only: makes one "hour" this many milliseconds so expiry can be tested. Never set in production.
 # TEST_HOUR_MS=3000
+# Local testing only: raises the 30-photos-per-10-minutes limit so the e2e test can check old-photo cleanup.
+# TEST_ROOM_UPLOADS=200

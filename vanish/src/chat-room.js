@@ -1,8 +1,13 @@
 // One ChatRoom per room. Relays and stores encrypted messages over WebSockets, and deletes everything
 // when the room expires. It uses the hibernation API, so an idle room costs nothing while people sit in it.
 import { DurableObject } from 'cloudflare:workers';
-import { LIMITS, safeEq, ok, GONE } from './common.js';
+import { LIMITS, IMG_ID_RE, randomId, safeEq, ok, err, GONE } from './common.js';
 
+const CHUNK = 1024 * 1024; // photos are stored as 1 MB rows
+
+const WRONG_MAX = 10; // wrong passphrases per room per 15 minutes before it stops accepting tries
+const WRONG_WINDOW_MS = 15 * 60 * 1000;
+const UPLOAD_WINDOW_MS = 10 * 60 * 1000;
 const RATE_WINDOW_MS = 10000;
 const RATE_MAX = 20; // messages per person per 10 seconds
 
@@ -17,6 +22,79 @@ export class ChatRoom extends DurableObject {
     this.ctx.storage.sql.exec(
       'CREATE TABLE IF NOT EXISTS msgs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER NOT NULL, data TEXT NOT NULL)');
     return this.ctx.storage.sql;
+  }
+
+  get imgSql() {
+    const sql = this.ctx.storage.sql;
+    sql.exec('CREATE TABLE IF NOT EXISTS imgs (id TEXT PRIMARY KEY, ts INTEGER NOT NULL, size INTEGER NOT NULL)');
+    sql.exec('CREATE TABLE IF NOT EXISTS img_chunks (id TEXT NOT NULL, seq INTEGER NOT NULL, data BLOB NOT NULL, PRIMARY KEY (id, seq))');
+    return sql;
+  }
+
+  // Every key check goes through here. Wrong guesses are counted, so a leaked link without its
+  // passphrase can't be brute-forced: after WRONG_MAX misses the room refuses all tries for 15 minutes.
+  async gate(m, verifier) {
+    const now = Date.now();
+    const w = m.wrong && now - m.wrong.since < WRONG_WINDOW_MS ? m.wrong : { since: now, n: 0 };
+    if (w.n >= WRONG_MAX) return err(429, 'Too many wrong passphrases. Try again in 15 minutes.');
+    if (safeEq(verifier, m.verifier)) return null;
+    w.n++;
+    m.wrong = w;
+    await this.ctx.storage.put('meta', m);
+    return err(403, 'Wrong passphrase.');
+  }
+
+  // Encrypted photo upload. Only someone holding the room key (the verifier proves it) can add one.
+  async putImage(verifier, buf) {
+    const m = await this.load();
+    if (!m) return GONE;
+    const denied = await this.gate(m, verifier);
+    if (denied) return denied;
+    if (buf.byteLength < 28 || buf.byteLength > LIMITS.imgBytes) return err(413, 'That photo is too large.');
+    const now = Date.now();
+    const u = m.uploads && now - m.uploads.since < UPLOAD_WINDOW_MS ? m.uploads : { since: now, n: 0 };
+    if (u.n >= (Number(this.env.TEST_ROOM_UPLOADS) || LIMITS.roomUploads)) return err(429, 'Too many photos too fast. Wait a few minutes.');
+    u.n++;
+    m.uploads = u;
+    await this.ctx.storage.put('meta', m);
+    const sql = this.imgSql;
+    const id = randomId();
+    const bytes = new Uint8Array(buf);
+    for (let seq = 0, off = 0; off < bytes.length; seq++, off += CHUNK) {
+      sql.exec('INSERT INTO img_chunks (id, seq, data) VALUES (?, ?, ?)', id, seq, bytes.slice(off, off + CHUNK).buffer);
+    }
+    sql.exec('INSERT INTO imgs (id, ts, size) VALUES (?, ?, ?)', id, Date.now(), bytes.length);
+    // Keep only the newest photos: at most LIMITS.roomImages of them and LIMITS.roomImageBytes in total.
+    let kept = 0;
+    let bytesKept = 0;
+    for (const row of sql.exec('SELECT id, size FROM imgs ORDER BY ts DESC, rowid DESC').toArray()) {
+      kept++;
+      bytesKept += row.size;
+      if (kept > LIMITS.roomImages || bytesKept > LIMITS.roomImageBytes) {
+        sql.exec('DELETE FROM img_chunks WHERE id = ?', row.id);
+        sql.exec('DELETE FROM imgs WHERE id = ?', row.id);
+      }
+    }
+    return ok({ id });
+  }
+
+  async getImage(verifier, id) {
+    const m = await this.load();
+    if (!m) return GONE;
+    const denied = await this.gate(m, verifier);
+    if (denied) return denied;
+    if (!IMG_ID_RE.test(id || '')) return GONE;
+    const sql = this.imgSql;
+    const row = sql.exec('SELECT size FROM imgs WHERE id = ?', id).toArray()[0];
+    if (!row) return GONE;
+    const out = new Uint8Array(row.size);
+    let off = 0;
+    for (const r of sql.exec('SELECT data FROM img_chunks WHERE id = ? ORDER BY seq', id)) {
+      const d = new Uint8Array(r.data);
+      out.set(d, off);
+      off += d.length;
+    }
+    return { status: 200, body: out.buffer };
   }
 
   async load() {
@@ -47,7 +125,7 @@ export class ChatRoom extends DurableObject {
   async check(verifier) {
     const m = await this.load();
     if (!m) return GONE;
-    return safeEq(verifier, m.verifier) ? ok() : { status: 403, body: { error: 'Wrong passphrase.' } };
+    return (await this.gate(m, verifier)) || ok();
   }
   async destroy(manage) {
     const m = await this.load();
@@ -56,12 +134,16 @@ export class ChatRoom extends DurableObject {
     return ok();
   }
 
-  // WebSocket join. The Worker already checked the Origin; here we check the verifier.
+  // WebSocket join. The Worker already checked the Origin; here we check the verifier. It arrives as the
+  // second WebSocket "subprotocol" (header), not in the URL, so it never lands in URL logs.
   async fetch(req) {
     const m = await this.load();
     if (!m) return new Response('gone', { status: 404 });
     if (req.headers.get('Upgrade') !== 'websocket') return new Response('expected websocket', { status: 426 });
-    if (!safeEq(new URL(req.url).searchParams.get('v'), m.verifier)) return new Response('forbidden', { status: 403 });
+    const [proto, verifier] = (req.headers.get('Sec-WebSocket-Protocol') || '').split(',').map((x) => x.trim());
+    if (proto !== 'poof') return new Response('forbidden', { status: 403 });
+    const denied = await this.gate(m, verifier);
+    if (denied) return new Response(denied.body.error, { status: denied.status });
     if (this.ctx.getWebSockets().length >= LIMITS.roomSockets) return new Response('room full', { status: 429 });
 
     const [client, server] = Object.values(new WebSocketPair());
@@ -70,7 +152,7 @@ export class ChatRoom extends DurableObject {
     const msgs = this.sql.exec('SELECT id, ts, data FROM msgs ORDER BY id DESC LIMIT ?', LIMITS.history).toArray().reverse();
     server.send(JSON.stringify({ type: 'history', msgs, expiresAt: m.expiresAt }));
     this.presence();
-    return new Response(null, { status: 101, webSocket: client });
+    return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Protocol': 'poof' } });
   }
 
   async webSocketMessage(ws, raw) {

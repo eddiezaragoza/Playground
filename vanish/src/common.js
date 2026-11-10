@@ -13,11 +13,16 @@ export const LIMITS = {
   history: 200, // messages sent to someone joining a room
   keep: 1000, // messages a room keeps; older ones are deleted
   roomSockets: 50,
+  imgBytes: 2.5 * 1024 * 1024 + 28, // one encrypted chat photo (browsers shrink photos to ~0.2-1 MB first)
+  roomImages: 150, // photos a room keeps; the oldest are deleted past this
+  roomImageBytes: 100 * 1024 * 1024, // and never more than this much photo storage per room
+  roomUploads: 30, // photo uploads allowed per room per 10 minutes (protects the daily free-plan quota)
 };
 
 // Lets local tests shrink an "hour" so expiry can be watched. Unset in production.
 export const hourMs = (env) => Number(env.TEST_HOUR_MS) || 3600000;
 
+export const IMG_ID_RE = /^[A-Za-z0-9_-]{22}$/;
 const ID_RE = /^[A-Za-z0-9_-]{22}$/; // 16 random bytes, base64url
 export const isId = (s) => typeof s === 'string' && ID_RE.test(s);
 export const VERIFIER_RE = /^[A-Za-z0-9_-]{43}$/; // 32 bytes, base64url

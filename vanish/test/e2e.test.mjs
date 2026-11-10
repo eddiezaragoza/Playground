@@ -146,7 +146,7 @@ test('unfinished upload is not viewable; creator can delete; validation rejects 
 
 // ---------- chat ----------
 function socket(id, verifier, origin = BASE) {
-  const ws = new WebSocket(`${BASE.replace('http', 'ws')}/chat/api/r/${id}/ws?v=${verifier}`, { headers: { Origin: origin } });
+  const ws = new WebSocket(`${BASE.replace('http', 'ws')}/chat/api/r/${id}/ws`, { protocols: ['poof', verifier], headers: { Origin: origin } });
   const inbox = [];
   const waiters = [];
   ws.addEventListener('message', (ev) => {
@@ -224,4 +224,40 @@ test('chat: two people exchange encrypted messages, history, presence, delete', 
   const closes = await Promise.all([a.closed, b.closed, c.closed]);
   assert.deepEqual(closes.map((e) => e.code), [4001, 4001, 4001]);
   assert.equal((await call(`/chat/api/r/${id}`, { auth: false })).status, 404);
+});
+
+test('chat photos: encrypted upload/download, key required, size cap, oldest evicted past the limit', async () => {
+  const linkKey = C.newLinkKey();
+  const { key, verifier } = await C.deriveKeys(linkKey);
+  const { id } = (await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 } })).data;
+  const photo = new Uint8Array(1.5 * 1024 * 1024); // spans 2 storage rows
+  for (let i = 0; i < photo.length; i += 65536) crypto.getRandomValues(photo.subarray(i, i + 65536));
+  const sealed = await C.seal(key, photo);
+  const put = (body, v = verifier, origin = BASE) =>
+    call(`/chat/api/r/${id}/img`, { method: 'PUT', body, headers: { 'X-Room-Verifier': v }, auth: false, origin });
+
+  const wrong = await C.deriveKeys(C.newLinkKey());
+  assert.equal((await put(sealed, wrong.verifier)).status, 403, 'needs the room key');
+  assert.equal((await put(sealed, verifier, 'https://evil.example')).status, 403, 'cross-site upload refused');
+  assert.equal((await put(new Uint8Array(2.5 * 1024 * 1024 + 100))).status, 413, 'too big refused');
+
+  const up = await put(sealed);
+  assert.equal(up.status, 200);
+  const imgId = up.data.id;
+  const get = (v = verifier, i = imgId) => call(`/chat/api/r/${id}/img/${i}`, { headers: { 'X-Room-Verifier': v }, auth: false, origin: null });
+  assert.equal((await get(wrong.verifier)).status, 403);
+  const got = await get();
+  assert.equal(got.status, 200);
+  assert.ok(!Buffer.from(got.data).includes(Buffer.from(photo.subarray(0, 64))), 'server copy is not the plain photo');
+  assert.deepEqual(await C.unseal(key, got.data), photo);
+
+  // Fill past the 150-photo cap with tiny photos: the first (big) one is evicted.
+  const tiny = await C.seal(key, new Uint8Array(10));
+  for (let i = 0; i < 150; i++) assert.equal((await put(tiny)).status, 200);
+  assert.equal((await get()).status, 404, 'oldest photo evicted');
+
+  // Upload rate limit (TEST_ROOM_UPLOADS=200 locally, 30 in production): keep going until refused.
+  let last;
+  for (let i = 0; i < 60; i++) { last = await put(tiny); if (last.status !== 200) break; }
+  assert.equal(last.status, 429, 'photo flood is refused');
 });
