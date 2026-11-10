@@ -122,7 +122,7 @@ function login() {
     },
   },
   el('h1', { text: 'Sign in' }),
-  el('p', { class: 'muted', text: 'You need the access code to create secrets and chat rooms. Opening a link someone sent you does not.' }),
+  el('p', { class: 'muted', text: 'You need the access code to send poofs and start chat rooms. Opening a poof someone sent you does not.' }),
   field('Access code', input), btn, msg);
   app.replaceChildren(form);
   input.focus();
@@ -156,13 +156,13 @@ function createSecret() {
   const views = el('input', { type: 'number', id: 'views', min: 1, max: 20, value: 3, inputmode: 'numeric' });
   const hours = el('input', { type: 'number', id: 'hours', min: 1, max: 720, value: 72, inputmode: 'numeric' });
   const pass = el('input', { type: 'text', id: 'pass', autocomplete: 'off', spellcheck: 'false', placeholder: 'Optional' });
-  const submit = el('button', { type: 'submit', class: 'primary wide' }, 'Create secret link');
+  const submit = el('button', { type: 'submit', class: 'primary wide' }, 'Create poof link');
 
   async function onSubmit(e) {
     e.preventDefault();
     const v = Number(views.value);
     const h = Number(hours.value);
-    if (!text.value.trim() && !files.length) return msg.say('Type a secret or attach a file.', true);
+    if (!text.value.trim() && !files.length) return msg.say('Type something or attach a file.', true);
     if (!Number.isInteger(v) || v < 1 || v > 20) return msg.say('Views must be a whole number from 1 to 20.', true);
     if (!Number.isInteger(h) || h < 1 || h > 720) return msg.say('Hours must be a whole number from 1 to 720 (30 days).', true);
     submit.disabled = true;
@@ -190,17 +190,17 @@ function createSecret() {
 
   app.replaceChildren(el('div', { class: 'split' },
     el('form', { class: 'card', onsubmit: onSubmit },
-      el('h1', { text: 'Share a secret' }),
-      field('The secret is...', text),
+      el('h1', { text: 'Send a poof' }),
+      field('Your secret', text),
       el('div', { class: 'field' }, el('div', { class: 'attach-row' }, addBtn, el('span', { class: 'hint', text: 'Optional. Up to 3 files, 10 MB each.' })), list, picker),
       el('div', { class: 'opts' }, field('Max views', views), field('Max hours', hours), field('Passphrase', pass)),
       el('p', { class: 'hint opts-hint', text: 'Deleted after the views or the hours run out, whichever comes first. If you set a passphrase, send it a different way than the link (for example, by text).' }),
       submit, msg),
     el('aside', { class: 'about' },
       el('h2', { text: 'How it works' }),
-      el('p', { text: 'Your secret is encrypted in this browser before it is uploaded. The key is in the part of the link after the #, and browsers never send that part to a server. So the server only stores scrambled data and cannot read your secret.' }),
-      el('p', { text: 'Once the views run out or the time is up, the secret is deleted for good. There are no backups.' }),
-      el('p', { text: 'For extra safety, send the username one way and the secret link another way, so the full credentials are never in one place.' }))));
+      el('p', { text: 'A poof is a link to a secret that disappears. It is encrypted in this browser before it is uploaded. The key is in the part of the link after the #, and browsers never send that part to a server, so the server only stores scrambled data and cannot read it.' }),
+      el('p', { text: 'Once the views run out or the time is up: poof, it is deleted for good. There are no backups.' }),
+      el('p', { text: 'For extra safety, send the username one way and the poof another way, so the full credentials are never in one place.' }))));
   text.focus();
 }
 
@@ -209,20 +209,20 @@ function created({ id, manage, link, v, h, hasPass }) {
   const del = el('button', {
     type: 'button', class: 'danger',
     onclick: async () => {
-      if (!confirm('Delete this secret now? The link will stop working.')) return;
+      if (!confirm('Delete this poof now? The link will stop working.')) return;
       try {
         await api(`/secret/api/s/${id}/destroy`, { method: 'POST', headers: { 'X-Manage-Token': manage } });
-        notice('Deleted', 'The secret is gone and the link no longer works.');
+        notice('Poof! Deleted.', 'It is gone and the link no longer works.');
       } catch (err) { msg.say(err.status === 404 ? 'It is already gone.' : err.message, true); }
     },
   }, 'Delete it now');
   app.replaceChildren(el('section', { class: 'card narrow' },
-    el('h1', { text: 'Your link is ready' }),
+    el('h1', { text: 'Your poof is ready' }),
     linkBox(link),
     el('p', { text: `It can be opened ${plural(v, 'time')}, and it expires ${fmtWhen(Date.now() + h * 3600000)}, whichever comes first.` }),
     hasPass && el('p', { class: 'callout', text: 'Remember to send the passphrase separately (a text message works). Without it, the link is useless.' }),
-    el('p', { class: 'muted', text: 'This link is the only way to read the secret. If you lose it, nobody can recover it, including the site owner.' }),
-    el('div', { class: 'actions' }, del, el('a', { class: 'button ghost', href: '/secret' }, 'Share another')),
+    el('p', { class: 'muted', text: 'This link is the only way to open the poof. If you lose it, nobody can recover it, including the site owner.' }),
+    el('div', { class: 'actions' }, del, el('a', { class: 'button ghost', href: '/secret' }, 'Send another')),
     msg));
 }
 
@@ -234,16 +234,16 @@ async function viewSecret() {
   try {
     info = await api(`/secret/api/s/${id}`);
   } catch (err) {
-    return notice('This secret is gone', err.status === 404
+    return notice('Poof! It is gone.', err.status === 404
       ? 'It was already opened the maximum number of times, it expired, or the link is wrong. Ask the sender to make a new one.'
       : err.message);
   }
   const pass = info.hasPass ? el('input', { type: 'password', id: 'pass', autocomplete: 'off', required: true }) : null;
-  const btn = el('button', { type: 'submit', class: 'primary wide' }, 'Reveal secret');
+  const btn = el('button', { type: 'submit', class: 'primary wide' }, 'Open the poof');
   const msg = status();
   const uses = info.viewsLeft === 1
-    ? 'This is the last view: once you reveal it, it is deleted.'
-    : `Revealing it uses 1 of the ${info.viewsLeft} views left.`;
+    ? 'This is the last view: once you open it, poof, it is deleted.'
+    : `Opening it uses 1 of the ${info.viewsLeft} views left.`;
   app.replaceChildren(el('form', {
     class: 'card narrow',
     onsubmit: async (e) => {
@@ -258,12 +258,12 @@ async function viewSecret() {
         btn.disabled = false;
         if (err.status === 403) msg.say(`Wrong passphrase. ${err.data.triesLeft} ${err.data.triesLeft === 1 ? 'try' : 'tries'} left before it destroys itself.`, true);
         else if (err.status === 410) notice('Destroyed', err.message);
-        else if (err.status === 404) notice('This secret is gone', 'Someone else may have just used the last view.');
+        else if (err.status === 404) notice('Poof! It is gone.', 'Someone else may have just used the last view.');
         else msg.say(err.message, true);
       }
     },
   },
-  el('h1', { text: 'Someone sent you a secret' }),
+  el('h1', { text: 'Someone sent you a poof' }),
   el('p', { text: `${uses} It expires ${fmtWhen(info.expiresAt)}.` }),
   info.files > 0 && el('p', { class: 'muted', text: `It includes ${plural(info.files, 'attachment')}.` }),
   pass && field('Passphrase', pass, 'The sender should have given you this separately.'),
@@ -309,11 +309,11 @@ async function revealed(id, key, data) {
   });
 
   const left = data.viewsLeft === 0
-    ? (files.length ? 'That was the last view. It has been deleted from the server, and the attachments can be downloaded for the next 10 minutes.'
-      : 'That was the last view. It has been deleted from the server.')
+    ? (files.length ? 'That was the last view, so it has been deleted from the server (poof). The attachments can still be downloaded for the next 10 minutes.'
+      : 'That was the last view, so it has been deleted from the server (poof).')
     : `It can be opened ${plural(data.viewsLeft, 'more time')}.`;
   app.replaceChildren(el('section', { class: 'card narrow' },
-    el('h1', { text: 'Here is your secret' }),
+    el('h1', { text: 'Here is your poof' }),
     textBlock,
     files.length > 0 && el('ul', { class: 'files' }, fileRows),
     el('p', { class: 'callout', text: `${left} Save what you need before leaving this page.` }),

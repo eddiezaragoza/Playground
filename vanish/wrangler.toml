@@ -1,4 +1,4 @@
-# Cloudflare Worker for eddiezaragoza.com/secret and /chat (the rest of the site stays on GitHub Pages).
+# Poof: Cloudflare Worker for eddiezaragoza.com/secret, /chat and /poof (the rest of the site stays on GitHub Pages).
 # Secrets are NOT in this file. Set them with: npx wrangler secret put CREATE_CODE | COOKIE_SECRET
 name = "vanish"
 main = "src/worker.js"
@@ -7,6 +7,7 @@ workers_dev = false
 routes = [
   { pattern = "eddiezaragoza.com/secret*", zone_name = "eddiezaragoza.com" },
   { pattern = "eddiezaragoza.com/chat*", zone_name = "eddiezaragoza.com" },
+  { pattern = "eddiezaragoza.com/poof*", zone_name = "eddiezaragoza.com" },
 ]
 
 # One Durable Object per secret, one per chat room, and one that counts wrong access codes.

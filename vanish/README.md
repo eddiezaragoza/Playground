@@ -1,7 +1,9 @@
-# Vanish
+# Poof
+
+(Folder, Worker and internal names are still `vanish`; only the public name changed on 2026-11-09.)
 
 Self-destructing secrets and end-to-end encrypted chat rooms, hosted on Eddie's Cloudflare account at
-`eddiezaragoza.com/secret` and `eddiezaragoza.com/chat` (the rest of the site stays on GitHub Pages).
+`eddiezaragoza.com/secret` and `eddiezaragoza.com/chat` (short link: `eddiezaragoza.com/poof`) (the rest of the site stays on GitHub Pages).
 Our own take on quickforget.com.
 
 ## How the encryption works

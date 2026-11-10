@@ -1,4 +1,4 @@
-// Vanish: self-destructing secrets (/secret) and end-to-end encrypted chat rooms (/chat) on eddiezaragoza.com.
+// Poof (code name vanish): self-destructing secrets (/secret, short link /poof) and end-to-end encrypted chat rooms (/chat) on eddiezaragoza.com.
 // Everything is encrypted in the browser. The key lives after the # in the link, which browsers never send
 // to a server, so this Worker and its Durable Objects only ever hold ciphertext.
 // Secrets (wrangler secret put): CREATE_CODE (access code needed to CREATE items/rooms), COOKIE_SECRET.
@@ -36,11 +36,11 @@ const json = (url, obj, status = 200, extra = {}) =>
 const fromDO = (url, r) => json(url, r.body, r.status);
 
 const PAGE_TITLES = {
-  login: 'Sign in', 'create-secret': 'Share a secret', 'view-secret': 'A secret for you',
+  login: 'Sign in', 'create-secret': 'Send a poof', 'view-secret': 'A poof for you',
   'create-room': 'Start a chat', room: 'Chat room',
 };
 const page = (url, name) =>
-  respond(url, SHELL_HTML.replaceAll('__PAGE__', name).replace('__TITLE__', `${PAGE_TITLES[name]} - Vanish`));
+  respond(url, SHELL_HTML.replaceAll('__PAGE__', name).replace('__TITLE__', `${PAGE_TITLES[name]} - Poof`));
 
 // ---------- auth (only needed to CREATE things; opening a link never needs it) ----------
 const enc = new TextEncoder();
@@ -101,6 +101,10 @@ async function route(req, env) {
   const path = url.pathname.replace(/\/+$/, '') || '/';
   const method = req.method;
   const parts = path.split('/').filter(Boolean); // e.g. ['secret','api','s',id,'file','0']
+
+  // Short, easy-to-say address: eddiezaragoza.com/poof (and /poof/chat).
+  if (path === '/poof') return Response.redirect(`${url.origin}/secret`, 302);
+  if (path === '/poof/chat') return Response.redirect(`${url.origin}/chat`, 302);
 
   // Static assets (shared by both apps).
   const ASSETS = {
