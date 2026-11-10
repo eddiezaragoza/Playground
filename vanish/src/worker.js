@@ -20,6 +20,8 @@ export { LoginGuard } from './login-guard.js';
 
 const COOKIE = 'vanish_session';
 const COOKIE_DAYS = 180;
+const FAILS_PER_PERSON = 20; // wrong access codes per person (internet address) per UTC day
+const FAILS_SITE_WIDE = 1000; // backstop across everyone, against guessing from many computers
 
 function headers(url, type) {
   return {
@@ -159,8 +161,19 @@ async function route(req, env) {
   const method = req.method;
   const parts = path.split('/').filter(Boolean); // e.g. ['secret','api','s',id,'file','0']
 
-  // Short, easy-to-say address: eddiezaragoza.com/poof (and /poof/chat).
-  if (path === '/poof') return Response.redirect(`${url.origin}/secret`, 302);
+  // Poof lives on its own origin. Anything arriving at the old eddiezaragoza.com paths is sent there; browsers keep
+  // the #key part of a link across a redirect, so old links still open. The old login cookie is cleared on the way.
+  if (env.CANONICAL_HOST && url.hostname !== env.CANONICAL_HOST) {
+    let to = path;
+    if (path === '/poof') to = '/secret';
+    if (path === '/poof/chat') to = '/chat';
+    return new Response(null, { status: 301, headers: {
+      Location: `https://${env.CANONICAL_HOST}${to}${url.search}`,
+      'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict`,
+      'Cache-Control': 'no-store',
+    } });
+  }
+  if (path === '/' || path === '/poof') return Response.redirect(`${url.origin}/secret`, 302);
   if (path === '/poof/chat') return Response.redirect(`${url.origin}/chat`, 302);
 
   // Static assets (shared by both apps).
@@ -191,11 +204,16 @@ async function route(req, env) {
 
   // Login / logout
   if (path === '/secret/api/login' && method === 'POST') {
-    const guard = env.GUARD.get(env.GUARD.idFromName('login'));
-    if (!(await guard.attempt())) return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429);
+    // One counter per person (their internet address, set by Cloudflare and not forgeable), so a stranger's wrong
+    // guesses never lock anyone else out, plus a large site-wide backstop. Addresses are HMAC'd, never stored.
+    const ip = req.headers.get('CF-Connecting-IP') || 'local';
+    const person = env.GUARD.get(env.GUARD.idFromName(`ip:${hex(await hmac(env.COOKIE_SECRET, `ip:${ip}`))}`));
+    const site = env.GUARD.get(env.GUARD.idFromName('login'));
+    if (!(await person.attempt(FAILS_PER_PERSON))) return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429);
+    if (!(await site.attempt(FAILS_SITE_WIDE))) { await person.refund(); return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429); }
     const b = await readJson(req, 1000);
     if (b && typeof b.code === 'string' && b.code.length <= 200 && (await codeMatches(env, b.code))) {
-      await guard.refund();
+      await Promise.all([person.refund(), site.refund()]);
       const cookie = `${COOKIE}=${await sessionValue(env)}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; HttpOnly; Secure; SameSite=Strict`;
       return json(url, { ok: true }, 200, { 'Set-Cookie': cookie });
     }

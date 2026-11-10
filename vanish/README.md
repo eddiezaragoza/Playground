@@ -2,6 +2,9 @@
 
 (Folder, Worker and internal names are still `vanish`; only the public name changed on 2026-11-09.)
 
+**Lives at https://poof.eddiezaragoza.com** (own origin since 2026-11-10; the old eddiezaragoza.com/secret, /chat and /poof
+paths 301-redirect there, keeping the #key). Originally:
+
 Self-destructing secrets and end-to-end encrypted chat rooms, hosted on Eddie's Cloudflare account at
 `eddiezaragoza.com/secret` and `eddiezaragoza.com/chat` (short link: `eddiezaragoza.com/poof`) (the rest of the site stays on GitHub Pages).
 Our own take on quickforget.com.
@@ -76,3 +79,9 @@ eddiezaragoza.com shares its browser storage, login cookie or service-worker sco
 login lockout that is global (anyone can lock everyone out for a day).
 Accepted by design: room members can pick any name and can spoof another member's "You"/reactions (no accounts);
 a leaked link without a passphrase is the whole key; a room link stays in the browser history of anyone who joined.
+
+## Own origin + per-person lockout (2026-11-10, Eddie's decisions on the self-review)
+- Custom domain `poof.eddiezaragoza.com` (wrangler `custom_domain = true`); `CANONICAL_HOST` var redirects every other
+  host there (301, clears the old cookie). `.dev.vars` sets `CANONICAL_HOST=` to disable locally.
+- Login lockout: 20 wrong codes per person (HMAC of `CF-Connecting-IP`, never stored raw) per UTC day, plus a
+  1,000/day site-wide backstop. Access code kept short by Eddie's choice.

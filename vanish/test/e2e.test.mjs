@@ -319,3 +319,16 @@ test('flood protection: room-wide event cap across many connections; bodies must
     body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode(JSON.stringify({ verifier }))); c.close(); } }), duplex: 'half' });
   assert.equal(j.status, 403, 'JSON without Content-Length is treated as empty, so the check fails');
 });
+
+test('login lockout is per person: one address burning its 20 guesses does not lock out another', async () => {
+  const tryCode = (code, ip) => fetch(`${BASE}/secret/api/login`, { method: 'POST', headers: { Origin: BASE, 'Content-Type': 'application/json', 'CF-Connecting-IP': ip }, body: JSON.stringify({ code }) });
+  const attacker = '203.0.113.7';
+  const statuses = [];
+  for (let i = 0; i < 22; i++) statuses.push((await tryCode(`wrong-${i}`, attacker)).status);
+  assert.deepEqual(statuses.slice(0, 20), Array(20).fill(401));
+  assert.deepEqual(statuses.slice(20), [429, 429], 'attacker is locked out');
+  assert.equal((await tryCode(CODE, attacker)).status, 429, 'even the right code, from the locked-out address');
+  assert.equal((await tryCode(CODE, '198.51.100.9')).status, 200, 'someone else can still sign in');
+  assert.equal((await tryCode('CODE-wrong', '198.51.100.9')).status, 401);
+  assert.equal((await tryCode(CODE, '198.51.100.9')).status, 200, 'a correct login refunds the miss');
+});

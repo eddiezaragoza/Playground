@@ -1,14 +1,20 @@
-# Poof: Cloudflare Worker for eddiezaragoza.com/secret, /chat and /poof (the rest of the site stays on GitHub Pages).
+# Poof: Cloudflare Worker. Lives at poof.eddiezaragoza.com (its own origin, so nothing else on the personal site shares
+# its storage, cookies or service-worker scope). The old eddiezaragoza.com/secret, /chat and /poof paths only redirect there. (the rest of the site stays on GitHub Pages).
 # Secrets are NOT in this file. Set them with: npx wrangler secret put CREATE_CODE | COOKIE_SECRET
 name = "vanish"
 main = "src/worker.js"
 compatibility_date = "2026-06-01"
 workers_dev = false
 routes = [
+  { pattern = "poof.eddiezaragoza.com", custom_domain = true },
   { pattern = "eddiezaragoza.com/secret*", zone_name = "eddiezaragoza.com" },
   { pattern = "eddiezaragoza.com/chat*", zone_name = "eddiezaragoza.com" },
   { pattern = "eddiezaragoza.com/poof*", zone_name = "eddiezaragoza.com" },
 ]
+
+[vars]
+# Requests on any other host are redirected here. .dev.vars blanks it for local testing.
+CANONICAL_HOST = "poof.eddiezaragoza.com"
 
 # One Durable Object per secret, one per chat room, and one that counts wrong access codes.
 # Each holds only ciphertext and deletes itself (alarm) when it expires.
