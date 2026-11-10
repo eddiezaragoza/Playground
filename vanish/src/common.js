@@ -13,6 +13,8 @@ export const LIMITS = {
   history: 200, // messages sent to someone joining a room
   keep: 1000, // messages a room keeps; older ones are deleted
   roomSockets: 50,
+  reactChars: 600, // base64 ciphertext of one reaction (emoji + who)
+  reactKeep: 5000, // reaction events a room keeps
   imgBytes: 2.5 * 1024 * 1024 + 28, // one encrypted chat photo (browsers shrink photos to ~0.2-1 MB first)
   roomImages: 150, // photos a room keeps; the oldest are deleted past this
   roomImageBytes: 100 * 1024 * 1024, // and never more than this much photo storage per room

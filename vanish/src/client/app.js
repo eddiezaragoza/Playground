@@ -7,6 +7,8 @@ const PAGE = document.body.dataset.page;
 const MAX_FILE = 10 * 1024 * 1024;
 const MAX_FILES = 3;
 const MAX_MSG = 4000;
+const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏', '🔥'];
+const SMILE_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="currentColor"/><circle cx="15" cy="10" r="1.3" fill="currentColor"/><path d="M8.5 14.2a4.2 4.2 0 0 0 7 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const MAX_PHOTO_EDGE = 1920; // photos are shrunk to this many pixels on the long side before encrypting
 const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
 const CAMERA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 4h6l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L9 4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>';
@@ -476,6 +478,9 @@ function chat(id, info, { key, verifier }, myName) {
   let queue = Promise.resolve();
   let pending = null; // photo waiting in the tray: { bytes, w, h, preview }
   const photos = new Map(); // photo id -> Promise<object URL of the decrypted photo>
+  const rows = new Map(); // message id -> its row element (to update reaction chips)
+  const reactions = new Map(); // message id -> Map("<sender>|<emoji>" -> { on, name })
+  let emojiPicker = null; // the open emoji picker, if any
 
   const log = el('div', { class: 'log', role: 'log', 'aria-live': 'polite' });
   const online = el('span', { class: 'online muted' });
@@ -589,9 +594,71 @@ function chat(id, info, { key, verifier }, myName) {
       photo.style.aspectRatio = `${w} / ${h}`; // reserve the space so the chat doesn't jump when it loads
       io.observe(photo);
     }
-    return el('div', { class: `bubble${mine ? ' mine' : ''}${photo ? ' has-photo' : ''}` },
+    const chips = el('div', { class: 'chips' });
+    const bubble = el('div', { class: `bubble${mine ? ' mine' : ''}${photo ? ' has-photo' : ''}` },
       el('div', { class: 'meta' }, el('span', { class: 'who', text: mine ? 'You' : String(p.n || '?').slice(0, 40) }), el('time', { text: fmtTime(m.ts) })),
-      photo, (text || !photo) && el('div', { class: 'body', text }));
+      photo, (text || !photo) && el('div', { class: 'body', text }), chips);
+    const reactBtn = el('button', { type: 'button', class: 'react-btn', 'aria-label': 'React to this message', title: 'React',
+      onclick: (e) => { e.stopPropagation(); openPicker(m.id, reactBtn); } });
+    reactBtn.innerHTML = SMILE_SVG; // static markup
+    const row = el('div', { class: `row${mine ? ' mine' : ''}`, 'data-id': String(m.id) }, bubble, reactBtn);
+    row.chips = chips;
+    rows.set(m.id, row);
+    drawChips(m.id);
+    return row;
+  }
+
+  // ----- reactions -----
+  async function applyReact(r) {
+    let p;
+    try { p = await C.unsealJson(key, r.data); } catch { return; }
+    if (!REACTIONS.includes(p.e) || typeof p.s !== 'string') return; // only the known set; ignore anything odd
+    if (!reactions.has(r.target)) reactions.set(r.target, new Map());
+    reactions.get(r.target).set(`${p.s}|${p.e}`, { on: !!p.on, name: String(p.n || '?').slice(0, 40), s: p.s, e: p.e });
+  }
+  function drawChips(target) {
+    const row = rows.get(target);
+    if (!row) return;
+    const byEmoji = new Map();
+    for (const r of reactions.get(target)?.values() || []) {
+      if (!r.on) continue;
+      if (!byEmoji.has(r.e)) byEmoji.set(r.e, []);
+      byEmoji.get(r.e).push(r);
+    }
+    row.chips.replaceChildren(...REACTIONS.filter((e) => byEmoji.has(e)).map((e) => {
+      const list = byEmoji.get(e);
+      const mineToo = list.some((r) => r.s === sender);
+      const names = list.map((r) => (r.s === sender ? 'You' : r.name)).join(', ');
+      return el('button', { type: 'button', class: `chip${mineToo ? ' me' : ''}`, title: names, 'aria-label': `${e} ${list.length}: ${names}. Tap to ${mineToo ? 'remove yours' : 'add yours'}.`,
+        onclick: () => sendReact(target, e) }, `${e} ${list.length}`);
+    }));
+  }
+  async function sendReact(target, e) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) { flash('Not connected yet. Try again in a moment.'); return; }
+    const current = reactions.get(target)?.get(`${sender}|${e}`);
+    const on = !current?.on;
+    ws.send(JSON.stringify({ type: 'react', target, data: await C.sealJson(key, { s: sender, n: myName, e, on }) }));
+  }
+  function closePicker() {
+    if (!emojiPicker) return;
+    emojiPicker.remove();
+    emojiPicker = null;
+    document.removeEventListener('click', closePicker);
+  }
+  function openPicker(target, anchor) {
+    const same = emojiPicker?.target === target;
+    closePicker();
+    if (same) return; // second tap on the same button closes it
+    emojiPicker = el('div', { class: 'picker', role: 'menu', 'aria-label': 'Pick a reaction', onclick: (e) => e.stopPropagation() },
+      REACTIONS.map((e) => el('button', { type: 'button', role: 'menuitem', 'aria-label': `React ${e}`,
+        onclick: () => { closePicker(); sendReact(target, e); } }, e)));
+    emojiPicker.target = target;
+    const row = anchor.closest('.row');
+    // Open downward when the message is near the top of the chat, so the header doesn't cover the picker.
+    if (row.getBoundingClientRect().top - log.getBoundingClientRect().top < 64) emojiPicker.classList.add('below');
+    row.append(emojiPicker);
+    emojiPicker.querySelector('button').focus();
+    setTimeout(() => document.addEventListener('click', closePicker), 0);
   }
 
   async function handle(raw) {
@@ -599,6 +666,9 @@ function chat(id, info, { key, verifier }, myName) {
     let m;
     try { m = JSON.parse(raw); } catch { return; }
     if (m.type === 'history') {
+      rows.clear();
+      reactions.clear();
+      for (const r of m.reacts || []) await applyReact(r); // in order, so the latest on/off wins
       const nodes = await Promise.all(m.msgs.map(render));
       log.replaceChildren(...(nodes.length ? nodes : [el('p', { class: 'empty muted', text: 'No messages yet. Say hi.' })]));
       toBottom();
@@ -609,6 +679,9 @@ function chat(id, info, { key, verifier }, myName) {
       log.append(node);
       if (stick || node.classList.contains('mine')) toBottom();
       if (document.hidden && !node.classList.contains('mine')) { unread++; document.title = `(${unread}) ${baseTitle}`; }
+    } else if (m.type === 'react') {
+      await applyReact(m);
+      drawChips(m.target);
     } else if (m.type === 'presence') {
       const names = new Set();
       for (const h of m.list) { try { const p = await C.unsealJson(key, h); names.add(String(p.n).slice(0, 40)); } catch { /* skip */ } }
@@ -685,6 +758,7 @@ function chat(id, info, { key, verifier }, myName) {
     const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
     if (f) { e.preventDefault(); choosePhoto(f); }
   });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePicker(); });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) { unread = 0; document.title = baseTitle; }
   });

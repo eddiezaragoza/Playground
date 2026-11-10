@@ -24,6 +24,14 @@ export class ChatRoom extends DurableObject {
     return this.ctx.storage.sql;
   }
 
+  // Reactions are encrypted events ({who, emoji, on/off}) pointing at a message id. The server sees only
+  // "someone reacted to message 42", never who or which emoji.
+  get reactSql() {
+    const sql = this.sql;
+    sql.exec('CREATE TABLE IF NOT EXISTS reacts (id INTEGER PRIMARY KEY AUTOINCREMENT, target INTEGER NOT NULL, ts INTEGER NOT NULL, data TEXT NOT NULL)');
+    return sql;
+  }
+
   get imgSql() {
     const sql = this.ctx.storage.sql;
     sql.exec('CREATE TABLE IF NOT EXISTS imgs (id TEXT PRIMARY KEY, ts INTEGER NOT NULL, size INTEGER NOT NULL)');
@@ -150,7 +158,10 @@ export class ChatRoom extends DurableObject {
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment({ hello: null, times: [] });
     const msgs = this.sql.exec('SELECT id, ts, data FROM msgs ORDER BY id DESC LIMIT ?', LIMITS.history).toArray().reverse();
-    server.send(JSON.stringify({ type: 'history', msgs, expiresAt: m.expiresAt }));
+    const reacts = msgs.length
+      ? this.reactSql.exec('SELECT id, target, data FROM reacts WHERE target >= ? ORDER BY id', msgs[0].id).toArray()
+      : [];
+    server.send(JSON.stringify({ type: 'history', msgs, reacts, expiresAt: m.expiresAt }));
     this.presence();
     return new Response(null, { status: 101, webSocket: client, headers: { 'Sec-WebSocket-Protocol': 'poof' } });
   }
@@ -176,7 +187,18 @@ export class ChatRoom extends DurableObject {
       if (!(await this.load())) return; // expired between messages; load() already closed everyone
       const { id } = this.sql.exec('INSERT INTO msgs (ts, data) VALUES (?, ?) RETURNING id', now, msg.data).one();
       this.sql.exec('DELETE FROM msgs WHERE id <= ?', id - LIMITS.keep);
+      this.reactSql.exec('DELETE FROM reacts WHERE target <= ?', id - LIMITS.keep);
       this.broadcast({ type: 'msg', id, ts: now, data: msg.data });
+      return;
+    }
+    if (msg?.type === 'react' && Number.isInteger(msg.target) && typeof msg.data === 'string' &&
+        msg.data.length > 0 && msg.data.length <= LIMITS.reactChars) {
+      if (!(await this.load())) return;
+      if (!this.sql.exec('SELECT 1 FROM msgs WHERE id = ?', msg.target).toArray().length) return; // no such message
+      const sql = this.reactSql;
+      const { id } = sql.exec('INSERT INTO reacts (target, ts, data) VALUES (?, ?, ?) RETURNING id', msg.target, now, msg.data).one();
+      sql.exec('DELETE FROM reacts WHERE id <= ?', id - LIMITS.reactKeep);
+      this.broadcast({ type: 'react', id, target: msg.target, data: msg.data });
     }
   }
 

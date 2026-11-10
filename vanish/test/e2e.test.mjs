@@ -218,6 +218,20 @@ test('chat: two people exchange encrypted messages, history, presence, delete', 
   for (let i = 0; i < 25; i++) c.send(JSON.stringify({ type: 'msg', data: 'x' }));
   assert.equal((await c.next('error')).error, 'Slow down a little.');
 
+  await new Promise((r) => setTimeout(r, 10500)); // let c's rate-limit window clear
+  // Reactions: relayed, stored, included in history; a reaction to a message that doesn't exist is ignored.
+  c.send(JSON.stringify({ type: 'react', target: got.id, data: await C.sealJson(key, { s: 'b', n: 'Sam', e: '👍', on: true }) }));
+  const r1 = await a.next('react');
+  assert.equal(r1.target, got.id);
+  assert.deepEqual(await C.unsealJson(key, r1.data), { s: 'b', n: 'Sam', e: '👍', on: true });
+  c.send(JSON.stringify({ type: 'react', target: 999999, data: 'x' }));
+  const d = socket(id, verifier);
+  await d.ready;
+  const h2 = await d.next('history');
+  assert.equal(h2.reacts.length, 1, 'history carries reactions; bogus target ignored');
+  assert.equal(h2.reacts[0].target, got.id);
+  d.close();
+
   // Deleting closes everyone with code 4001.
   const del = await call(`/chat/api/r/${id}/destroy`, { method: 'POST', headers: { 'X-Manage-Token': manage }, auth: false });
   assert.equal(del.status, 200);

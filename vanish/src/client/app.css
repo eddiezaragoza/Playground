@@ -228,3 +228,33 @@ body.chat-page main { padding-bottom: 16px; }
   100% { transform: scale(1.1); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .gone-cloud { animation: none; } }
+
+/* ---------- reactions ---------- */
+.row { display: flex; align-items: center; gap: 4px; align-self: flex-start; max-width: min(80%, 600px); position: relative; }
+.row.mine { align-self: flex-end; flex-direction: row-reverse; }
+.row .bubble { max-width: 100%; min-width: 0; }
+@media (max-width: 520px) { .row { max-width: 92%; } .row .bubble { max-width: 100%; } }
+.react-btn {
+  flex: none; padding: 5px; border-radius: 999px; background: transparent; color: var(--muted); border: 0;
+  opacity: 0; transition: opacity .15s;
+}
+.row:hover .react-btn, .row:focus-within .react-btn, .react-btn:focus-visible { opacity: 1; }
+.react-btn:hover { background: var(--accent-soft); color: var(--accent); }
+@media (hover: none) { .react-btn { opacity: .55; } }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips:not(:empty) { margin-top: 6px; }
+.chip {
+  padding: 1px 8px; font-size: .85rem; font-weight: 600; border-radius: 999px;
+  background: var(--card); color: var(--ink); border: 1px solid var(--line);
+}
+.chip.me { border-color: var(--accent); background: var(--accent-soft); }
+.bubble.mine .chip { color: var(--ink); }
+.picker {
+  position: absolute; bottom: calc(100% + 4px); left: 0; z-index: 20; display: flex; gap: 2px; padding: 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 6px 24px rgba(20, 22, 40, .18);
+}
+.row.mine .picker { left: auto; right: 0; }
+.picker button { font-size: 1.35rem; line-height: 1; padding: 6px; border: 0; background: none; border-radius: 999px; }
+.picker button:hover, .picker button:focus-visible { background: var(--accent-soft); transform: scale(1.15); }
+.picker.below { bottom: auto; top: calc(100% + 4px); }
+.chip, .picker button { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"; }
