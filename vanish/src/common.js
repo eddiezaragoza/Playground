@@ -20,6 +20,9 @@ export const LIMITS = {
   roomImages: 150, // photos a room keeps; the oldest are deleted past this
   roomImageBytes: 100 * 1024 * 1024, // and never more than this much photo storage per room
   roomUploads: 30, // photo uploads allowed per room per 10 minutes (protects the daily free-plan quota)
+  roomEventsPerMin: 120, // messages + reactions per room per minute, across everyone in it
+  roomEventsPerDay: 5000, // and per UTC day: one flooding member can't use up the free plan's daily write allowance
+  roomGifSearches: 40, // GIF searches per room per 10 minutes (Giphy's free key has a small hourly limit)
 };
 
 // Lets local tests shrink an "hour" so expiry can be watched. Unset in production.

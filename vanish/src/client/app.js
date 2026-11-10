@@ -506,6 +506,7 @@ function chat(id, info, { key, verifier }, myName) {
   let sender = store.get('vanish-sender');
   if (!sender) { sender = C.toB64u(crypto.getRandomValues(new Uint8Array(9))); store.set('vanish-sender', sender); }
   const manage = store.get(`vanish-manage-${id}`);
+  let unread = 0;
   let baseTitle = document.title;
   const titleEl = el('strong', { text: 'Chat room' });
   function setName(n) {
@@ -517,11 +518,10 @@ function chat(id, info, { key, verifier }, myName) {
   const left = el('span', { title: `Deleted ${fmtWhen(info.expiresAt)}` });
   const tick = () => { left.textContent = `Auto-deletes in ${fmtLeft(info.expiresAt)}`; };
   tick();
-  setInterval(tick, 30000);
+  const ticker = setInterval(tick, 30000);
   let ws;
   let retry = 0;
   let ended = false;
-  let unread = 0;
   let ping;
   let queue = Promise.resolve();
   let pending = null; // photo waiting in the tray: { bytes, w, h, preview }
@@ -836,12 +836,13 @@ function chat(id, info, { key, verifier }, myName) {
       if (ended) return;
       if (ev.code === 4000 || ev.code === 4001) {
         ended = true;
+        clearInterval(ticker);
         poofBurst({ big: true, sub: 'This chat has ended' });
         return notice('Poof! This chat has ended.', ev.reason || 'The room is gone.', { poof: true });
       }
       // The room may have expired while we were away.
       try { await api(`/chat/api/r/${id}`); } catch (err) {
-        if (err.status === 404) { ended = true; poofBurst({ big: true, sub: 'This chat has ended' }); return notice('Poof! This chat has ended.', 'The room expired or was deleted.', { poof: true }); }
+        if (err.status === 404) { ended = true; clearInterval(ticker); poofBurst({ big: true, sub: 'This chat has ended' }); return notice('Poof! This chat has ended.', 'The room expired or was deleted.', { poof: true }); }
       }
       setConn('Reconnecting...');
       setTimeout(connect, Math.min(15000, 1000 * 2 ** retry++));

@@ -65,3 +65,14 @@ until the next UTC day.
 Worker secret `GIPHY_KEY` (free Giphy API key, app "Poof", created 2026-11-10). Searches go through
 `GET /chat/api/r/<id>/gifs?q=` (room members only, PG-13, cached 5 min). GIF images load from `*.giphy.com`,
 allowed only on room pages' CSP. Locally, `GIPHY_FAKE=1` returns fake results.
+
+## Self-review (2026-11-10)
+Fixed: room-wide flood caps (120 events/min, 5,000/day per room; GIF search 40/10 min per room) so one member can't
+exhaust the free plan's daily quota; request bodies must declare Content-Length (refused before being read); chat
+page timer/ordering cleanups. Attack suite now lives in the repo: `npm run test:attacks` (LOCAL ONLY - it locks the
+login for the day on the server it hits). Results 2026-11-10: 31 attacks, 0 got through.
+Open decisions (Eddie): (1) move Poof to its own origin (poof.eddiezaragoza.com) so nothing else on
+eddiezaragoza.com shares its browser storage, login cookie or service-worker scope; (2) the short access code plus a
+login lockout that is global (anyone can lock everyone out for a day).
+Accepted by design: room members can pick any name and can spoof another member's "You"/reactions (no accounts);
+a leaked link without a passphrase is the whole key; a room link stays in the browser history of anyone who joined.

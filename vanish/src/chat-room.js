@@ -9,6 +9,7 @@ const WRONG_MAX = 10; // wrong passphrases per room per 15 minutes before it sto
 const WRONG_WINDOW_MS = 15 * 60 * 1000;
 const UPLOAD_WINDOW_MS = 10 * 60 * 1000;
 const RATE_WINDOW_MS = 10000;
+const today = () => new Date().toISOString().slice(0, 10);
 const RATE_MAX = 20; // messages per person per 10 seconds
 
 export class ChatRoom extends DurableObject {
@@ -105,6 +106,36 @@ export class ChatRoom extends DurableObject {
     return { status: 200, body: out.buffer };
   }
 
+  // Room-wide budget for stored events (messages + reactions), on top of the per-person limit, so one member
+  // with many connections can't flood. The per-minute window lives in memory (a flood keeps the room awake);
+  // the daily count is saved every 25 events so it survives restarts at little write cost.
+  async spend() {
+    const now = Date.now();
+    const perMin = Number(this.env.TEST_ROOM_EVENTS_PER_MIN) || LIMITS.roomEventsPerMin;
+    this.recent = (this.recent || []).filter((t) => now - t < 60000);
+    if (this.recent.length >= perMin) return 'This room is very busy. Wait a moment.';
+    if (!this.daily) this.daily = (await this.ctx.storage.get('daily')) || { day: today(), n: 0 };
+    if (this.daily.day !== today()) this.daily = { day: today(), n: 0 };
+    if (this.daily.n >= LIMITS.roomEventsPerDay) return 'This room reached today\'s message limit.';
+    this.recent.push(now);
+    this.daily.n++;
+    if (this.daily.n % 25 === 0) await this.ctx.storage.put('daily', this.daily);
+    return null;
+  }
+
+  // GIF search goes through the room so it can be limited per room (and only members can search).
+  async gifAllowed(verifier) {
+    const m = await this.load();
+    if (!m) return GONE;
+    const denied = await this.gate(m, verifier);
+    if (denied) return denied;
+    const now = Date.now();
+    this.gifTimes = (this.gifTimes || []).filter((t) => now - t < 10 * 60 * 1000);
+    if (this.gifTimes.length >= LIMITS.roomGifSearches) return err(429, 'Lots of GIF searches right now. Try again in a few minutes.');
+    this.gifTimes.push(now);
+    return ok();
+  }
+
   async load() {
     const m = await this.ctx.storage.get('meta');
     if (!m) return null;
@@ -195,6 +226,8 @@ export class ChatRoom extends DurableObject {
     }
     if (msg?.type === 'msg' && typeof msg.data === 'string' && msg.data.length > 0 && msg.data.length <= LIMITS.msgChars) {
       if (!(await this.load())) return; // expired between messages; load() already closed everyone
+      const busy = await this.spend();
+      if (busy) { ws.send(JSON.stringify({ type: 'error', error: busy })); return; }
       const { id } = this.sql.exec('INSERT INTO msgs (ts, data) VALUES (?, ?) RETURNING id', now, msg.data).one();
       this.sql.exec('DELETE FROM msgs WHERE id <= ?', id - LIMITS.keep);
       this.reactSql.exec('DELETE FROM reacts WHERE target <= ?', id - LIMITS.keep);
@@ -205,6 +238,8 @@ export class ChatRoom extends DurableObject {
         msg.data.length > 0 && msg.data.length <= LIMITS.reactChars) {
       if (!(await this.load())) return;
       if (!this.sql.exec('SELECT 1 FROM msgs WHERE id = ?', msg.target).toArray().length) return; // no such message
+      const busy = await this.spend();
+      if (busy) { ws.send(JSON.stringify({ type: 'error', error: busy })); return; }
       const sql = this.reactSql;
       const { id } = sql.exec('INSERT INTO reacts (target, ts, data) VALUES (?, ?, ?) RETURNING id', msg.target, now, msg.data).one();
       sql.exec('DELETE FROM reacts WHERE id <= ?', id - LIMITS.reactKeep);

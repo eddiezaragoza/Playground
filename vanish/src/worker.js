@@ -120,9 +120,14 @@ async function codeMatches(env, code) {
   return crypto.subtle.timingSafeEqual(a, b);
 }
 
+// Bodies must say how big they are up front, so an oversized upload is refused before it is read into memory.
+const declaredLength = (req) => {
+  const h = req.headers.get('Content-Length');
+  return h !== null && /^\d+$/.test(h) ? Number(h) : null;
+};
 async function readJson(req, max) {
-  const len = Number(req.headers.get('Content-Length') || 0);
-  if (len > max) return null;
+  const len = declaredLength(req);
+  if (len === null || len > max) return null;
   const text = await req.text();
   if (text.length > max) return null;
   try { return JSON.parse(text); } catch { return null; }
@@ -235,7 +240,9 @@ async function route(req, env) {
     if (parts[4] === 'file' && /^\d$/.test(parts[5] || '') && parts.length === 6) {
       const n = Number(parts[5]);
       if (method === 'PUT') {
-        if (Number(req.headers.get('Content-Length') || 0) > LIMITS.fileBytes) return json(url, { error: 'File is too large.' }, 413);
+        const len = declaredLength(req);
+        if (len === null) return json(url, { error: 'Missing Content-Length.' }, 411);
+        if (len > LIMITS.fileBytes) return json(url, { error: 'File is too large.' }, 413);
         const buf = await req.arrayBuffer();
         if (buf.byteLength > LIMITS.fileBytes) return json(url, { error: 'File is too large.' }, 413);
         return fromDO(url, await stub.upload(manage, n, buf));
@@ -281,7 +288,7 @@ async function route(req, env) {
     if (rest === 'ws' && method === 'GET') return stub.fetch(req);
     if (rest === 'gifs' && method === 'GET') {
       if (!env.GIPHY_KEY && !env.GIPHY_FAKE) return json(url, { error: 'GIF search is not set up yet.' }, 503);
-      const ok = await stub.check(req.headers.get('X-Room-Verifier') || ''); // only room members can search
+      const ok = await stub.gifAllowed(req.headers.get('X-Room-Verifier') || ''); // room members only, rate-limited per room
       if (ok.status !== 200) return fromDO(url, ok);
       const q = (url.searchParams.get('q') || '').trim().slice(0, 50);
       const offset = Math.min(Math.max(Number(url.searchParams.get('offset')) || 0, 0), 200);
@@ -290,7 +297,9 @@ async function route(req, env) {
     }
     const verifier = req.headers.get('X-Room-Verifier') || '';
     if (rest === 'img' && method === 'PUT') {
-      if (Number(req.headers.get('Content-Length') || 0) > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);
+      const len = declaredLength(req);
+      if (len === null) return json(url, { error: 'Missing Content-Length.' }, 411);
+      if (len > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);
       const buf = await req.arrayBuffer();
       if (buf.byteLength > LIMITS.imgBytes) return json(url, { error: 'That photo is too large.' }, 413);
       return fromDO(url, await stub.putImage(verifier, buf));

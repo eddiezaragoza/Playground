@@ -298,3 +298,24 @@ test('GIF search: room members only (needs GIPHY_FAKE=1 locally)', async () => {
   const other = await fetch(`${BASE}/secret`);
   assert.doesNotMatch(other.headers.get('Content-Security-Policy'), /giphy/, 'secret pages stay locked down');
 });
+
+test('flood protection: room-wide event cap across many connections; bodies must declare their size', async () => {
+  const linkKey = C.newLinkKey();
+  const { key, verifier } = await C.deriveKeys(linkKey);
+  const { id } = (await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 } })).data;
+  const socks = Array.from({ length: 4 }, () => socket(id, verifier));
+  await Promise.all(socks.map((s) => s.ready));
+  const data = await C.sealJson(key, { n: 'x', s: 'x', t: 'spam' });
+  for (const s of socks) for (let i = 0; i < 20; i++) s.send(JSON.stringify({ type: 'msg', data })); // 80 > 60/min (test limit)
+  const errs = await Promise.all(socks.map((s) => s.next('error', 8000).catch(() => null)));
+  assert.ok(errs.some((e) => e?.error === 'This room is very busy. Wait a moment.'), 'room-wide cap kicks in');
+  socks.forEach((s) => s.close());
+
+  // A streamed body with no Content-Length is refused before it is read.
+  const stream = new ReadableStream({ start(c) { c.enqueue(new Uint8Array(100)); c.close(); } });
+  const r = await fetch(`${BASE}/chat/api/r/${id}/img`, { method: 'PUT', headers: { Origin: BASE, 'X-Room-Verifier': verifier }, body: stream, duplex: 'half' });
+  assert.equal(r.status, 411);
+  const j = await fetch(`${BASE}/chat/api/r/${id}/check`, { method: 'POST', headers: { Origin: BASE, 'Content-Type': 'application/json' },
+    body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode(JSON.stringify({ verifier }))); c.close(); } }), duplex: 'half' });
+  assert.equal(j.status, 403, 'JSON without Content-Length is treated as empty, so the check fails');
+});

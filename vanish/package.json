@@ -6,7 +6,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "test": "node --test test/crypto.test.mjs",
-    "test:e2e": "node --test test/e2e.test.mjs"
+    "test:e2e": "node --test test/e2e.test.mjs",
+    "test:attacks": "node test/attacks.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
