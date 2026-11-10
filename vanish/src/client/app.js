@@ -129,7 +129,7 @@ function login() {
 }
 
 function createSecret() {
-  const text = el('textarea', { id: 'text', rows: 7, maxlength: 50000, placeholder: 'A password, API key, note...' });
+  const text = el('textarea', { id: 'text', rows: 4, maxlength: 50000, placeholder: 'A password, API key, note...' });
   const files = [];
   const list = el('ul', { class: 'files' });
   const msg = status();
@@ -145,7 +145,7 @@ function createSecret() {
       renderFiles();
     },
   });
-  const addBtn = el('button', { type: 'button', class: 'ghost', onclick: () => picker.click() }, '+ Attach a file');
+  const addBtn = el('button', { type: 'button', class: 'ghost small', onclick: () => picker.click() }, '+ Attach a file');
   function renderFiles() {
     list.replaceChildren(...files.map((f, i) => el('li', {},
       el('span', { class: 'fname', text: f.name }), el('span', { class: 'muted', text: fmtSize(f.size) }),
@@ -192,9 +192,9 @@ function createSecret() {
     el('form', { class: 'card', onsubmit: onSubmit },
       el('h1', { text: 'Share a secret' }),
       field('The secret is...', text),
-      el('div', { class: 'field' }, el('span', { class: 'label', text: 'Attachments (optional, up to 3, 10 MB each)' }), list, addBtn, picker),
-      el('div', { class: 'row' }, field('Forget it after (views)', views), el('span', { class: 'or', text: 'or' }), field('hours', hours)),
-      field('Passphrase', pass, 'Optional. If you set one, send it a different way than the link (for example, by text).'),
+      el('div', { class: 'field' }, el('div', { class: 'attach-row' }, addBtn, el('span', { class: 'hint', text: 'Optional. Up to 3 files, 10 MB each.' })), list, picker),
+      el('div', { class: 'opts' }, field('Max views', views), field('Max hours', hours), field('Passphrase', pass)),
+      el('p', { class: 'hint opts-hint', text: 'Deleted after the views or the hours run out, whichever comes first. If you set a passphrase, send it a different way than the link (for example, by text).' }),
       submit, msg),
     el('aside', { class: 'about' },
       el('h2', { text: 'How it works' }),
