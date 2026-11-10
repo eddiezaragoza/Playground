@@ -270,7 +270,7 @@ body.chat-page main { padding-bottom: 16px; }
 .gif-top { display: flex; gap: 8px; align-items: center; }
 .gif-search { flex: 1; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
 .link-btn.plain { color: var(--muted); }
-.gif-grid { overflow-y: auto; columns: 3 120px; column-gap: 6px; min-height: 80px; }
+.gif-grid { overflow-y: auto; columns: 140px; column-gap: 6px; min-height: 80px; }
 .gif-pick { display: block; width: 100%; margin: 0 0 6px; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: rgba(127, 127, 127, .18); break-inside: avoid; cursor: pointer; }
 .gif-pick img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .gif-pick:hover, .gif-pick:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }

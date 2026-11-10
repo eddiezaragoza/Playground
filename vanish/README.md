@@ -60,3 +60,8 @@ Known limits (by design): anyone holding a room link is a full member and can pi
 link without a passphrase is a leaked secret; a determined flood of requests can still use up the free plan's
 daily request quota (Cloudflare rate-limiting rule recommended); 20 wrong access codes lock login for everyone
 until the next UTC day.
+
+## GIF search (Giphy)
+Worker secret `GIPHY_KEY` (free Giphy API key, app "Poof", created 2026-11-10). Searches go through
+`GET /chat/api/r/<id>/gifs?q=` (room members only, PG-13, cached 5 min). GIF images load from `*.giphy.com`,
+allowed only on room pages' CSP. Locally, `GIPHY_FAKE=1` returns fake results.
