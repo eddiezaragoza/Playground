@@ -11,6 +11,16 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏', '🔥'];
 const SMILE_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.3" fill="currentColor"/><circle cx="15" cy="10" r="1.3" fill="currentColor"/><path d="M8.5 14.2a4.2 4.2 0 0 0 7 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const MAX_PHOTO_EDGE = 1920; // photos are shrunk to this many pixels on the long side before encrypting
 const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
+const MAX_GIF_BYTES = 5 * 1024 * 1024; // GIFs are sent as-is (re-drawing would freeze the animation)
+
+// GIFs keep their animation, so they skip the canvas step. Only their size is read here.
+async function prepareGif(file) {
+  if (file.size > MAX_GIF_BYTES) throw new Error('GIFs can be up to 5 MB. That one is bigger.');
+  let w = 4;
+  let h = 3;
+  try { const bmp = await createImageBitmap(file); w = bmp.width; h = bmp.height; bmp.close?.(); } catch { throw new Error('That GIF could not be read.'); }
+  return { bytes: new Uint8Array(await file.arrayBuffer()), w, h, preview: URL.createObjectURL(file), gif: true };
+}
 const CAMERA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 4h6l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L9 4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>';
 
 // Redraws a photo on a canvas and saves it as JPEG. That shrinks it AND strips hidden metadata
@@ -90,6 +100,19 @@ function fmtSize(n) {
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
+}
+// "6d 23h", "3h 12m", "42 min", "under a minute"
+function fmtLeft(ts) {
+  const mins = Math.max(0, Math.floor((ts - Date.now()) / 60000));
+  if (mins < 1) return 'under a minute';
+  if (mins < 60) return `${mins} min`;
+  const h = Math.floor(mins / 60);
+  if (h < 24) return `${h}h ${mins % 60}m`;
+  return `${Math.floor(h / 24)}d ${h % 24}h`;
+}
+async function roomName(key, data) {
+  if (!data) return '';
+  try { return String(await C.unsealText(key, data)).slice(0, 40); } catch { return ''; }
 }
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
@@ -387,6 +410,7 @@ function createRoom() {
   const life = el('select', { id: 'life' },
     el('option', { value: '24' }, '1 day'), el('option', { value: '168', selected: true }, '1 week'), el('option', { value: '720' }, '30 days'));
   const pass = el('input', { type: 'text', id: 'pass', autocomplete: 'off', spellcheck: 'false', placeholder: 'Optional' });
+  const rname = el('input', { type: 'text', id: 'rname', maxlength: 40, autocomplete: 'off', placeholder: 'e.g. Lunch crew' });
   const submit = el('button', { type: 'submit', class: 'primary wide' }, 'Create chat room');
   const msg = status();
   app.replaceChildren(el('div', { class: 'split' },
@@ -397,12 +421,14 @@ function createRoom() {
         submit.disabled = true;
         try {
           const linkKey = C.newLinkKey();
-          const { verifier } = await C.deriveKeys(linkKey, pass.value);
-          const { id, manage } = await api('/chat/api/create', { method: 'POST', body: { verifier, hasPass: !!pass.value, hours: Number(life.value) } });
+          const { key, verifier } = await C.deriveKeys(linkKey, pass.value);
+          const title = rname.value.trim().slice(0, 40);
+          const name = title ? await C.sealText(key, title) : '';
+          const { id, manage } = await api('/chat/api/create', { method: 'POST', body: { verifier, hasPass: !!pass.value, hours: Number(life.value), name } });
           store.set(`vanish-manage-${id}`, manage);
           const link = `${location.origin}/chat/r/${id}#${linkKey}`;
           app.replaceChildren(el('section', { class: 'card narrow' },
-            el('h1', { text: 'Your chat room is ready' }),
+            el('h1', { text: title ? `"${title}" is ready` : 'Your chat room is ready' }),
             el('p', { text: 'Send this link to the people you want in the room. Anyone with the link can join, so share it only with them.' }),
             linkBox(link),
             pass.value && el('p', { class: 'callout', text: 'Send the passphrase separately. People need both to get in.' }),
@@ -414,6 +440,7 @@ function createRoom() {
       },
     },
     el('h1', { text: 'Start a chat room' }),
+    field('Room name', rname, 'Optional. Shows in the browser tab, so you can tell rooms apart. Encrypted like the messages.'),
     field('Delete the room and all messages after', life),
     field('Passphrase', pass, 'Optional. Adds a second lock on top of the link.'),
     submit, msg),
@@ -439,6 +466,12 @@ async function room() {
   const pass = info.hasPass ? el('input', { type: 'password', id: 'pass', autocomplete: 'off', required: true }) : null;
   const btn = el('button', { type: 'submit', class: 'primary wide' }, 'Join');
   const msg = status();
+  const joinTitle = el('h1', { text: 'Join the chat' });
+  if (!info.hasPass && info.name) {
+    C.deriveKeys(linkKey).then(({ key }) => roomName(key, info.name)).then((n) => {
+      if (n) { joinTitle.textContent = `Join "${n}"`; document.title = `${n} - Poof`; }
+    }).catch(() => {});
+  }
   app.replaceChildren(el('form', {
     class: 'card narrow',
     onsubmit: async (e) => {
@@ -458,8 +491,8 @@ async function room() {
       }
     },
   },
-  el('h1', { text: 'Join the chat' }),
-  el('p', { class: 'muted', text: `This room and its messages are deleted ${fmtWhen(info.expiresAt)}.` }),
+  joinTitle,
+  el('p', { class: 'muted', text: `This room and all its messages auto-delete in ${fmtLeft(info.expiresAt)} (${fmtWhen(info.expiresAt)}).` }),
   field('Your display name', name), pass && field('Passphrase', pass), btn, msg));
   (name.value ? (pass || btn) : name).focus();
 }
@@ -469,7 +502,18 @@ function chat(id, info, { key, verifier }, myName) {
   let sender = store.get('vanish-sender');
   if (!sender) { sender = C.toB64u(crypto.getRandomValues(new Uint8Array(9))); store.set('vanish-sender', sender); }
   const manage = store.get(`vanish-manage-${id}`);
-  const baseTitle = document.title;
+  let baseTitle = document.title;
+  const titleEl = el('strong', { text: 'Chat room' });
+  function setName(n) {
+    titleEl.textContent = n || 'Chat room';
+    baseTitle = `${n || 'Chat room'} - Poof`;
+    document.title = unread ? `(${unread}) ${baseTitle}` : baseTitle;
+  }
+  roomName(key, info.name).then(setName);
+  const left = el('span', { class: 'muted', title: `Deleted ${fmtWhen(info.expiresAt)}` });
+  const tick = () => { left.textContent = ` · auto-deletes in ${fmtLeft(info.expiresAt)}`; };
+  tick();
+  setInterval(tick, 30000);
   let ws;
   let retry = 0;
   let ended = false;
@@ -495,6 +539,17 @@ function chat(id, info, { key, verifier }, myName) {
   const photoBtn = el('button', { type: 'button', class: 'ghost icon', 'aria-label': 'Add a photo', title: 'Add a photo', onclick: () => picker.click() });
   photoBtn.innerHTML = CAMERA_SVG; // static markup, not user data
   const inviteBtn = el('button', { type: 'button', class: 'ghost small', onclick: () => copy(location.href, inviteBtn) }, 'Copy invite link');
+  const renameBtn = manage && el('button', {
+    type: 'button', class: 'ghost small',
+    onclick: async () => {
+      const n = prompt('Room name (shows in the browser tab):', titleEl.textContent === 'Chat room' ? '' : titleEl.textContent);
+      if (n === null) return;
+      const clean = n.trim().slice(0, 40);
+      try {
+        await api(`/chat/api/r/${id}/rename`, { method: 'POST', body: { name: clean ? await C.sealText(key, clean) : '' }, headers: { 'X-Manage-Token': manage } });
+      } catch (err) { flash(err.message); }
+    },
+  }, 'Rename');
   const delBtn = manage && el('button', {
     type: 'button', class: 'danger small',
     onclick: async () => {
@@ -510,12 +565,13 @@ function chat(id, info, { key, verifier }, myName) {
   const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
 
   // ----- photos -----
-  function fetchPhoto(imgId) {
+  function fetchPhoto(imgId, gif = false) {
     if (!photos.has(imgId)) {
       const p = (async () => {
         const res = await api(`/chat/api/r/${id}/img/${imgId}`, { raw: true, headers: { 'X-Room-Verifier': verifier } });
         const plain = await C.unseal(key, await res.arrayBuffer());
-        return URL.createObjectURL(new Blob([plain], { type: 'image/jpeg' }));
+        // Only two types are ever used, whatever the sender claims.
+        return URL.createObjectURL(new Blob([plain], { type: gif ? 'image/gif' : 'image/jpeg' }));
       })();
       photos.set(imgId, p);
       p.catch(() => photos.delete(imgId));
@@ -528,7 +584,7 @@ function chat(id, info, { key, verifier }, myName) {
       if (!e.isIntersecting) continue;
       io.unobserve(e.target);
       const frame = e.target;
-      fetchPhoto(frame.dataset.img).then((url) => {
+      fetchPhoto(frame.dataset.img, frame.dataset.gif === '1').then((url) => {
         frame.querySelector('img').src = url;
         frame.classList.add('loaded');
       }).catch((err) => {
@@ -538,16 +594,16 @@ function chat(id, info, { key, verifier }, myName) {
     }
   }, { root: log, rootMargin: '600px 0px' });
 
-  async function openPhoto(imgId, ts) {
+  async function openPhoto(imgId, ts, gif = false) {
     let url;
-    try { url = await fetchPhoto(imgId); } catch { return; }
+    try { url = await fetchPhoto(imgId, gif); } catch { return; }
     const close = () => { overlay.remove(); document.removeEventListener('keydown', onKey); photoBtn.focus(); };
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     const closeBtn = el('button', { type: 'button', class: 'ghost small on-dark', onclick: close }, 'Close');
     const overlay = el('div', { class: 'lightbox', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Photo', onclick: (e) => { if (e.target === overlay) close(); } },
       el('img', { src: url, alt: 'Photo' }),
       el('div', { class: 'lightbox-bar' },
-        el('a', { class: 'button primary small', href: url, download: `poof-photo-${new Date(ts).toISOString().slice(0, 10)}.jpg` }, 'Download'),
+        el('a', { class: 'button primary small', href: url, download: `poof-${gif ? 'gif' : 'photo'}-${new Date(ts).toISOString().slice(0, 10)}.${gif ? 'gif' : 'jpg'}` }, 'Download'),
         closeBtn));
     document.body.append(overlay);
     document.addEventListener('keydown', onKey);
@@ -565,10 +621,10 @@ function chat(id, info, { key, verifier }, myName) {
     if (!file.type.startsWith('image/')) return flash('That is not a photo.');
     setConn('Preparing photo...');
     try {
-      const shot = await shrinkPhoto(file);
+      const shot = file.type === 'image/gif' ? await prepareGif(file) : await shrinkPhoto(file);
       clearPending();
       pending = shot;
-      tray.replaceChildren(el('img', { src: shot.preview, alt: 'Photo to send' }),
+      tray.replaceChildren(el('img', { src: shot.preview, alt: shot.gif ? 'GIF to send' : 'Photo to send' }),
         el('span', { class: 'muted', text: 'Add a caption if you like, then press Send.' }),
         el('button', { type: 'button', class: 'link-btn', onclick: () => { clearPending(); box.focus(); } }, 'Remove'));
       tray.hidden = false;
@@ -589,7 +645,9 @@ function chat(id, info, { key, verifier }, myName) {
     if (p.img && typeof p.img.id === 'string' && /^[A-Za-z0-9_-]{22}$/.test(p.img.id)) {
       const w = Number(p.img.w) > 0 ? Number(p.img.w) : 4;
       const h = Number(p.img.h) > 0 ? Number(p.img.h) : 3;
-      photo = el('button', { type: 'button', class: 'photo', 'data-img': p.img.id, 'aria-label': 'Open photo full size', onclick: () => openPhoto(p.img.id, m.ts) },
+      const gif = p.img.g === 1;
+      photo = el('button', { type: 'button', class: `photo${gif ? ' gif' : ''}`, 'data-img': p.img.id, 'data-gif': gif ? '1' : '0',
+        'aria-label': gif ? 'Open GIF full size' : 'Open photo full size', onclick: () => openPhoto(p.img.id, m.ts, gif) },
         el('span', { class: 'ph', text: 'Loading photo...' }), el('img', { alt: text ? text.slice(0, 120) : 'Photo' }));
       photo.style.aspectRatio = `${w} / ${h}`; // reserve the space so the chat doesn't jump when it loads
       io.observe(photo);
@@ -619,6 +677,7 @@ function chat(id, info, { key, verifier }, myName) {
   function drawChips(target) {
     const row = rows.get(target);
     if (!row) return;
+    const stick = row.isConnected && nearBottom(); // if we're at the bottom, stay there after the message grows
     const byEmoji = new Map();
     for (const r of reactions.get(target)?.values() || []) {
       if (!r.on) continue;
@@ -632,6 +691,7 @@ function chat(id, info, { key, verifier }, myName) {
       return el('button', { type: 'button', class: `chip${mineToo ? ' me' : ''}`, title: names, 'aria-label': `${e} ${list.length}: ${names}. Tap to ${mineToo ? 'remove yours' : 'add yours'}.`,
         onclick: () => sendReact(target, e) }, `${e} ${list.length}`);
     }));
+    if (stick) toBottom();
   }
   async function sendReact(target, e) {
     if (!ws || ws.readyState !== WebSocket.OPEN) { flash('Not connected yet. Try again in a moment.'); return; }
@@ -682,6 +742,8 @@ function chat(id, info, { key, verifier }, myName) {
     } else if (m.type === 'react') {
       await applyReact(m);
       drawChips(m.target);
+    } else if (m.type === 'name') {
+      setName(await roomName(key, m.data));
     } else if (m.type === 'presence') {
       const names = new Set();
       for (const h of m.list) { try { const p = await C.unsealJson(key, h); names.add(String(p.n).slice(0, 40)); } catch { /* skip */ } }
@@ -732,7 +794,7 @@ function chat(id, info, { key, verifier }, myName) {
       try {
         const sealed = await C.seal(key, pending.bytes);
         const r = await api(`/chat/api/r/${id}/img`, { method: 'PUT', body: sealed, headers: { 'X-Room-Verifier': verifier } });
-        img = { id: r.id, w: pending.w, h: pending.h };
+        img = { id: r.id, w: pending.w, h: pending.h, ...(pending.gif && { g: 1 }) };
         photos.set(r.id, Promise.resolve(pending.preview)); // show our own copy instantly, no re-download
         pending.preview = null;
       } catch (err) {
@@ -765,8 +827,8 @@ function chat(id, info, { key, verifier }, myName) {
 
   const section = el('section', { class: 'chat' },
     el('div', { class: 'chat-head' },
-      el('div', {}, el('strong', { text: 'Chat room' }), el('span', { class: 'muted', text: ` · deleted ${fmtWhen(info.expiresAt)}` }), el('br'), online),
-      el('div', { class: 'actions' }, inviteBtn, delBtn)),
+      el('div', {}, titleEl, left, el('br'), online),
+      el('div', { class: 'actions' }, inviteBtn, renameBtn, delBtn)),
     conn, log, tray,
     el('form', { class: 'composer', onsubmit: submit }, photoBtn, picker, box, send));
   // Drag a photo anywhere onto the chat.

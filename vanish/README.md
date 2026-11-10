@@ -47,7 +47,7 @@ npm run deploy
 Photos are redrawn on a canvas in the sender's browser (max 1920 px, JPEG): that shrinks them and strips hidden
 metadata (GPS location, camera details). Then they're encrypted with the room key and uploaded separately from the
 message (`PUT /chat/api/r/<id>/img`); the message carries only the photo id. Up to 150 photos / 100 MB per room
-(oldest removed), 30 uploads per room per 10 minutes, 2.5 MB each.
+(oldest removed), 30 uploads per room per 10 minutes. Photos are shrunk to <=2.5 MB; GIFs are sent as-is (animation kept), up to 5 MB.
 
 ## Security review (2026-11-09)
 Fixed in review: login lockout raced (count-then-check -> atomic reserve/refund); unlimited chat passphrase guessing

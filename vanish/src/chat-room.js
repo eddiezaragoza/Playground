@@ -128,13 +128,23 @@ export class ChatRoom extends DurableObject {
   }
   async info() {
     const m = await this.load();
-    return m ? ok({ hasPass: m.hasPass, expiresAt: m.expiresAt }) : GONE;
+    return m ? ok({ hasPass: m.hasPass, expiresAt: m.expiresAt, name: m.name || '' }) : GONE;
   }
   async check(verifier) {
     const m = await this.load();
     if (!m) return GONE;
     return (await this.gate(m, verifier)) || ok();
   }
+  // Only the creator (holder of the manage token) can rename. The name is ciphertext, like everything else.
+  async rename(manage, name) {
+    const m = await this.load();
+    if (!m || !safeEq(manage, m.manage)) return GONE;
+    m.name = name;
+    await this.ctx.storage.put('meta', m);
+    this.broadcast({ type: 'name', data: name });
+    return ok();
+  }
+
   async destroy(manage) {
     const m = await this.load();
     if (!m || !safeEq(manage, m.manage)) return GONE;

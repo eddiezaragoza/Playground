@@ -258,3 +258,7 @@ body.chat-page main { padding-bottom: 16px; }
 .picker button:hover, .picker button:focus-visible { background: var(--accent-soft); transform: scale(1.15); }
 .picker.below { bottom: auto; top: calc(100% + 4px); }
 .chip, .picker button { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"; }
+.photo.gif::after {
+  content: "GIF"; position: absolute; left: 8px; bottom: 8px; padding: 1px 6px; border-radius: 4px;
+  font-size: .7rem; font-weight: 800; letter-spacing: .04em; background: rgba(0, 0, 0, .55); color: #fff;
+}

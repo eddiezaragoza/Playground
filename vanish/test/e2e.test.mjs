@@ -232,6 +232,13 @@ test('chat: two people exchange encrypted messages, history, presence, delete', 
   assert.equal(h2.reacts[0].target, got.id);
   d.close();
 
+  // Rename: creator only, broadcast to everyone, readable via info.
+  const newName = await C.sealText(key, 'Lunch crew');
+  assert.equal((await call(`/chat/api/r/${id}/rename`, { method: 'POST', body: { name: newName }, headers: { 'X-Manage-Token': 'AAAAAAAAAAAAAAAAAAAAAA' }, auth: false })).status, 404);
+  assert.equal((await call(`/chat/api/r/${id}/rename`, { method: 'POST', body: { name: newName }, headers: { 'X-Manage-Token': manage }, auth: false })).status, 200);
+  assert.equal(await C.unsealText(key, (await a.next('name')).data), 'Lunch crew');
+  assert.equal(await C.unsealText(key, (await call(`/chat/api/r/${id}`, { auth: false })).data.name), 'Lunch crew');
+
   // Deleting closes everyone with code 4001.
   const del = await call(`/chat/api/r/${id}/destroy`, { method: 'POST', headers: { 'X-Manage-Token': manage }, auth: false });
   assert.equal(del.status, 200);
@@ -253,7 +260,7 @@ test('chat photos: encrypted upload/download, key required, size cap, oldest evi
   const wrong = await C.deriveKeys(C.newLinkKey());
   assert.equal((await put(sealed, wrong.verifier)).status, 403, 'needs the room key');
   assert.equal((await put(sealed, verifier, 'https://evil.example')).status, 403, 'cross-site upload refused');
-  assert.equal((await put(new Uint8Array(2.5 * 1024 * 1024 + 100))).status, 413, 'too big refused');
+  assert.equal((await put(new Uint8Array(5 * 1024 * 1024 + 100))).status, 413, 'too big refused');
 
   const up = await put(sealed);
   assert.equal(up.status, 200);

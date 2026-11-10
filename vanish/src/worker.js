@@ -201,13 +201,16 @@ async function route(req, env) {
   // ----- chat -----
   if (path === '/chat/api/create' && method === 'POST') {
     if (!(await isAuthed(req, env))) return json(url, { error: 'Sign in first.' }, 401);
-    const b = await readJson(req, 1000);
-    if (!b || !VERIFIER_RE.test(b.verifier || '') || typeof b.hasPass !== 'boolean' || !LIMITS.roomHours.includes(b.hours)) {
+    const b = await readJson(req, 2000);
+    const name = b?.name ?? '';
+    if (!b || !VERIFIER_RE.test(b.verifier || '') || typeof b.hasPass !== 'boolean' || !LIMITS.roomHours.includes(b.hours) ||
+        typeof name !== 'string' || name.length > LIMITS.roomNameChars) {
       return json(url, { error: 'That request did not look right.' }, 400);
     }
     const id = randomId();
     const manage = randomId();
-    await room(env, id).init({ verifier: b.verifier, hasPass: b.hasPass, manage, expiresAt: Date.now() + b.hours * hourMs(env) });
+    // name is ciphertext (encrypted with the room key in the browser), or '' for no name.
+    await room(env, id).init({ verifier: b.verifier, hasPass: b.hasPass, manage, name, expiresAt: Date.now() + b.hours * hourMs(env) });
     return json(url, { id, manage });
   }
 
@@ -220,6 +223,11 @@ async function route(req, env) {
       return fromDO(url, await stub.check(String(b?.verifier || '')));
     }
     if (rest === 'destroy' && method === 'POST') return fromDO(url, await stub.destroy(req.headers.get('X-Manage-Token') || ''));
+    if (rest === 'rename' && method === 'POST') {
+      const b = await readJson(req, 1000);
+      if (typeof b?.name !== 'string' || b.name.length > LIMITS.roomNameChars) return json(url, { error: 'That name is too long.' }, 400);
+      return fromDO(url, await stub.rename(req.headers.get('X-Manage-Token') || '', b.name));
+    }
     if (rest === 'ws' && method === 'GET') return stub.fetch(req);
     const verifier = req.headers.get('X-Room-Verifier') || '';
     if (rest === 'img' && method === 'PUT') {
