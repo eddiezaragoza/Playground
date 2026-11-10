@@ -131,9 +131,9 @@ async function copy(text, btn) {
     document.execCommand('copy');
     t.remove();
   }
-  const old = btn.textContent;
+  const old = [...btn.childNodes];
   btn.textContent = 'Copied';
-  setTimeout(() => { btn.textContent = old; }, 1500);
+  setTimeout(() => { btn.replaceChildren(...old); }, 1500);
 }
 
 function linkBox(link) {
@@ -514,8 +514,8 @@ function chat(id, info, { key, verifier }, myName) {
     document.title = unread ? `(${unread}) ${baseTitle}` : baseTitle;
   }
   roomName(key, info.name).then(setName);
-  const left = el('span', { class: 'muted', title: `Deleted ${fmtWhen(info.expiresAt)}` });
-  const tick = () => { left.textContent = ` · auto-deletes in ${fmtLeft(info.expiresAt)}`; };
+  const left = el('span', { title: `Deleted ${fmtWhen(info.expiresAt)}` });
+  const tick = () => { left.textContent = `Auto-deletes in ${fmtLeft(info.expiresAt)}`; };
   tick();
   setInterval(tick, 30000);
   let ws;
@@ -531,7 +531,7 @@ function chat(id, info, { key, verifier }, myName) {
   let emojiPicker = null; // the open emoji picker, if any
 
   const log = el('div', { class: 'log', role: 'log', 'aria-live': 'polite' });
-  const online = el('span', { class: 'online muted' });
+  const online = el('span', { class: 'online' });
   const conn = el('span', { class: 'conn' });
   const box = el('textarea', { rows: 1, maxlength: MAX_MSG, placeholder: 'Message', 'aria-label': 'Message' });
   const send = el('button', { type: 'submit', class: 'primary' }, 'Send');
@@ -548,7 +548,8 @@ function chat(id, info, { key, verifier }, myName) {
     el('div', { class: 'gif-top' }, gifSearch, el('button', { type: 'button', class: 'link-btn plain gif-close', 'aria-label': 'Close GIF search', title: 'Close', onclick: () => toggleGifs(false) }, '✕')),
     gifGrid, el('p', { class: 'giphy-attr' }, 'Powered by GIPHY'));
   photoBtn.innerHTML = CAMERA_SVG; // static markup, not user data
-  const inviteBtn = el('button', { type: 'button', class: 'ghost small', onclick: () => copy(location.href, inviteBtn) }, 'Copy invite link');
+  const inviteBtn = el('button', { type: 'button', class: 'ghost small', 'aria-label': 'Copy invite link', onclick: () => copy(location.href, inviteBtn) },
+    el('span', { class: 'lbl-long' }, 'Copy invite link'), el('span', { class: 'lbl-short' }, 'Invite'));
   const renameBtn = manage && el('button', {
     type: 'button', class: 'ghost small',
     onclick: async () => {
@@ -569,7 +570,7 @@ function chat(id, info, { key, verifier }, myName) {
         store.del(`vanish-manage-${id}`);
       } catch (err) { setConn(err.message); }
     },
-  }, 'Delete room');
+  }, el('span', { class: 'lbl-long' }, 'Delete room'), el('span', { class: 'lbl-short' }, 'Delete'));
 
   const setConn = (t) => { conn.textContent = t; conn.hidden = !t; };
   const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
@@ -769,9 +770,14 @@ function chat(id, info, { key, verifier }, myName) {
     const same = emojiPicker?.target === target;
     closePicker();
     if (same) return; // second tap on the same button closes it
+    const who = REACTIONS.map((e) => {
+      const names = [...(reactions.get(target)?.values() || [])].filter((r) => r.on && r.e === e).map((r) => (r.s === sender ? 'You' : r.name));
+      return names.length ? `${e} ${names.join(', ')}` : '';
+    }).filter(Boolean).join('   ');
     emojiPicker = el('div', { class: 'picker', role: 'menu', 'aria-label': 'Pick a reaction', onclick: (e) => e.stopPropagation() },
-      REACTIONS.map((e) => el('button', { type: 'button', role: 'menuitem', 'aria-label': `React ${e}`,
-        onclick: () => { closePicker(); sendReact(target, e); } }, e)));
+      el('div', { class: 'picker-row' }, REACTIONS.map((e) => el('button', { type: 'button', role: 'menuitem', 'aria-label': `React ${e}`,
+        onclick: () => { closePicker(); sendReact(target, e); } }, e))),
+      who && el('div', { class: 'picker-who', text: who }));
     emojiPicker.target = target;
     const row = anchor.closest('.row');
     // Open downward when the message is near the top of the chat, so the header doesn't cover the picker.
@@ -807,7 +813,7 @@ function chat(id, info, { key, verifier }, myName) {
     } else if (m.type === 'presence') {
       const names = new Set();
       for (const h of m.list) { try { const p = await C.unsealJson(key, h); names.add(String(p.n).slice(0, 40)); } catch { /* skip */ } }
-      online.textContent = names.size ? `Here now: ${[...names].join(', ')}` : '';
+      online.textContent = names.size ? ` · Here now: ${[...names].join(', ')}` : '';
     } else if (m.type === 'error') {
       setConn(m.error);
       setTimeout(() => setConn(''), 3000);
@@ -887,7 +893,7 @@ function chat(id, info, { key, verifier }, myName) {
 
   const section = el('section', { class: 'chat' },
     el('div', { class: 'chat-head' },
-      el('div', {}, titleEl, left, el('br'), online),
+      el('div', { class: 'head-text' }, titleEl, el('div', { class: 'sub muted' }, left, online)),
       el('div', { class: 'actions' }, inviteBtn, renameBtn, delBtn)),
     conn, log, tray, gifPanel,
     el('form', { class: 'composer', onsubmit: submit }, photoBtn, gifBtn, picker, box, send));

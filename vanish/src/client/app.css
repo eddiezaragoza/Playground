@@ -119,8 +119,10 @@ body.chat-page main { padding-bottom: 16px; }
   background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden;
 }
 .chat-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-.chat-head .actions { margin: 0; }
-.online { font-size: .88rem; }
+.chat-head .actions { margin: 0; flex-wrap: nowrap; }
+.head-text { min-width: 0; }
+.head-text strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.head-text .sub { font-size: .88rem; }
 .conn { display: block; text-align: center; font-size: .88rem; padding: 6px; background: var(--accent-soft); }
 .conn[hidden] { display: none; }
 .log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
@@ -291,3 +293,61 @@ body.chat-page main { padding-bottom: 16px; }
   .gif-btn { min-width: 36px; font-size: .72rem; }
   .composer button[type=submit] { padding: 10px 12px; }
 }
+
+/* ---------- phones & touch screens ---------- */
+.lbl-short { display: none; }
+.picker { flex-direction: column; align-items: stretch; border-radius: 18px; }
+.picker-row { display: flex; gap: 2px; }
+.picker-who { font-size: .8rem; color: var(--muted); padding: 2px 8px 4px; max-width: 320px; white-space: pre-wrap; }
+button, .button, .chip, nav a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+/* iPhone notch / home bar */
+.top { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+main { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+body.chat-page main { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+
+/* Finger-sized tap targets (about 44px, Apple's guideline) wherever the pointer is a finger. */
+@media (pointer: coarse) {
+  nav a { padding: 11px 14px; }
+  .small { min-height: 42px; padding: 9px 14px; }
+  .react-btn { padding: 10px; opacity: .6; }
+  .chip { min-height: 34px; padding: 4px 11px; font-size: .95rem; }
+  .picker button { min-width: 42px; min-height: 44px; font-size: 1.5rem; }
+  .gif-close { min-width: 44px; min-height: 44px; }
+  .link-btn { min-height: 40px; padding: 8px 10px; }
+  .linkbox .link { font-size: 16px; } /* iOS zooms into any text box under 16px */
+  .lightbox-bar .button, .lightbox-bar button { min-height: 46px; padding: 11px 22px; }
+  .secret button { min-height: 40px; }
+}
+
+/* Phone, upright: a slimmer chat header so messages get the room. */
+@media (max-width: 520px) {
+  .lbl-long { display: none; }
+  .lbl-short { display: inline; }
+  body.chat-page .top { padding-top: 6px; padding-bottom: 6px; }
+  .chat { height: calc(100vh - 70px); height: calc(100dvh - 70px - env(safe-area-inset-bottom)); }
+  .chat-head { flex-wrap: nowrap; padding: 8px 10px 8px 14px; gap: 8px; }
+  .chat-head .actions { gap: 6px; flex: none; }
+  .head-text .sub { font-size: .8rem; }
+}
+
+/* Phone, sideways: hide the site bar inside a chat and shrink the header. */
+@media (max-height: 500px) and (orientation: landscape) {
+  body.chat-page .top { display: none; }
+  body.chat-page main { padding-top: max(8px, env(safe-area-inset-top)); }
+  .chat { height: calc(100vh - 16px); height: calc(100dvh - 16px - env(safe-area-inset-bottom)); }
+  .chat-head { padding: 6px 12px; }
+  .head-text .sub { font-size: .8rem; }
+  .composer { padding: 8px; }
+  .gif-panel { max-height: 60vh; }
+}
+@media (pointer: coarse) {
+  .chip { min-height: 36px; }
+  .composer .icon, .composer button[type=submit] { min-height: 44px; }
+}
+/* Small phones: the picker shrinks its emoji buttons to stay on screen. */
+@media (max-width: 520px) {
+  .picker { max-width: calc(100vw - 48px); }
+  .picker-row button { flex: 1 1 0; min-width: 34px; padding: 6px 2px; font-size: 1.35rem; }
+}
+@media (max-width: 520px) { .picker { width: min(330px, calc(100vw - 48px)); } }

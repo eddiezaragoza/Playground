@@ -7,6 +7,11 @@ import APP_JS from './client/app.js';
 import CRYPTO_JS from './client/crypto.js';
 import APP_CSS from './client/app.css';
 import ICON_SVG from './client/icon.svg';
+import MANIFEST from './client/manifest.webmanifest';
+import ICON_180 from './client/icon-180.png';
+import ICON_192 from './client/icon-192.png';
+import ICON_512 from './client/icon-512.png';
+import ICON_MASKABLE from './client/icon-maskable.png';
 import { LIMITS, hourMs, isId, randomId, VERIFIER_RE } from './common.js';
 
 export { SecretBox } from './vault.js';
@@ -159,6 +164,11 @@ async function route(req, env) {
     '/secret/assets/crypto.js': [CRYPTO_JS, 'text/javascript; charset=utf-8'],
     '/secret/assets/app.css': [APP_CSS, 'text/css; charset=utf-8'],
     '/secret/assets/icon.svg': [ICON_SVG, 'image/svg+xml'],
+    '/secret/assets/manifest.webmanifest': [MANIFEST, 'application/manifest+json'],
+    '/secret/assets/icon-180.png': [ICON_180, 'image/png'],
+    '/secret/assets/icon-192.png': [ICON_192, 'image/png'],
+    '/secret/assets/icon-512.png': [ICON_512, 'image/png'],
+    '/secret/assets/icon-maskable.png': [ICON_MASKABLE, 'image/png'],
   };
   if (method === 'GET' && ASSETS[path]) return respond(url, ASSETS[path][0], 200, ASSETS[path][1]);
 

@@ -31,5 +31,11 @@ new_sqlite_classes = ["SecretBox", "ChatRoom", "LoginGuard"]
 # Ship the browser files as plain text strings inside the Worker bundle.
 [[rules]]
 type = "Text"
-globs = ["**/client/*.html", "**/client/*.js", "**/client/*.css", "**/client/*.svg"]
+globs = ["**/client/*.html", "**/client/*.js", "**/client/*.css", "**/client/*.svg", "**/client/*.webmanifest"]
+fallthrough = false
+
+# App icons for "Add to Home Screen" ship as binary.
+[[rules]]
+type = "Data"
+globs = ["**/client/*.png"]
 fallthrough = false
