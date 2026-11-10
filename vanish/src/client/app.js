@@ -130,7 +130,7 @@ function cloud(cls) {
 }
 
 // The poof burst: a cloud pops, sparkles fly out, then it all clears away.
-function poofBurst({ big = false } = {}) {
+function poofBurst({ big = false, sub = 'Deleted from the server' } = {}) {
   if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
   const fx = el('div', { class: `poof-fx${big ? ' big' : ''}`, 'aria-hidden': 'true' }, cloud('poof-cloud'));
   const n = big ? 14 : 9;
@@ -143,7 +143,7 @@ function poofBurst({ big = false } = {}) {
     dot.style.setProperty('--s', `${(0.6 + Math.random() * 0.9).toFixed(2)}`);
     fx.append(dot);
   }
-  if (big) fx.append(el('div', { class: 'poof-word' }, 'Poof!', el('small', { text: 'Deleted from the server' })));
+  if (big) fx.append(el('div', { class: 'poof-word' }, 'Poof!', el('small', { text: sub })));
   document.body.append(fx);
   setTimeout(() => fx.remove(), big ? 2300 : 1400);
 }
@@ -270,7 +270,6 @@ function created({ id, manage, link, v, h, hasPass }) {
       try {
         await api(`/secret/api/s/${id}/destroy`, { method: 'POST', headers: { 'X-Manage-Token': manage } });
         notice('Poof! Deleted.', 'It is gone and the link no longer works.', { poof: true });
-        poofBurst({ big: true });
       } catch (err) { msg.say(err.status === 404 ? 'It is already gone.' : err.message, true); }
     },
   }, 'Delete it now');
@@ -292,9 +291,11 @@ async function viewSecret() {
   try {
     info = await api(`/secret/api/s/${id}`);
   } catch (err) {
-    return notice('Poof! It is gone.', err.status === 404
+    notice('Poof! It is gone.', err.status === 404
       ? 'It was already opened the maximum number of times, it expired, or the link is wrong. Ask the sender to make a new one.'
       : err.message, { poof: err.status === 404 });
+    if (err.status === 404) poofBurst({ big: true, sub: 'This one is already gone' });
+    return;
   }
   const pass = info.hasPass ? el('input', { type: 'password', id: 'pass', autocomplete: 'off', required: true }) : null;
   const btn = el('button', { type: 'submit', class: 'primary wide' }, 'Open the poof');
@@ -315,8 +316,8 @@ async function viewSecret() {
       } catch (err) {
         btn.disabled = false;
         if (err.status === 403) msg.say(`Wrong passphrase. ${err.data.triesLeft} ${err.data.triesLeft === 1 ? 'try' : 'tries'} left before it destroys itself.`, true);
-        else if (err.status === 410) notice('Poof! Destroyed.', err.message, { poof: true });
-        else if (err.status === 404) notice('Poof! It is gone.', 'Someone else may have just used the last view.', { poof: true });
+        else if (err.status === 410) { notice('Poof! Destroyed.', err.message, { poof: true }); poofBurst({ big: true }); }
+        else if (err.status === 404) { notice('Poof! It is gone.', 'Someone else may have just used the last view.', { poof: true }); poofBurst({ big: true, sub: 'Someone used the last view' }); }
         else msg.say(err.message, true);
       }
     },
@@ -377,7 +378,7 @@ async function revealed(id, key, data) {
     files.length > 0 && el('ul', { class: 'files' }, fileRows),
     el('p', { class: 'callout', text: `${left} Save what you need before leaving this page.` }),
     msg));
-  poofBurst({ big: data.viewsLeft === 0 }); // the final view gets the full "Poof! Deleted" burst
+  if (data.viewsLeft === 0) poofBurst({ big: true }); // only the view that destroys it gets the burst
 }
 
 function createRoom() {
@@ -634,12 +635,12 @@ function chat(id, info, { key, verifier }, myName) {
       if (ended) return;
       if (ev.code === 4000 || ev.code === 4001) {
         ended = true;
-        poofBurst({ big: true });
+        poofBurst({ big: true, sub: 'This chat has ended' });
         return notice('Poof! This chat has ended.', ev.reason || 'The room is gone.', { poof: true });
       }
       // The room may have expired while we were away.
       try { await api(`/chat/api/r/${id}`); } catch (err) {
-        if (err.status === 404) { ended = true; return notice('Poof! This chat has ended.', 'The room expired or was deleted.', { poof: true }); }
+        if (err.status === 404) { ended = true; poofBurst({ big: true, sub: 'This chat has ended' }); return notice('Poof! This chat has ended.', 'The room expired or was deleted.', { poof: true }); }
       }
       setConn('Reconnecting...');
       setTimeout(connect, Math.min(15000, 1000 * 2 ** retry++));
