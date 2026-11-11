@@ -25,6 +25,7 @@ async function prepareGif(file) {
   try { const bmp = await createImageBitmap(file); w = bmp.width; h = bmp.height; bmp.close?.(); } catch { throw new Error('That GIF could not be read.'); }
   return { bytes: new Uint8Array(await file.arrayBuffer()), w, h, preview: URL.createObjectURL(file), gif: true };
 }
+const REPLY_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 7 4 12l6 5M4 12h10a6 6 0 0 1 6 6v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CAMERA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 4h6l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L9 4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>';
 
 // Redraws a photo on a canvas and saves it as JPEG. That shrinks it AND strips hidden metadata
@@ -529,6 +530,7 @@ function chat(id, info, { key, verifier }, myName) {
   const rows = new Map(); // message id -> its row element (to update reaction chips)
   const reactions = new Map(); // message id -> Map("<sender>|<emoji>" -> { on, name })
   let emojiPicker = null; // the open emoji picker, if any
+  let replyTo = null; // { id, n, s, t } of the message being replied to
 
   const log = el('div', { class: 'log', role: 'log', 'aria-live': 'polite' });
   const online = el('span', { class: 'online' });
@@ -536,6 +538,9 @@ function chat(id, info, { key, verifier }, myName) {
   const box = el('textarea', { rows: 1, maxlength: MAX_MSG, placeholder: 'Message', 'aria-label': 'Message' });
   const send = el('button', { type: 'submit', class: 'primary' }, 'Send');
   const tray = el('div', { class: 'tray', hidden: true });
+  const replyLabel = el('span', { class: 'reply-label' });
+  const replyBar = el('div', { class: 'reply-bar', hidden: true }, replyLabel,
+    el('button', { type: 'button', class: 'link-btn plain reply-cancel', 'aria-label': 'Cancel reply', title: 'Cancel reply', onclick: () => cancelReply() }, '✕'));
   const picker = el('input', {
     type: 'file', accept: 'image/*', class: 'offscreen', tabindex: '-1', 'aria-hidden': 'true',
     onchange: () => { if (picker.files[0]) choosePhoto(picker.files[0]); picker.value = ''; },
@@ -575,6 +580,24 @@ function chat(id, info, { key, verifier }, myName) {
   const setConn = (t) => { conn.textContent = t; conn.hidden = !t; };
   const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
 
+  // ----- replies -----
+  // The quote (who + first 100 characters) travels inside the encrypted message, so it still shows after the
+  // original scrolls out of history, and the server never learns who replied to what.
+  function startReply(info) {
+    replyTo = info;
+    replyLabel.replaceChildren(el('strong', { text: `Replying to ${info.s === sender ? 'yourself' : info.n}` }), document.createTextNode(info.t ? `: ${info.t}` : ''));
+    replyBar.hidden = false;
+    box.focus();
+  }
+  function cancelReply() { replyTo = null; replyBar.hidden = true; }
+  function jumpTo(id) {
+    const row = rows.get(id);
+    if (!row || !row.isConnected) { flash('That message is no longer in the chat.'); return; }
+    row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    row.classList.add('flash');
+    setTimeout(() => row.classList.remove('flash'), 1600);
+  }
+
   // ----- GIF search -----
   let gifTimer;
   let gifSeq = 0;
@@ -603,7 +626,8 @@ function chat(id, info, { key, verifier }, myName) {
   gifSearch.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); toggleGifs(false); } });
   async function sendGif(g) {
     if (!ws || ws.readyState !== WebSocket.OPEN) { flash('Not connected yet. Try again in a moment.'); return; }
-    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, { n: myName, s: sender, t: '', gif: { u: g.u, w: g.w, h: g.h, t: g.title } }) }));
+    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, { n: myName, s: sender, t: '', gif: { u: g.u, w: g.w, h: g.h, t: g.title }, ...(replyTo && { r: replyTo }) }) }));
+    cancelReply();
     toggleGifs(false);
   }
   function openGiphy(u, title) {
@@ -714,14 +738,25 @@ function chat(id, info, { key, verifier }, myName) {
       io.observe(photo);
     }
     const chips = el('div', { class: 'chips' });
+    let quote = null;
+    if (p.r && Number.isInteger(p.r.id)) {
+      const qWho = p.r.s === sender ? 'You' : String(p.r.n || '?').slice(0, 40);
+      quote = el('button', { type: 'button', class: 'quote', 'aria-label': `Replying to ${qWho}. Show the original message.`, onclick: () => jumpTo(p.r.id) },
+        el('span', { class: 'quote-who', text: qWho }), el('span', { class: 'quote-text', text: String(p.r.t || '').slice(0, 120) }));
+    }
     const bubble = el('div', { class: `bubble${mine ? ' mine' : ''}${photo ? ' has-photo' : ''}` },
       el('div', { class: 'meta' }, el('span', { class: 'who', text: mine ? 'You' : String(p.n || '?').slice(0, 40) }), el('time', { text: fmtTime(m.ts) })),
-      photo, (text || !photo) && el('div', { class: 'body', text }), chips);
+      quote, photo, (text || !photo) && el('div', { class: 'body', text }), chips);
     const reactBtn = el('button', { type: 'button', class: 'react-btn', 'aria-label': 'React to this message', title: 'React',
       onclick: (e) => { e.stopPropagation(); openPicker(m.id, reactBtn); } });
     reactBtn.innerHTML = SMILE_SVG; // static markup
-    const row = el('div', { class: `row${mine ? ' mine' : ''}`, 'data-id': String(m.id) }, bubble, reactBtn);
+    const snippet = (text || (p.gif || p.img?.g === 1 ? 'GIF' : photo ? '📷 Photo' : '')).replace(/\s+/g, ' ').slice(0, 100);
+    const replyInfo = { id: m.id, n: String(p.n || '?').slice(0, 40), s: typeof p.s === 'string' ? p.s : '', t: snippet };
+    const replyBtn = el('button', { type: 'button', class: 'reply-btn', 'aria-label': 'Reply to this message', title: 'Reply', onclick: () => startReply(replyInfo) });
+    replyBtn.innerHTML = REPLY_SVG; // static markup
+    const row = el('div', { class: `row${mine ? ' mine' : ''}`, 'data-id': String(m.id) }, bubble, reactBtn, replyBtn);
     row.chips = chips;
+    row.replyInfo = replyInfo;
     rows.set(m.id, row);
     drawChips(m.id);
     return row;
@@ -777,6 +812,7 @@ function chat(id, info, { key, verifier }, myName) {
     emojiPicker = el('div', { class: 'picker', role: 'menu', 'aria-label': 'Pick a reaction', onclick: (e) => e.stopPropagation() },
       el('div', { class: 'picker-row' }, REACTIONS.map((e) => el('button', { type: 'button', role: 'menuitem', 'aria-label': `React ${e}`,
         onclick: () => { closePicker(); sendReact(target, e); } }, e))),
+      el('button', { type: 'button', class: 'picker-reply', role: 'menuitem', onclick: () => { const info = rows.get(target)?.replyInfo; closePicker(); if (info) startReply(info); } }, '↩  Reply'),
       who && el('div', { class: 'picker-who', text: who }));
     emojiPicker.target = target;
     const row = anchor.closest('.row');
@@ -872,8 +908,10 @@ function chat(id, info, { key, verifier }, myName) {
       send.disabled = false;
       setConn('');
     }
-    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, img ? { n: myName, s: sender, t, img } : { n: myName, s: sender, t }) }));
+    const out = { n: myName, s: sender, t, ...(img && { img }), ...(replyTo && { r: replyTo }) };
+    ws.send(JSON.stringify({ type: 'msg', data: await C.sealJson(key, out) }));
     if (img) clearPending();
+    cancelReply();
     box.value = '';
     grow();
     box.focus();
@@ -887,7 +925,10 @@ function chat(id, info, { key, verifier }, myName) {
     const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
     if (f) { e.preventDefault(); choosePhoto(f); }
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePicker(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (emojiPicker) closePicker(); else if (!replyBar.hidden && !document.querySelector('.lightbox')) cancelReply();
+  });
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) { unread = 0; document.title = baseTitle; }
   });
@@ -896,7 +937,7 @@ function chat(id, info, { key, verifier }, myName) {
     el('div', { class: 'chat-head' },
       el('div', { class: 'head-text' }, titleEl, el('div', { class: 'sub muted' }, left, online)),
       el('div', { class: 'actions' }, inviteBtn, renameBtn, delBtn)),
-    conn, log, tray, gifPanel,
+    conn, log, replyBar, tray, gifPanel,
     el('form', { class: 'composer', onsubmit: submit }, photoBtn, gifBtn, picker, box, send));
   // Drag a photo anywhere onto the chat.
   section.addEventListener('dragover', (e) => {

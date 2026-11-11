@@ -85,3 +85,13 @@ a leaked link without a passphrase is the whole key; a room link stays in the br
   host there (301, clears the old cookie). `.dev.vars` sets `CANONICAL_HOST=` to disable locally.
 - Login lockout: 20 wrong codes per person (HMAC of `CF-Connecting-IP`, never stored raw) per UTC day, plus a
   1,000/day site-wide backstop. Access code kept short by Eddie's choice.
+
+## Replies (2026-11-11)
+Reply to any message: desktop = hover the message and click the ↩ button; touch screens = the smiley menu's "↩ Reply" item.
+The quote ({id, name, sender, first 100 chars}) rides inside the encrypted message, so it survives the original scrolling
+out of history and the server never learns who replied to what. Click a quote to jump to (and highlight) the original.
+
+## Fast local testing
+`wrangler dev` from /mnt/c can take 3-10+ minutes to start (slow Windows-drive file access from WSL). Copy the folder to
+the Linux disk once (`tar --exclude=.wrangler -cf - . | tar -xf - -C <linux dir>`) and run it there: starts in ~1 s.
+Copy changed files back into the repo (or diff) before committing.

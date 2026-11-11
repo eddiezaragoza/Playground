@@ -351,3 +351,36 @@ body.chat-page main { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
   .picker-row button { flex: 1 1 0; min-width: 34px; padding: 6px 2px; font-size: 1.35rem; }
 }
 @media (max-width: 520px) { .picker { width: min(330px, calc(100vw - 48px)); } }
+
+/* ---------- replies ---------- */
+.reply-btn {
+  flex: none; padding: 5px; border-radius: 999px; background: transparent; color: var(--muted); border: 0;
+  opacity: 0; transition: opacity .15s;
+}
+.row:hover .reply-btn, .row:focus-within .reply-btn, .reply-btn:focus-visible { opacity: 1; }
+.reply-btn:hover { background: var(--accent-soft); color: var(--accent); }
+@media (pointer: coarse) { .reply-btn { display: none; } } /* on touch screens, Reply lives in the smiley menu */
+.quote {
+  display: block; width: 100%; text-align: left; font: inherit; font-size: .82rem; color: inherit; cursor: pointer;
+  border: 0; border-left: 3px solid var(--accent); border-radius: 6px; background: rgba(127, 127, 127, .14);
+  padding: 4px 8px; margin: 2px 0 6px;
+}
+.bubble.mine .quote { border-left-color: rgba(255, 255, 255, .85); background: rgba(255, 255, 255, .16); }
+.bubble.has-photo .quote { width: auto; margin: 2px 6px 6px; }
+.quote-who { display: block; font-weight: 700; }
+.quote-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: .85; max-width: 60ch; }
+.reply-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px 0; border-top: 1px solid var(--line); font-size: .88rem; }
+.reply-bar[hidden] { display: none; }
+.reply-bar + .tray, .reply-bar + .tray + .gif-panel { border-top: 0; }
+.reply-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-left: 3px solid var(--accent); padding-left: 8px; color: var(--muted); }
+.reply-label strong { color: var(--ink); }
+.picker-reply {
+  font: inherit; font-size: .9rem; font-weight: 700; color: var(--accent); background: none; border: 0;
+  border-top: 1px solid var(--line); padding: 8px 10px; text-align: left; cursor: pointer;
+}
+.picker-reply:hover, .picker-reply:focus-visible { background: var(--accent-soft); }
+@media (pointer: coarse) { .picker-reply { min-height: 44px; } }
+.row .bubble { transition: box-shadow .3s; }
+.row.flash .bubble { box-shadow: 0 0 0 3px var(--accent); }
+.reply-cancel { font-size: 1.1rem; padding: 4px 6px; }
+@media (pointer: coarse) { .reply-cancel { min-width: 44px; min-height: 44px; } }
