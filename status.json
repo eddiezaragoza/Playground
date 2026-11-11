@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T00:35:54.520Z",
+  "generatedAt": "2026-11-11T07:02:18.365Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
-      "lastLiveAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
+      "lastLiveAt": "2026-11-11T07:02:18.365Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-08T02:22:19.854Z",
-          "lastSeenLiveAt": "2026-11-11T00:35:54.520Z"
+          "lastSeenLiveAt": "2026-11-11T07:02:18.365Z"
         },
         {
           "videoId": "i5t518NS-rk",
@@ -131,15 +131,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
-      "lastLiveAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
+      "lastLiveAt": "2026-11-11T07:02:18.365Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-07T15:50:53.207Z",
-          "lastSeenLiveAt": "2026-11-11T00:35:54.520Z"
+          "lastSeenLiveAt": "2026-11-11T07:02:18.365Z"
         },
         {
           "videoId": "JlZaxpGBeoE",
@@ -203,7 +203,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -211,7 +211,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -246,15 +246,15 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "SCd7qpv46Qc",
-        "title": "EN VIVO | Papa León XIV en Argentina: Vigilia con los jóvenes en Buenos Aires | 10 noviembre 2026",
-        "url": "https://www.youtube.com/watch?v=SCd7qpv46Qc",
-        "thumbnail": "https://i.ytimg.com/vi/SCd7qpv46Qc/hqdefault.jpg",
-        "startedAt": null,
+        "state": "upcoming",
+        "videoId": "vY1hx80B67Q",
+        "title": "EN VIVO | Papa León XIV en Argentina: Visita a la cárcel de Devoto | 11 noviembre 2026",
+        "url": "https://www.youtube.com/watch?v=vY1hx80B67Q",
+        "thumbnail": "https://i.ytimg.com/vi/vY1hx80B67Q/hqdefault.jpg",
+        "scheduledFor": "2026-11-11T11:00:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
       "lastLiveAt": "2026-11-11T00:35:54.520Z",
       "history": [
         {
@@ -382,7 +382,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-11T00:35:54.520Z",
+      "checkedAt": "2026-11-11T07:02:18.365Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
