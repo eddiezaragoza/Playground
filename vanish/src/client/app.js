@@ -26,6 +26,10 @@ async function prepareGif(file) {
   return { bytes: new Uint8Array(await file.arrayBuffer()), w, h, preview: URL.createObjectURL(file), gif: true };
 }
 const REPLY_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 7 4 12l6 5M4 12h10a6 6 0 0 1 6 6v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const BELL_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+const BELL_OFF_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20a2 2 0 0 0 4 0M4 4l16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const PENCIL_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+const TRASH_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CAMERA_SVG = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 4h6l1.5 2H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L9 4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg>';
 
 // Redraws a photo on a canvas and saves it as JPEG. That shrinks it AND strips hidden metadata
@@ -532,6 +536,41 @@ function chat(id, info, { key, verifier }, myName) {
   let emojiPicker = null; // the open emoji picker, if any
   let replyTo = null; // { id, n, s, t } of the message being replied to
 
+  // ----- message sound -----
+  // A soft two-note "pop" made by the browser itself (Web Audio), so there is no sound file to load. Browsers only
+  // allow sound after a click on the page: joining counts, and any later click or key press wakes it up too.
+  let soundOn = store.get('vanish-sound') !== 'off';
+  let audio = null;
+  let lastDing = 0;
+  function wakeAudio() {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+    } catch { /* no Web Audio: stay silent */ }
+  }
+  function ding(force = false) {
+    if ((!soundOn && !force) || !audio || audio.state !== 'running') return;
+    const now = Date.now();
+    if (!force && now - lastDing < 1500) return; // a burst of messages gives one sound, not many
+    lastDing = now;
+    const t = audio.currentTime;
+    for (const [freq, at] of [[880, 0], [1320, 0.09]]) {
+      const o = audio.createOscillator();
+      const g = audio.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, t + at);
+      g.gain.setValueAtTime(0.0001, t + at);
+      g.gain.exponentialRampToValueAtTime(0.18, t + at + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + at + 0.25);
+      o.connect(g).connect(audio.destination);
+      o.start(t + at);
+      o.stop(t + at + 0.3);
+    }
+  }
+  wakeAudio();
+  document.addEventListener('pointerdown', wakeAudio);
+  document.addEventListener('keydown', wakeAudio);
+
   const log = el('div', { class: 'log', role: 'log', 'aria-live': 'polite' });
   const online = el('span', { class: 'online' });
   const conn = el('span', { class: 'conn' });
@@ -553,10 +592,25 @@ function chat(id, info, { key, verifier }, myName) {
     el('div', { class: 'gif-top' }, gifSearch, el('button', { type: 'button', class: 'link-btn plain gif-close', 'aria-label': 'Close GIF search', title: 'Close', onclick: () => toggleGifs(false) }, '✕')),
     gifGrid, el('p', { class: 'giphy-attr' }, 'Powered by GIPHY'));
   photoBtn.innerHTML = CAMERA_SVG; // static markup, not user data
+  const soundBtn = el('button', { type: 'button', class: 'ghost small icon-only', onclick: () => {
+    soundOn = !soundOn;
+    store.set('vanish-sound', soundOn ? 'on' : 'off');
+    drawSoundBtn();
+    wakeAudio();
+    if (soundOn) setTimeout(() => ding(true), 50); // a sample, so you know it works
+  } });
+  function drawSoundBtn() {
+    soundBtn.innerHTML = soundOn ? BELL_SVG : BELL_OFF_SVG; // static markup
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    soundBtn.setAttribute('aria-label', soundOn ? 'Message sound is on. Turn it off.' : 'Message sound is off. Turn it on.');
+    soundBtn.title = soundOn ? 'Sound on' : 'Sound off';
+  }
+  drawSoundBtn();
   const inviteBtn = el('button', { type: 'button', class: 'ghost small', 'aria-label': 'Copy invite link', onclick: () => copy(location.href, inviteBtn) },
     el('span', { class: 'lbl-long' }, 'Copy invite link'), el('span', { class: 'lbl-short' }, 'Invite'));
+  const iconSpan = (svg) => { const s = el('span', { class: 'lbl-short' }); s.innerHTML = svg; return s; }; // static markup
   const renameBtn = manage && el('button', {
-    type: 'button', class: 'ghost small',
+    type: 'button', class: 'ghost small', 'aria-label': 'Rename room', title: 'Rename room',
     onclick: async () => {
       const n = prompt('Room name (shows in the browser tab):', titleEl.textContent === 'Chat room' ? '' : titleEl.textContent);
       if (n === null) return;
@@ -565,9 +619,9 @@ function chat(id, info, { key, verifier }, myName) {
         await api(`/chat/api/r/${id}/rename`, { method: 'POST', body: { name: clean ? await C.sealText(key, clean) : '' }, headers: { 'X-Manage-Token': manage } });
       } catch (err) { flash(err.message); }
     },
-  }, 'Rename');
+  }, el('span', { class: 'lbl-long' }, 'Rename'), iconSpan(PENCIL_SVG));
   const delBtn = manage && el('button', {
-    type: 'button', class: 'danger small',
+    type: 'button', class: 'danger small', 'aria-label': 'Delete room', title: 'Delete room',
     onclick: async () => {
       if (!confirm('Delete this room and every message in it for everyone?')) return;
       try {
@@ -575,7 +629,7 @@ function chat(id, info, { key, verifier }, myName) {
         store.del(`vanish-manage-${id}`);
       } catch (err) { setConn(err.message); }
     },
-  }, el('span', { class: 'lbl-long' }, 'Delete room'), el('span', { class: 'lbl-short' }, 'Delete'));
+  }, el('span', { class: 'lbl-long' }, 'Delete room'), iconSpan(TRASH_SVG));
 
   const setConn = (t) => { conn.textContent = t; conn.hidden = !t; };
   const flash = (t) => { setConn(t); setTimeout(() => { if (conn.textContent === t) setConn(''); }, 4000); };
@@ -840,6 +894,7 @@ function chat(id, info, { key, verifier }, myName) {
       const node = await render(m);
       log.append(node);
       if (stick || node.classList.contains('mine')) toBottom();
+      if (!node.classList.contains('mine')) ding();
       if (document.hidden && !node.classList.contains('mine')) { unread++; document.title = `(${unread}) ${baseTitle}`; }
     } else if (m.type === 'react') {
       await applyReact(m);
@@ -936,7 +991,7 @@ function chat(id, info, { key, verifier }, myName) {
   const section = el('section', { class: 'chat' },
     el('div', { class: 'chat-head' },
       el('div', { class: 'head-text' }, titleEl, el('div', { class: 'sub muted' }, left, online)),
-      el('div', { class: 'actions' }, inviteBtn, renameBtn, delBtn)),
+      el('div', { class: 'actions' }, soundBtn, inviteBtn, renameBtn, delBtn)),
     conn, log, replyBar, tray, gifPanel,
     el('form', { class: 'composer', onsubmit: submit }, photoBtn, gifBtn, picker, box, send));
   // Drag a photo anywhere onto the chat.

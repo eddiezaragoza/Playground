@@ -384,3 +384,19 @@ body.chat-page main { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 .row.flash .bubble { box-shadow: 0 0 0 3px var(--accent); }
 .reply-cancel { font-size: 1.1rem; padding: 4px 6px; }
 @media (pointer: coarse) { .reply-cancel { min-width: 44px; min-height: 44px; } }
+
+/* ---------- message sound toggle ---------- */
+.icon-only { padding: 6px 9px; }
+.icon-only svg { display: block; }
+.icon-only[aria-pressed="false"] { color: var(--muted); border-color: var(--line); }
+@media (pointer: coarse) { .icon-only { min-width: 42px; } }
+/* Phones: the room name keeps at least ~140px; when the buttons don't fit beside it (room creator), they wrap below. */
+@media (max-width: 520px) {
+  .chat-head { flex-wrap: wrap; row-gap: 6px; }
+  .head-text { flex: 1 1 140px; }
+}
+@media (max-width: 520px) {
+  .chat-head .actions { flex-wrap: wrap; justify-content: flex-end; }
+  .lbl-short svg { display: block; }
+  .chat-head .actions .small:has(.lbl-short svg) { padding-left: 10px; padding-right: 10px; }
+}

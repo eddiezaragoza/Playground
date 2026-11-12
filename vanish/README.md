@@ -95,3 +95,9 @@ out of history and the server never learns who replied to what. Click a quote to
 `wrangler dev` from /mnt/c can take 3-10+ minutes to start (slow Windows-drive file access from WSL). Copy the folder to
 the Linux disk once (`tar --exclude=.wrangler -cf - . | tar -xf - -C <linux dir>`) and run it there: starts in ~1 s.
 Copy changed files back into the repo (or diff) before committing.
+
+## Message sound (2026-11-12)
+Others' messages play a soft two-note pop made with Web Audio (no sound file; CSP unchanged). Own messages, reactions and
+history are silent; bursts give one sound per 1.5 s. Bell button in the chat header mutes it (per device, localStorage
+`vanish-sound`). On phones the creator's Rename/Delete become pencil/trash icons and the header buttons wrap under the title.
+Test: `test/ui/sound_ui.py` (counts tones the page starts).
