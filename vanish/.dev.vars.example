@@ -1,5 +1,7 @@
 # Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
-CREATE_CODE=pick-an-access-code
+# (no access code since 2026-11-12)
+# Local testing only: lowers the per-person daily creation limit so the e2e test can hit it.
+TEST_CREATES_PER_PERSON=5
 COOKIE_SECRET=run: openssl rand -base64 32
 # Local testing only: makes one "hour" this many milliseconds so expiry can be tested. Never set in production.
 # TEST_HOUR_MS=3000

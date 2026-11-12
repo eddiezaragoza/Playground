@@ -1,9 +1,10 @@
 import sys
 from playwright.sync_api import sync_playwright
+import _ip  # noqa: F401  (each browser = a different person)
 B=sys.argv[1]; code=open(sys.argv[2]).read(); S=sys.argv[3]; errors=[]
 with sync_playwright() as p:
     br=p.chromium.launch(); ctx=br.new_context(viewport={'width':1100,'height':560}); pg=ctx.new_page(); pg.on('pageerror', lambda e: errors.append(str(e)))
-    pg.goto(B+'/chat'); pg.fill('#code',code); pg.click('button[type=submit]'); pg.wait_for_selector('#rname')
+    pg.goto(B+'/chat'); pg.wait_for_selector('#rname')
     pg.fill('#rname','Lunch crew'); pg.click('button.primary.wide'); pg.wait_for_selector('input.link'); print('created page:', pg.inner_text('main h1')); room=pg.input_value('input.link')
     g=br.new_context(viewport={'width':390,'height':640}).new_page(); g.on('pageerror', lambda e: errors.append(str(e)))
     g.goto(room); g.wait_for_selector('text=Join "Lunch crew"'); print('guest join page:', g.inner_text('main h1'), '|', g.inner_text('main p.muted'))

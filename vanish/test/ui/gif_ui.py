@@ -1,11 +1,12 @@
 import sys, hashlib
 from playwright.sync_api import sync_playwright
+import _ip  # noqa: F401  (each browser = a different person)
 B=sys.argv[1]; code=open(sys.argv[2]).read(); S=sys.argv[3]; errors=[]
 orig=open(f'{S}/test.gif','rb').read()
 with sync_playwright() as p:
     br=p.chromium.launch(); ctx=br.new_context(viewport={'width':1100,'height':700}, bypass_csp=True); pg=ctx.new_page()
     pg.on('pageerror', lambda e: errors.append(str(e)))
-    pg.goto(B+'/chat'); pg.fill('#code',code); pg.click('button[type=submit]'); pg.wait_for_selector('#life')
+    pg.goto(B+'/chat'); pg.wait_for_selector('#life')
     pg.click('button.primary.wide'); pg.wait_for_selector('input.link'); room=pg.input_value('input.link')
     pg.goto(room); pg.fill('#name','Eddie'); pg.click('button[type=submit]'); pg.wait_for_selector('.composer textarea')
     m=br.new_context(viewport={'width':390,'height':760}, bypass_csp=True).new_page(); m.on('pageerror', lambda e: errors.append(str(e)))

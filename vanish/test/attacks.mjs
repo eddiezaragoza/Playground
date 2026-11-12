@@ -1,35 +1,27 @@
 // Adversarial checks: tries to break Poof the way an attacker would. Run against a LOCAL `wrangler dev`
-// (it locks the login for the rest of the UTC day on whatever server it targets, so never point it at production).
-//   node test/attacks.mjs            (expects CREATE_CODE=test-code-123 in .dev.vars)
+// (it uses up creation limits on whatever server it targets, so never point it at production).
+//   node test/attacks.mjs            (expects TEST_CREATES_PER_PERSON=5 in .dev.vars)
 import * as C from '../src/client/crypto.js';
 
 const B = process.env.BASE || 'http://localhost:8787';
 if (!/^http:\/\/(localhost|127\.0\.0\.1)/.test(B)) { console.error('Refusing to run attacks against a non-local server.'); process.exit(2); }
-const CODE = process.env.CODE || 'test-code-123';
+const ip = () => `10.${(Math.random() * 255) | 0}.${(Math.random() * 255) | 0}.${(Math.random() * 255) | 0}`;
 const O = { Origin: B, 'Content-Type': 'application/json' };
 const res = [];
 const check = (name, okay, detail = '') => res.push(`${okay ? 'BLOCKED ' : 'PROBLEM!'}  ${name}${detail ? `  (${detail})` : ''}`);
-const post = (p, body, h = {}) => fetch(B + p, { method: 'POST', headers: { ...O, ...h }, body: JSON.stringify(body) });
+const post = (p, body, h = {}) => fetch(B + p, { method: 'POST', headers: { ...O, 'CF-Connecting-IP': ip(), ...h }, body: JSON.stringify(body) });
 const ws = (url, protos, origin = B) => new Promise((r) => {
   const w = new WebSocket(url, { protocols: protos, headers: { Origin: origin } });
   w.onopen = () => { w.close(); r('OPEN'); };
   w.onerror = () => r('refused');
 });
 
-const lg = await post('/secret/api/login', { code: CODE });
-if (lg.status !== 200) { console.error(`Login failed (${lg.status}); is the server fresh and CREATE_CODE=${CODE}?`); process.exit(2); }
-const cookie = lg.headers.get('set-cookie').split(';')[0];
-const A = { Cookie: cookie };
+const A = {};
 
-// 1. Forged / tampered / expired login cookies
-for (const c of [`vanish_session=9999999999999.${'a'.repeat(64)}`, cookie.replace(/.$/, (x) => (x === 'a' ? 'b' : 'a')), `vanish_session=1.${cookie.split('.')[1]}`]) {
-  const r = await post('/chat/api/create', { verifier: 'x'.repeat(43), hasPass: false, hours: 24 }, { Cookie: c });
-  check('forged/tampered/expired login cookie', r.status === 401, `HTTP ${r.status}`);
-}
 // 2. Cross-site request riding on a real login (CSRF)
 {
-  const r = await fetch(`${B}/chat/api/create`, { method: 'POST', headers: { ...A, Origin: 'https://evil.example', 'Content-Type': 'application/json' }, body: '{}' });
-  check('cross-site request using a login (CSRF)', r.status === 403, `HTTP ${r.status}`);
+  const r = await fetch(`${B}/chat/api/create`, { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/json' }, body: '{}' });
+  check('cross-site request (CSRF)', r.status === 403, `HTTP ${r.status}`);
 }
 // 3. Oversized and size-hiding bodies
 {
@@ -95,13 +87,15 @@ for (const p of ['/secret/api/s/..%2F..%2Fchat', `/secret/api/s/${'A'.repeat(21)
   }
   check('secret pages may not load Giphy images', !/giphy/.test(h.get('content-security-policy')));
 }
-// 9. LAST (locks login until tomorrow on this server): 60 simultaneous wrong codes, then the right one
+// 9. Creation flood from one address: 40 rooms at once, then someone else
 {
-  const s = (await Promise.all(Array.from({ length: 60 }, (_, i) => post('/secret/api/login', { code: `guess-${i}` })))).map((r) => r.status);
-  const wrong = s.filter((x) => x === 401).length;
-  const locked = s.filter((x) => x === 429).length;
-  const right = (await post('/secret/api/login', { code: CODE })).status;
-  check('60 simultaneous code guesses', wrong <= 20 && locked >= 40 && right === 429, `${wrong} checked, ${locked} refused, real code now -> ${right} until tomorrow`);
+  const { verifier } = await C.deriveKeys(C.newLinkKey());
+  const flooder = '203.0.113.99';
+  const s = (await Promise.all(Array.from({ length: 40 }, () => post('/chat/api/create', { verifier, hasPass: false, hours: 24 }, { 'CF-Connecting-IP': flooder })))).map((r) => r.status);
+  const made = s.filter((x) => x === 200).length;
+  const other = (await post('/chat/api/create', { verifier, hasPass: false, hours: 24 })).status;
+  check('40 simultaneous room creations from one address', made <= 5 && s.filter((x) => x === 429).length >= 35 && other === 200,
+    `${made} created, ${s.filter((x) => x === 429).length} refused; someone else -> ${other}`);
 }
 console.log(res.join('\n'));
 const bad = res.filter((r) => r.startsWith('PROBLEM')).length;

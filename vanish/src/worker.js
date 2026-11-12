@@ -1,7 +1,8 @@
 // Poof (code name vanish): self-destructing secrets (/secret, short link /poof) and end-to-end encrypted chat rooms (/chat) on eddiezaragoza.com.
 // Everything is encrypted in the browser. The key lives after the # in the link, which browsers never send
 // to a server, so this Worker and its Durable Objects only ever hold ciphertext.
-// Secrets (wrangler secret put): CREATE_CODE (access code needed to CREATE items/rooms), COOKIE_SECRET.
+// Open to anyone (no access code since 2026-11-12, Eddie's call): creation is rate-limited per person and site-wide instead.
+// Secrets (wrangler secret put): COOKIE_SECRET (HMAC key for hashing addresses), GIPHY_KEY.
 import SHELL_HTML from './client/shell.html';
 import APP_JS from './client/app.js';
 import CRYPTO_JS from './client/crypto.js';
@@ -19,9 +20,8 @@ export { ChatRoom } from './chat-room.js';
 export { LoginGuard } from './login-guard.js';
 
 const COOKIE = 'vanish_session';
-const COOKIE_DAYS = 180;
-const FAILS_PER_PERSON = 20; // wrong access codes per person (internet address) per UTC day
-const FAILS_SITE_WIDE = 1000; // backstop across everyone, against guessing from many computers
+const CREATES_PER_PERSON = 30; // new poofs + chat rooms per person (internet address) per UTC day
+const CREATES_SITE_WIDE = 500; // backstop across everyone, so bots can't fill the free plan's storage
 
 function headers(url, type) {
   return {
@@ -101,26 +101,18 @@ async function hmac(secret, msg) {
 }
 const hex = (bytes) => [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
 
-async function sessionValue(env) {
-  const exp = Date.now() + COOKIE_DAYS * 864e5;
-  return `${exp}.${hex(await hmac(env.COOKIE_SECRET, `vanish:${exp}`))}`;
+// Creating is open to anyone, so it is rate-limited instead: one counter per person (their internet address, set by
+// Cloudflare and not forgeable; HMAC'd, never stored) plus a site-wide backstop. Both reset each UTC day.
+async function allowCreate(req, env) {
+  // Cloudflare always sets CF-Connecting-IP in production; only local test traffic arrives without it.
+  const ip = req.headers.get('CF-Connecting-IP');
+  const person = ip ? env.GUARD.get(env.GUARD.idFromName(`create-ip:${hex(await hmac(env.COOKIE_SECRET, `ip:${ip}`))}`)) : null;
+  const site = env.GUARD.get(env.GUARD.idFromName('create-site'));
+  if (person && !(await person.attempt(Number(env.TEST_CREATES_PER_PERSON) || CREATES_PER_PERSON))) return false;
+  if (!(await site.attempt(CREATES_SITE_WIDE))) { if (person) await person.refund(); return false; }
+  return true;
 }
-async function isAuthed(req, env) {
-  const raw = (req.headers.get('Cookie') || '').split(/;\s*/).find((c) => c.startsWith(`${COOKIE}=`));
-  if (!raw) return false;
-  const [exp, sig] = raw.slice(COOKIE.length + 1).split('.');
-  if (!(Number(exp) > Date.now()) || typeof sig !== 'string' || sig.length !== 64) return false;
-  const want = await hmac(env.COOKIE_SECRET, `vanish:${exp}`);
-  return crypto.subtle.timingSafeEqual(enc.encode(sig), enc.encode(hex(want)));
-}
-// Forgiving about how the words are typed: "Button Glacier basket-lagoon" == "button-glacier-basket-lagoon".
-// Phones capitalize the first letter on their own, and ignoring case costs almost nothing against a 20-tries-a-day lock.
-const normCode = (c) => String(c).trim().toLowerCase().replace(/[\s_-]+/g, '-');
-// HMAC both sides first so the comparison is constant-time even when lengths differ.
-async function codeMatches(env, code) {
-  const [a, b] = await Promise.all([hmac(env.COOKIE_SECRET, `code:${normCode(code)}`), hmac(env.COOKIE_SECRET, `code:${normCode(env.CREATE_CODE)}`)]);
-  return crypto.subtle.timingSafeEqual(a, b);
-}
+const tooMany = (url) => json(url, { error: 'You have made a lot of these today. Try again tomorrow.' }, 429);
 
 // Bodies must say how big they are up front, so an oversized upload is refused before it is read into memory.
 const declaredLength = (req) => {
@@ -153,8 +145,8 @@ export default {
 
 async function route(req, env) {
   const url = new URL(req.url);
-  // Never run with missing secrets: an unset CREATE_CODE must not become the literal string "undefined".
-  if (!env.CREATE_CODE || !env.COOKIE_SECRET || env.COOKIE_SECRET.length < 16) {
+  // Never run without the HMAC key used to hash addresses for the rate limits.
+  if (!env.COOKIE_SECRET || env.COOKIE_SECRET.length < 16) {
     return json(url, { error: 'Vanish is not configured yet.' }, 503);
   }
   const path = url.pathname.replace(/\/+$/, '') || '/';
@@ -196,36 +188,14 @@ async function route(req, env) {
 
   // Pages
   if (method === 'GET') {
-    if (path === '/secret') return page(url, (await isAuthed(req, env)) ? 'create-secret' : 'login');
-    if (path === '/chat') return page(url, (await isAuthed(req, env)) ? 'create-room' : 'login');
+    if (path === '/secret') return page(url, 'create-secret');
+    if (path === '/chat') return page(url, 'create-room');
     if (parts[0] === 'secret' && parts[1] === 's' && isId(parts[2]) && parts.length === 3) return page(url, 'view-secret');
     if (parts[0] === 'chat' && parts[1] === 'r' && isId(parts[2]) && parts.length === 3) return page(url, 'room');
   }
 
-  // Login / logout
-  if (path === '/secret/api/login' && method === 'POST') {
-    // One counter per person (their internet address, set by Cloudflare and not forgeable), so a stranger's wrong
-    // guesses never lock anyone else out, plus a large site-wide backstop. Addresses are HMAC'd, never stored.
-    const ip = req.headers.get('CF-Connecting-IP') || 'local';
-    const person = env.GUARD.get(env.GUARD.idFromName(`ip:${hex(await hmac(env.COOKIE_SECRET, `ip:${ip}`))}`));
-    const site = env.GUARD.get(env.GUARD.idFromName('login'));
-    if (!(await person.attempt(FAILS_PER_PERSON))) return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429);
-    if (!(await site.attempt(FAILS_SITE_WIDE))) { await person.refund(); return json(url, { error: 'Too many wrong codes today. Try again tomorrow.' }, 429); }
-    const b = await readJson(req, 1000);
-    if (b && typeof b.code === 'string' && b.code.length <= 200 && (await codeMatches(env, b.code))) {
-      await Promise.all([person.refund(), site.refund()]);
-      const cookie = `${COOKIE}=${await sessionValue(env)}; Path=/; Max-Age=${COOKIE_DAYS * 86400}; HttpOnly; Secure; SameSite=Strict`;
-      return json(url, { ok: true }, 200, { 'Set-Cookie': cookie });
-    }
-    return json(url, { error: 'Wrong access code.' }, 401);
-  }
-  if (path === '/secret/api/logout' && method === 'POST') {
-    return json(url, { ok: true }, 200, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict` });
-  }
-
   // ----- secrets -----
   if (path === '/secret/api/create' && method === 'POST') {
-    if (!(await isAuthed(req, env))) return json(url, { error: 'Sign in first.' }, 401);
     const b = await readJson(req, LIMITS.textChars + LIMITS.files * LIMITS.fileNameChars + 2000);
     const maxViews = intIn(b?.maxViews, 1, LIMITS.maxViews);
     const hours = intIn(b?.hours, 1, LIMITS.maxHours);
@@ -235,6 +205,7 @@ async function route(req, env) {
       files && files.length <= LIMITS.files &&
       files.every((f) => typeof f?.name === 'string' && f.name.length > 0 && f.name.length <= LIMITS.fileNameChars);
     if (!valid) return json(url, { error: 'That request did not look right.' }, 400);
+    if (!(await allowCreate(req, env))) return tooMany(url);
     const id = randomId();
     const manage = randomId();
     const r = await vault(env, id).init({
@@ -275,13 +246,13 @@ async function route(req, env) {
 
   // ----- chat -----
   if (path === '/chat/api/create' && method === 'POST') {
-    if (!(await isAuthed(req, env))) return json(url, { error: 'Sign in first.' }, 401);
     const b = await readJson(req, 2000);
     const name = b?.name ?? '';
     if (!b || !VERIFIER_RE.test(b.verifier || '') || typeof b.hasPass !== 'boolean' || !LIMITS.roomHours.includes(b.hours) ||
         typeof name !== 'string' || name.length > LIMITS.roomNameChars) {
       return json(url, { error: 'That request did not look right.' }, 400);
     }
+    if (!(await allowCreate(req, env))) return tooMany(url);
     const id = randomId();
     const manage = randomId();
     // name is ciphertext (encrypted with the room key in the browser), or '' for no name.

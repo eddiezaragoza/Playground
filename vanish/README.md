@@ -101,3 +101,11 @@ Others' messages play a soft two-note pop made with Web Audio (no sound file; CS
 history are silent; bursts give one sound per 1.5 s. Bell button in the chat header mutes it (per device, localStorage
 `vanish-sound`). On phones the creator's Rename/Delete become pencil/trash icons and the header buttons wrap under the title.
 Test: `test/ui/sound_ui.py` (counts tones the page starts).
+
+## No access code (2026-11-12, Eddie's call: "it's just for my friends and me")
+Anyone can create poofs and chat rooms; the sign-in page and `/secret/api/login` are gone, and the CREATE_CODE secret
+was deleted. Abuse protection instead: 30 creations (poofs + rooms) per person (HMAC of CF-Connecting-IP) per UTC day,
+plus 500/day site-wide (LoginGuard DOs reused as counters). Cloudflare refuses any request that sends its own
+CF-Connecting-IP (403, error 1000), so the per-person limit can't be dodged by faking an address. Requests without the
+header (local dev only) skip the per-person limit. Note: tests run against production from Eddie's PC count against
+his own 30/day. Earlier sections mentioning the access code / login lockout are historical.

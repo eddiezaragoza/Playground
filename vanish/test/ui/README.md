@@ -2,10 +2,10 @@
 
 Each script drives real Chromium against a running Poof. Usage:
 
-    python3 test/ui/<script>.py <BASE> <file containing the access code> <output folder>
+    python3 test/ui/<script>.py <BASE> <code file (ignored since the access code was removed; any file)> <output folder>
 
 - `BASE` = `http://localhost:8787` (wrangler dev) or `https://poof.eddiezaragoza.com`.
-- Locally the code is `test-code-123` (`.dev.vars`); keep the code in a file, never on the command line.
+- No access code any more: the second argument is kept for compatibility and ignored.
 - They create real rooms/poofs on whatever server they target (rooms auto-delete).
 
 | Script | Checks |

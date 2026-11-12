@@ -194,31 +194,6 @@ function field(label, input, hint) {
 const idFromPath = () => location.pathname.split('/')[3];
 
 // ---------- pages ----------
-function login() {
-  const input = el('input', { type: 'password', id: 'code', autocomplete: 'current-password', autocapitalize: 'none', spellcheck: 'false', required: true });
-  const msg = status();
-  const btn = el('button', { type: 'submit', class: 'primary' }, 'Continue');
-  const form = el('form', {
-    class: 'card narrow',
-    onsubmit: async (e) => {
-      e.preventDefault();
-      btn.disabled = true;
-      try {
-        await api('/secret/api/login', { method: 'POST', body: { code: input.value } });
-        location.reload();
-      } catch (err) {
-        msg.say(err.message, true);
-        btn.disabled = false;
-      }
-    },
-  },
-  el('h1', { text: 'Sign in' }),
-  el('p', { class: 'muted', text: 'You need the access code to send poofs and start chat rooms. Opening a poof someone sent you does not.' }),
-  field('Access code', input), btn, msg);
-  app.replaceChildren(form);
-  input.focus();
-}
-
 function createSecret() {
   const text = el('textarea', { id: 'text', rows: 4, maxlength: 50000, placeholder: 'A password, API key, note...' });
   const files = [];
@@ -274,7 +249,7 @@ function createSecret() {
       await api(`/secret/api/s/${id}/finalize`, { method: 'POST', headers: { 'X-Manage-Token': manage } });
       created({ id, manage, link: `${location.origin}/secret/s/${id}#${linkKey}`, v, h, hasPass: !!pass.value });
     } catch (err) {
-      msg.say(err.status === 401 ? 'Your sign-in expired. Reload the page.' : err.message, true);
+      msg.say(err.message, true);
       submit.disabled = false;
     }
   }
@@ -443,7 +418,7 @@ function createRoom() {
             pass.value && el('p', { class: 'callout', text: 'Send the passphrase separately. People need both to get in.' }),
             el('div', { class: 'actions' }, el('a', { class: 'button primary', href: link }, 'Open the room'))));
         } catch (err) {
-          msg.say(err.status === 401 ? 'Your sign-in expired. Reload the page.' : err.message, true);
+          msg.say(err.message, true);
           submit.disabled = false;
         }
       },
@@ -1013,5 +988,5 @@ function chat(id, info, { key, verifier }, myName) {
 
 // ---------- boot ----------
 document.querySelector(`[data-nav="${location.pathname.startsWith('/chat') ? 'chat' : 'secret'}"]`)?.classList.add('active');
-const pages = { login, 'create-secret': createSecret, 'view-secret': viewSecret, 'create-room': createRoom, room };
+const pages = { 'create-secret': createSecret, 'view-secret': viewSecret, 'create-room': createRoom, room };
 (pages[PAGE] || (() => notice('Not found', 'That page does not exist.')))();

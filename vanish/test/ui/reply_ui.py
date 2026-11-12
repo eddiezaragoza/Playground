@@ -1,11 +1,12 @@
 # Replies: desktop (hover ↩) and phone (smiley menu), quote on both screens, jump to original, reply to a photo, Esc cancels.
 import sys
 from playwright.sync_api import sync_playwright
+import _ip  # noqa: F401  (each browser = a different person)
 B = sys.argv[1]; code = open(sys.argv[2]).read(); OUT = sys.argv[3]; errors = []
 with sync_playwright() as p:
     br = p.chromium.launch()
     pg = br.new_context(viewport={'width': 1100, 'height': 650}).new_page(); pg.on('pageerror', lambda e: errors.append(str(e)))
-    pg.goto(B + '/chat'); pg.fill('#code', code); pg.click('button[type=submit]'); pg.wait_for_selector('#rname')
+    pg.goto(B + '/chat'); pg.wait_for_selector('#rname')
     pg.click('button.primary.wide'); pg.wait_for_selector('input.link'); room = pg.input_value('input.link')
     pg.goto(room); pg.fill('#name', 'Eddie'); pg.click('button[type=submit]'); pg.wait_for_selector('.composer textarea')
     m = br.new_context(**p.devices['iPhone 14']).new_page(); m.on('pageerror', lambda e: errors.append(str(e)))

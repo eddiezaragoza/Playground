@@ -1,19 +1,20 @@
 // End-to-end test against a running `wrangler dev` (default http://localhost:8787).
-// Needs .dev.vars with CREATE_CODE=test-code-123 and TEST_HOUR_MS=4000 (one "hour" = 4 seconds).
+// Needs .dev.vars with TEST_HOUR_MS=4000 (one "hour" = 4 seconds) and TEST_CREATES_PER_PERSON=5.
+// Each call pretends to come from a different person (random CF-Connecting-IP) so the per-person creation limit
+// only bites in the test that is about it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as C from '../src/client/crypto.js';
 
 const BASE = process.env.BASE || 'http://localhost:8787';
-const CODE = process.env.CODE || 'test-code-123';
 const HOUR = Number(process.env.HOUR_MS || 4000);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-let cookie = '';
+const randomIp = () => `10.${(Math.random() * 255) | 0}.${(Math.random() * 255) | 0}.${(Math.random() * 255) | 0}`;
+// eslint-disable-next-line no-unused-vars
 async function call(path, { method = 'GET', body, headers = {}, origin = BASE, auth = true } = {}) {
-  const h = { ...headers };
+  const h = { 'CF-Connecting-IP': randomIp(), ...headers };
   if (origin) h.Origin = origin;
-  if (auth && cookie) h.Cookie = cookie;
   let payload;
   if (body instanceof Uint8Array) { payload = body; h['Content-Type'] = 'application/octet-stream'; }
   else if (body !== undefined) { payload = JSON.stringify(body); h['Content-Type'] = 'application/json'; }
@@ -45,24 +46,18 @@ test('pages and assets are served with a strict CSP', async () => {
   const r = await fetch(`${BASE}/secret`);
   assert.equal(r.status, 200);
   assert.match(r.headers.get('Content-Security-Policy'), /script-src 'self'/);
-  assert.match(await r.text(), /data-page="login"/);
+  assert.match(await r.text(), /data-page="create-secret"/, 'no sign-in page any more');
   assert.equal((await fetch(`${BASE}/secret/assets/app.js`)).status, 200);
   assert.equal((await fetch(`${BASE}/secret/s/AAAAAAAAAAAAAAAAAAAAAA`)).status, 200); // viewer page needs no login
   assert.equal((await fetch(`${BASE}/nope`)).status, 404);
 });
 
-test('login: wrong code refused, right code gives a cookie, create needs it', async () => {
-  assert.equal((await call('/secret/api/login', { method: 'POST', body: { code: 'nope' } })).status, 401);
-  const noAuth = await call('/secret/api/create', { method: 'POST', body: {}, auth: false });
-  assert.equal(noAuth.status, 401);
-  const bad = await call('/secret/api/login', { method: 'POST', body: { code: CODE }, origin: 'https://evil.example' });
-  assert.equal(bad.status, 403, 'cross-origin POST must be refused');
-  const r = await call('/secret/api/login', { method: 'POST', body: { code: CODE } });
-  assert.equal(r.status, 200);
-  cookie = r.res.headers.get('Set-Cookie').split(';')[0];
-  assert.match(cookie, /^vanish_session=\d+\.[0-9a-f]{64}$/);
-  const page = await fetch(`${BASE}/secret`, { headers: { Cookie: cookie } });
-  assert.match(await page.text(), /data-page="create-secret"/);
+test('no access code: anyone can create; cross-site creation is still refused; the old login is gone', async () => {
+  const { verifier } = await C.deriveKeys(C.newLinkKey());
+  assert.equal((await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 } })).status, 200);
+  assert.equal((await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 }, origin: 'https://evil.example' })).status, 403);
+  assert.match(await (await fetch(`${BASE}/chat`)).text(), /data-page="create-room"/);
+  assert.equal((await call('/secret/api/login', { method: 'POST', body: { code: 'x' } })).status, 404);
 });
 
 test('secret with passphrase + attachment: wrong pass costs no view, views count down, then it is gone', async () => {
@@ -174,7 +169,6 @@ test('chat: two people exchange encrypted messages, history, presence, delete', 
   const r = await call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: true, hours: 24 } });
   assert.equal(r.status, 200);
   const { id, manage } = r.data;
-  assert.equal((await call(`/chat/api/create`, { method: 'POST', body: { verifier, hasPass: true, hours: 24 }, auth: false })).status, 401);
 
   const info = await call(`/chat/api/r/${id}`, { auth: false });
   assert.equal(info.data.hasPass, true);
@@ -320,15 +314,15 @@ test('flood protection: room-wide event cap across many connections; bodies must
   assert.equal(j.status, 403, 'JSON without Content-Length is treated as empty, so the check fails');
 });
 
-test('login lockout is per person: one address burning its 20 guesses does not lock out another', async () => {
-  const tryCode = (code, ip) => fetch(`${BASE}/secret/api/login`, { method: 'POST', headers: { Origin: BASE, 'Content-Type': 'application/json', 'CF-Connecting-IP': ip }, body: JSON.stringify({ code }) });
-  const attacker = '203.0.113.7';
+test('creation limit is per person: one address hitting its daily limit does not block anyone else', async () => {
+  const { verifier } = await C.deriveKeys(C.newLinkKey());
+  const make = (ip) => call('/chat/api/create', { method: 'POST', body: { verifier, hasPass: false, hours: 24 }, headers: { 'CF-Connecting-IP': ip } });
+  const flooder = '203.0.113.7';
   const statuses = [];
-  for (let i = 0; i < 22; i++) statuses.push((await tryCode(`wrong-${i}`, attacker)).status);
-  assert.deepEqual(statuses.slice(0, 20), Array(20).fill(401));
-  assert.deepEqual(statuses.slice(20), [429, 429], 'attacker is locked out');
-  assert.equal((await tryCode(CODE, attacker)).status, 429, 'even the right code, from the locked-out address');
-  assert.equal((await tryCode(CODE, '198.51.100.9')).status, 200, 'someone else can still sign in');
-  assert.equal((await tryCode('CODE-wrong', '198.51.100.9')).status, 401);
-  assert.equal((await tryCode(CODE, '198.51.100.9')).status, 200, 'a correct login refunds the miss');
+  for (let i = 0; i < 7; i++) statuses.push((await make(flooder)).status); // TEST_CREATES_PER_PERSON=5 locally
+  assert.deepEqual(statuses, [200, 200, 200, 200, 200, 429, 429]);
+  assert.match((await make(flooder)).data.error, /a lot of these today/);
+  assert.equal((await make('198.51.100.9')).status, 200, 'someone else can still create');
+  const bad = await call('/secret/api/create', { method: 'POST', body: { junk: true }, headers: { 'CF-Connecting-IP': '198.51.100.10' } });
+  assert.equal(bad.status, 400, 'junk requests are rejected before they count');
 });

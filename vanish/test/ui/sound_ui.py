@@ -2,13 +2,14 @@
 # one ding, mute silences it and survives a reload, history on join is silent, turning sound on plays a sample.
 import sys
 from playwright.sync_api import sync_playwright
+import _ip  # noqa: F401  (each browser = a different person)
 B = sys.argv[1]; code = open(sys.argv[2]).read(); errors = []
 COUNT = "window.__tones = 0; const o = AudioContext.prototype.createOscillator; AudioContext.prototype.createOscillator = function () { window.__tones++; return o.call(this); };"
 with sync_playwright() as p:
     br = p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
     ctx = br.new_context(); ctx.add_init_script(COUNT)
     e = ctx.new_page(); e.on('pageerror', lambda x: errors.append(str(x)))
-    e.goto(B + '/chat'); e.fill('#code', code); e.click('button[type=submit]'); e.wait_for_selector('#rname')
+    e.goto(B + '/chat'); e.wait_for_selector('#rname')
     e.click('button.primary.wide'); e.wait_for_selector('input.link'); room = e.input_value('input.link')
     e.goto(room); e.fill('#name', 'Eddie'); e.click('button[type=submit]'); e.wait_for_selector('.composer textarea')
     s = br.new_context().new_page(); s.goto(room); s.fill('#name', 'Sam'); s.click('button[type=submit]'); s.wait_for_selector('.composer textarea')
