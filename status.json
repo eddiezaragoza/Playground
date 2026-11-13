@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T11:30:09.696Z",
+  "generatedAt": "2026-11-13T18:43:01.394Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
-      "lastLiveAt": "2026-11-13T11:30:09.696Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-08T02:22:19.854Z",
-          "lastSeenLiveAt": "2026-11-13T11:30:09.696Z"
+          "lastSeenLiveAt": "2026-11-13T18:43:01.394Z"
         },
         {
           "videoId": "i5t518NS-rk",
@@ -124,16 +124,23 @@
     "vatican-news": {
       "current": {
         "state": "live",
-        "videoId": "ibD8T15MXgs",
-        "title": "November 11 2026, Angelus and Rosary",
-        "url": "https://www.youtube.com/watch?v=ibD8T15MXgs",
-        "thumbnail": "https://i.ytimg.com/vi/ibD8T15MXgs/hqdefault.jpg",
+        "videoId": "03pYP2Nmreo",
+        "title": "Vatican Media Live",
+        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
-      "lastLiveAt": "2026-11-13T11:30:09.696Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
+        {
+          "videoId": "03pYP2Nmreo",
+          "title": "Vatican Media Live",
+          "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+          "startedAt": "2026-11-13T18:43:01.394Z",
+          "lastSeenLiveAt": "2026-11-13T18:43:01.394Z"
+        },
         {
           "videoId": "ibD8T15MXgs",
           "title": "November 11 2026, Angelus and Rosary",
@@ -224,7 +231,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -232,7 +239,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -267,17 +274,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "upcoming",
-        "videoId": "5HO_2BaHZtI",
-        "title": "EN VIVO | Papa León XIV en Perú: Bienvenida a Chiclayo y Santa Misa | 13 noviembre 2026",
-        "url": "https://www.youtube.com/watch?v=5HO_2BaHZtI",
-        "thumbnail": "https://i.ytimg.com/vi/5HO_2BaHZtI/hqdefault.jpg",
-        "scheduledFor": "2026-11-13T14:00:00.000Z",
+        "state": "live",
+        "videoId": "LOU6pEPTvDA",
+        "title": "Conecta2 en Familia: Comprender el sexto mandamiento",
+        "url": "https://www.youtube.com/watch?v=LOU6pEPTvDA",
+        "thumbnail": "https://i.ytimg.com/vi/LOU6pEPTvDA/hqdefault.jpg",
+        "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
-      "lastLiveAt": "2026-11-12T23:43:46.383Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
+        {
+          "videoId": "LOU6pEPTvDA",
+          "title": "Conecta2 en Familia: Comprender el sexto mandamiento",
+          "url": "https://www.youtube.com/watch?v=LOU6pEPTvDA",
+          "startedAt": "2026-11-13T18:43:01.394Z",
+          "lastSeenLiveAt": "2026-11-13T18:43:01.394Z"
+        },
         {
           "videoId": "hSknPyTWSL8",
           "title": "EN VIVO | Papa León XIV en Perú: Vigilia con los jóvenes en el Estadio Nacional | 12 noviembre 2026",
@@ -415,9 +429,15 @@
     },
     "catholictv": {
       "current": {
-        "state": "offline"
+        "state": "upcoming",
+        "videoId": "c40itSQ37Gs",
+        "title": "Live Adoration of the Blessed Sacrament From the CatholicTV Chapel 11/13/26",
+        "url": "https://www.youtube.com/watch?v=c40itSQ37Gs",
+        "thumbnail": "https://i.ytimg.com/vi/c40itSQ37Gs/hqdefault.jpg",
+        "scheduledFor": "2026-11-13T20:00:00.000Z",
+        "embeddable": true
       },
-      "checkedAt": "2026-11-13T11:30:09.696Z",
+      "checkedAt": "2026-11-13T18:43:01.394Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
