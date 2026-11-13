@@ -1,17 +1,11 @@
 {
-  "generatedAt": "2026-11-13T18:43:01.394Z",
+  "generatedAt": "2026-11-13T23:55:10.854Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
-        "state": "live",
-        "videoId": "qz8YE61BoXM",
-        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
-        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
-        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
       "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
         {
@@ -131,15 +125,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
-      "lastLiveAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
+      "lastLiveAt": "2026-11-13T23:55:10.854Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-13T18:43:01.394Z",
-          "lastSeenLiveAt": "2026-11-13T18:43:01.394Z"
+          "lastSeenLiveAt": "2026-11-13T23:55:10.854Z"
         },
         {
           "videoId": "ibD8T15MXgs",
@@ -231,7 +225,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -239,7 +233,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -274,15 +268,9 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "LOU6pEPTvDA",
-        "title": "Conecta2 en Familia: Comprender el sexto mandamiento",
-        "url": "https://www.youtube.com/watch?v=LOU6pEPTvDA",
-        "thumbnail": "https://i.ytimg.com/vi/LOU6pEPTvDA/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
       "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
         {
@@ -429,15 +417,9 @@
     },
     "catholictv": {
       "current": {
-        "state": "upcoming",
-        "videoId": "c40itSQ37Gs",
-        "title": "Live Adoration of the Blessed Sacrament From the CatholicTV Chapel 11/13/26",
-        "url": "https://www.youtube.com/watch?v=c40itSQ37Gs",
-        "thumbnail": "https://i.ytimg.com/vi/c40itSQ37Gs/hqdefault.jpg",
-        "scheduledFor": "2026-11-13T20:00:00.000Z",
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-13T23:55:10.854Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
