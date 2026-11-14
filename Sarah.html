@@ -558,28 +558,18 @@
 
   <!-- ===== Cover ===== -->
   <section class="card cover" id="cover">
-    <div class="eyebrow">A private lesson</div>
-    <div class="for">prepared for</div>
-    <div class="name">Sarah</div>
-    <div class="for" style="margin-top:0">of Tampa, by way of Boston</div>
-    <div class="steak-emoji" style="margin-top:10px">🥩</div>
-    <p class="hello">Hi Sarah, it’s <b>Eddie</b> from Bumble. 👋</p>
-    <div class="divider">✦</div>
-    <div class="course">Steak 101</div>
-    <div class="for" style="margin-top:4px">Churrasco Edition 🔥</div>
-    <blockquote>
-      You said: <b>“Teach me something about cooking steak.”</b><br>
-      You also said: <b>“Win me over by asking me out instead of endless messaging.”</b><br>
-      So I made a page that does both.
-    </blockquote>
-    <button class="btn" onclick="goTo('lesson1')">Class is in session</button>
+    <p class="hello" style="margin-top:0">Hi Sarah, it’s <b>Eddie</b> from Bumble. 👋</p>
+    <div class="name" style="margin-top:14px">Steak 101</div>
+    <div class="steak-emoji" style="margin-top:6px">🥩</div>
+    <p class="lead" style="margin-top:14px">You wanted someone to teach you something about cooking steak. Challenge accepted. It’s short, I promise.</p>
+    <button class="btn" onclick="goTo('lesson1')">Let’s cook</button>
   </section>
 
   <!-- ===== Lesson 1 ===== -->
   <section class="card hidden" id="lesson1">
-    <div class="eyebrow">Lesson 1 of 3</div>
+    <div class="eyebrow">Lesson 1</div>
     <h2>The Pull Temperature</h2>
-    <p class="lead">Slide to how you like yours. Pay attention to the second number.</p>
+    <p class="lead">Slide to how you like yours.</p>
 
     <div class="steak-stage">
       <svg viewBox="0 0 300 190" aria-hidden="true">
@@ -623,28 +613,25 @@
     </div>
 
     <div class="tip" id="tipText"></div>
-    <div class="tip">
-      <b>Bonus, for a Brazilian steakhouse:</b> the meat is roasted on a long skewer, so the outside slices are more done and the middle is rarer. Tell the server how you like it and they’ll carve from the right spot.
-    </div>
 
-    <button class="btn" onclick="lockDoneness()">That’s how I like it</button>
+    <button class="btn" onclick="lockDoneness()">Got it</button>
   </section>
 
   <!-- ===== Lesson 2 ===== -->
   <section class="card hidden" id="lesson2">
-    <div class="eyebrow">Lesson 2 of 3</div>
-    <h2>Meet the Cuts</h2>
-    <p class="lead">At a churrascaria the steak comes to you, one skewer at a time. Here’s who’s coming. Tap each card to flip it.</p>
+    <div class="eyebrow">Lesson 2</div>
+    <h2>Three Cuts Worth Knowing</h2>
+    <p class="lead">Tap to flip.</p>
 
     <div class="rules">
       <div class="rule" onclick="flip(this)">
         <div class="rule-inner">
           <div class="face front">
             <div class="num">1</div>
-            <div><div class="title">Picanha</div><div class="hint">The star · tap to flip</div></div>
+            <div><div class="title">Picanha</div><div class="hint">Tap to flip</div></div>
           </div>
           <div class="face back">
-            <div>The <b>top sirloin cap</b>, with a thick strip of fat left on. It’s curled onto the skewer, seasoned with nothing but coarse salt, and roasted over the fire so the fat bastes the meat. Get a slice with a little of the fat edge.</div>
+            <div>The <b>top sirloin cap</b>. The fat stays on, it gets nothing but coarse salt, and it roasts over the fire on a skewer. The Brazilian steakhouse classic.</div>
           </div>
         </div>
       </div>
@@ -653,10 +640,10 @@
         <div class="rule-inner">
           <div class="face front">
             <div class="num">2</div>
-            <div><div class="title">Fraldinha</div><div class="hint">The Boston connection · tap to flip</div></div>
+            <div><div class="title">Fraldinha</div><div class="hint">Tap to flip</div></div>
           </div>
           <div class="face back">
-            <div><b>Bottom sirloin flap</b>, the same cut most New England <b>steak tips</b> are made from. So a Boston girl already loves this one, she just knew it by a different name. Loose grain, big flavor, and the perfect test of the rule: <b>slice against the grain</b>.</div>
+            <div><b>Bottom sirloin flap</b>, the same cut used for New England steak tips. Big flavor, but <b>slice it against the grain</b> or it gets chewy.</div>
           </div>
         </div>
       </div>
@@ -665,95 +652,57 @@
         <div class="rule-inner">
           <div class="face front">
             <div class="num">3</div>
-            <div><div class="title">Filet Mignon</div><div class="hint">The classic · tap to flip</div></div>
+            <div><div class="title">Filet Mignon</div><div class="hint">Tap to flip</div></div>
           </div>
           <div class="face back">
-            <div>The <b>tenderloin</b>, the most tender cut on the animal. It’s so lean it has very little fat to protect it, which is why they <b>wrap it in bacon</b>. Tender, not the most flavor: that’s the tradeoff.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="rule" onclick="flip(this)">
-        <div class="rule-inner">
-          <div class="face front">
-            <div class="num">4</div>
-            <div><div class="title">The Pace Rule</div><div class="hint">Strategy · tap to flip</div></div>
-          </div>
-          <div class="face back">
-            <div>Rookies fill up on the salad bar and the first three skewers. Take <b>small slices</b>, try everything once, then go back for your favorite. Use the card on your table to pace it (more on that card in a minute). And if you hit the gym the next morning, call it protein loading.</div>
+            <div>The <b>tenderloin</b>. The most tender cut, but so lean that it’s usually <b>wrapped in bacon</b> to keep it juicy.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="progress-note" id="flipNote">0 of 4 flipped</div>
-    <button class="btn" id="toExam" onclick="goTo('lesson3')" disabled>On to the final exam</button>
+    <div class="progress-note" id="flipNote">0 of 3 flipped</div>
+    <button class="btn" id="toExam" onclick="goTo('lesson3')" disabled>Next</button>
   </section>
 
   <!-- ===== Lesson 3: the ask ===== -->
   <section class="card hidden" id="lesson3">
-    <div class="eyebrow">Lesson 3 of 3 · The Final Exam</div>
-    <h2>It’s a Field Trip</h2>
-    <p class="ask-quote">You said to win you over by <span>asking you out instead of endless messaging.</span></p>
-    <div class="big-ask">So I’m asking.<br>Dinner with me?</div>
+    <div class="eyebrow">Lesson 3</div>
+    <div class="big-ask">The rest is better<br>learned in person.<br>Dinner with me?</div>
 
     <div class="venue">
       <div class="vname">Texas de Brazil</div>
       <div class="vaddr">4112 W Boy Scout Blvd · Westshore</div>
-      <ul class="itinerary">
-        <li><span class="ic">🔥</span><span><b>A live steak lesson.</b> <span class="d">Servers bring cut after cut to the table on skewers. We try them all and the foodie at the table tells me which one wins.</span></span></li>
-        <li><span class="ic">📈</span><span><b>The math.</b> <span class="d">One price, unlimited steak. You work in commercial lending, so you can appreciate a deal with that kind of return.</span></span></li>
-        <li><span class="ic">🥗</span><span><b>The salad bar.</b> <span class="d">Huge, and a trap. You already know the pace rule.</span></span></li>
-        <li><span class="ic">🍷</span><span><b>A glass of white.</b> <span class="d">On me.</span></span></li>
-      </ul>
+      <p class="lead" style="margin-top:12px">They bring the cuts to the table one skewer at a time, so we can try them all and you can pick a favorite.</p>
     </div>
-
-    <div class="order-line">Your steak: <b id="orderDoneness">Medium-Rare</b> (I was paying attention). Doors will be opened.</div>
 
     <div class="pick-label">Pick a night</div>
     <div class="nights" id="nights">
-      <button class="night" onclick="pickNight(this)">This Friday</button>
-      <button class="night" onclick="pickNight(this)">This Saturday</button>
+      <button class="night" onclick="pickNight(this)">This weekend</button>
       <button class="night" onclick="pickNight(this)">Next weekend</button>
-      <button class="night" onclick="pickNight(this)">A weeknight</button>
-      <button class="night full" onclick="pickNight(this)">You name it, I’ll make it work</button>
+      <button class="night full" onclick="pickNight(this)">You pick</button>
     </div>
 
-    <div class="pick-label">Then, after dinner…</div>
+    <div class="pick-label">And after</div>
     <div class="after-grid" id="afterGrid">
       <button class="after" data-short="Ice skating at Winter Village" onclick="pickAfter(this)">
         <span class="ic">⛸️</span>
-        <span><span class="at">Ice skating on the Riverwalk</span>
-        <span class="ad" style="display:block">Winter Village puts a real ice rink in Curtis Hixon Park every holiday season. Lights, music, a Floridian on skates. Fridays there’s a silent disco, too, and with Kaskade and Tiësto in your top artists, I already know which channel you’re on.</span>
-        <span class="when">Nov 20 – Jan 3 only</span></span>
-      </button>
-      <button class="after" data-short="Sparkman Wharf" onclick="pickAfter(this)">
-        <span class="ic">🌊</span>
-        <span><span class="at">Drinks at Sparkman Wharf</span>
-        <span class="ad" style="display:block">Open-air beer garden on the water, built out of shipping containers. Lawn games, string lights, and a nightcap by the channel.</span>
-        <span class="when">Any time</span></span>
+        <span><span class="at">Ice skating downtown</span>
+        <span class="ad" style="display:block">The holiday rink at Curtis Hixon Park.</span>
+        <span class="when">Nov 20 – Jan 3</span></span>
       </button>
       <button class="after" data-short="Riverwalk + Armature Works" onclick="pickAfter(this)">
         <span class="ic">🌉</span>
-        <span><span class="at">Riverwalk to Armature Works</span>
-        <span class="ad" style="display:block">Walk off the meat sweats along the river at night, then dessert in the old streetcar barn that’s now Tampa’s coolest food hall.</span>
-        <span class="when">Any time</span></span>
-      </button>
-      <button class="after" data-short="A concert, your pick" onclick="pickAfter(this)">
-        <span class="ic">🎶</span>
-        <span><span class="at">A concert, your pick</span>
-        <span class="ad" style="display:block">I saw your top artists. Rüfüs Du Sol to Phil Collins is a wild range and I respect it. Point at a show and I’ll handle the tickets. (Probably a second date. I’m planning ahead.)</span>
-        <span class="when">Whenever they’re in town</span></span>
+        <span><span class="at">Riverwalk and dessert</span>
+        <span class="ad" style="display:block">A walk along the river, then dessert at Armature Works.</span></span>
       </button>
       <button class="after" data-short="Surprise me" onclick="pickAfter(this)">
         <span class="ic">🎲</span>
-        <span><span class="at">Surprise me</span>
-        <span class="ad" style="display:block">You trust me to plan it. Bold. I like it.</span></span>
+        <span><span class="at">Surprise me</span></span>
       </button>
     </div>
 
-    <div class="pick-label">Now flip your card</div>
-    <p class="card-caption" style="margin-top:6px">At a churrascaria, green means “bring it on” and red means “I’m good for now.” Same rules here.</p>
+    <p class="card-caption" style="margin-top:22px">At a Brazilian steakhouse, green means “bring it on” and red means “I’m good.”</p>
     <div class="gaucho-card">
       <button class="disc green" id="yesBtn" onclick="sayYes()" disabled><span>Green</span><span class="big">Bring it on</span></button>
       <button class="disc red" onclick="rainCheck()"><span>Red</span><span class="big">Not this time</span></button>
@@ -763,38 +712,37 @@
 
   <!-- ===== Yes: the ticket ===== -->
   <section class="ticket hidden" id="ticket">
-    <div class="t-eyebrow">Reservation for two</div>
+    <div class="t-eyebrow">It’s a date</div>
     <div class="t-names">Sarah &amp; Eddie</div>
     <div class="t-row"><span>Dinner</span><span>Texas de Brazil</span></div>
-    <div class="t-row"><span>When</span><span id="tNight">This Friday</span></div>
+    <div class="t-row"><span>When</span><span id="tNight">This weekend</span></div>
     <div class="t-row"><span>After</span><span id="tAfter">Surprise me</span></div>
     <div class="t-row"><span>Your steak</span><span id="tDoneness">Medium-Rare</span></div>
-    <div class="t-foot">You passed Steak 101. 🎓<br><b>Screenshot this and send it to me.</b> I’ll make the reservation and confirm the details with you the day before. Good communication, as requested.</div>
-    <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=Texas+de+Brazil+4112+W+Boy+Scout+Blvd+Tampa+FL" target="_blank" rel="noopener">📍 See it on the map</a>
+    <div class="t-foot">Send me a screenshot and I’ll take care of the rest.</div>
   </section>
 
   <!-- ===== Rain check ===== -->
   <section class="card hidden rain" id="rain">
     <h2>Totally fair.</h2>
-    <p class="lead">Thanks for reading this far. Keep the steak tips, they work.<br>Enjoy Tampa. 🥂</p>
+    <p class="lead">Thanks for reading. Keep the steak tips, they work.</p>
     <button class="text-link" onclick="undoRain()">Wait, I changed my mind</button>
   </section>
 
-  <div class="footer-msg">Eddie &amp; Sarah’s steak date <span>♥</span></div>
+  <div class="footer-msg">— Eddie</div>
 </main>
 
 <script>
   const LEVELS = [
     { name: 'Rare',        final: 125, center: ['#9E1A33', '#86152B'], band: 0.94,
-      note: 'Cool red center. Bold choice. Pull it at <b>120°F</b> and it lands right at 125°F after resting.' },
+      note: 'Pull it at <b>120°F</b>. Steak keeps cooking about 5°F after it leaves the heat, so it lands right at 125°F.' },
     { name: 'Medium-Rare', final: 135, center: ['#C6384C', '#A82C40'], band: 0.88,
-      note: 'The steakhouse standard: warm red center, most of the juice, rendered fat. Pull it at <b>130°F</b>. It keeps cooking about 5°F after it leaves the heat (that’s <b>carryover cooking</b>), so if you wait for 135°F, you’ve already gone past it.' },
+      note: 'Pull it at <b>130°F</b>. Steak keeps cooking about 5°F after it leaves the heat, so if you wait for 135°F, you’ve already gone past it.' },
     { name: 'Medium',      final: 145, center: ['#D98C80', '#C77468'], band: 0.78,
-      note: 'Warm pink center, a little firmer. Pull it at <b>140°F</b>. It keeps cooking about 5°F after it leaves the heat (that’s <b>carryover cooking</b>). Thicker steaks carry over more, so pull a big ribeye a few degrees earlier.' },
+      note: 'Pull it at <b>140°F</b>. Steak keeps cooking about 5°F after it leaves the heat, so if you wait for 145°F, you’ve already gone past it.' },
     { name: 'Medium-Well', final: 150, center: ['#C3A08F', '#A98675'], band: 0.66,
-      note: 'Just a hint of pink. Pull it at <b>145°F</b>, because it keeps cooking about 5°F after it leaves the heat. Butter-basting at the end keeps it from drying out.' },
+      note: 'Pull it at <b>145°F</b>. Steak keeps cooking about 5°F after it leaves the heat, so pull it early and let it rest.' },
     { name: 'Well Done',   final: 160, center: ['#9A7F70', '#8A7062'], band: 0.5,
-      note: 'No judgment here (okay, a little). Pull it at <b>155°F</b>, cook it lower and slower so the outside doesn’t burn first, and rest it longer.' }
+      note: 'Pull it at <b>155°F</b>, and cook it a little lower and slower so the outside doesn’t burn first.' }
   ];
 
   let chosen = 1;
@@ -817,7 +765,7 @@
     const c = document.getElementById('center');
     c.setAttribute('rx', (104 * L.band).toFixed(1));
     c.setAttribute('ry', (58 * L.band).toFixed(1));
-    document.getElementById('tipText').innerHTML = '<b>The lesson:</b> ' + L.note;
+    document.getElementById('tipText').innerHTML = '<b>The trick:</b> ' + L.note;
   }
 
   function goTo(id) {
@@ -831,7 +779,6 @@
 
   function lockDoneness() {
     const name = LEVELS[chosen].name;
-    document.getElementById('orderDoneness').textContent = name;
     document.getElementById('tDoneness').textContent = name;
     goTo('lesson2');
   }
@@ -841,7 +788,7 @@
     const cards = [...document.querySelectorAll('.rule')];
     flipped.add(cards.indexOf(card));
     document.getElementById('flipNote').textContent =
-      flipped.size < cards.length ? `${flipped.size} of ${cards.length} flipped` : 'All four. You’re ready.';
+      flipped.size < cards.length ? `${flipped.size} of ${cards.length} flipped` : 'Done.';
     if (flipped.size === cards.length) document.getElementById('toExam').disabled = false;
   }
 
@@ -849,7 +796,7 @@
     const ready = selectedNight && selectedAfter;
     document.getElementById('yesBtn').disabled = !ready;
     document.getElementById('needPick').textContent = ready
-      ? 'Looks like a plan.'
+      ? 'Your move.'
       : !selectedNight && !selectedAfter ? 'Pick a night and an after first.'
       : !selectedNight ? 'Now pick a night.' : 'Now pick the after.';
   }
@@ -871,7 +818,7 @@
   function sayYes() {
     if (!selectedNight || !selectedAfter) return;
     document.getElementById('tNight').textContent =
-      selectedNight.startsWith('You name it') ? 'Your call' : selectedNight;
+      selectedNight === 'You pick' ? 'Your call' : selectedNight;
     document.getElementById('tAfter').textContent = selectedAfter;
     document.getElementById('rain').classList.add('hidden');
     goTo('ticket');
