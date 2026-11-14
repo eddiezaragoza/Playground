@@ -1,13 +1,26 @@
 {
-  "generatedAt": "2026-11-13T23:55:10.854Z",
+  "generatedAt": "2026-11-14T04:26:05.082Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "dJJchE55wiE",
+        "title": "Saturday 14th November 2026 - St Benedict's, Melbourne. Welcome!",
+        "url": "https://www.youtube.com/watch?v=dJJchE55wiE",
+        "thumbnail": "https://i.ytimg.com/vi/dJJchE55wiE/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
-      "lastLiveAt": "2026-11-13T18:43:01.394Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
+      "lastLiveAt": "2026-11-14T04:26:05.082Z",
       "history": [
+        {
+          "videoId": "dJJchE55wiE",
+          "title": "Saturday 14th November 2026 - St Benedict's, Melbourne. Welcome!",
+          "url": "https://www.youtube.com/watch?v=dJJchE55wiE",
+          "startedAt": "2026-11-14T04:26:05.082Z",
+          "lastSeenLiveAt": "2026-11-14T04:26:05.082Z"
+        },
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
@@ -125,15 +138,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
-      "lastLiveAt": "2026-11-13T23:55:10.854Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
+      "lastLiveAt": "2026-11-14T04:26:05.082Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-13T18:43:01.394Z",
-          "lastSeenLiveAt": "2026-11-13T23:55:10.854Z"
+          "lastSeenLiveAt": "2026-11-14T04:26:05.082Z"
         },
         {
           "videoId": "ibD8T15MXgs",
@@ -225,7 +238,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -233,7 +246,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -268,9 +281,15 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "offline"
+        "state": "upcoming",
+        "videoId": "xhVCIMVOKHY",
+        "title": "EN VIVO | Papa León XIV en Perú: Coronación de la Virgen Inmaculada en Chiclayo | 14 noviembre 2026",
+        "url": "https://www.youtube.com/watch?v=xhVCIMVOKHY",
+        "thumbnail": "https://i.ytimg.com/vi/xhVCIMVOKHY/hqdefault.jpg",
+        "scheduledFor": "2026-11-14T12:45:00.000Z",
+        "embeddable": true
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
       "lastLiveAt": "2026-11-13T18:43:01.394Z",
       "history": [
         {
@@ -419,7 +438,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-13T23:55:10.854Z",
+      "checkedAt": "2026-11-14T04:26:05.082Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
