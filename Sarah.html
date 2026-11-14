@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Steak 101 for Sarah 🥩</title>
-<meta name="description" content="A private steak lesson, and a dinner invitation.">
+<title>Steak 101 for Sarah 🔥</title>
+<meta name="description" content="A private steak lesson, a churrasco dinner, and an after-dinner pick.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Great+Vibes&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -289,6 +289,7 @@
   }
   .rule-inner {
     position: relative;
+    display: grid;
     width: 100%;
     min-height: 118px;
     transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
@@ -296,8 +297,8 @@
   }
   .rule.flipped .rule-inner { transform: rotateY(180deg); }
   .face {
-    position: absolute;
-    inset: 0;
+    grid-area: 1 / 1;
+    position: relative;
     border-radius: 14px;
     padding: 16px 18px;
     backface-visibility: hidden;
@@ -463,6 +464,79 @@
     0%, 100% { transform: rotate(-4deg) scale(1); }
     50% { transform: rotate(4deg) scale(1.06); }
   }
+  /* ---------- Churrasco green/red card ---------- */
+  :root { --green: #2F9E5B; --green-dark: #1F6E3F; --red: #C2343F; }
+  .gaucho-card {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 22px;
+  }
+  .disc {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.85);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    line-height: 1.25;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  }
+  .disc .big { font-family: 'Playfair Display', serif; font-size: 1.35rem; letter-spacing: 0; text-transform: none; }
+  .disc.green { background: radial-gradient(circle at 35% 30%, #49C27A, var(--green) 55%, var(--green-dark)); }
+  .disc.red { background: radial-gradient(circle at 35% 30%, #E25A63, var(--red) 55%, #8E222B); width: 104px; height: 104px; align-self: center; font-size: 0.7rem; }
+  .disc.red .big { font-size: 1.05rem; }
+  .disc:hover { transform: translateY(-3px) rotate(-3deg); }
+  .disc:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .card-caption { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
+
+  /* ---------- After-dinner picks ---------- */
+  .after-grid { display: grid; gap: 10px; margin-top: 18px; }
+  .after {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,0.28);
+    color: var(--cream);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .after:hover { border-color: var(--gold); }
+  .after.selected {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, rgba(212,175,106,0.22), rgba(212,175,106,0.06));
+    box-shadow: 0 0 0 1px var(--gold) inset;
+  }
+  .after .ic { font-size: 1.7rem; line-height: 1.2; }
+  .after .at { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.05rem; }
+  .after .ad { font-size: 0.82rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .after .when {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.66rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ember);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -482,6 +556,7 @@
     <div class="steak-emoji">🥩</div>
     <div class="divider">✦</div>
     <div class="course">Steak 101</div>
+    <div class="for" style="margin-top:4px">Churrasco Edition 🔥</div>
     <blockquote>
       You said: <b>“Teach me something about cooking steak.”</b><br>
       You also said: <b>“Win me over by asking me out instead of endless messaging.”</b><br>
@@ -507,28 +582,21 @@
             <feGaussianBlur stdDeviation="3"/>
           </filter>
         </defs>
-        <!-- plate shadow -->
         <ellipse cx="150" cy="172" rx="120" ry="10" fill="rgba(0,0,0,0.45)" filter="url(#soft)"/>
-        <!-- crust -->
         <path d="M40,95 C30,45 95,20 160,24 C235,28 280,60 268,105 C258,150 200,168 140,165 C80,162 48,140 40,95 Z" fill="#4A2A1C"/>
         <path d="M40,95 C30,45 95,20 160,24 C235,28 280,60 268,105 C258,150 200,168 140,165 C80,162 48,140 40,95 Z" fill="none" stroke="#2E1A11" stroke-width="3"/>
-        <!-- fat cap -->
         <path d="M60,60 C90,30 150,24 200,32" fill="none" stroke="#E9D9BE" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-        <!-- gray band -->
         <ellipse id="band" cx="154" cy="96" rx="104" ry="58" fill="#8C6F62"/>
-        <!-- center -->
         <ellipse id="center" cx="154" cy="96" rx="94" ry="50" fill="url(#centerGrad)"/>
-        <!-- grain lines -->
         <g stroke="rgba(0,0,0,0.12)" stroke-width="1.2" fill="none">
           <path d="M80,80 C120,70 180,72 230,86"/>
           <path d="M75,98 C120,90 185,92 236,104"/>
           <path d="M84,116 C125,110 180,112 226,122"/>
         </g>
-        <!-- thermometer -->
         <g transform="translate(205,8) rotate(28)">
           <rect x="-4" y="0" width="8" height="78" rx="4" fill="#D9D3CA"/>
           <rect x="-11" y="-30" width="22" height="34" rx="6" fill="#2A1E1A" stroke="#D4AF6A" stroke-width="1.5"/>
-          <text id="thermoText" x="0" y="-8" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#E9D3A3">135°</text>
+          <text id="thermoText" x="0" y="-8" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#E9D3A3">130°</text>
         </g>
       </svg>
     </div>
@@ -544,8 +612,9 @@
       </div>
     </div>
 
-    <div class="tip" id="tipText">
-      <b>The lesson:</b> a steak keeps cooking after it leaves the heat. That’s called <b>carryover cooking</b>, and it’s usually about 5°F. If you wait until the thermometer says your number, you’ve already overshot it. Pull early and let the rest finish the job.
+    <div class="tip" id="tipText"></div>
+    <div class="tip">
+      <b>Bonus, for a Brazilian steakhouse:</b> the meat is roasted on a long skewer, so the outside slices are more done and the middle is rarer. Tell the server how you like it and they’ll carve from the right spot.
     </div>
 
     <button class="btn" onclick="lockDoneness()">That’s how I like it</button>
@@ -554,18 +623,18 @@
   <!-- ===== Lesson 2 ===== -->
   <section class="card hidden" id="lesson2">
     <div class="eyebrow">Lesson 2 of 3</div>
-    <h2>Three Rules for a Steakhouse Crust at Home</h2>
-    <p class="lead">Tap each card to flip it.</p>
+    <h2>Meet the Cuts</h2>
+    <p class="lead">At a churrascaria the steak comes to you, one skewer at a time. Here’s who’s coming. Tap each card to flip it.</p>
 
     <div class="rules">
       <div class="rule" onclick="flip(this)">
         <div class="rule-inner">
           <div class="face front">
             <div class="num">1</div>
-            <div><div class="title">Salt it the night before</div><div class="hint">Tap to flip</div></div>
+            <div><div class="title">Picanha</div><div class="hint">The star · tap to flip</div></div>
           </div>
           <div class="face back">
-            Salt both sides and leave it <b>uncovered in the fridge</b> overnight. The salt seasons it all the way through, and the surface dries out. A dry surface browns. A wet one steams.
+            <div>The <b>top sirloin cap</b>, with a thick strip of fat left on. It’s curled onto the skewer, seasoned with nothing but coarse salt, and roasted over the fire so the fat bastes the meat. Get a slice with a little of the fat edge.</div>
           </div>
         </div>
       </div>
@@ -574,10 +643,10 @@
         <div class="rule-inner">
           <div class="face front">
             <div class="num">2</div>
-            <div><div class="title">Hot pan, then butter</div><div class="hint">Tap to flip</div></div>
+            <div><div class="title">Fraldinha</div><div class="hint">The sleeper · tap to flip</div></div>
           </div>
           <div class="face back">
-            Cast iron, smoking hot, a little high-heat oil. Flip every minute or so for an even crust. For the last minute, add <b>butter, smashed garlic and thyme</b>, tilt the pan and spoon it over the top.
+            <div><b>Bottom sirloin</b>, with a loose, open grain that soaks up juice and flavor. It can be chewy if it’s cut the wrong way, so it’s the perfect test of the rule: <b>slice against the grain</b>.</div>
           </div>
         </div>
       </div>
@@ -586,16 +655,28 @@
         <div class="rule-inner">
           <div class="face front">
             <div class="num">3</div>
-            <div><div class="title">Rest it, then slice it right</div><div class="hint">Tap to flip</div></div>
+            <div><div class="title">Filet Mignon</div><div class="hint">The classic · tap to flip</div></div>
           </div>
           <div class="face back">
-            Let it rest <b>5 to 10 minutes</b> so the juices stay in the steak instead of on the cutting board. Then slice <b>against the grain</b>, across the lines in the meat, so every bite is tender.
+            <div>The <b>tenderloin</b>, the most tender cut on the animal. It’s so lean it has very little fat to protect it, which is why they <b>wrap it in bacon</b>. Tender, not the most flavor: that’s the tradeoff.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule" onclick="flip(this)">
+        <div class="rule-inner">
+          <div class="face front">
+            <div class="num">4</div>
+            <div><div class="title">The Pace Rule</div><div class="hint">Strategy · tap to flip</div></div>
+          </div>
+          <div class="face back">
+            <div>Rookies fill up on the salad bar and the first three skewers. Take <b>small slices</b>, try everything once, then go back for your favorite. Use the card on your table to pace it (more on that card in a minute).</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="progress-note" id="flipNote">0 of 3 flipped</div>
+    <div class="progress-note" id="flipNote">0 of 4 flipped</div>
     <button class="btn" id="toExam" onclick="goTo('lesson3')" disabled>On to the final exam</button>
   </section>
 
@@ -607,20 +688,19 @@
     <div class="big-ask">So I’m asking.<br>Dinner with me?</div>
 
     <div class="venue">
-      <div class="vname">Bern’s Steak House</div>
-      <div class="vaddr">1208 S Howard Ave · South Tampa</div>
+      <div class="vname">Texas de Brazil</div>
+      <div class="vaddr">4112 W Boy Scout Blvd · Westshore</div>
       <ul class="itinerary">
-        <li><span class="ic">🥩</span><span><b>Dinner.</b> <span class="d">They age their own beef in-house and the menu lets you choose the thickness of your cut. Best classroom in Tampa.</span></span></li>
-        <li><span class="ic">👨‍🍳</span><span><b>The kitchen tour.</b> <span class="d">After dinner they walk you through the kitchen, so you can see the lesson done by people who do it every night.</span></span></li>
-        <li><span class="ic">🍷</span><span><b>The wine cellar.</b> <span class="d">One of the biggest wine collections in the world. A glass of white is on me.</span></span></li>
-        <li><span class="ic">🍰</span><span><b>Dessert upstairs.</b> <span class="d">The Harry Waugh Dessert Room, little private booths, a whole menu of just desserts.</span></span></li>
+        <li><span class="ic">🔥</span><span><b>A live steak lesson.</b> <span class="d">Servers bring cut after cut to the table on skewers. We try them all and you tell me which one wins.</span></span></li>
+        <li><span class="ic">🥗</span><span><b>The salad bar.</b> <span class="d">Huge, and a trap. You already know the pace rule.</span></span></li>
+        <li><span class="ic">🍷</span><span><b>A glass of white.</b> <span class="d">On me.</span></span></li>
       </ul>
     </div>
 
     <div class="order-line">Your steak: <b id="orderDoneness">Medium-Rare</b> (I was paying attention). Doors will be opened.</div>
 
     <div class="pick-label">Pick a night</div>
-    <div class="nights">
+    <div class="nights" id="nights">
       <button class="night" onclick="pickNight(this)">This Friday</button>
       <button class="night" onclick="pickNight(this)">This Saturday</button>
       <button class="night" onclick="pickNight(this)">Next weekend</button>
@@ -628,20 +708,58 @@
       <button class="night full" onclick="pickNight(this)">You name it, I’ll make it work</button>
     </div>
 
-    <button class="btn gold" id="yesBtn" onclick="sayYes()" disabled>Yes, I’m in</button>
-    <button class="text-link" onclick="rainCheck()">Not this time</button>
+    <div class="pick-label">Then, after dinner…</div>
+    <div class="after-grid" id="afterGrid">
+      <button class="after" data-short="Ice skating at Winter Village" onclick="pickAfter(this)">
+        <span class="ic">⛸️</span>
+        <span><span class="at">Ice skating on the Riverwalk</span>
+        <span class="ad" style="display:block">Winter Village puts a real ice rink in Curtis Hixon Park every holiday season. Lights, music, a Floridian on skates. Fridays there’s a silent disco, too.</span>
+        <span class="when">Nov 20 – Jan 3 only</span></span>
+      </button>
+      <button class="after" data-short="Sparkman Wharf" onclick="pickAfter(this)">
+        <span class="ic">🌊</span>
+        <span><span class="at">Drinks at Sparkman Wharf</span>
+        <span class="ad" style="display:block">Open-air beer garden on the water, built out of shipping containers. Lawn games, string lights, and a nightcap by the channel.</span>
+        <span class="when">Any time</span></span>
+      </button>
+      <button class="after" data-short="Riverwalk + Armature Works" onclick="pickAfter(this)">
+        <span class="ic">🌉</span>
+        <span><span class="at">Riverwalk to Armature Works</span>
+        <span class="ad" style="display:block">Walk off the meat sweats along the river at night, then dessert in the old streetcar barn that’s now Tampa’s coolest food hall.</span>
+        <span class="when">Any time</span></span>
+      </button>
+      <button class="after" data-short="A concert, your pick" onclick="pickAfter(this)">
+        <span class="ic">🎶</span>
+        <span><span class="at">A concert, your pick</span>
+        <span class="ad" style="display:block">I saw your top artists. Rüfüs, Kaskade, Fleetwood Mac, AC/DC: point at a show and I’ll handle the tickets. (Probably a second date. I’m planning ahead.)</span>
+        <span class="when">Whenever they’re in town</span></span>
+      </button>
+      <button class="after" data-short="Surprise me" onclick="pickAfter(this)">
+        <span class="ic">🎲</span>
+        <span><span class="at">Surprise me</span>
+        <span class="ad" style="display:block">You trust me to plan it. Bold. I like it.</span></span>
+      </button>
+    </div>
+
+    <div class="pick-label">Now flip your card</div>
+    <p class="card-caption" style="margin-top:6px">At a churrascaria, green means “bring it on” and red means “I’m good for now.” Same rules here.</p>
+    <div class="gaucho-card">
+      <button class="disc green" id="yesBtn" onclick="sayYes()" disabled><span>Green</span><span class="big">Bring it on</span></button>
+      <button class="disc red" onclick="rainCheck()"><span>Red</span><span class="big">Not this time</span></button>
+    </div>
+    <p class="card-caption" id="needPick">Pick a night and an after first.</p>
   </section>
 
   <!-- ===== Yes: the ticket ===== -->
   <section class="ticket hidden" id="ticket">
     <div class="t-eyebrow">Reservation for two</div>
     <div class="t-names">Sarah &amp; Eddie</div>
-    <div class="t-row"><span>Where</span><span>Bern’s Steak House</span></div>
+    <div class="t-row"><span>Dinner</span><span>Texas de Brazil</span></div>
     <div class="t-row"><span>When</span><span id="tNight">This Friday</span></div>
+    <div class="t-row"><span>After</span><span id="tAfter">Surprise me</span></div>
     <div class="t-row"><span>Your steak</span><span id="tDoneness">Medium-Rare</span></div>
-    <div class="t-row"><span>Dress code</span><span>Date night</span></div>
     <div class="t-foot">You passed Steak 101. 🎓<br><b>Screenshot this and send it to me</b>, and I’ll take care of the rest.</div>
-    <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=Bern%27s+Steak+House+1208+S+Howard+Ave+Tampa+FL" target="_blank" rel="noopener">📍 See it on the map</a>
+    <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=Texas+de+Brazil+4112+W+Boy+Scout+Blvd+Tampa+FL" target="_blank" rel="noopener">📍 See it on the map</a>
   </section>
 
   <!-- ===== Rain check ===== -->
@@ -661,16 +779,17 @@
     { name: 'Medium-Rare', final: 135, center: ['#C6384C', '#A82C40'], band: 0.88,
       note: 'The steakhouse standard: warm red center, most of the juice, rendered fat. Pull it at <b>130°F</b>. It keeps cooking about 5°F after it leaves the heat (that’s <b>carryover cooking</b>), so if you wait for 135°F, you’ve already gone past it.' },
     { name: 'Medium',      final: 145, center: ['#D98C80', '#C77468'], band: 0.78,
-      note: 'Warm pink center, a little firmer. Pull it at <b>140°F</b>. Thicker steaks carry over more, so pull a big ribeye a few degrees earlier.' },
+      note: 'Warm pink center, a little firmer. Pull it at <b>140°F</b>. It keeps cooking about 5°F after it leaves the heat (that’s <b>carryover cooking</b>). Thicker steaks carry over more, so pull a big ribeye a few degrees earlier.' },
     { name: 'Medium-Well', final: 150, center: ['#C3A08F', '#A98675'], band: 0.66,
-      note: 'Just a hint of pink. Pull it at <b>145°F</b>. Butter-basting at the end keeps it from drying out.' },
+      note: 'Just a hint of pink. Pull it at <b>145°F</b>, because it keeps cooking about 5°F after it leaves the heat. Butter-basting at the end keeps it from drying out.' },
     { name: 'Well Done',   final: 160, center: ['#9A7F70', '#8A7062'], band: 0.5,
       note: 'No judgment here (okay, a little). Pull it at <b>155°F</b>, cook it lower and slower so the outside doesn’t burn first, and rest it longer.' }
   ];
 
   let chosen = 1;
   let selectedNight = null;
-  let flipped = new Set();
+  let selectedAfter = null;
+  const flipped = new Set();
 
   const slider = document.getElementById('tempSlider');
   slider.addEventListener('input', () => renderLevel(+slider.value));
@@ -708,24 +827,41 @@
 
   function flip(card) {
     card.classList.toggle('flipped');
-    const idx = [...document.querySelectorAll('.rule')].indexOf(card);
-    flipped.add(idx);
+    const cards = [...document.querySelectorAll('.rule')];
+    flipped.add(cards.indexOf(card));
     document.getElementById('flipNote').textContent =
-      flipped.size < 3 ? `${flipped.size} of 3 flipped` : 'All three. You’re ready.';
-    if (flipped.size === 3) document.getElementById('toExam').disabled = false;
+      flipped.size < cards.length ? `${flipped.size} of ${cards.length} flipped` : 'All four. You’re ready.';
+    if (flipped.size === cards.length) document.getElementById('toExam').disabled = false;
+  }
+
+  function updateYes() {
+    const ready = selectedNight && selectedAfter;
+    document.getElementById('yesBtn').disabled = !ready;
+    document.getElementById('needPick').textContent = ready
+      ? 'Looks like a plan.'
+      : !selectedNight && !selectedAfter ? 'Pick a night and an after first.'
+      : !selectedNight ? 'Now pick a night.' : 'Now pick the after.';
   }
 
   function pickNight(btn) {
     document.querySelectorAll('.night').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedNight = btn.textContent.trim();
-    document.getElementById('yesBtn').disabled = false;
+    updateYes();
+  }
+
+  function pickAfter(btn) {
+    document.querySelectorAll('.after').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedAfter = btn.dataset.short;
+    updateYes();
   }
 
   function sayYes() {
-    if (!selectedNight) return;
+    if (!selectedNight || !selectedAfter) return;
     document.getElementById('tNight').textContent =
       selectedNight.startsWith('You name it') ? 'Your call' : selectedNight;
+    document.getElementById('tAfter').textContent = selectedAfter;
     document.getElementById('rain').classList.add('hidden');
     goTo('ticket');
     launchConfetti();
@@ -746,7 +882,7 @@
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const colors = ['#D4AF6A', '#E9D3A3', '#A32A3A', '#F6EEDF', '#E0703A', '#7A1F2B'];
+    const colors = ['#D4AF6A', '#E9D3A3', '#2F9E5B', '#F6EEDF', '#E0703A', '#49C27A'];
     const parts = [];
     for (let i = 0; i < 110; i++) {
       parts.push({
