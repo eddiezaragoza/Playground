@@ -538,57 +538,12 @@
     color: var(--ember);
   }
 
-  /* ---------- Photos ---------- */
-  .duo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 18px 0 6px;
-    position: relative;
-  }
-  .duo img {
-    width: 118px;
-    height: 118px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--gold);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
-    background: var(--card);
-  }
-  .duo img.her { transform: rotate(-4deg); z-index: 2; }
-  .duo img.him { margin-left: -22px; transform: rotate(4deg); }
-  .duo .badge {
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: var(--char);
-    border: 2px solid var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    animation: sizzle 2.4s ease-in-out infinite;
-  }
   .hello {
     font-size: 0.9rem;
     color: var(--cream);
-    margin-top: 16px;
+    margin-top: 14px;
   }
   .hello b { color: var(--gold-soft); }
-  .t-duo { display: flex; justify-content: center; margin-bottom: 8px; }
-  .t-duo img {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--wine);
-  }
-  .t-duo img + img { margin-left: -12px; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -606,12 +561,9 @@
     <div class="eyebrow">A private lesson</div>
     <div class="for">prepared for</div>
     <div class="name">Sarah</div>
-    <div class="duo">
-      <img class="her" src="images/sarah/sarah.jpg" alt="Sarah">
-      <img class="him" src="images/sarah/eddie.jpg" alt="Eddie">
-      <div class="badge">🥩</div>
-    </div>
-    <p class="hello">Hi Sarah, it’s <b>Eddie</b> from Bumble. 👋<br>I made this page just for you.</p>
+    <div class="for" style="margin-top:0">of Tampa, by way of Boston</div>
+    <div class="steak-emoji" style="margin-top:10px">🥩</div>
+    <p class="hello">Hi Sarah, it’s <b>Eddie</b> from Bumble. 👋</p>
     <div class="divider">✦</div>
     <div class="course">Steak 101</div>
     <div class="for" style="margin-top:4px">Churrasco Edition 🔥</div>
@@ -701,10 +653,10 @@
         <div class="rule-inner">
           <div class="face front">
             <div class="num">2</div>
-            <div><div class="title">Fraldinha</div><div class="hint">The sleeper · tap to flip</div></div>
+            <div><div class="title">Fraldinha</div><div class="hint">The Boston connection · tap to flip</div></div>
           </div>
           <div class="face back">
-            <div><b>Bottom sirloin</b>, with a loose, open grain that soaks up juice and flavor. It can be chewy if it’s cut the wrong way, so it’s the perfect test of the rule: <b>slice against the grain</b>.</div>
+            <div><b>Bottom sirloin flap</b>, the same cut most New England <b>steak tips</b> are made from. So a Boston girl already loves this one, she just knew it by a different name. Loose grain, big flavor, and the perfect test of the rule: <b>slice against the grain</b>.</div>
           </div>
         </div>
       </div>
@@ -728,7 +680,7 @@
             <div><div class="title">The Pace Rule</div><div class="hint">Strategy · tap to flip</div></div>
           </div>
           <div class="face back">
-            <div>Rookies fill up on the salad bar and the first three skewers. Take <b>small slices</b>, try everything once, then go back for your favorite. Use the card on your table to pace it (more on that card in a minute).</div>
+            <div>Rookies fill up on the salad bar and the first three skewers. Take <b>small slices</b>, try everything once, then go back for your favorite. Use the card on your table to pace it (more on that card in a minute). And if you hit the gym the next morning, call it protein loading.</div>
           </div>
         </div>
       </div>
@@ -749,7 +701,8 @@
       <div class="vname">Texas de Brazil</div>
       <div class="vaddr">4112 W Boy Scout Blvd · Westshore</div>
       <ul class="itinerary">
-        <li><span class="ic">🔥</span><span><b>A live steak lesson.</b> <span class="d">Servers bring cut after cut to the table on skewers. We try them all and you tell me which one wins.</span></span></li>
+        <li><span class="ic">🔥</span><span><b>A live steak lesson.</b> <span class="d">Servers bring cut after cut to the table on skewers. We try them all and the foodie at the table tells me which one wins.</span></span></li>
+        <li><span class="ic">📈</span><span><b>The math.</b> <span class="d">One price, unlimited steak. You work in commercial lending, so you can appreciate a deal with that kind of return.</span></span></li>
         <li><span class="ic">🥗</span><span><b>The salad bar.</b> <span class="d">Huge, and a trap. You already know the pace rule.</span></span></li>
         <li><span class="ic">🍷</span><span><b>A glass of white.</b> <span class="d">On me.</span></span></li>
       </ul>
@@ -771,7 +724,7 @@
       <button class="after" data-short="Ice skating at Winter Village" onclick="pickAfter(this)">
         <span class="ic">⛸️</span>
         <span><span class="at">Ice skating on the Riverwalk</span>
-        <span class="ad" style="display:block">Winter Village puts a real ice rink in Curtis Hixon Park every holiday season. Lights, music, a Floridian on skates. Fridays there’s a silent disco, too.</span>
+        <span class="ad" style="display:block">Winter Village puts a real ice rink in Curtis Hixon Park every holiday season. Lights, music, a Floridian on skates. Fridays there’s a silent disco, too, and with Kaskade and Tiësto in your top artists, I already know which channel you’re on.</span>
         <span class="when">Nov 20 – Jan 3 only</span></span>
       </button>
       <button class="after" data-short="Sparkman Wharf" onclick="pickAfter(this)">
@@ -789,7 +742,7 @@
       <button class="after" data-short="A concert, your pick" onclick="pickAfter(this)">
         <span class="ic">🎶</span>
         <span><span class="at">A concert, your pick</span>
-        <span class="ad" style="display:block">I saw your top artists. Rüfüs, Kaskade, Fleetwood Mac, AC/DC: point at a show and I’ll handle the tickets. (Probably a second date. I’m planning ahead.)</span>
+        <span class="ad" style="display:block">I saw your top artists. Rüfüs Du Sol to Phil Collins is a wild range and I respect it. Point at a show and I’ll handle the tickets. (Probably a second date. I’m planning ahead.)</span>
         <span class="when">Whenever they’re in town</span></span>
       </button>
       <button class="after" data-short="Surprise me" onclick="pickAfter(this)">
@@ -810,17 +763,13 @@
 
   <!-- ===== Yes: the ticket ===== -->
   <section class="ticket hidden" id="ticket">
-    <div class="t-duo">
-      <img src="images/sarah/sarah.jpg" alt="Sarah">
-      <img src="images/sarah/eddie.jpg" alt="Eddie">
-    </div>
     <div class="t-eyebrow">Reservation for two</div>
     <div class="t-names">Sarah &amp; Eddie</div>
     <div class="t-row"><span>Dinner</span><span>Texas de Brazil</span></div>
     <div class="t-row"><span>When</span><span id="tNight">This Friday</span></div>
     <div class="t-row"><span>After</span><span id="tAfter">Surprise me</span></div>
     <div class="t-row"><span>Your steak</span><span id="tDoneness">Medium-Rare</span></div>
-    <div class="t-foot">You passed Steak 101. 🎓<br><b>Screenshot this and send it to me</b>, and I’ll take care of the rest.</div>
+    <div class="t-foot">You passed Steak 101. 🎓<br><b>Screenshot this and send it to me.</b> I’ll make the reservation and confirm the details with you the day before. Good communication, as requested.</div>
     <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=Texas+de+Brazil+4112+W+Boy+Scout+Blvd+Tampa+FL" target="_blank" rel="noopener">📍 See it on the map</a>
   </section>
 
