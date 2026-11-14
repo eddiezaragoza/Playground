@@ -497,8 +497,10 @@
   }
   .disc .big { font-family: 'Playfair Display', serif; font-size: 1.35rem; letter-spacing: 0; text-transform: none; }
   .disc.green { background: radial-gradient(circle at 35% 30%, #49C27A, var(--green) 55%, var(--green-dark)); }
-  .disc.red { background: radial-gradient(circle at 35% 30%, #E25A63, var(--red) 55%, #8E222B); width: 104px; height: 104px; align-self: center; font-size: 0.7rem; }
-  .disc.red .big { font-size: 1.05rem; }
+  .disc.red { background: radial-gradient(circle at 35% 30%, #E25A63, var(--red) 55%, #8E222B); width: 62px; height: 62px; padding: 4px; border-width: 2px; align-self: center; font-size: 0.5rem; letter-spacing: 1px; touch-action: none; transition: left 0.18s ease-out, top 0.18s ease-out, transform 0.2s; }
+  .disc.red .big { font-size: 0.72rem; }
+  .disc.red.running { position: fixed; z-index: 50; margin: 0; }
+  .ticket .t-send { margin-top: 16px; }
   .disc:hover { transform: translateY(-3px) rotate(-3deg); }
   .disc:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
   .card-caption { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
@@ -668,7 +670,7 @@
   <!-- ===== Lesson 3: the ask ===== -->
   <section class="card hidden" id="lesson3">
     <div class="eyebrow">Lesson 3</div>
-    <div class="big-ask">The rest is better<br>learned in person.<br>Dinner with me?</div>
+    <div class="big-ask">The rest is better<br>in person, with me.</div>
 
     <div class="venue">
       <div class="vname">Texas de Brazil</div>
@@ -680,7 +682,6 @@
     <div class="nights" id="nights">
       <button class="night" onclick="pickNight(this)">This weekend</button>
       <button class="night" onclick="pickNight(this)">Next weekend</button>
-      <button class="night full" onclick="pickNight(this)">You pick</button>
     </div>
 
     <div class="pick-label">And after</div>
@@ -705,7 +706,7 @@
     <p class="card-caption" style="margin-top:22px">At a Brazilian steakhouse, green means “bring it on” and red means “I’m good.”</p>
     <div class="gaucho-card">
       <button class="disc green" id="yesBtn" onclick="sayYes()" disabled><span>Green</span><span class="big">Bring it on</span></button>
-      <button class="disc red" onclick="rainCheck()"><span>Red</span><span class="big">Not this time</span></button>
+      <button class="disc red" id="noBtn" type="button" aria-label="Not this time"><span>Red</span><span class="big">Nope</span></button>
     </div>
     <p class="card-caption" id="needPick">Pick a night and an after first.</p>
   </section>
@@ -718,7 +719,8 @@
     <div class="t-row"><span>When</span><span id="tNight">This weekend</span></div>
     <div class="t-row"><span>After</span><span id="tAfter">Surprise me</span></div>
     <div class="t-row"><span>Your steak</span><span id="tDoneness">Medium-Rare</span></div>
-    <div class="t-foot">Send me a screenshot and I’ll take care of the rest.</div>
+    <div class="t-foot">Your email should be open with the details. Hit send and I’ll take care of the rest.</div>
+    <a class="btn t-send" id="sendBtn" href="#">✉️ Email my picks to Eddie</a>
   </section>
 
   <!-- ===== Rain check ===== -->
@@ -817,13 +819,73 @@
 
   function sayYes() {
     if (!selectedNight || !selectedAfter) return;
-    document.getElementById('tNight').textContent =
-      selectedNight === 'You pick' ? 'Your call' : selectedNight;
+    document.getElementById('tNight').textContent = selectedNight;
     document.getElementById('tAfter').textContent = selectedAfter;
     document.getElementById('rain').classList.add('hidden');
+    document.getElementById('noBtn').style.display = 'none';
+    const href = picksMailto();
+    document.getElementById('sendBtn').href = href;
     goTo('ticket');
     launchConfetti();
+    setTimeout(() => { window.location.href = href; }, 900);
   }
+
+  // Builds the email to Eddie with her picks. The address is assembled here
+  // instead of written out so simple scrapers don't pick it up.
+  function picksMailto() {
+    const to = ['eddiez63', 'gmail.com'].join('@');
+    const subject = 'Steak 101: it\u2019s a date \uD83E\uDD69';
+    const body = [
+      'Hi Eddie,',
+      '',
+      'I\u2019m in. Here are my picks:',
+      '',
+      'Dinner: Texas de Brazil',
+      'When: ' + selectedNight,
+      'After: ' + selectedAfter,
+      'My steak: ' + LEVELS[chosen].name,
+      '',
+      'Sarah'
+    ].join('\n');
+    return 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
+  // The red card never sits still long enough to be tapped.
+  (function setupRunaway() {
+    const no = document.getElementById('noBtn');
+    const dodge = (e) => {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const size = no.offsetWidth || 62;
+      const pad = 16;
+      const maxX = window.innerWidth - size - pad;
+      const maxY = window.innerHeight - size - pad;
+      const rect = no.getBoundingClientRect();
+      let x, y, tries = 0;
+      do {
+        x = pad + Math.random() * Math.max(1, maxX - pad);
+        y = pad + Math.random() * Math.max(1, maxY - pad);
+        tries++;
+      } while (tries < 20 && Math.hypot(x - rect.left, y - rect.top) < 140);
+      if (!no.classList.contains('running')) {
+        // Fixed positioning breaks inside the animated card (its transform
+        // becomes the containing block), so move the button to <body>.
+        document.body.appendChild(no);
+        no.style.left = rect.left + 'px';
+        no.style.top = rect.top + 'px';
+        no.classList.add('running');
+        void no.offsetWidth;
+      }
+      no.style.left = x + 'px';
+      no.style.top = y + 'px';
+    };
+    ['pointerdown', 'touchstart', 'mouseenter', 'click', 'focus'].forEach(ev =>
+      no.addEventListener(ev, dodge, { passive: false }));
+    window.addEventListener('resize', () => {
+      if (!no.classList.contains('running')) return;
+      no.style.left = Math.min(parseFloat(no.style.left), window.innerWidth - 78) + 'px';
+      no.style.top = Math.min(parseFloat(no.style.top), window.innerHeight - 78) + 'px';
+    });
+  })();
 
   function rainCheck() {
     document.getElementById('ticket').classList.add('hidden');
