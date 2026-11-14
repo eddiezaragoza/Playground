@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steak 101 for Sarah 🥩</title>
+<meta name="description" content="A private steak lesson, and a dinner invitation.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Great+Vibes&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --char: #17110F;
+    --char-2: #221815;
+    --card: #2A1E1A;
+    --line: rgba(212, 175, 106, 0.22);
+    --gold: #D4AF6A;
+    --gold-soft: #E9D3A3;
+    --cream: #F6EEDF;
+    --muted: #B9A994;
+    --wine: #7A1F2B;
+    --wine-bright: #A32A3A;
+    --ember: #E0703A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--char);
+    color: var(--cream);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    line-height: 1.55;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(163, 42, 58, 0.28) 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, rgba(224, 112, 58, 0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, var(--char-2) 0%, var(--char) 100%);
+    z-index: -1;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 28px 16px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* ---------- Menu-card frame ---------- */
+  .card {
+    background: linear-gradient(180deg, var(--card), #231915);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px 22px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+    animation: rise 0.7s ease-out both;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(212, 175, 106, 0.12);
+    border-radius: 13px;
+    pointer-events: none;
+  }
+
+  .hidden { display: none !important; }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold);
+    font-size: 0.8rem;
+    margin: 14px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: 1.55rem;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--cream);
+  }
+
+  p.lead {
+    color: var(--muted);
+    text-align: center;
+    font-size: 0.95rem;
+    margin-top: 8px;
+  }
+
+  /* ---------- Cover ---------- */
+  .cover { text-align: center; padding: 40px 22px 34px; }
+  .cover .for {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 18px;
+  }
+  .cover .name {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(4rem, 20vw, 5.6rem);
+    line-height: 1;
+    color: var(--gold-soft);
+    text-shadow: 0 4px 30px rgba(212, 175, 106, 0.25);
+    margin: 6px 0 4px;
+  }
+  .cover .course {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .cover blockquote {
+    margin: 22px auto 0;
+    max-width: 330px;
+    font-size: 0.92rem;
+    color: var(--muted);
+    border-left: 2px solid var(--wine-bright);
+    padding: 4px 0 4px 14px;
+    text-align: left;
+  }
+  .cover blockquote b { color: var(--cream); font-weight: 500; }
+  .steak-emoji { font-size: 2.6rem; animation: sizzle 2.4s ease-in-out infinite; display: inline-block; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: linear-gradient(135deg, var(--wine-bright), var(--wine));
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 8px 26px rgba(163, 42, 58, 0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    text-align: center;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(163, 42, 58, 0.45); }
+  .btn:active { transform: translateY(1px); }
+  .btn.gold {
+    background: linear-gradient(135deg, #E2C17F, #B8924A);
+    color: #1B1210;
+    box-shadow: 0 8px 26px rgba(212, 175, 106, 0.3);
+  }
+  .btn.ghost {
+    background: transparent;
+    box-shadow: none;
+    border-color: var(--line);
+    color: var(--gold-soft);
+  }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .text-link {
+    display: block;
+    margin: 14px auto 0;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.82rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- Lesson 1: doneness ---------- */
+  .steak-stage {
+    display: flex;
+    justify-content: center;
+    margin: 18px 0 6px;
+  }
+  .steak-stage svg { width: 100%; max-width: 300px; height: auto; overflow: visible; }
+
+  .temp-readout {
+    text-align: center;
+    margin-top: 6px;
+  }
+  .temp-readout .level {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--gold-soft);
+  }
+  .temp-readout .nums {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,0.25);
+    color: var(--cream);
+  }
+  .pill b { color: var(--ember); }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    margin: 20px 0 6px;
+    background: linear-gradient(90deg, #8E1630, #C6384C, #D98C80, #B89482, #8C7466);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 3px solid var(--gold);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    cursor: grab;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 3px solid var(--gold);
+    cursor: grab;
+  }
+  .scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  .tip {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(212, 175, 106, 0.07);
+    border: 1px dashed rgba(212, 175, 106, 0.35);
+    font-size: 0.9rem;
+    color: var(--cream);
+  }
+  .tip b { color: var(--gold-soft); }
+
+  /* ---------- Lesson 2: flip cards ---------- */
+  .rules { display: grid; gap: 12px; margin-top: 20px; }
+  .rule {
+    perspective: 900px;
+    cursor: pointer;
+    min-height: 118px;
+  }
+  .rule-inner {
+    position: relative;
+    width: 100%;
+    min-height: 118px;
+    transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+    transform-style: preserve-3d;
+  }
+  .rule.flipped .rule-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--line);
+  }
+  .face.front { background: rgba(0,0,0,0.28); }
+  .face.back {
+    background: linear-gradient(135deg, rgba(122,31,43,0.55), rgba(42,30,26,0.9));
+    transform: rotateY(180deg);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .face .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold);
+    min-width: 34px;
+  }
+  .face .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .face .hint { font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .progress-note { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 14px; }
+
+  /* ---------- The ask ---------- */
+  .ask-quote {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.98rem;
+    margin-top: 14px;
+  }
+  .ask-quote span { color: var(--gold-soft); }
+  .big-ask {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    text-align: center;
+    font-size: 1.9rem;
+    margin-top: 14px;
+    line-height: 1.2;
+  }
+  .venue {
+    margin-top: 22px;
+    padding: 20px 18px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--line);
+  }
+  .venue .vname {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--gold-soft);
+    text-align: center;
+  }
+  .venue .vaddr { text-align: center; font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+  .itinerary { list-style: none; margin-top: 16px; display: grid; gap: 12px; }
+  .itinerary li { display: flex; gap: 12px; font-size: 0.9rem; }
+  .itinerary .ic { font-size: 1.3rem; line-height: 1.3; }
+  .itinerary b { color: var(--cream); }
+  .itinerary span.d { color: var(--muted); }
+
+  .order-line {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .order-line b { color: var(--ember); }
+
+  .nights { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .night {
+    padding: 14px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,0.25);
+    color: var(--cream);
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .night.full { grid-column: 1 / -1; }
+  .night:hover { border-color: var(--gold); }
+  .night.selected {
+    background: linear-gradient(135deg, rgba(212,175,106,0.25), rgba(212,175,106,0.08));
+    border-color: var(--gold);
+    color: var(--gold-soft);
+    box-shadow: 0 0 0 1px var(--gold) inset;
+  }
+  .pick-label { text-align: center; margin-top: 20px; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+
+  /* ---------- Ticket ---------- */
+  .ticket {
+    background: var(--cream);
+    color: #2A1E1A;
+    border-radius: 16px;
+    padding: 26px 22px;
+    text-align: center;
+    position: relative;
+    animation: rise 0.6s ease-out both;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .ticket::before, .ticket::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 26px; height: 26px;
+    background: var(--char);
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  .ticket::before { left: -13px; }
+  .ticket::after { right: -13px; }
+  .ticket .t-eyebrow { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--wine); font-weight: 700; }
+  .ticket .t-names { font-family: 'Great Vibes', cursive; font-size: 2.8rem; color: var(--wine); line-height: 1.1; margin-top: 6px; }
+  .ticket .t-row {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(42,30,26,0.25);
+    padding: 10px 2px;
+    font-size: 0.9rem;
+    text-align: left;
+    gap: 12px;
+  }
+  .ticket .t-row:first-of-type { margin-top: 14px; }
+  .ticket .t-row span:first-child { color: #7A6A5C; }
+  .ticket .t-row span:last-child { font-weight: 700; text-align: right; }
+  .ticket .t-foot { margin-top: 14px; font-size: 0.85rem; color: #5A4A3E; }
+  .ticket .t-foot b { color: var(--wine); }
+  .ticket .maps { margin-top: 16px; }
+
+  .rain {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .footer-msg {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .footer-msg span { color: var(--wine-bright); }
+
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes sizzle {
+    0%, 100% { transform: rotate(-4deg) scale(1); }
+    50% { transform: rotate(4deg) scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<main class="wrap">
+
+  <!-- ===== Cover ===== -->
+  <section class="card cover" id="cover">
+    <div class="eyebrow">A private lesson</div>
+    <div class="for">prepared for</div>
+    <div class="name">Sarah</div>
+    <div class="steak-emoji">🥩</div>
+    <div class="divider">✦</div>
+    <div class="course">Steak 101</div>
+    <blockquote>
+      You said: <b>“Teach me something about cooking steak.”</b><br>
+      You also said: <b>“Win me over by asking me out instead of endless messaging.”</b><br>
+      So I made a page that does both.
+    </blockquote>
+    <button class="btn" onclick="goTo('lesson1')">Class is in session</button>
+  </section>
+
+  <!-- ===== Lesson 1 ===== -->
+  <section class="card hidden" id="lesson1">
+    <div class="eyebrow">Lesson 1 of 3</div>
+    <h2>The Pull Temperature</h2>
+    <p class="lead">Slide to how you like yours. Pay attention to the second number.</p>
+
+    <div class="steak-stage">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <defs>
+          <radialGradient id="centerGrad" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" id="cStop0" stop-color="#C6384C"/>
+            <stop offset="100%" id="cStop1" stop-color="#A82C40"/>
+          </radialGradient>
+          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3"/>
+          </filter>
+        </defs>
+        <!-- plate shadow -->
+        <ellipse cx="150" cy="172" rx="120" ry="10" fill="rgba(0,0,0,0.45)" filter="url(#soft)"/>
+        <!-- crust -->
+        <path d="M40,95 C30,45 95,20 160,24 C235,28 280,60 268,105 C258,150 200,168 140,165 C80,162 48,140 40,95 Z" fill="#4A2A1C"/>
+        <path d="M40,95 C30,45 95,20 160,24 C235,28 280,60 268,105 C258,150 200,168 140,165 C80,162 48,140 40,95 Z" fill="none" stroke="#2E1A11" stroke-width="3"/>
+        <!-- fat cap -->
+        <path d="M60,60 C90,30 150,24 200,32" fill="none" stroke="#E9D9BE" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+        <!-- gray band -->
+        <ellipse id="band" cx="154" cy="96" rx="104" ry="58" fill="#8C6F62"/>
+        <!-- center -->
+        <ellipse id="center" cx="154" cy="96" rx="94" ry="50" fill="url(#centerGrad)"/>
+        <!-- grain lines -->
+        <g stroke="rgba(0,0,0,0.12)" stroke-width="1.2" fill="none">
+          <path d="M80,80 C120,70 180,72 230,86"/>
+          <path d="M75,98 C120,90 185,92 236,104"/>
+          <path d="M84,116 C125,110 180,112 226,122"/>
+        </g>
+        <!-- thermometer -->
+        <g transform="translate(205,8) rotate(28)">
+          <rect x="-4" y="0" width="8" height="78" rx="4" fill="#D9D3CA"/>
+          <rect x="-11" y="-30" width="22" height="34" rx="6" fill="#2A1E1A" stroke="#D4AF6A" stroke-width="1.5"/>
+          <text id="thermoText" x="0" y="-8" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#E9D3A3">135°</text>
+        </g>
+      </svg>
+    </div>
+
+    <input type="range" id="tempSlider" min="0" max="4" step="1" value="1" aria-label="Doneness">
+    <div class="scale"><span>Rare</span><span>Med-rare</span><span>Medium</span><span>Med-well</span><span>Well</span></div>
+
+    <div class="temp-readout">
+      <div class="level" id="levelName">Medium-Rare</div>
+      <div class="nums">
+        <div class="pill">On the plate: <b id="finalTemp">135°F</b></div>
+        <div class="pill">Pull it at: <b id="pullTemp">130°F</b></div>
+      </div>
+    </div>
+
+    <div class="tip" id="tipText">
+      <b>The lesson:</b> a steak keeps cooking after it leaves the heat. That’s called <b>carryover cooking</b>, and it’s usually about 5°F. If you wait until the thermometer says your number, you’ve already overshot it. Pull early and let the rest finish the job.
+    </div>
+
+    <button class="btn" onclick="lockDoneness()">That’s how I like it</button>
+  </section>
+
+  <!-- ===== Lesson 2 ===== -->
+  <section class="card hidden" id="lesson2">
+    <div class="eyebrow">Lesson 2 of 3</div>
+    <h2>Three Rules for a Steakhouse Crust at Home</h2>
+    <p class="lead">Tap each card to flip it.</p>
+
+    <div class="rules">
+      <div class="rule" onclick="flip(this)">
+        <div class="rule-inner">
+          <div class="face front">
+            <div class="num">1</div>
+            <div><div class="title">Salt it the night before</div><div class="hint">Tap to flip</div></div>
+          </div>
+          <div class="face back">
+            Salt both sides and leave it <b>uncovered in the fridge</b> overnight. The salt seasons it all the way through, and the surface dries out. A dry surface browns. A wet one steams.
+          </div>
+        </div>
+      </div>
+
+      <div class="rule" onclick="flip(this)">
+        <div class="rule-inner">
+          <div class="face front">
+            <div class="num">2</div>
+            <div><div class="title">Hot pan, then butter</div><div class="hint">Tap to flip</div></div>
+          </div>
+          <div class="face back">
+            Cast iron, smoking hot, a little high-heat oil. Flip every minute or so for an even crust. For the last minute, add <b>butter, smashed garlic and thyme</b>, tilt the pan and spoon it over the top.
+          </div>
+        </div>
+      </div>
+
+      <div class="rule" onclick="flip(this)">
+        <div class="rule-inner">
+          <div class="face front">
+            <div class="num">3</div>
+            <div><div class="title">Rest it, then slice it right</div><div class="hint">Tap to flip</div></div>
+          </div>
+          <div class="face back">
+            Let it rest <b>5 to 10 minutes</b> so the juices stay in the steak instead of on the cutting board. Then slice <b>against the grain</b>, across the lines in the meat, so every bite is tender.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-note" id="flipNote">0 of 3 flipped</div>
+    <button class="btn" id="toExam" onclick="goTo('lesson3')" disabled>On to the final exam</button>
+  </section>
+
+  <!-- ===== Lesson 3: the ask ===== -->
+  <section class="card hidden" id="lesson3">
+    <div class="eyebrow">Lesson 3 of 3 · The Final Exam</div>
+    <h2>It’s a Field Trip</h2>
+    <p class="ask-quote">You said to win you over by <span>asking you out instead of endless messaging.</span></p>
+    <div class="big-ask">So I’m asking.<br>Dinner with me?</div>
+
+    <div class="venue">
+      <div class="vname">Bern’s Steak House</div>
+      <div class="vaddr">1208 S Howard Ave · South Tampa</div>
+      <ul class="itinerary">
+        <li><span class="ic">🥩</span><span><b>Dinner.</b> <span class="d">They age their own beef in-house and the menu lets you choose the thickness of your cut. Best classroom in Tampa.</span></span></li>
+        <li><span class="ic">👨‍🍳</span><span><b>The kitchen tour.</b> <span class="d">After dinner they walk you through the kitchen, so you can see the lesson done by people who do it every night.</span></span></li>
+        <li><span class="ic">🍷</span><span><b>The wine cellar.</b> <span class="d">One of the biggest wine collections in the world. A glass of white is on me.</span></span></li>
+        <li><span class="ic">🍰</span><span><b>Dessert upstairs.</b> <span class="d">The Harry Waugh Dessert Room, little private booths, a whole menu of just desserts.</span></span></li>
+      </ul>
+    </div>
+
+    <div class="order-line">Your steak: <b id="orderDoneness">Medium-Rare</b> (I was paying attention). Doors will be opened.</div>
+
+    <div class="pick-label">Pick a night</div>
+    <div class="nights">
+      <button class="night" onclick="pickNight(this)">This Friday</button>
+      <button class="night" onclick="pickNight(this)">This Saturday</button>
+      <button class="night" onclick="pickNight(this)">Next weekend</button>
+      <button class="night" onclick="pickNight(this)">A weeknight</button>
+      <button class="night full" onclick="pickNight(this)">You name it, I’ll make it work</button>
+    </div>
+
+    <button class="btn gold" id="yesBtn" onclick="sayYes()" disabled>Yes, I’m in</button>
+    <button class="text-link" onclick="rainCheck()">Not this time</button>
+  </section>
+
+  <!-- ===== Yes: the ticket ===== -->
+  <section class="ticket hidden" id="ticket">
+    <div class="t-eyebrow">Reservation for two</div>
+    <div class="t-names">Sarah &amp; Eddie</div>
+    <div class="t-row"><span>Where</span><span>Bern’s Steak House</span></div>
+    <div class="t-row"><span>When</span><span id="tNight">This Friday</span></div>
+    <div class="t-row"><span>Your steak</span><span id="tDoneness">Medium-Rare</span></div>
+    <div class="t-row"><span>Dress code</span><span>Date night</span></div>
+    <div class="t-foot">You passed Steak 101. 🎓<br><b>Screenshot this and send it to me</b>, and I’ll take care of the rest.</div>
+    <a class="btn maps" href="https://www.google.com/maps/search/?api=1&query=Bern%27s+Steak+House+1208+S+Howard+Ave+Tampa+FL" target="_blank" rel="noopener">📍 See it on the map</a>
+  </section>
+
+  <!-- ===== Rain check ===== -->
+  <section class="card hidden rain" id="rain">
+    <h2>Totally fair.</h2>
+    <p class="lead">Thanks for reading this far. Keep the steak tips, they work.<br>Enjoy Tampa. 🥂</p>
+    <button class="text-link" onclick="undoRain()">Wait, I changed my mind</button>
+  </section>
+
+  <div class="footer-msg">Eddie &amp; Sarah’s steak date <span>♥</span></div>
+</main>
+
+<script>
+  const LEVELS = [
+    { name: 'Rare',        final: 125, center: ['#9E1A33', '#86152B'], band: 0.94,
+      note: 'Cool red center. Bold choice. Pull it at <b>120°F</b> and it lands right at 125°F after resting.' },
+    { name: 'Medium-Rare', final: 135, center: ['#C6384C', '#A82C40'], band: 0.88,
+      note: 'The steakhouse standard: warm red center, most of the juice, rendered fat. Pull it at <b>130°F</b>. It keeps cooking about 5°F after it leaves the heat (that’s <b>carryover cooking</b>), so if you wait for 135°F, you’ve already gone past it.' },
+    { name: 'Medium',      final: 145, center: ['#D98C80', '#C77468'], band: 0.78,
+      note: 'Warm pink center, a little firmer. Pull it at <b>140°F</b>. Thicker steaks carry over more, so pull a big ribeye a few degrees earlier.' },
+    { name: 'Medium-Well', final: 150, center: ['#C3A08F', '#A98675'], band: 0.66,
+      note: 'Just a hint of pink. Pull it at <b>145°F</b>. Butter-basting at the end keeps it from drying out.' },
+    { name: 'Well Done',   final: 160, center: ['#9A7F70', '#8A7062'], band: 0.5,
+      note: 'No judgment here (okay, a little). Pull it at <b>155°F</b>, cook it lower and slower so the outside doesn’t burn first, and rest it longer.' }
+  ];
+
+  let chosen = 1;
+  let selectedNight = null;
+  let flipped = new Set();
+
+  const slider = document.getElementById('tempSlider');
+  slider.addEventListener('input', () => renderLevel(+slider.value));
+
+  function renderLevel(i) {
+    const L = LEVELS[i];
+    chosen = i;
+    document.getElementById('levelName').textContent = L.name;
+    document.getElementById('finalTemp').textContent = L.final + '°F';
+    document.getElementById('pullTemp').textContent = (L.final - 5) + '°F';
+    document.getElementById('thermoText').textContent = (L.final - 5) + '°';
+    document.getElementById('cStop0').setAttribute('stop-color', L.center[0]);
+    document.getElementById('cStop1').setAttribute('stop-color', L.center[1]);
+    const c = document.getElementById('center');
+    c.setAttribute('rx', (104 * L.band).toFixed(1));
+    c.setAttribute('ry', (58 * L.band).toFixed(1));
+    document.getElementById('tipText').innerHTML = '<b>The lesson:</b> ' + L.note;
+  }
+
+  function goTo(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('hidden');
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  }
+
+  function lockDoneness() {
+    const name = LEVELS[chosen].name;
+    document.getElementById('orderDoneness').textContent = name;
+    document.getElementById('tDoneness').textContent = name;
+    goTo('lesson2');
+  }
+
+  function flip(card) {
+    card.classList.toggle('flipped');
+    const idx = [...document.querySelectorAll('.rule')].indexOf(card);
+    flipped.add(idx);
+    document.getElementById('flipNote').textContent =
+      flipped.size < 3 ? `${flipped.size} of 3 flipped` : 'All three. You’re ready.';
+    if (flipped.size === 3) document.getElementById('toExam').disabled = false;
+  }
+
+  function pickNight(btn) {
+    document.querySelectorAll('.night').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedNight = btn.textContent.trim();
+    document.getElementById('yesBtn').disabled = false;
+  }
+
+  function sayYes() {
+    if (!selectedNight) return;
+    document.getElementById('tNight').textContent =
+      selectedNight.startsWith('You name it') ? 'Your call' : selectedNight;
+    document.getElementById('rain').classList.add('hidden');
+    goTo('ticket');
+    launchConfetti();
+  }
+
+  function rainCheck() {
+    document.getElementById('ticket').classList.add('hidden');
+    goTo('rain');
+  }
+
+  function undoRain() {
+    document.getElementById('rain').classList.add('hidden');
+    document.getElementById('lesson3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const colors = ['#D4AF6A', '#E9D3A3', '#A32A3A', '#F6EEDF', '#E0703A', '#7A1F2B'];
+    const parts = [];
+    for (let i = 0; i < 110; i++) {
+      parts.push({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 220,
+        y: canvas.height * 0.55,
+        vx: (Math.random() - 0.5) * 13,
+        vy: -Math.random() * 15 - 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 6 + 3,
+        rot: Math.random() * 360,
+        spin: (Math.random() - 0.5) * 12,
+        life: 1
+      });
+    }
+    let frame = 0;
+    (function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      parts.forEach(p => {
+        if (p.life <= 0) return;
+        alive = true;
+        p.x += p.vx; p.vy += 0.26; p.y += p.vy;
+        p.rot += p.spin; p.life -= 0.011;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      });
+      if (alive && ++frame < 220) requestAnimationFrame(tick);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    })();
+  }
+
+  renderLevel(1);
+</script>
+</body>
+</html>
