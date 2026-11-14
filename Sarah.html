@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steak 101 for Sarah 🔥</title>
+<meta name="robots" content="noindex, nofollow">
 <meta name="description" content="A private steak lesson, a churrasco dinner, and an after-dinner pick.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Great+Vibes&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -537,6 +538,58 @@
     color: var(--ember);
   }
 
+  /* ---------- Photos ---------- */
+  .duo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 18px 0 6px;
+    position: relative;
+  }
+  .duo img {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+    background: var(--card);
+  }
+  .duo img.her { transform: rotate(-4deg); z-index: 2; }
+  .duo img.him { margin-left: -22px; transform: rotate(4deg); }
+  .duo .badge {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--char);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    animation: sizzle 2.4s ease-in-out infinite;
+  }
+  .hello {
+    font-size: 0.9rem;
+    color: var(--cream);
+    margin-top: 16px;
+  }
+  .hello b { color: var(--gold-soft); }
+  .t-duo { display: flex; justify-content: center; margin-bottom: 8px; }
+  .t-duo img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--wine);
+  }
+  .t-duo img + img { margin-left: -12px; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -553,7 +606,12 @@
     <div class="eyebrow">A private lesson</div>
     <div class="for">prepared for</div>
     <div class="name">Sarah</div>
-    <div class="steak-emoji">🥩</div>
+    <div class="duo">
+      <img class="her" src="images/sarah/sarah.jpg" alt="Sarah">
+      <img class="him" src="images/sarah/eddie.jpg" alt="Eddie">
+      <div class="badge">🥩</div>
+    </div>
+    <p class="hello">Hi Sarah, it’s <b>Eddie</b> from Bumble. 👋<br>I made this page just for you.</p>
     <div class="divider">✦</div>
     <div class="course">Steak 101</div>
     <div class="for" style="margin-top:4px">Churrasco Edition 🔥</div>
@@ -752,6 +810,10 @@
 
   <!-- ===== Yes: the ticket ===== -->
   <section class="ticket hidden" id="ticket">
+    <div class="t-duo">
+      <img src="images/sarah/sarah.jpg" alt="Sarah">
+      <img src="images/sarah/eddie.jpg" alt="Eddie">
+    </div>
     <div class="t-eyebrow">Reservation for two</div>
     <div class="t-names">Sarah &amp; Eddie</div>
     <div class="t-row"><span>Dinner</span><span>Texas de Brazil</span></div>
