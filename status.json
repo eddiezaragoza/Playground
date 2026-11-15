@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T07:54:16.283Z",
+  "generatedAt": "2026-11-15T15:10:02.553Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
-      "lastLiveAt": "2026-11-15T07:54:16.283Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
+      "lastLiveAt": "2026-11-15T15:10:02.553Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-14T11:39:45.634Z",
-          "lastSeenLiveAt": "2026-11-15T07:54:16.283Z"
+          "lastSeenLiveAt": "2026-11-15T15:10:02.553Z"
         },
         {
           "videoId": "dJJchE55wiE",
@@ -145,15 +145,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
-      "lastLiveAt": "2026-11-15T07:54:16.283Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
+      "lastLiveAt": "2026-11-15T15:10:02.553Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-13T18:43:01.394Z",
-          "lastSeenLiveAt": "2026-11-15T07:54:16.283Z"
+          "lastSeenLiveAt": "2026-11-15T15:10:02.553Z"
         },
         {
           "videoId": "ibD8T15MXgs",
@@ -245,7 +245,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -253,7 +253,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -288,11 +288,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "TcGM4SxyYUI",
+        "title": "EN VIVO | Papa León XIV en Perú: Encuentro con los fieles en Saqsaywaman | 15 noviembre 2026",
+        "url": "https://www.youtube.com/watch?v=TcGM4SxyYUI",
+        "thumbnail": "https://i.ytimg.com/vi/TcGM4SxyYUI/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
-      "lastLiveAt": "2026-11-14T17:18:11.583Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
+      "lastLiveAt": "2026-11-15T15:10:02.553Z",
       "history": [
+        {
+          "videoId": "TcGM4SxyYUI",
+          "title": "EN VIVO | Papa León XIV en Perú: Encuentro con los fieles en Saqsaywaman | 15 noviembre 2026",
+          "url": "https://www.youtube.com/watch?v=TcGM4SxyYUI",
+          "startedAt": "2026-11-15T15:10:02.553Z",
+          "lastSeenLiveAt": "2026-11-15T15:10:02.553Z"
+        },
         {
           "videoId": "PI2__I2wYys",
           "title": "EN VIVO | Papa León XIV en Perú: Santa Misa en Santa Cruz de Succhabamba, Cajamarca | 14 nov. 2026",
@@ -446,7 +459,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T07:54:16.283Z",
+      "checkedAt": "2026-11-15T15:10:02.553Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
