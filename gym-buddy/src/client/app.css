@@ -140,3 +140,18 @@ body.sheet-open { overflow: hidden; }
 .timer-time { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .timer button { height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); }
 [hidden] { display: none !important; }
+
+/* exercise timers (timed targets) */
+.ex-timer { margin-top: 10px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #0d0f13; display: grid; gap: 6px; text-align: center; }
+.ex-timer-label { color: var(--muted); font-size: 14px; font-weight: 700; letter-spacing: .03em; }
+.ex-timer-time { font-size: 64px; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ex-timer.running { border-color: var(--accent); background: #10291a; }
+.ex-timer.running .ex-timer-time, .ex-timer.running .ex-timer-label { color: var(--accent); }
+.ex-timer.running.rest { border-color: var(--warn); background: #2b1d10; }
+.ex-timer.running.rest .ex-timer-time, .ex-timer.running.rest .ex-timer-label { color: var(--warn); }
+.ex-timer.paused .ex-timer-time { opacity: .55; }
+.ex-timer-btns { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+.ex-timer-start, .ex-timer-pause { height: 48px; min-width: 120px; padding: 0 16px; border-radius: 12px; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 17px; }
+.ex-timer-start:disabled { opacity: .4; }
+.ex-timer-pause { background: var(--card); color: var(--text); border: 1px solid var(--line); }
+.ex-timer-btns .small { height: 48px; border-radius: 12px; }

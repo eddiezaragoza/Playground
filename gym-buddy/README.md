@@ -52,6 +52,13 @@ For local development, copy `.dev.vars.example` to `.dev.vars` (gitignored) and 
   {"name":"DB RDL","sets":3,"reps":"10","weight":"30s","anchor":true,"cue":"hips back, flat back"}]}]}
 ```
 
+- **Timed targets.** When `reps` is a time, the exercise gets a Start button and a big countdown (pause, resume, stop):
+  `"2 min"`, `"60s"`, `"1:30"` run one countdown per set. `"45s each"` (or `each side` / `per leg`) runs left, then a
+  5s switch, then right. `"3 min hard / 2 min walk"` runs a HARD/WALK interval for every set (`Round 2/4 - HARD`).
+  It beeps and vibrates at 3-2-1 and at each phase change, keeps the screen awake, and when a set's time is done it
+  ticks the set and puts the planned time in its reps box (`3 min/2 min` for intervals, to fit the 20-character save
+  cap). Single and each-side timers start the block's rest afterwards, the same as tapping ✓. Intervals don't, because
+  they end on their own rest phase. The save format is unchanged.
 - **Workout** is written one line per exercise: `DB RDL 3x10 @ 30s` when every set matched, `DB RDL 10@30s, 10@35s`
   when they didn't, and `DB RDL (skipped)` when no set was ticked.
 - **Anchor Lifts** is the top completed set (`DB RDL 35s x10`) for each anchor lift: the heaviest weight, with the most reps breaking a

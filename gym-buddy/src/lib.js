@@ -19,6 +19,52 @@ export function extractPlanJson(text) {
   return text.slice(start, end + 1);
 }
 
+// ---------- timed targets ----------
+// "2 min", "60s", "90 sec", "1:30", "1.5 min" -> seconds. Anything else -> null.
+const DURATION_RE = /^(?:(\d{1,2}):([0-5]\d)|(\d+(?:\.\d+)?)\s*(s|secs?|seconds?|m|mins?|minutes?))$/i;
+function parseDuration(text) {
+  const m = DURATION_RE.exec(String(text).trim());
+  if (!m) return null;
+  const sec = m[1] != null ? Number(m[1]) * 60 + Number(m[2]) : Math.round(Number(m[3]) * (/^s/i.test(m[4]) ? 1 : 60));
+  return sec >= 1 && sec <= 3600 ? sec : null;
+}
+const fmtDuration = (sec) => (sec % 60 === 0 ? `${sec / 60} min` : sec < 60 ? `${sec}s` : `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`);
+
+export const SWITCH_SEC = 5;
+
+// Reps text -> a timer the page can run, or null for ordinary reps ("10", "8-12", "AMRAP").
+//   "60s"                     -> {kind: 'single', sec: 60}
+//   "45s each" / "45s each side" -> {kind: 'each', sec: 45, gap: 5}  (left, switch, right)
+//   "3 min hard / 2 min walk" -> {kind: 'interval', work: 180, rest: 120, workLabel: 'HARD', restLabel: 'WALK'}
+// fill is what goes in the reps box when the timer finishes (kept under the 20-char save cap).
+export function parseTimer(reps) {
+  const text = str(reps, 40).replace(/\s+/g, ' ');
+  if (!text) return null;
+  const single = parseDuration(text);
+  if (single) return { kind: 'single', sec: single, fill: text.slice(0, 20) };
+  const each = /^(.+?)\s+(?:each|per)(?:\s+(?:side|leg|arm|way))?$/i.exec(text);
+  if (each) {
+    const sec = parseDuration(each[1]);
+    if (sec) return { kind: 'each', sec, gap: SWITCH_SEC, fill: text.slice(0, 20) };
+  }
+  const parts = text.split('/').map((p) => p.trim());
+  if (parts.length === 2) {
+    const phase = (p) => {
+      const m = /^(.*?\d(?:\s*(?:s|secs?|seconds?|m|mins?|minutes?))?)(?:\s+([a-z][a-z ]{0,15}))?$/i.exec(p);
+      const sec = m && parseDuration(m[1]);
+      return sec ? { sec, label: (m[2] || '').trim().toUpperCase() } : null;
+    };
+    const w = phase(parts[0]), r = phase(parts[1]);
+    if (w && r) {
+      return {
+        kind: 'interval', work: w.sec, rest: r.sec, workLabel: w.label || 'WORK', restLabel: r.label || 'REST',
+        fill: `${fmtDuration(w.sec)}/${fmtDuration(r.sec)}`.slice(0, 20),
+      };
+    }
+  }
+  return null;
+}
+
 export function normalizePlan(raw) {
   const plan = typeof raw === 'string' ? JSON.parse(extractPlanJson(raw)) : raw;
   if (!plan || !Array.isArray(plan.blocks)) throw new Error('Plan JSON needs a "blocks" array');
@@ -29,10 +75,11 @@ export function normalizePlan(raw) {
       exercises: (Array.isArray(b && b.exercises) ? b.exercises : []).map((e, ei) => ({
         name: str(e && e.name, 80) || `Exercise ${ei + 1}`,
         sets: int(e && e.sets, 1, MAX_SETS, 1),
-        reps: str(e && e.reps, 20),
+        reps: str(e && e.reps, 40), // read cap only; saved reps stay capped at 20 in cleanResults
         weight: str(e && e.weight, 20),
         anchor: !!(e && e.anchor),
         cue: str(e && e.cue, 200),
+        timer: parseTimer(e && e.reps),
       })),
     })),
   };

@@ -74,6 +74,7 @@
     if (!state?.startedAt || state.pausedAt) return;
     state.pausedAt = Date.now();
     stopRest();
+    pauseExTimer();
     persist();
     if (wakeLock) wakeLock.release().catch(() => {});
     tickClock();
@@ -162,12 +163,195 @@
     renderRest();
   });
 
+  // ---------- exercise timers (timed targets: "60s", "45s each", "3 min hard / 2 min walk") ----------
+  // One runs at a time. Phases are timestamp-based so a backgrounded tab catches up instead of drifting.
+  let rowRefs = []; // [bi][ei][si] = {row, reps, check}
+  const exPanels = new Map(); // "bi:ei" -> panel refs
+  let exTimer = null; // {key, bi, ei, phases, i, endAt, remaining (while paused), lastSec, handle}
+  const fmt = (sec) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+  const buzz = (pattern) => { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch { /* unsupported */ } };
+
+  function tone(freq, dur, count = 1, gap = 0.18) {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      for (let n = 0; n < count; n++) {
+        const t = audio.currentTime + n * (dur + gap);
+        const o = audio.createOscillator(); const g = audio.createGain();
+        o.frequency.value = freq; o.connect(g); g.connect(audio.destination);
+        g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+        o.start(t); o.stop(t + dur + 0.01);
+      }
+    } catch { /* no audio */ }
+  }
+  const countBeep = () => { tone(660, 0.12); buzz(80); };
+  const phaseBeep = () => { tone(990, 0.22, 2, 0.08); buzz([250, 100, 250]); };
+  const doneBeep = () => { tone(880, 0.25, 3, 0.1); buzz([300, 150, 300, 150, 300]); };
+
+  // Phases for the next undone set (single / each), or every remaining round (interval).
+  function buildPhases(e, bi, ei) {
+    const t = e.timer;
+    const sets = state.results[bi][ei];
+    const first = sets.findIndex((x) => !x.done);
+    if (first < 0) return [];
+    const n = sets.length;
+    if (t.kind === 'single') return [{ sec: t.sec, label: `Set ${first + 1}/${n}`, set: first, last: true }];
+    if (t.kind === 'each') {
+      return [
+        { sec: t.sec, label: `Set ${first + 1}/${n} - LEFT`, set: first },
+        { sec: t.gap, label: 'SWITCH', set: first, gap: true },
+        { sec: t.sec, label: `Set ${first + 1}/${n} - RIGHT`, set: first, last: true },
+      ];
+    }
+    const out = [];
+    for (let si = first; si < n; si++) {
+      if (sets[si].done) continue;
+      // The round counts once the work phase is done; the walk is recovery.
+      out.push({ sec: t.work, label: `Round ${si + 1}/${n} - ${t.workLabel}`, set: si, last: true });
+      out.push({ sec: t.rest, label: `Round ${si + 1}/${n} - ${t.restLabel}`, set: si, gap: true });
+    }
+    return out;
+  }
+
+  function exTimerPanel(b, e, bi, ei) {
+    const key = `${bi}:${ei}`;
+    const time = h('div', { class: 'ex-timer-time', role: 'timer', 'aria-live': 'off' });
+    const label = h('div', { class: 'ex-timer-label', 'aria-live': 'polite' });
+    const start = h('button', { type: 'button', class: 'ex-timer-start' }, 'Start');
+    const pause = h('button', { type: 'button', class: 'ex-timer-pause', hidden: true }, 'Pause');
+    const stop = h('button', { type: 'button', class: 'small', hidden: true }, 'Stop');
+    const panel = h('div', { class: 'ex-timer' }, label, time, h('div', { class: 'ex-timer-btns' }, start, pause, stop));
+    const refs = { b, e, bi, ei, panel, time, label, start, pause, stop };
+    exPanels.set(key, refs);
+    start.addEventListener('click', () => startExTimer(refs));
+    pause.addEventListener('click', () => (exTimer?.remaining != null ? resumeExTimer() : pauseExTimer()));
+    stop.addEventListener('click', () => stopExTimer());
+    refreshExTimer(bi, ei);
+    return panel;
+  }
+
+  // Idle view: what Start will run next.
+  function refreshExTimer(bi, ei) {
+    const refs = exPanels.get(`${bi}:${ei}`);
+    if (!refs || exTimer?.key === `${bi}:${ei}`) return;
+    const phases = buildPhases(refs.e, bi, ei);
+    refs.panel.classList.remove('running', 'paused', 'rest');
+    refs.start.hidden = false; refs.pause.hidden = true; refs.stop.hidden = true;
+    if (!phases.length) {
+      refs.label.textContent = 'All sets done';
+      refs.time.textContent = '✓';
+      refs.start.textContent = 'Done';
+      refs.start.disabled = true;
+      return;
+    }
+    refs.start.disabled = false;
+    refs.start.textContent = phases[0].set > 0 ? `Start set ${phases[0].set + 1}` : 'Start';
+    refs.label.textContent = phases[0].label;
+    refs.time.textContent = fmt(phases[0].sec);
+  }
+
+  function startExTimer(refs) {
+    const phases = buildPhases(refs.e, refs.bi, refs.ei);
+    if (!phases.length) return;
+    stopExTimer();
+    stopRest(); // you're working now, not resting
+    startClock();
+    exTimer = { key: `${refs.bi}:${refs.ei}`, refs, phases, i: 0, endAt: Date.now() + phases[0].sec * 1000, remaining: null, lastSec: null, handle: setInterval(tickExTimer, 200) };
+    refs.start.hidden = true; refs.pause.hidden = false; refs.stop.hidden = false;
+    refs.pause.textContent = 'Pause';
+    phaseBeep(); // also unlocks audio inside the tap (iOS)
+    keepAwake();
+    renderExTimer();
+  }
+
+  function pauseExTimer() {
+    if (!exTimer || exTimer.remaining != null) return;
+    exTimer.remaining = Math.max(0, exTimer.endAt - Date.now());
+    exTimer.refs.pause.textContent = 'Resume';
+    renderExTimer();
+  }
+  function resumeExTimer() {
+    if (!exTimer || exTimer.remaining == null) return;
+    if (state?.pausedAt) resumeWorkout();
+    exTimer.endAt = Date.now() + exTimer.remaining;
+    exTimer.remaining = null;
+    exTimer.refs.pause.textContent = 'Pause';
+    keepAwake();
+    renderExTimer();
+  }
+  function stopExTimer() {
+    if (!exTimer) return;
+    clearInterval(exTimer.handle);
+    const { bi, ei } = exTimer.refs;
+    exTimer = null;
+    refreshExTimer(bi, ei);
+  }
+
+  // Tick a set as done with the planned time in its reps box, same as tapping ✓.
+  function completeSet(bi, ei, si, fill) {
+    const set = state.results[bi][ei][si];
+    set.done = true;
+    set.reps = fill;
+    const r = rowRefs[bi]?.[ei]?.[si];
+    if (r) { r.reps.value = fill; r.check.setAttribute('aria-pressed', 'true'); r.row.classList.add('done'); }
+    persist();
+  }
+
+  function tickExTimer() {
+    if (!exTimer || exTimer.remaining != null) return;
+    const { refs, phases } = exTimer;
+    // Advance through every phase that has ended (more than one if the tab slept).
+    while (exTimer && Date.now() >= exTimer.endAt) {
+      const p = phases[exTimer.i];
+      if (p.last) completeSet(refs.bi, refs.ei, p.set, refs.e.timer.fill);
+      exTimer.i += 1;
+      if (exTimer.i >= phases.length) {
+        doneBeep();
+        clearInterval(exTimer.handle);
+        exTimer = null;
+        refreshExTimer(refs.bi, refs.ei);
+        // Same as tapping ✓: start the block's rest. Intervals already ended on their own rest phase.
+        if (refs.b.rest_sec && refs.e.timer.kind !== 'interval') startRest(refs.b.rest_sec, refs.b.name);
+        return;
+      }
+      exTimer.endAt += phases[exTimer.i].sec * 1000;
+      exTimer.lastSec = null;
+      phaseBeep();
+    }
+    renderExTimer();
+  }
+
+  function renderExTimer() {
+    if (!exTimer) return;
+    const { refs, phases, i } = exTimer;
+    const p = phases[i];
+    const ms = exTimer.remaining != null ? exTimer.remaining : exTimer.endAt - Date.now();
+    const left = Math.max(0, Math.ceil(ms / 1000));
+    if (exTimer.remaining == null && left !== exTimer.lastSec) {
+      if (left >= 1 && left <= 3 && exTimer.lastSec != null) countBeep();
+      exTimer.lastSec = left;
+    }
+    refs.label.textContent = exTimer.remaining != null ? `${p.label} · paused` : p.label;
+    refs.time.textContent = fmt(left);
+    refs.panel.classList.add('running');
+    refs.panel.classList.toggle('paused', exTimer.remaining != null);
+    refs.panel.classList.toggle('rest', !!p.gap);
+  }
+
   // Keep the screen awake while logging.
   let wakeLock = null;
+  let wakeLockPending = false;
   async function keepAwake() {
-    try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch { /* not allowed */ }
+    if (!('wakeLock' in navigator) || wakeLock || wakeLockPending || document.visibilityState !== 'visible') return;
+    wakeLockPending = true;
+    try { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } catch { /* not allowed */ }
+    wakeLockPending = false;
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && session && !session.readOnly && !state?.pausedAt) keepAwake(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    if ((session && !session.readOnly && !state?.pausedAt) || (exTimer && exTimer.remaining == null)) keepAwake();
+    tickExTimer(); // catch up phases that ended while the screen was off
+  });
   $('pause').addEventListener('click', () => (state?.pausedAt ? resumeWorkout() : pauseWorkout()));
 
   // ---------- rendering ----------
@@ -200,6 +384,7 @@
     const weight = h('input', { type: 'text', value: set.weight, 'aria-label': `${e.name} set ${si + 1} weight`, placeholder: 'wt', autocapitalize: 'off' });
     const check = h('button', { type: 'button', class: 'check', 'aria-pressed': String(set.done), 'aria-label': `${e.name} set ${si + 1} done` }, '✓');
     const row = h('div', { class: `set${set.done ? ' done' : ''}` }, h('span', { class: 'set-label' }, `Set ${si + 1}`), reps, weight, check);
+    ((rowRefs[bi] ||= [])[ei] ||= [])[si] = { row, reps, check };
     reps.addEventListener('input', () => { set.reps = reps.value.trim(); persist(); });
     weight.addEventListener('input', () => { set.weight = weight.value.trim(); persist(); });
     check.addEventListener('click', () => {
@@ -208,6 +393,7 @@
       row.classList.toggle('done', set.done);
       startClock();
       persist();
+      refreshExTimer(bi, ei);
       if (set.done && block.rest_sec) startRest(block.rest_sec, block.name);
       keepAwake();
     });
@@ -290,6 +476,9 @@
   }
 
   function renderPlanned(s) {
+    stopExTimer();
+    rowRefs = [];
+    exPanels.clear();
     const kids = [];
     if (s.coachNote) kids.push(h('div', { class: 'card note' }, h('div', { class: 'muted' }, 'Coach note'), s.coachNote));
     if (s.planError) kids.push(h('div', { class: 'banner' }, `${s.planError} You can still log the session fields and save.`));
@@ -306,6 +495,7 @@
             howToButton(e.name)),
           h('div', { class: 'target' }, `Target ${targetText(e)}`),
           e.cue ? h('div', { class: 'cue' }, e.cue) : null,
+          e.timer ? exTimerPanel(b, e, bi, ei) : null,
           Array.from({ length: e.sets }, (_, si) => setRow(b, bi, e, ei, si)),
           exerciseExtras(e, bi, ei),
         )),
@@ -384,6 +574,7 @@
       if (!res.ok) throw new Error(data.error || `Save failed (${res.status})`);
       forget(state.id);
       stopRest();
+      stopExTimer();
       session = data.session;
       header(session);
       tickClock();
