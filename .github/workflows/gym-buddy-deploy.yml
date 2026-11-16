@@ -1,0 +1,42 @@
+# Gym Buddy auto-deploy: when main changes under gym-buddy/, run the tests and deploy the Worker.
+# Lets phone/web Claude Code sessions ship by merging a PR (they have no wrangler login of their own).
+# Repo secrets: CLOUDFLARE_API_TOKEN ("Edit Cloudflare Workers" template), CLOUDFLARE_ACCOUNT_ID.
+# Worker secrets (NOTION_TOKEN, APP_PASSWORD, COOKIE_SECRET) live in Cloudflare and are not touched by a deploy.
+name: Gym Buddy deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gym-buddy/**'
+      - '.github/workflows/gym-buddy-deploy.yml'
+  workflow_dispatch: # manual "Run workflow" button in the Actions tab
+
+concurrency:
+  group: gym-buddy-deploy
+  cancel-in-progress: false # never cut a deploy off halfway; queue the next one
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gym-buddy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: gym-buddy/package-lock.json
+      - run: npm ci
+      - name: Tests (a failure stops the deploy; the live site stays as it was)
+        run: npm test
+      - name: Deploy to Cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
