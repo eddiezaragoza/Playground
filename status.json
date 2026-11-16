@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-15T20:22:59.756Z",
+  "generatedAt": "2026-11-16T00:06:10.789Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
-      "lastLiveAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
+      "lastLiveAt": "2026-11-16T00:06:10.789Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-14T11:39:45.634Z",
-          "lastSeenLiveAt": "2026-11-15T20:22:59.756Z"
+          "lastSeenLiveAt": "2026-11-16T00:06:10.789Z"
         },
         {
           "videoId": "dJJchE55wiE",
@@ -145,15 +145,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
-      "lastLiveAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
+      "lastLiveAt": "2026-11-16T00:06:10.789Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-13T18:43:01.394Z",
-          "lastSeenLiveAt": "2026-11-15T20:22:59.756Z"
+          "lastSeenLiveAt": "2026-11-16T00:06:10.789Z"
         },
         {
           "videoId": "ibD8T15MXgs",
@@ -245,7 +245,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -253,7 +253,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -288,15 +288,9 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "live",
-        "videoId": "oOOZgXQv4ZU",
-        "title": "EN VIVO | Papa León XIV Perú: Encuentro pueblos amazónicos y Santa Misa en Pucallpa | 15 nov. 2026",
-        "url": "https://www.youtube.com/watch?v=oOOZgXQv4ZU",
-        "thumbnail": "https://i.ytimg.com/vi/oOOZgXQv4ZU/hqdefault.jpg",
-        "startedAt": null,
-        "embeddable": true
+        "state": "offline"
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
       "lastLiveAt": "2026-11-15T20:22:59.756Z",
       "history": [
         {
@@ -466,7 +460,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-15T20:22:59.756Z",
+      "checkedAt": "2026-11-16T00:06:10.789Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
