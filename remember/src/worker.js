@@ -80,6 +80,7 @@ function pageSettings(env, s) {
     subtitle: s.subtitle ?? 'Celebration of Life',
     intro: s.intro || `Share your favorite photos of ${name}. They'll be part of the slideshow at the celebration of life. Thank you for sharing your memories.`,
     approval: s.approval === '1',
+    guestShow: s.guestShow !== '0', // guests can open the slideshow from the upload page (on unless the family turns it off)
     coverVersion: s.coverVersion || '',
   };
 }
@@ -91,6 +92,7 @@ function fill(html, base, settings, origin) {
     .replaceAll('__NAME__', esc(settings.name))
     .replaceAll('__SUBTITLE__', esc(settings.subtitle))
     .replaceAll('__INTRO__', esc(settings.intro))
+    .replaceAll('__WATCH_HIDDEN__', settings.guestShow ? '' : 'hidden')
     .replaceAll('__COVER__', settings.coverVersion ? `${esc(base)}/cover?v=${esc(settings.coverVersion)}` : '')
     .replaceAll('__INITIAL__', esc([...settings.name.trim()][0] || '♥'))
     .replaceAll('__GUEST_URL__', esc(guestUrl))
@@ -103,8 +105,8 @@ function qrSvg(text) {
   qr.make();
   const n = qr.getModuleCount();
   let d = '';
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (qr.isDark(y, x)) d += `M${x + 4} ${y + 4}h1v1h-1z`;
-  const size = n + 8;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (qr.isDark(y, x)) d += `M${x + 2} ${y + 2}h1v1h-1z`;
+  const size = n + 4; // 2-module white border; the white card around it adds the rest
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges">` +
     `<rect width="${size}" height="${size}" fill="#fff"/><path fill="#000" d="${d}"/></svg>`;
 }
@@ -205,7 +207,7 @@ export default {
 
       // Slideshow data: needs the slideshow link's key (or the family's admin cookie).
       if (sub === '/api/show') {
-        const ok = safeEq(req.headers.get('X-Show-Key') || '', await showToken(env)) || (await isAdmin(req, env));
+        const ok = (await settings()).guestShow || safeEq(req.headers.get('X-Show-Key') || '', await showToken(env)) || (await isAdmin(req, env));
         if (!ok) return fail(403, 'This slideshow link is not valid. Copy it again from the admin page.');
         const s = await settings();
         const photos = (await stub.list(true)).map(({ id, ts, name, note }) => ({ id, ts, name, note }));
@@ -273,6 +275,7 @@ export default {
       if (b.subtitle !== undefined) out.subtitle = cleanText(b.subtitle, 120);
       if (b.intro !== undefined) out.intro = cleanText(b.intro, 600);
       if (b.approval !== undefined) out.approval = b.approval ? '1' : '0';
+      if (b.guestShow !== undefined) out.guestShow = b.guestShow ? '1' : '0';
       return json({ settings: pageSettings(env, await stub.setSettings(out)) });
     }
     if (sub === '/api/cover') {

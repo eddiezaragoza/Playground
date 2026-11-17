@@ -7,8 +7,8 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#f7f3ee">
 <title>Share your photos of __NAME__</title>
-<link rel="stylesheet" href="__BASE__/a/style.css">
-<script type="module" src="__BASE__/a/guest.js"></script>
+<link rel="stylesheet" href="__BASE__/a/style.css?v=4">
+<script type="module" src="__BASE__/a/guest.js?v=4"></script>
 </head>
 <body class="guest" data-base="__BASE__">
 <main class="wrap">
@@ -41,6 +41,8 @@
       <span aria-hidden="true">📷</span> Take a picture of a printed photo
     </label>
     <input id="snap" type="file" accept="image/*" capture="environment" hidden>
+
+    <a class="button secondary watch" id="watch" href="__BASE__/show" __WATCH_HIDDEN__>▶ Watch the slideshow</a>
 
     <p class="hint">You can pick many photos at once. They start sending as soon as you choose them.</p>
   </section>

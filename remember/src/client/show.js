@@ -23,7 +23,7 @@ let timer = null;
 let paused = false;
 let started = false;
 let showCaptions = params.get('captions') !== '0';
-let showQr = params.get('qr') !== '0';
+let showQr = params.has('qr') ? params.get('qr') !== '0' : Boolean(key); // guests watching on a phone don't need the QR
 let lastId = null;
 const awake = keepAwake();
 

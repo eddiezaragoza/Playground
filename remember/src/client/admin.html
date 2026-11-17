@@ -6,8 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>__NAME__ · Family page</title>
-<link rel="stylesheet" href="__BASE__/a/style.css">
-<script type="module" src="__BASE__/a/admin.js"></script>
+<link rel="stylesheet" href="__BASE__/a/style.css?v=4">
+<script type="module" src="__BASE__/a/admin.js?v=4"></script>
 </head>
 <body class="admin" data-base="__BASE__">
 <main class="wrap wide">
@@ -62,6 +62,8 @@
         <label class="field"><span>Line under the name</span><input id="s-subtitle" maxlength="120" placeholder="1958 – 2026 · Celebration of Life"></label>
         <label class="field"><span>Message to guests</span><textarea id="s-intro" maxlength="600" rows="3"></textarea></label>
         <label class="check"><input type="checkbox" id="s-approval"> Check new photos before they appear in the slideshow</label>
+        <label class="check"><input type="checkbox" id="s-guestshow"> Guests can watch the slideshow on their phones</label>
+        <p class="hint">Adds a "Watch the slideshow" button to the guest page. Hidden photos and photos waiting for you never show.</p>
         <div class="row"><button class="button small" type="submit">Save</button><span class="saved" id="saved"></span></div>
       </form>
       <div class="cover-edit">

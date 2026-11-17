@@ -68,6 +68,7 @@ textarea { resize: vertical; }
   font: 600 1rem/1.2 var(--sans); text-decoration: none; cursor: pointer; }
 .button.secondary { background: transparent; color: var(--accent); }
 #start .button.secondary, #done-actions .button.secondary { width: 100%; }
+#start .watch { margin-top: 10px; }
 .button.small { min-height: 42px; padding: 6px 14px; font-size: .92rem; }
 .button.tiny { min-height: 34px; padding: 4px 10px; font-size: .82rem; border-radius: 9px; }
 .button.danger { background: transparent; border-color: var(--bad); color: var(--bad); }
@@ -149,7 +150,7 @@ textarea { resize: vertical; }
 .caption .who { font: 600 clamp(1rem, 1.6vw, 1.6rem)/1.3 var(--serif); }
 .caption .note { font-size: clamp(.95rem, 1.3vw, 1.3rem); color: #e8e1ee; margin-top: 4px; font-style: italic; }
 .caption .note:empty { display: none; }
-.qr-corner { position: fixed; right: max(2vw, env(safe-area-inset-right, 0px)); bottom: max(3vh, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 8px 6px;
+.qr-corner { position: fixed; right: max(2vw, env(safe-area-inset-right, 0px)); bottom: max(3vh, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 4px 6px;
   background: rgb(255 255 255 / 94%); color: #1d1722; border-radius: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / 35%); }
 .qr-corner img { width: clamp(80px, 7vw, 120px); height: auto; display: block; }
 .qr-corner span { font: 600 clamp(.7rem, .8vw, .9rem)/1.2 var(--sans); white-space: nowrap; }
@@ -178,4 +179,12 @@ textarea { resize: vertical; }
   @page { size: letter; margin: .25in; }
   .sheet { max-width: none; }
   .qr-card { height: 5.2in; justify-content: center; }
+}
+
+/* slideshow on a phone (guests watching from the upload page) */
+@media (max-width: 700px) {
+  .caption { left: 3vw; right: 3vw; bottom: 3vh; max-width: none; padding: 10px 14px; }
+  .title-card .cover.big { width: 160px; height: 160px; }
+  .title-card .cover.big.initial { font-size: 4.5rem; }
+  .start-box h2 { font-size: 1.5rem; }
 }

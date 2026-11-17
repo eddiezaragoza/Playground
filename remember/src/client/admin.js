@@ -37,6 +37,7 @@ function render() {
     $('s-subtitle').value = settings.subtitle;
     $('s-intro').value = settings.intro;
     $('s-approval').checked = settings.approval;
+    $('s-guestshow').checked = settings.guestShow;
   }
   const cp = $('cover-preview');
   cp.dataset.cover = settings.coverVersion ? `${BASE}/cover?v=${settings.coverVersion}` : '';
@@ -114,7 +115,7 @@ $('settings-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   try {
     const r = await postJson('/api/settings', {
-      name: $('s-name').value, subtitle: $('s-subtitle').value, intro: $('s-intro').value, approval: $('s-approval').checked,
+      name: $('s-name').value, subtitle: $('s-subtitle').value, intro: $('s-intro').value, approval: $('s-approval').checked, guestShow: $('s-guestshow').checked,
     });
     state.settings = r.settings;
     $('saved').textContent = 'Saved ✓';

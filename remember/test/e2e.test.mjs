@@ -78,6 +78,7 @@ test('guests upload photos; the slideshow sees them with name and note', async (
   const b = await upload({ photo: PNG(), name: '', note: '' });
   assert.equal(b.status, 200);
 
+  await admin('/api/settings', { guestShow: false }); // with guest watching off, the slideshow needs its key
   let r = await fetch(`${B}/api/show`);
   assert.equal(r.status, 403, 'slideshow data needs the key');
   r = await fetch(`${B}/api/show`, { headers: { 'X-Show-Key': 'x'.repeat(43) } });
@@ -89,6 +90,7 @@ test('guests upload photos; the slideshow sees them with name and note', async (
   assert.equal(pa.name, 'Aunt Linda');
   assert.equal(pa.note, 'Lake Tahoe, 1987 <3');
   assert.ok(show.photos.find((p) => p.id === b.body.id));
+  await admin('/api/settings', { guestShow: true });
 
   r = await fetch(`${B}/p/${a.body.id}`);
   assert.equal(r.status, 200);
@@ -214,4 +216,29 @@ test('old /vicky addresses redirect to /vicki, keeping the path and query', asyn
     assert.equal(r.headers.get('location'), `${ORIGIN}${p.replace('/vicky', '/vicki')}`, p);
   }
   assert.equal((await fetch(`${ORIGIN}/vickyx`, { redirect: 'manual' })).status, 404);
+});
+
+test('guests can watch the slideshow from the upload page unless the family turns it off', async () => {
+  const r = await fetch(`${B}/api/login`, { method: 'POST', headers: { Origin: ORIGIN, 'Content-Type': 'application/json', 'CF-Connecting-IP': ip(97) }, body: JSON.stringify({ password: PASSWORD }) });
+  cookie = r.headers.get('set-cookie').split(';')[0];
+  const live = await upload({ name: 'Watch me', from: ip(8), photo: JPEG(150) });
+  const hid = await upload({ name: 'Hidden', from: ip(8), photo: JPEG(150) });
+  await admin(`/api/photo/${hid.body.id}`, { status: 'hidden' });
+  // default: on
+  let html = await (await fetch(B)).text();
+  assert.match(html, /id="watch" href="\/vicki\/show" >/);
+  let res = await fetch(`${B}/api/show`);
+  assert.equal(res.status, 200);
+  const ids = (await res.json()).photos.map((p) => p.id);
+  assert.ok(ids.includes(live.body.id));
+  assert.ok(!ids.includes(hid.body.id), 'hidden photos never show to guests');
+  // off: button hidden, key needed again
+  await admin('/api/settings', { guestShow: false });
+  html = await (await fetch(B)).text();
+  assert.match(html, /id="watch" href="\/vicki\/show" hidden>/);
+  assert.equal((await fetch(`${B}/api/show`)).status, 403);
+  const { showKey } = await state();
+  assert.equal((await fetch(`${B}/api/show`, { headers: { 'X-Show-Key': showKey } })).status, 200);
+  await admin('/api/settings', { guestShow: true });
+  assert.equal((await fetch(`${B}/api/show`)).status, 200);
 });
