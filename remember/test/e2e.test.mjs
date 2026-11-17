@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 const ORIGIN = process.env.BASE_URL || 'http://localhost:8787';
-const B = `${ORIGIN}/vicky`;
+const B = `${ORIGIN}/vicki`;
 const PASSWORD = 'test-family-password';
 const run = Math.floor(Math.random() * 200) + 20;
 const ip = (n) => `10.${run}.0.${n}`;
@@ -40,7 +40,7 @@ test('pages render and unknown paths 404', async () => {
     assert.equal(r.status, 200, p);
     assert.match(r.headers.get('content-security-policy'), /script-src 'self'/);
   }
-  assert.equal((await fetch(`${ORIGIN}/vickyx`)).status, 404);
+  assert.equal((await fetch(`${ORIGIN}/vickix`)).status, 404);
   assert.equal((await fetch(`${B}/nope`)).status, 404);
   const qr = await fetch(`${B}/qr.svg`);
   assert.equal(qr.headers.get('content-type'), 'image/svg+xml');
@@ -59,7 +59,7 @@ test('admin login: wrong password refused, right one sets a cookie', async () =>
   const set = r.headers.get('set-cookie');
   assert.match(set, /HttpOnly/);
   assert.match(set, /SameSite=Strict/);
-  assert.match(set, /Path=\/vicky/);
+  assert.match(set, /Path=\/vicki/);
   cookie = set.split(';')[0];
   const s = await state();
   assert.ok(s.showKey && s.showKey.length === 43);
@@ -180,7 +180,7 @@ test('cover photo: set, served, removed', async () => {
   assert.equal(r.status, 200);
   const { settings } = await r.json();
   assert.ok(settings.coverVersion);
-  assert.match(await (await fetch(B)).text(), /data-cover="\/vicky\/cover\?v=\d+"/);
+  assert.match(await (await fetch(B)).text(), /data-cover="\/vicki\/cover\?v=\d+"/);
   assert.equal((await (await fetch(`${B}/cover`)).arrayBuffer()).byteLength, 5000);
   assert.ok(!(await state()).photos.some((p) => p.id === '_cover'), 'cover is not one of the photos');
   const rm = new FormData();
@@ -205,4 +205,13 @@ test('one person is limited per day (12 in the test setup), others are not', asy
 test('logout clears the cookie', async () => {
   const r = await admin('/api/logout', {});
   assert.match(r.status === 200 ? 'ok' : '', /ok/);
+});
+
+test('old /vicky addresses redirect to /vicki, keeping the path and query', async () => {
+  for (const p of ['/vicky', '/vicky/show?s=8', '/vicky/admin', '/vicky/card']) {
+    const r = await fetch(`${ORIGIN}${p}`, { redirect: 'manual' });
+    assert.equal(r.status, 308, p);
+    assert.equal(r.headers.get('location'), `${ORIGIN}${p.replace('/vicky', '/vicki')}`, p);
+  }
+  assert.equal((await fetch(`${ORIGIN}/vickyx`, { redirect: 'manual' })).status, 404);
 });

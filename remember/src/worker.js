@@ -167,10 +167,16 @@ export default {
     const slug = (env.SLUG || 'vicky').toLowerCase();
     const base = `/${slug}`;
     const path = url.pathname.replace(/\/+$/, '') || '/';
+    // Old addresses (env OLD_SLUGS) keep working: 308 keeps the method and body, and browsers carry the #key along.
+    for (const old of String(env.OLD_SLUGS || '').toLowerCase().split(',').map((x) => x.trim()).filter(Boolean)) {
+      if (old !== slug && (path === `/${old}` || path.startsWith(`/${old}/`))) {
+        return Response.redirect(`${url.origin}${base}${path.slice(old.length + 1)}${url.search}`, 308);
+      }
+    }
     if (path !== base && !path.startsWith(`${base}/`)) return respond('Not found', 404, 'text/plain; charset=utf-8');
     if (!env.ADMIN_KEY) return respond('This page is not set up yet (ADMIN_KEY is missing).', 503, 'text/plain; charset=utf-8');
     const sub = path.slice(base.length) || '/';
-    const stub = env.MEMORIAL.get(env.MEMORIAL.idFromName(slug));
+    const stub = env.MEMORIAL.get(env.MEMORIAL.idFromName((env.STORE || slug).toLowerCase()));
     const settings = async () => pageSettings(env, await stub.getSettings());
     const method = req.method;
 
