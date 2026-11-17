@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>__NAME__ · Family page</title>
+<link rel="stylesheet" href="__BASE__/a/style.css">
+<script type="module" src="__BASE__/a/admin.js"></script>
+</head>
+<body class="admin" data-base="__BASE__">
+<main class="wrap wide">
+  <header class="admin-head">
+    <div>
+      <p class="kicker">Family page</p>
+      <h1>__NAME__</h1>
+    </div>
+    <button type="button" id="logout" class="button small secondary" hidden>Sign out</button>
+  </header>
+
+  <section class="card narrow" id="login" hidden>
+    <h2>Sign in</h2>
+    <form id="login-form">
+      <label class="field"><span>Family password</span><input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="button" type="submit">Sign in</button>
+      <p class="error" id="login-error" role="alert"></p>
+    </form>
+  </section>
+
+  <div id="panel" hidden>
+    <section class="stats" id="stats"></section>
+
+    <section class="card">
+      <h2>Share and show</h2>
+      <div class="links">
+        <div>
+          <h3>Link for guests</h3>
+          <p class="mono" id="guest-url"></p>
+          <div class="row">
+            <button type="button" class="button small" id="copy-guest">Copy link</button>
+            <a class="button small secondary" href="__BASE__" target="_blank" rel="noopener">Open</a>
+            <a class="button small secondary" href="__BASE__/card" target="_blank" rel="noopener">Print QR cards</a>
+          </div>
+          <p class="hint">Text this link to family before the service so photos are in the slideshow on the day.</p>
+        </div>
+        <div>
+          <h3>Slideshow</h3>
+          <p class="hint">Open this on the computer connected to the TV or projector. Anyone with this link can watch the slideshow, so only give it to whoever runs the screen.</p>
+          <div class="row">
+            <a class="button small" id="open-show" target="_blank" rel="noopener">Open slideshow</a>
+            <button type="button" class="button small secondary" id="copy-show">Copy slideshow link</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Page details</h2>
+      <form id="settings-form" class="settings">
+        <label class="field"><span>Name</span><input id="s-name" maxlength="60" required></label>
+        <label class="field"><span>Line under the name</span><input id="s-subtitle" maxlength="120" placeholder="1958 – 2026 · Celebration of Life"></label>
+        <label class="field"><span>Message to guests</span><textarea id="s-intro" maxlength="600" rows="3"></textarea></label>
+        <label class="check"><input type="checkbox" id="s-approval"> Check new photos before they appear in the slideshow</label>
+        <div class="row"><button class="button small" type="submit">Save</button><span class="saved" id="saved"></span></div>
+      </form>
+      <div class="cover-edit">
+        <div class="cover" id="cover-preview" data-cover="__COVER__" data-initial="__INITIAL__"></div>
+        <div>
+          <h3>Cover photo</h3>
+          <p class="hint">Shown at the top of the guest page, on the QR cards and on the slideshow's title card.</p>
+          <div class="row">
+            <label class="button small" for="cover-file">Choose cover photo</label>
+            <button type="button" class="button small secondary" id="cover-remove">Remove</button>
+          </div>
+          <input type="file" id="cover-file" accept="image/*" hidden>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="photos-head">
+        <h2>Photos</h2>
+        <div class="tabs" role="tablist">
+          <button type="button" data-filter="all" class="on">All</button>
+          <button type="button" data-filter="pending">Waiting for you</button>
+          <button type="button" data-filter="hidden">Hidden</button>
+        </div>
+        <button type="button" class="button small" id="download">Download all</button>
+      </div>
+      <p class="hint" id="download-status"></p>
+      <div class="grid" id="grid"></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

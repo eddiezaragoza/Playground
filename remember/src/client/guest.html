@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#f7f3ee">
+<title>Share your photos of __NAME__</title>
+<link rel="stylesheet" href="__BASE__/a/style.css">
+<script type="module" src="__BASE__/a/guest.js"></script>
+</head>
+<body class="guest" data-base="__BASE__">
+<main class="wrap">
+  <header class="hero">
+    <div class="cover" data-cover="__COVER__" data-initial="__INITIAL__"></div>
+    <p class="kicker">In loving memory</p>
+    <h1>__NAME__</h1>
+    <p class="subtitle">__SUBTITLE__</p>
+  </header>
+
+  <section class="card" id="start">
+    <p class="intro">__INTRO__</p>
+
+    <label class="field">
+      <span>Your name <em>(optional)</em></span>
+      <input id="name" type="text" maxlength="60" autocomplete="name" placeholder="For example: Aunt Linda">
+    </label>
+    <label class="field">
+      <span>A memory or note <em>(optional)</em></span>
+      <textarea id="note" maxlength="500" rows="3" placeholder="Where was this? What do you remember?"></textarea>
+    </label>
+
+    <label class="big-button" for="pick">
+      <span class="icon" aria-hidden="true">🖼️</span>
+      <span>Choose photos from my phone</span>
+    </label>
+    <input id="pick" type="file" accept="image/*" multiple hidden>
+
+    <label class="button secondary" for="snap">
+      <span aria-hidden="true">📷</span> Take a picture of a printed photo
+    </label>
+    <input id="snap" type="file" accept="image/*" capture="environment" hidden>
+
+    <p class="hint">You can pick many photos at once. They start sending as soon as you choose them.</p>
+  </section>
+
+  <section class="card" id="progress" hidden>
+    <h2 id="status-title">Sending your photos…</h2>
+    <p id="status-text" class="status-text">Please keep this page open until it's done.</p>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div id="bar-fill"></div></div>
+    <ul id="items" class="items"></ul>
+    <div id="done-actions" hidden>
+      <label class="big-button" for="pick">
+        <span class="icon" aria-hidden="true">➕</span>
+        <span>Add more photos</span>
+      </label>
+      <button type="button" id="retry" class="button secondary" hidden>Try the failed photos again</button>
+    </div>
+  </section>
+
+  <footer class="foot">Photos only. Your photos are shared with the family and shown in the slideshow.</footer>
+</main>
+</body>
+</html>

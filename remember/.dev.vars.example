@@ -1,0 +1,4 @@
+# Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
+ADMIN_KEY=test-family-password
+# Local testing only: lowers the per-person daily upload limit so the e2e test can hit it.
+UPLOADS_PER_PERSON=12

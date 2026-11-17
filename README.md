@@ -25,6 +25,12 @@ Cloudflare Worker on the `/gym*` route, so the Notion token stays server-side, a
 secrets (`NOTION_TOKEN`, `APP_PASSWORD`, `COOKIE_SECRET`) and the Plan JSON format are in
 [gym-buddy/README.md](gym-buddy/README.md).
 
+## Remember (eddiezaragoza.com/vicky)
+
+Photo sharing and a live slideshow for a celebration of life. Guests scan a QR code and pick photos on their phone, no account
+needed, and the photos appear in a full-screen slideshow while it runs. Cloudflare Worker + Durable Object on the `/vicky*` route.
+See [remember/README.md](remember/README.md).
+
 ## Contact
 
 - Email: [edward.zaragoza@gmail.com](mailto:edward.zaragoza@gmail.com)

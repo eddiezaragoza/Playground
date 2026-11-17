@@ -1,0 +1,26 @@
+# Remember: photo sharing + live slideshow for Vicky's celebration of life, at eddiezaragoza.com/vicky
+# (the rest of the site stays on GitHub Pages). Everything is stored in one Durable Object; no R2 needed.
+# Secret is NOT in this file. Set it with: npx wrangler secret put ADMIN_KEY   (the family password)
+name = "remember"
+main = "src/worker.js"
+compatibility_date = "2026-06-01"
+workers_dev = false
+routes = [{ pattern = "eddiezaragoza.com/vicky*", zone_name = "eddiezaragoza.com" }]
+
+[vars]
+SLUG = "vicky" # must match the route above
+NAME = "Vicky" # default name; the family can change it on the admin page
+
+[[durable_objects.bindings]]
+name = "MEMORIAL"
+class_name = "Memorial"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Memorial"]
+
+# Ship the browser files as plain text strings inside the Worker bundle.
+[[rules]]
+type = "Text"
+globs = ["**/client/*.html", "**/client/*.js", "**/client/*.css"]
+fallthrough = false

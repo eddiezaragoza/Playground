@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>__NAME__ · Slideshow</title>
+<link rel="stylesheet" href="__BASE__/a/style.css">
+<script type="module" src="__BASE__/a/show.js"></script>
+</head>
+<body class="show" data-base="__BASE__">
+<div id="stage">
+  <div class="slide" id="s0"><div class="bg"></div><img class="fg" alt=""></div>
+  <div class="slide" id="s1"><div class="bg"></div><img class="fg" alt=""></div>
+  <div class="title-card" id="title-card">
+    <div class="cover big" data-cover="__COVER__" data-initial="__INITIAL__"></div>
+    <p class="kicker">In loving memory</p>
+    <h1>__NAME__</h1>
+    <p class="subtitle">__SUBTITLE__</p>
+    <p class="count" id="count"></p>
+  </div>
+</div>
+
+<div id="caption" class="caption" hidden><p class="who"></p><p class="note"></p></div>
+
+<aside id="qr" class="qr-corner">
+  <img src="__BASE__/qr.svg" alt="QR code to share photos">
+  <div><strong>Share your photos</strong><span>Scan with your phone camera<br>or visit __GUEST_URL_SHORT__</span></div>
+</aside>
+
+<div id="start" class="start-overlay">
+  <div class="start-box">
+    <h2>Slideshow for __NAME__</h2>
+    <p id="start-msg">New photos appear automatically as people share them.</p>
+    <button type="button" id="go" class="big-button">▶ Start full-screen slideshow</button>
+    <p class="keys">While it plays: <b>Space</b> pause · <b>← →</b> back / next · <b>F</b> full screen · <b>C</b> captions on/off · <b>Q</b> QR code on/off</p>
+  </div>
+</div>
+<div id="paused" class="paused" hidden>Paused · press Space to continue</div>
+</body>
+</html>
