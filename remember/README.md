@@ -1,4 +1,4 @@
-# Remember: photo sharing + live slideshow (Vicky)
+# Remember: photo sharing + live slideshow (Vicki)
 
 **Lives at https://eddiezaragoza.com/vicki** (Cloudflare Worker on the `/vicki*` route; the old `/vicky` address redirects there, and photos stay in the Durable Object named `vicky` (`STORE`); the rest of the site stays on GitHub Pages).
 Made for Cody's aunt Vicky's celebration of life: guests scan a QR code, pick photos on their phone, and the photos

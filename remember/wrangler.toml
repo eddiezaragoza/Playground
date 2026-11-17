@@ -1,4 +1,4 @@
-# Remember: photo sharing + live slideshow for Vicky's celebration of life, at eddiezaragoza.com/vicki
+# Remember: photo sharing + live slideshow for Vicki's celebration of life, at eddiezaragoza.com/vicki
 # (the rest of the site stays on GitHub Pages). Everything is stored in one Durable Object; no R2 needed.
 # Secret is NOT in this file. Set it with: npx wrangler secret put ADMIN_KEY   (the family password)
 name = "remember"
@@ -14,7 +14,7 @@ routes = [
 SLUG = "vicki" # must match the first route above
 STORE = "vicky" # name of the Durable Object holding the photos; kept as "vicky" so the URL rename keeps every photo
 OLD_SLUGS = "vicky" # comma-separated old addresses that redirect to SLUG
-NAME = "Vicky" # default name; the family can change it on the admin page
+NAME = "Vicki" # default name; the family can change it on the admin page
 
 [[durable_objects.bindings]]
 name = "MEMORIAL"
