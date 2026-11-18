@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T23:28:56.762Z",
+  "generatedAt": "2026-11-18T04:39:02.892Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
-      "lastLiveAt": "2026-11-17T23:28:56.762Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "lastLiveAt": "2026-11-18T04:39:02.892Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-14T11:39:45.634Z",
-          "lastSeenLiveAt": "2026-11-17T23:28:56.762Z"
+          "lastSeenLiveAt": "2026-11-18T04:39:02.892Z"
         },
         {
           "videoId": "dJJchE55wiE",
@@ -137,11 +137,24 @@
     },
     "vatican-news": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "03pYP2Nmreo",
+        "title": "Vatican Media Live",
+        "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+        "thumbnail": "https://i.ytimg.com/vi/03pYP2Nmreo/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
-      "lastLiveAt": "2026-11-17T16:06:18.392Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "lastLiveAt": "2026-11-18T04:39:02.892Z",
       "history": [
+        {
+          "videoId": "03pYP2Nmreo",
+          "title": "Vatican Media Live",
+          "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
+          "startedAt": "2026-11-18T04:39:02.892Z",
+          "lastSeenLiveAt": "2026-11-18T04:39:02.892Z"
+        },
         {
           "videoId": "eTI8okUHMRY",
           "title": "Pittori e mosaicisti a San Pietro nei documenti degli archivi della Basilica Vaticana.",
@@ -246,7 +259,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -254,7 +267,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -297,7 +310,7 @@
         "scheduledFor": "2026-11-18T08:45:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
       "lastLiveAt": "2026-11-16T15:54:45.542Z",
       "history": [
         {
@@ -474,7 +487,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-17T23:28:56.762Z",
+      "checkedAt": "2026-11-18T04:39:02.892Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
