@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-18T04:39:02.892Z",
+  "generatedAt": "2026-11-18T13:26:01.454Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
-      "lastLiveAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
+      "lastLiveAt": "2026-11-18T13:26:01.454Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-14T11:39:45.634Z",
-          "lastSeenLiveAt": "2026-11-18T04:39:02.892Z"
+          "lastSeenLiveAt": "2026-11-18T13:26:01.454Z"
         },
         {
           "videoId": "dJJchE55wiE",
@@ -145,15 +145,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
-      "lastLiveAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
+      "lastLiveAt": "2026-11-18T13:26:01.454Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-18T04:39:02.892Z",
-          "lastSeenLiveAt": "2026-11-18T04:39:02.892Z"
+          "lastSeenLiveAt": "2026-11-18T13:26:01.454Z"
         },
         {
           "videoId": "eTI8okUHMRY",
@@ -259,7 +259,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -267,7 +267,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -303,14 +303,14 @@
     "ewtn-espanol": {
       "current": {
         "state": "upcoming",
-        "videoId": "_8qXiBZ5KCM",
-        "title": "EN VIVO | Audiencia General del Papa León XIV desde el Vaticano | 18 de Noviembre de 2026",
-        "url": "https://www.youtube.com/watch?v=_8qXiBZ5KCM",
-        "thumbnail": "https://i.ytimg.com/vi/_8qXiBZ5KCM/hqdefault.jpg",
-        "scheduledFor": "2026-11-18T08:45:00.000Z",
+        "videoId": "Hk-4HA42iEU",
+        "title": "EN VIVO | Santa Misa del Papa León XIV por los 400 años de la dedicación de la Basílica de San Pedro",
+        "url": "https://www.youtube.com/watch?v=Hk-4HA42iEU",
+        "thumbnail": "https://i.ytimg.com/vi/Hk-4HA42iEU/hqdefault.jpg",
+        "scheduledFor": "2026-11-18T15:55:00.000Z",
         "embeddable": true
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
       "lastLiveAt": "2026-11-16T15:54:45.542Z",
       "history": [
         {
@@ -487,7 +487,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-18T04:39:02.892Z",
+      "checkedAt": "2026-11-18T13:26:01.454Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
