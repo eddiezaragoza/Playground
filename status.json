@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T10:46:33.143Z",
+  "generatedAt": "2026-11-19T19:11:04.816Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
@@ -11,15 +11,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
-      "lastLiveAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
+      "lastLiveAt": "2026-11-19T19:11:04.816Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-19T10:46:33.143Z",
-          "lastSeenLiveAt": "2026-11-19T10:46:33.143Z"
+          "lastSeenLiveAt": "2026-11-19T19:11:04.816Z"
         },
         {
           "videoId": "prdGt2_9n1w",
@@ -159,15 +159,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
-      "lastLiveAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
+      "lastLiveAt": "2026-11-19T19:11:04.816Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-18T04:39:02.892Z",
-          "lastSeenLiveAt": "2026-11-19T10:46:33.143Z"
+          "lastSeenLiveAt": "2026-11-19T19:11:04.816Z"
         },
         {
           "videoId": "eTI8okUHMRY",
@@ -273,7 +273,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -281,7 +281,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -318,7 +318,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
       "lastLiveAt": "2026-11-16T15:54:45.542Z",
       "history": [
         {
@@ -495,7 +495,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-19T10:46:33.143Z",
+      "checkedAt": "2026-11-19T19:11:04.816Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
