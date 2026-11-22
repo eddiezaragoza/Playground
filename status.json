@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2026-11-21T23:36:31.178Z",
+  "generatedAt": "2026-11-22T03:27:59.873Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
         "state": "live",
-        "videoId": "oUUVlxLX9z8",
-        "title": "Feast of Chirst the King - St Benedict's, Melbourne. Welcome!",
-        "url": "https://www.youtube.com/watch?v=oUUVlxLX9z8",
-        "thumbnail": "https://i.ytimg.com/vi/oUUVlxLX9z8/hqdefault.jpg",
+        "videoId": "qz8YE61BoXM",
+        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
-      "lastLiveAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
+      "lastLiveAt": "2026-11-22T03:27:59.873Z",
       "history": [
+        {
+          "videoId": "qz8YE61BoXM",
+          "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+          "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+          "startedAt": "2026-11-22T03:27:59.873Z",
+          "lastSeenLiveAt": "2026-11-22T03:27:59.873Z"
+        },
         {
           "videoId": "oUUVlxLX9z8",
           "title": "Feast of Chirst the King - St Benedict's, Melbourne. Welcome!",
@@ -180,15 +187,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
-      "lastLiveAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
+      "lastLiveAt": "2026-11-22T03:27:59.873Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-18T04:39:02.892Z",
-          "lastSeenLiveAt": "2026-11-21T23:36:31.178Z"
+          "lastSeenLiveAt": "2026-11-22T03:27:59.873Z"
         },
         {
           "videoId": "eTI8okUHMRY",
@@ -294,7 +301,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -302,7 +309,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -339,7 +346,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
       "lastLiveAt": "2026-11-16T15:54:45.542Z",
       "history": [
         {
@@ -516,7 +523,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-21T23:36:31.178Z",
+      "checkedAt": "2026-11-22T03:27:59.873Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
