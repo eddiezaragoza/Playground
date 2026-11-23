@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#14122b">
+<title>Twister Spinner</title>
+<style>
+  :root {
+    --bg: #14122b;
+    --panel: #1f1c40;
+    --panel-2: #2a2654;
+    --text: #ffffff;
+    --muted: #b7b3d9;
+    --red: #e53935;
+    --blue: #1e88e5;
+    --yellow: #fdd835;
+    --green: #43a047;
+    --accent: #fdd835;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-user-select: none; user-select: none;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  .hidden { display: none !important; }
+
+  /* ---------- header ---------- */
+  .logo {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 4px 0 18px;
+  }
+  .logo h1 { font-size: 30px; letter-spacing: 1px; }
+  .dots { display: flex; gap: 5px; }
+  .dots i { width: 14px; height: 14px; border-radius: 50%; display: block; }
+  .dots i:nth-child(1) { background: var(--red); }
+  .dots i:nth-child(2) { background: var(--blue); }
+  .dots i:nth-child(3) { background: var(--yellow); }
+  .dots i:nth-child(4) { background: var(--green); }
+
+  /* ---------- setup ---------- */
+  .card { background: var(--panel); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
+  .card h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 12px; }
+  .add-row { display: flex; gap: 8px; }
+  .add-row input {
+    flex: 1; min-width: 0; font-size: 18px; padding: 14px; border-radius: 12px; border: 2px solid var(--panel-2);
+    background: var(--bg); color: var(--text); -webkit-user-select: text; user-select: text;
+  }
+  .add-row input:focus { outline: none; border-color: var(--accent); }
+  .btn {
+    border: none; border-radius: 12px; font-weight: 700; font-size: 17px; padding: 14px 18px; cursor: pointer;
+    background: var(--panel-2); color: var(--text); font-family: inherit;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary { background: var(--accent); color: #1a1a1a; }
+  .btn.big { width: 100%; font-size: 22px; padding: 18px; border-radius: 16px; }
+  .btn:disabled { opacity: 0.4; }
+  .players { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    display: flex; align-items: center; gap: 8px; background: var(--panel-2); border-radius: 999px;
+    padding: 8px 8px 8px 14px; font-size: 17px; font-weight: 600;
+  }
+  .chip button {
+    border: none; background: rgba(255,255,255,0.12); color: var(--text); width: 28px; height: 28px; border-radius: 50%;
+    font-size: 16px; cursor: pointer; line-height: 1;
+  }
+  .hint { color: var(--muted); font-size: 14px; margin-top: 10px; line-height: 1.4; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .seg button {
+    border: 2px solid var(--panel-2); background: var(--bg); color: var(--text); border-radius: 14px; padding: 14px 10px;
+    font-family: inherit; cursor: pointer; text-align: left;
+  }
+  .seg button b { display: block; font-size: 17px; margin-bottom: 4px; }
+  .seg button span { font-size: 13px; color: var(--muted); line-height: 1.35; display: block; }
+  .seg button.on { border-color: var(--accent); background: var(--panel-2); }
+  .opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; font-size: 16px; }
+  .opt + .opt { border-top: 1px solid var(--panel-2); }
+  .opt small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .opt select {
+    font-size: 16px; padding: 8px 10px; border-radius: 10px; background: var(--bg); color: var(--text);
+    border: 2px solid var(--panel-2); font-family: inherit;
+  }
+  .switch { position: relative; width: 52px; height: 30px; flex: none; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch span { position: absolute; inset: 0; background: var(--panel-2); border-radius: 999px; transition: 0.2s; cursor: pointer; }
+  .switch span::after {
+    content: ""; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s;
+  }
+  .switch input:checked + span { background: var(--green); }
+  .switch input:checked + span::after { transform: translateX(22px); }
+
+  /* ---------- game ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .topbar .btn { font-size: 14px; padding: 10px 12px; }
+  .mode-tag { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+  .up-next { text-align: center; font-size: 24px; font-weight: 800; min-height: 32px; margin: 4px 0 10px; }
+  .up-next em { font-style: normal; color: var(--accent); }
+
+  .spinner-box { position: relative; width: min(82vw, 340px); aspect-ratio: 1; margin: 0 auto; }
+  .spinner-box svg { width: 100%; height: 100%; display: block; }
+  #arrow { transform-origin: 150px 150px; transition: transform 2.6s cubic-bezier(0.15, 0.85, 0.25, 1); }
+
+  .result {
+    margin: 16px auto 12px; border-radius: 20px; padding: 16px; text-align: center; min-height: 118px;
+    background: var(--panel); display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: background 0.3s;
+  }
+  .result .who { font-size: 18px; font-weight: 700; opacity: 0.9; }
+  .result .move { font-size: clamp(30px, 9vw, 44px); font-weight: 900; line-height: 1.1; margin-top: 4px; }
+  .result .move .ico { display: inline-block; }
+  .result .move .ico.flip { transform: scaleX(-1); }
+  .result.c-red { background: var(--red); }
+  .result.c-blue { background: var(--blue); }
+  .result.c-green { background: var(--green); }
+  .result.c-yellow { background: var(--yellow); color: #1a1a1a; }
+  .result.pop { animation: pop 0.35s ease-out; }
+  @keyframes pop { 0% { transform: scale(0.85); } 60% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+  .controls { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .controls .btn.primary { font-size: 24px; padding: 20px; }
+  .auto-bar { height: 6px; border-radius: 3px; background: var(--panel-2); margin-top: 10px; overflow: hidden; }
+  .auto-bar div { height: 100%; width: 0; background: var(--accent); }
+
+  .board { margin-top: 16px; }
+  .board h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin: 0 0 8px 2px; }
+  .prow {
+    display: flex; align-items: center; gap: 10px; background: var(--panel); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
+    border: 2px solid transparent; flex-wrap: wrap;
+  }
+  .prow.turn { border-color: var(--accent); }
+  .prow.out { opacity: 0.4; }
+  .prow .name { font-weight: 700; font-size: 17px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .limbs { order: 3; width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 8px; font-size: 13px; color: var(--muted); }
+  .limbs div { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .limbs i { width: 12px; height: 12px; border-radius: 50%; display: block; background: transparent; border: 2px dashed #555; }
+  .limbs i.red { background: var(--red); border: none; }
+  .limbs i.blue { background: var(--blue); border: none; }
+  .limbs i.yellow { background: var(--yellow); border: none; }
+  .limbs i.green { background: var(--green); border: none; }
+  .prow .btn { font-size: 13px; padding: 8px 10px; }
+
+  /* ---------- winner ---------- */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(10, 8, 30, 0.92); display: flex; align-items: center; justify-content: center;
+    padding: 24px; z-index: 20; text-align: center;
+  }
+  .overlay .box { max-width: 420px; width: 100%; }
+  .overlay h2 { font-size: 22px; color: var(--muted); margin-bottom: 6px; }
+  .overlay .winner { font-size: clamp(40px, 12vw, 64px); font-weight: 900; margin-bottom: 24px; }
+  .overlay .btn { width: 100%; margin-bottom: 10px; }
+  .confetti { position: fixed; top: -20px; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 21;
+    animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><div class="dots"><i></i><i></i><i></i><i></i></div><h1>Twister</h1></div>
+
+  <!-- ===== SETUP ===== -->
+  <section id="setup">
+    <div class="card">
+      <h2>Players</h2>
+      <form class="add-row" id="addForm" autocomplete="off">
+        <input id="nameInput" type="text" maxlength="16" placeholder="Add a name" enterkeyhint="done">
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <div class="players" id="playerChips"></div>
+      <p class="hint" id="playerHint">Add everyone who's playing. Turn order follows this list.</p>
+    </div>
+
+    <div class="card">
+      <h2>Mode</h2>
+      <div class="seg" id="modeSeg">
+        <button data-mode="turns"><b>Take Turns</b><span>Each spin is for one player. Everyone keeps their own spots.</span></button>
+        <button data-mode="all"><b>Everyone</b><span>One spin, everybody does the same move.</span></button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Options</h2>
+      <label class="opt">
+        <div>Say it out loud<small>Reads each spin so nobody has to look at the phone.</small></div>
+        <span class="switch"><input type="checkbox" id="optVoice"><span></span></span>
+      </label>
+      <div class="opt">
+        <div>Auto-spin<small>Spins by itself, so nobody has to leave the mat.</small></div>
+        <select id="optAuto">
+          <option value="0">Off</option>
+          <option value="8">Every 8 sec</option>
+          <option value="12">Every 12 sec</option>
+          <option value="15">Every 15 sec</option>
+          <option value="20">Every 20 sec</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn primary big" id="startBtn">Let's Play</button>
+  </section>
+
+  <!-- ===== GAME ===== -->
+  <section id="game" class="hidden">
+    <div class="topbar">
+      <button class="btn" id="backBtn">&larr; Setup</button>
+      <span class="mode-tag" id="modeTag"></span>
+      <button class="btn" id="undoBtn">Undo</button>
+    </div>
+
+    <div class="up-next" id="upNext"></div>
+
+    <div class="spinner-box">
+      <svg viewBox="0 0 300 300" id="wheel" aria-hidden="true"></svg>
+    </div>
+
+    <div class="result" id="result"><div class="who" id="resWho">Tap spin to start</div><div class="move" id="resMove"></div></div>
+
+    <div class="controls">
+      <button class="btn primary" id="spinBtn">SPIN</button>
+      <button class="btn" id="autoBtn" title="Pause or resume auto-spin">Pause</button>
+    </div>
+    <div class="auto-bar" id="autoBarWrap"><div id="autoBar"></div></div>
+
+    <div class="board">
+      <h2 id="boardTitle">Where everyone is</h2>
+      <div id="boardRows"></div>
+    </div>
+  </section>
+</div>
+
+<div class="overlay hidden" id="winOverlay">
+  <div class="box">
+    <h2>Last one standing</h2>
+    <div class="winner" id="winName"></div>
+    <button class="btn primary big" id="againBtn">Play Again</button>
+    <button class="btn big" id="winUndoBtn">Oops, undo that fall</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const COLORS = ['red', 'blue', 'yellow', 'green'];
+  const COLOR_HEX = { red: '#e53935', blue: '#1e88e5', yellow: '#fdd835', green: '#43a047' };
+  // Clockwise from the top, like the real spinner: right hand, right foot, left foot, left hand.
+  const LIMBS = ['RH', 'RF', 'LF', 'LH'];
+  const LIMB = {
+    RH: { side: 'Right', part: 'Hand', short: 'R hand', ico: '✋', flip: false },
+    RF: { side: 'Right', part: 'Foot', short: 'R foot', ico: '🦶', flip: false },
+    LF: { side: 'Left',  part: 'Foot', short: 'L foot', ico: '🦶', flip: true },
+    LH: { side: 'Left',  part: 'Hand', short: 'L hand', ico: '✋', flip: true },
+  };
+  const STORE_KEY = 'twister.setup.v1';
+  const $ = id => document.getElementById(id);
+
+  // ---------- state ----------
+  let setup = { names: [], mode: 'turns', voice: true, auto: 0 };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (saved && Array.isArray(saved.names)) setup = Object.assign(setup, saved);
+  } catch (e) { /* storage blocked: use defaults */ }
+  const saveSetup = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(setup)); } catch (e) {} };
+
+  let game = null;      // { mode, players:[{name, limbs, out}], shared, turn, last }
+  let history = [];     // snapshots for undo
+  let spinning = false;
+  let arrowDeg = 0;
+  let autoPaused = false;
+  let autoTimer = null;
+  let autoStart = 0;
+  let wakeLock = null;
+
+  const emptyLimbs = () => ({ RH: null, RF: null, LF: null, LH: null });
+  const rand = n => {
+    if (window.crypto && crypto.getRandomValues) {
+      const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  };
+
+  // ---------- setup screen ----------
+  function renderSetup() {
+    const chips = $('playerChips');
+    chips.innerHTML = '';
+    setup.names.forEach((n, i) => {
+      const c = document.createElement('div');
+      c.className = 'chip';
+      c.textContent = n;
+      const x = document.createElement('button');
+      x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'Remove ' + n);
+      x.onclick = () => { setup.names.splice(i, 1); saveSetup(); renderSetup(); };
+      c.appendChild(x);
+      chips.appendChild(c);
+    });
+    document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === setup.mode));
+    $('optVoice').checked = !!setup.voice;
+    $('optAuto').value = String(setup.auto || 0);
+    $('startBtn').disabled = setup.names.length === 0;
+  }
+
+  $('addForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = $('nameInput').value.trim();
+    if (!v) return;
+    if (setup.names.some(n => n.toLowerCase() === v.toLowerCase())) { $('nameInput').select(); return; }
+    setup.names.push(v);
+    $('nameInput').value = '';
+    saveSetup(); renderSetup();
+  });
+  document.querySelectorAll('#modeSeg button').forEach(b => b.addEventListener('click', () => {
+    setup.mode = b.dataset.mode; saveSetup(); renderSetup();
+  }));
+  $('optVoice').addEventListener('change', e => { setup.voice = e.target.checked; saveSetup(); });
+  $('optAuto').addEventListener('change', e => { setup.auto = parseInt(e.target.value, 10) || 0; saveSetup(); });
+
+  $('startBtn').addEventListener('click', () => {
+    if (!setup.names.length) return;
+    // A name typed but not added yet is almost certainly a mistake: add it.
+    const pending = $('nameInput').value.trim();
+    if (pending && !setup.names.includes(pending)) { setup.names.push(pending); $('nameInput').value = ''; saveSetup(); }
+    newGame();
+    primeSpeech();
+  });
+
+  // ---------- game ----------
+  function newGame() {
+    game = {
+      mode: setup.mode,
+      players: setup.names.map(name => ({ name, limbs: emptyLimbs(), out: false })),
+      shared: emptyLimbs(),
+      turn: 0,
+      last: null,
+    };
+    history = [];
+    autoPaused = false;
+    $('setup').classList.add('hidden');
+    $('game').classList.remove('hidden');
+    $('winOverlay').classList.add('hidden');
+    $('modeTag').textContent = game.mode === 'turns' ? 'Take Turns' : 'Everyone';
+    $('result').className = 'result';
+    $('resWho').textContent = 'Tap spin to start';
+    $('resMove').innerHTML = '';
+    requestWakeLock();
+    render();
+    stopAuto();
+  }
+
+  const active = () => game.players.filter(p => !p.out);
+  const snapshot = () => JSON.stringify(game);
+
+  function currentPlayer() {
+    if (game.mode !== 'turns') return null;
+    return game.players[game.turn];
+  }
+
+  function advanceTurn() {
+    const n = game.players.length;
+    for (let i = 1; i <= n; i++) {
+      const idx = (game.turn + i) % n;
+      if (!game.players[idx].out) { game.turn = idx; return; }
+    }
+  }
+
+  function ensureTurnOnActive() {
+    if (game.mode !== 'turns') return;
+    if (game.players[game.turn] && !game.players[game.turn].out) return;
+    advanceTurn();
+  }
+
+  // Pick a limb + color that would actually make someone move.
+  // A limb already sitting on that color is a wasted spin, so it's never offered.
+  // That also covers "don't give me left foot green twice in a row".
+  function pickMove(limbs) {
+    const options = [];
+    LIMBS.forEach(l => COLORS.forEach(c => { if (limbs[l] !== c) options.push({ limb: l, color: c }); }));
+    return options[rand(options.length)];
+  }
+
+  function spin() {
+    if (spinning || !game) return;
+    if (game.players.length > 1 && active().length <= 1) return;
+    stopAuto();
+    history.push(snapshot());
+    if (history.length > 50) history.shift();
+
+    const target = game.mode === 'turns' ? currentPlayer().limbs : game.shared;
+    const move = pickMove(target);
+    const who = game.mode === 'turns' ? currentPlayer().name : 'Everyone';
+
+    // Point the arrow at that segment, with a few full turns for drama.
+    const segIndex = LIMBS.indexOf(move.limb) * 4 + COLORS.indexOf(move.color);
+    const center = segIndex * 22.5 + 11.25;
+    const jitter = (rand(1000) / 1000 - 0.5) * 14;
+    const currentMod = ((arrowDeg % 360) + 360) % 360;
+    let delta = center + jitter - currentMod;
+    if (delta < 0) delta += 360;
+    arrowDeg += 360 * (3 + rand(2)) + delta;
+
+    spinning = true;
+    $('spinBtn').disabled = true;
+    $('result').className = 'result';
+    $('resWho').textContent = 'Spinning…';
+    $('resMove').innerHTML = '';
+    $('arrow').style.transform = 'rotate(' + arrowDeg + 'deg)';
+    tick();
+
+    setTimeout(() => {
+      spinning = false;
+      $('spinBtn').disabled = false;
+      target[move.limb] = move.color;
+      game.last = { who, limb: move.limb, color: move.color };
+      if (game.mode === 'turns') advanceTurn();
+      showResult(game.last, true);
+      render();
+      say(spokenText(game.last));
+      scheduleAuto();
+    }, 2700);
+  }
+
+  function spokenText(m) {
+    const l = LIMB[m.limb];
+    const prefix = m.who === 'Everyone' ? 'Everybody' : m.who;
+    return prefix + '. ' + l.side + ' ' + l.part.toLowerCase() + ', ' + m.color + '.';
+  }
+
+  function showResult(m, animate) {
+    const r = $('result');
+    if (!m) {
+      r.className = 'result';
+      $('resWho').textContent = 'Tap spin to start';
+      $('resMove').innerHTML = '';
+      return;
+    }
+    const l = LIMB[m.limb];
+    r.className = 'result c-' + m.color + (animate ? ' pop' : '');
+    $('resWho').textContent = m.who === 'Everyone' ? 'Everybody!' : m.who;
+    $('resMove').innerHTML = '<span class="ico' + (l.flip ? ' flip' : '') + '">' + l.ico + '</span> ' +
+      l.side + ' ' + l.part + '<br>' + m.color.toUpperCase();
+  }
+
+  function eliminate(i) {
+    if (spinning) return;
+    history.push(snapshot());
+    game.players[i].out = true;
+    ensureTurnOnActive();
+    render();
+    checkWinner();
+  }
+
+  function checkWinner() {
+    const left = active();
+    if (game.players.length > 1 && left.length === 1) {
+      stopAuto();
+      $('winName').textContent = left[0].name;
+      $('winOverlay').classList.remove('hidden');
+      say(left[0].name + ' wins!');
+      confetti();
+    } else if (game.players.length > 1 && left.length === 0) {
+      stopAuto();
+    }
+  }
+
+  function undo() {
+    if (spinning || !history.length) return;
+    game = JSON.parse(history.pop());
+    $('winOverlay').classList.add('hidden');
+    showResult(game.last, false);
+    render();
+    scheduleAuto();
+  }
+
+  // ---------- rendering ----------
+  function limbDots(limbs) {
+    return '<div class="limbs">' + ['LH', 'RH', 'LF', 'RF'].map(l =>
+      '<div><i class="' + (limbs[l] || '') + '"></i>' + LIMB[l].short + '</div>').join('') + '</div>';
+  }
+
+  function esc(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+  function render() {
+    const rows = $('boardRows');
+    rows.innerHTML = '';
+    const solo = game.players.length === 1;
+
+    if (game.mode === 'turns') {
+      const p = currentPlayer();
+      $('upNext').innerHTML = p && !p.out ? '<em>' + esc(p.name) + '</em>, you’re up!' : '';
+      $('spinBtn').textContent = p && !solo ? 'SPIN FOR ' + p.name.toUpperCase() : 'SPIN';
+      $('boardTitle').textContent = 'Where everyone is';
+      game.players.forEach((pl, i) => {
+        const row = document.createElement('div');
+        row.className = 'prow' + (pl.out ? ' out' : '') + (i === game.turn && !pl.out ? ' turn' : '');
+        row.innerHTML = '<div class="name">' + esc(pl.name) + '</div>' + limbDots(pl.limbs);
+        if (!solo) row.appendChild(fellButton(i, pl.out));
+        rows.appendChild(row);
+      });
+    } else {
+      $('upNext').innerHTML = '<em>Everybody</em> moves!';
+      $('spinBtn').textContent = 'SPIN';
+      $('boardTitle').textContent = 'Everyone is on';
+      const shared = document.createElement('div');
+      shared.className = 'prow';
+      shared.innerHTML = '<div class="name">All players</div>' + limbDots(game.shared);
+      rows.appendChild(shared);
+      if (!solo) {
+        game.players.forEach((pl, i) => {
+          const row = document.createElement('div');
+          row.className = 'prow' + (pl.out ? ' out' : '');
+          row.innerHTML = '<div class="name">' + esc(pl.name) + '</div>';
+          row.appendChild(fellButton(i, pl.out));
+          rows.appendChild(row);
+        });
+      }
+    }
+    $('undoBtn').disabled = history.length === 0;
+    $('autoBtn').classList.toggle('hidden', !setup.auto);
+    $('autoBarWrap').classList.toggle('hidden', !setup.auto);
+    $('autoBtn').textContent = autoPaused ? 'Resume' : 'Pause';
+  }
+
+  function fellButton(i, out) {
+    const b = document.createElement('button');
+    b.className = 'btn';
+    b.textContent = out ? 'Out' : 'Fell';
+    b.disabled = out;
+    b.onclick = () => eliminate(i);
+    return b;
+  }
+
+  function drawWheel() {
+    const svg = $('wheel');
+    const cx = 150, cy = 150, rO = 145, rI = 78;
+    const pt = (r, deg) => {
+      const a = (deg - 90) * Math.PI / 180;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    };
+    let html = '<circle cx="150" cy="150" r="148" fill="#ffffff"/>';
+    for (let i = 0; i < 16; i++) {
+      const a0 = i * 22.5 + 1, a1 = (i + 1) * 22.5 - 1;
+      const [x0, y0] = pt(rO, a0), [x1, y1] = pt(rO, a1), [x2, y2] = pt(rI, a1), [x3, y3] = pt(rI, a0);
+      const color = COLOR_HEX[COLORS[i % 4]];
+      html += '<path d="M' + x0 + ' ' + y0 + ' A' + rO + ' ' + rO + ' 0 0 1 ' + x1 + ' ' + y1 +
+        ' L' + x2 + ' ' + y2 + ' A' + rI + ' ' + rI + ' 0 0 0 ' + x3 + ' ' + y3 + ' Z" fill="' + color + '"/>';
+    }
+    // Quadrant dividers and labels
+    for (let q = 0; q < 4; q++) {
+      const [lx, ly] = pt(rO + 2, q * 90);
+      html += '<line x1="150" y1="150" x2="' + lx + '" y2="' + ly + '" stroke="#14122b" stroke-width="4"/>';
+      const mid = q * 90 + 45;
+      const [tx, ty] = pt(48, mid);
+      const l = LIMB[LIMBS[q]];
+      html += '<text x="' + tx + '" y="' + (ty - 6) + '" text-anchor="middle" font-size="20"' +
+        (l.flip ? ' transform="translate(' + (2 * tx) + ' 0) scale(-1 1)"' : '') + '>' + l.ico + '</text>';
+      html += '<text x="' + tx + '" y="' + (ty + 14) + '" text-anchor="middle" font-size="12" font-weight="800" fill="#14122b">' +
+        l.side.toUpperCase() + '</text>';
+    }
+    html += '<g id="arrow"><polygon points="150,22 140,60 160,60" fill="#14122b"/>' +
+      '<rect x="146" y="56" width="8" height="94" rx="4" fill="#14122b"/></g>';
+    html += '<circle cx="150" cy="150" r="13" fill="#14122b"/><circle cx="150" cy="150" r="5" fill="#fdd835"/>';
+    svg.innerHTML = html;
+    $('arrow').style.transform = 'rotate(' + arrowDeg + 'deg)';
+  }
+
+  // ---------- auto-spin ----------
+  function scheduleAuto() {
+    stopAuto();
+    if (!game || !setup.auto || autoPaused) return;
+    if (game.players.length > 1 && active().length <= 1) return;
+    autoStart = performance.now();
+    const ms = setup.auto * 1000;
+    const step = () => {
+      const p = Math.min(1, (performance.now() - autoStart) / ms);
+      $('autoBar').style.width = (p * 100) + '%';
+      if (p >= 1) { autoTimer = null; spin(); return; }
+      autoTimer = requestAnimationFrame(step);
+    };
+    autoTimer = requestAnimationFrame(step);
+  }
+  function stopAuto() {
+    if (autoTimer) cancelAnimationFrame(autoTimer);
+    autoTimer = null;
+    $('autoBar').style.width = '0%';
+  }
+  $('autoBtn').addEventListener('click', () => {
+    autoPaused = !autoPaused;
+    if (autoPaused) stopAuto(); else scheduleAuto();
+    render();
+  });
+
+  // ---------- voice + sound ----------
+  function primeSpeech() {
+    // iOS only allows speech after a tap; speaking an empty line during the tap unlocks it for auto-spin later.
+    if (!setup.voice || !('speechSynthesis' in window)) return;
+    try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
+  }
+  function say(text) {
+    if (!setup.voice || !('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95; u.pitch = 1.05;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  let audioCtx = null;
+  function tick() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      // Clicks that slow down, like the spinner arrow passing the pegs.
+      let t = 0, gap = 0.035;
+      while (t < 2.5) {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.value = 1400; o.type = 'square';
+        g.gain.setValueAtTime(0.05, now + t);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + t + 0.03);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(now + t); o.stop(now + t + 0.04);
+        t += gap; gap *= 1.09;
+      }
+    } catch (e) {}
+  }
+
+  // ---------- screen awake ----------
+  async function requestWakeLock() {
+    try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && game && !$('game').classList.contains('hidden')) requestWakeLock();
+  });
+
+  function confetti() {
+    const cols = Object.values(COLOR_HEX);
+    for (let i = 0; i < 60; i++) {
+      const d = document.createElement('div');
+      d.className = 'confetti';
+      d.style.left = rand(100) + 'vw';
+      d.style.background = cols[i % 4];
+      d.style.animationDuration = (2 + rand(200) / 100) + 's';
+      d.style.animationDelay = (rand(80) / 100) + 's';
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 5000);
+    }
+  }
+
+  // ---------- wiring ----------
+  $('spinBtn').addEventListener('click', spin);
+  $('undoBtn').addEventListener('click', undo);
+  $('winUndoBtn').addEventListener('click', undo);
+  $('againBtn').addEventListener('click', newGame);
+  $('backBtn').addEventListener('click', () => {
+    stopAuto();
+    try { if (wakeLock) wakeLock.release(); } catch (e) {}
+    $('game').classList.add('hidden');
+    $('setup').classList.remove('hidden');
+    renderSetup();
+  });
+
+  drawWheel();
+  renderSetup();
+})();
+</script>
+</body>
+</html>
