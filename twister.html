@@ -173,7 +173,7 @@
         <button class="btn primary" type="submit">Add</button>
       </form>
       <div class="players" id="playerChips"></div>
-      <p class="hint" id="playerHint">Add everyone who's playing. Turn order follows this list.</p>
+      <p class="hint" id="playerHint">Optional. Add names to take turns, or just tap Let's Play. Turn order follows this list.</p>
     </div>
 
     <div class="card">
@@ -270,6 +270,7 @@
   let game = null;      // { mode, players:[{name, limbs, out}], shared, turn, last }
   let history = [];     // snapshots for undo
   let spinning = false;
+  let spinTimer = null;
   let arrowDeg = 0;
   let autoPaused = false;
   let autoTimer = null;
@@ -301,7 +302,6 @@
     document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === setup.mode));
     $('optVoice').checked = !!setup.voice;
     $('optAuto').value = String(setup.auto || 0);
-    $('startBtn').disabled = setup.names.length === 0;
   }
 
   $('addForm').addEventListener('submit', e => {
@@ -320,7 +320,6 @@
   $('optAuto').addEventListener('change', e => { setup.auto = parseInt(e.target.value, 10) || 0; saveSetup(); });
 
   $('startBtn').addEventListener('click', () => {
-    if (!setup.names.length) return;
     // A name typed but not added yet is almost certainly a mistake: add it.
     const pending = $('nameInput').value.trim();
     if (pending && !setup.names.includes(pending)) { setup.names.push(pending); $('nameInput').value = ''; saveSetup(); }
@@ -331,7 +330,7 @@
   // ---------- game ----------
   function newGame() {
     game = {
-      mode: setup.mode,
+      mode: setup.names.length ? setup.mode : 'all',
       players: setup.names.map(name => ({ name, limbs: emptyLimbs(), out: false })),
       shared: emptyLimbs(),
       turn: 0,
@@ -339,6 +338,7 @@
     };
     history = [];
     autoPaused = false;
+    cancelSpin();
     $('setup').classList.add('hidden');
     $('game').classList.remove('hidden');
     $('winOverlay').classList.add('hidden');
@@ -352,6 +352,7 @@
   }
 
   const active = () => game.players.filter(p => !p.out);
+  const inGame = () => !!game && !$('game').classList.contains('hidden');
   const snapshot = () => JSON.stringify(game);
 
   function currentPlayer() {
@@ -410,8 +411,10 @@
     $('arrow').style.transform = 'rotate(' + arrowDeg + 'deg)';
     tick();
 
-    setTimeout(() => {
+    spinTimer = setTimeout(() => {
+      spinTimer = null;
       spinning = false;
+      if (!inGame()) return;
       $('spinBtn').disabled = false;
       target[move.limb] = move.color;
       game.last = { who, limb: move.limb, color: move.color };
@@ -423,10 +426,17 @@
     }, 2700);
   }
 
+  function cancelSpin() {
+    if (spinTimer) clearTimeout(spinTimer);
+    spinTimer = null;
+    spinning = false;
+    $('spinBtn').disabled = false;
+  }
+
   function spokenText(m) {
     const l = LIMB[m.limb];
-    const prefix = m.who === 'Everyone' ? 'Everybody' : m.who;
-    return prefix + '. ' + l.side + ' ' + l.part.toLowerCase() + ', ' + m.color + '.';
+    const move = l.side + ' ' + l.part.toLowerCase() + ', ' + m.color + '.';
+    return m.who === 'Everyone' ? move : m.who + '. ' + move;
   }
 
   function showResult(m, animate) {
@@ -570,13 +580,14 @@
   // ---------- auto-spin ----------
   function scheduleAuto() {
     stopAuto();
-    if (!game || !setup.auto || autoPaused) return;
+    if (!inGame() || !setup.auto || autoPaused) return;
     if (game.players.length > 1 && active().length <= 1) return;
     autoStart = performance.now();
     const ms = setup.auto * 1000;
     const step = () => {
       const p = Math.min(1, (performance.now() - autoStart) / ms);
       $('autoBar').style.width = (p * 100) + '%';
+      if (!inGame()) { stopAuto(); return; }
       if (p >= 1) { autoTimer = null; spin(); return; }
       autoTimer = requestAnimationFrame(step);
     };
@@ -656,6 +667,8 @@
   $('againBtn').addEventListener('click', newGame);
   $('backBtn').addEventListener('click', () => {
     stopAuto();
+    cancelSpin();
+    try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
     try { if (wakeLock) wakeLock.release(); } catch (e) {}
     $('game').classList.add('hidden');
     $('setup').classList.remove('hidden');
