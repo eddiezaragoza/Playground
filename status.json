@@ -1,19 +1,25 @@
 {
-  "generatedAt": "2026-11-24T12:57:09.153Z",
+  "generatedAt": "2026-11-24T22:54:27.078Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "qz8YE61BoXM",
+        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
+        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
+        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
-      "lastLiveAt": "2026-11-24T02:42:11.595Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
+      "lastLiveAt": "2026-11-24T22:54:27.078Z",
       "history": [
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
           "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
           "startedAt": "2026-11-22T03:27:59.873Z",
-          "lastSeenLiveAt": "2026-11-24T02:42:11.595Z"
+          "lastSeenLiveAt": "2026-11-24T22:54:27.078Z"
         },
         {
           "videoId": "oUUVlxLX9z8",
@@ -181,15 +187,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
-      "lastLiveAt": "2026-11-24T12:57:09.153Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
+      "lastLiveAt": "2026-11-24T22:54:27.078Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-18T04:39:02.892Z",
-          "lastSeenLiveAt": "2026-11-24T12:57:09.153Z"
+          "lastSeenLiveAt": "2026-11-24T22:54:27.078Z"
         },
         {
           "videoId": "eTI8okUHMRY",
@@ -295,7 +301,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -303,7 +309,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -338,11 +344,24 @@
     },
     "ewtn-espanol": {
       "current": {
-        "state": "offline"
+        "state": "live",
+        "videoId": "VfQqa7dVgYs",
+        "title": "Café con Cristo Radio Show - Escuchar a Dios no es suficiente",
+        "url": "https://www.youtube.com/watch?v=VfQqa7dVgYs",
+        "thumbnail": "https://i.ytimg.com/vi/VfQqa7dVgYs/hqdefault.jpg",
+        "startedAt": null,
+        "embeddable": true
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
-      "lastLiveAt": "2026-11-16T15:54:45.542Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
+      "lastLiveAt": "2026-11-24T22:54:27.078Z",
       "history": [
+        {
+          "videoId": "VfQqa7dVgYs",
+          "title": "Café con Cristo Radio Show - Escuchar a Dios no es suficiente",
+          "url": "https://www.youtube.com/watch?v=VfQqa7dVgYs",
+          "startedAt": "2026-11-24T22:54:27.078Z",
+          "lastSeenLiveAt": "2026-11-24T22:54:27.078Z"
+        },
         {
           "videoId": "PttKZ5JpZeg",
           "title": "EN VIVO | Papa León XIV en Perú: Visita a ancianos, Santa Misa y despedida de Lima | 16 nov. 2026",
@@ -517,7 +536,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-24T12:57:09.153Z",
+      "checkedAt": "2026-11-24T22:54:27.078Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
