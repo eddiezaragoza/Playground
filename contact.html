@@ -52,24 +52,25 @@
       min-height: 100dvh;
       display: flex;
       justify-content: center;
+      align-items: center;
       padding:
-        max(40px, env(safe-area-inset-top))
+        max(28px, env(safe-area-inset-top))
         max(16px, env(safe-area-inset-right))
-        max(32px, env(safe-area-inset-bottom))
+        max(20px, env(safe-area-inset-bottom))
         max(16px, env(safe-area-inset-left));
     }
 
     main { width: 100%; max-width: 440px; }
 
-    .profile { text-align: center; margin-bottom: 28px; }
+    .profile { text-align: center; margin-bottom: 22px; }
 
     .avatar {
-      width: 112px;
-      height: 112px;
+      width: 96px;
+      height: 96px;
       border-radius: 50%;
       object-fit: cover;
       display: block;
-      margin: 0 auto 14px;
+      margin: 0 auto 10px;
       border: 3px solid var(--card);
       box-shadow: var(--shadow);
     }
@@ -78,23 +79,15 @@
 
     .tagline { color: var(--text-light); font-size: 0.95rem; margin-top: 2px; }
 
-    .links { list-style: none; display: grid; gap: 12px; }
+    .links { list-style: none; display: grid; gap: 10px; }
 
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-light);
-      margin: 24px 4px 10px;
-    }
 
     .link {
       display: flex;
       align-items: center;
       gap: 14px;
-      min-height: 64px;
-      padding: 12px 16px;
+      min-height: 60px;
+      padding: 10px 16px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -142,9 +135,19 @@
       text-align: center;
       color: var(--text-light);
       font-size: 0.8rem;
-      margin-top: 32px;
+      margin-top: 20px;
     }
     footer a { color: inherit; }
+
+    @media (max-height: 620px) {
+      body { padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(0px, env(safe-area-inset-bottom)); }
+      .avatar { width: 72px; height: 72px; margin-bottom: 8px; }
+      h1 { font-size: 1.4rem; }
+      .profile { margin-bottom: 16px; }
+      .links { gap: 8px; }
+      .link { min-height: 56px; padding: 8px 14px; }
+      footer { margin-top: 14px; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       .link { transition: none; }
@@ -155,12 +158,11 @@
 <body>
   <main>
     <header class="profile">
-      <img class="avatar" src="images/profile.png" alt="Eddie Zaragoza" width="112" height="112">
+      <img class="avatar" src="images/profile.png" alt="Eddie Zaragoza" width="96" height="96">
       <h1>Eddie Zaragoza</h1>
       <p class="tagline">Let's connect</p>
     </header>
 
-    <p class="section-label">Social</p>
     <ul class="links">
       <li>
         <a class="link linkedin" href="https://www.linkedin.com/in/eddie-zaragoza-895796/" target="_blank" rel="noopener">
@@ -189,10 +191,6 @@
           <span class="chev" aria-hidden="true">&rsaquo;</span>
         </a>
       </li>
-    </ul>
-
-    <p class="section-label">Pay me</p>
-    <ul class="links">
       <li>
         <a class="link venmo" href="https://venmo.com/code?user_id=1634792646901760730&amp;created=1795853166" target="_blank" rel="noopener">
           <span class="icon" aria-hidden="true">
