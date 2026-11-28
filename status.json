@@ -1,19 +1,26 @@
 {
-  "generatedAt": "2026-11-27T17:39:05.282Z",
+  "generatedAt": "2026-11-28T00:40:40.442Z",
   "channels": {
     "st-benedicts-burwood": {
       "current": {
         "state": "live",
-        "videoId": "qz8YE61BoXM",
-        "title": "Perpetual Adoration live from St Benedict's, Melbourne",
-        "url": "https://www.youtube.com/watch?v=qz8YE61BoXM",
-        "thumbnail": "https://i.ytimg.com/vi/qz8YE61BoXM/hqdefault.jpg",
+        "videoId": "qzhT_QPoEhA",
+        "title": "Saturday 28th November 2026 - St Benedict's, Melbourne. Welcome!",
+        "url": "https://www.youtube.com/watch?v=qzhT_QPoEhA",
+        "thumbnail": "https://i.ytimg.com/vi/qzhT_QPoEhA/hqdefault.jpg",
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
-      "lastLiveAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
+      "lastLiveAt": "2026-11-28T00:40:40.442Z",
       "history": [
+        {
+          "videoId": "qzhT_QPoEhA",
+          "title": "Saturday 28th November 2026 - St Benedict's, Melbourne. Welcome!",
+          "url": "https://www.youtube.com/watch?v=qzhT_QPoEhA",
+          "startedAt": "2026-11-28T00:40:40.442Z",
+          "lastSeenLiveAt": "2026-11-28T00:40:40.442Z"
+        },
         {
           "videoId": "qz8YE61BoXM",
           "title": "Perpetual Adoration live from St Benedict's, Melbourne",
@@ -187,15 +194,15 @@
         "startedAt": null,
         "embeddable": true
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
-      "lastLiveAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
+      "lastLiveAt": "2026-11-28T00:40:40.442Z",
       "history": [
         {
           "videoId": "03pYP2Nmreo",
           "title": "Vatican Media Live",
           "url": "https://www.youtube.com/watch?v=03pYP2Nmreo",
           "startedAt": "2026-11-18T04:39:02.892Z",
-          "lastSeenLiveAt": "2026-11-27T17:39:05.282Z"
+          "lastSeenLiveAt": "2026-11-28T00:40:40.442Z"
         },
         {
           "videoId": "eTI8okUHMRY",
@@ -301,7 +308,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
       "lastLiveAt": null,
       "history": []
     },
@@ -309,7 +316,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
       "lastLiveAt": "2026-10-31T16:08:05.909Z",
       "history": [
         {
@@ -346,7 +353,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
       "lastLiveAt": "2026-11-24T22:54:27.078Z",
       "history": [
         {
@@ -530,7 +537,7 @@
       "current": {
         "state": "offline"
       },
-      "checkedAt": "2026-11-27T17:39:05.282Z",
+      "checkedAt": "2026-11-28T00:40:40.442Z",
       "lastLiveAt": "2026-10-16T18:59:08.268Z",
       "history": [
         {
